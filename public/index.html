@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Work Redesign Platform</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            font-size: 3rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .dashboard {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .card h3 {
+            color: #667eea;
+            margin-bottom: 16px;
+            font-size: 1.3rem;
+        }
+
+        .stats {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .stat {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: #666;
+            margin-top: 4px;
+        }
+
+        .button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 500;
+            transition: transform 0.2s, box-shadow 0.2s;
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+
+        .button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        .button.secondary {
+            background: white;
+            color: #667eea;
+            border: 2px solid #667eea;
+        }
+
+        .log {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 16px;
+            font-family: 'Monaco', 'Menlo', monospace;
+            font-size: 0.9rem;
+            max-height: 200px;
+            overflow-y: auto;
+            border-left: 4px solid #667eea;
+        }
+
+        .workflow-list {
+            list-style: none;
+        }
+
+        .workflow-item {
+            background: #f8f9fa;
+            padding: 12px;
+            margin-bottom: 8px;
+            border-radius: 6px;
+            border-left: 4px solid #28a745;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .workflow-item.failed {
+            border-left-color: #dc3545;
+        }
+
+        .workflow-item.running {
+            border-left-color: #ffc107;
+        }
+
+        .status-indicator {
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        .status-active {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-running {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .status-failed {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .controls {
+            margin-top: 20px;
+        }
+
+        .agent-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 12px;
+        }
+
+        .agent-card {
+            background: #f8f9fa;
+            padding: 16px;
+            border-radius: 8px;
+            text-align: center;
+            border: 2px solid transparent;
+            transition: border-color 0.2s;
+        }
+
+        .agent-card.active {
+            border-color: #28a745;
+        }
+
+        .agent-card.busy {
+            border-color: #ffc107;
+        }
+
+        .agent-type {
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 8px;
+        }
+
+        .agent-status {
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .connection-status {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 8px 16px;
+            border-radius: 20px;
+            color: white;
+            font-weight: bold;
+            z-index: 1000;
+        }
+
+        .connected {
+            background: #28a745;
+        }
+
+        .disconnected {
+            background: #dc3545;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+
+            .dashboard {
+                grid-template-columns: 1fr;
+            }
+
+            .stats {
+                flex-direction: column;
+                gap: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="connection-status" id="connectionStatus">
+        <span id="statusText">Disconnected</span>
+    </div>
+
+    <div class="container">
+        <header class="header">
+            <h1>Work Redesign Platform</h1>
+            <p>Multi-Agent Automation & Workflow Orchestration</p>
+        </header>
+
+        <div class="dashboard">
+            <div class="card">
+                <h3>System Overview</h3>
+                <div class="stats">
+                    <div class="stat">
+                        <div class="stat-value" id="totalAgents">0</div>
+                        <div class="stat-label">Agents</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-value" id="activeWorkflows">0</div>
+                        <div class="stat-label">Workflows</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-value" id="totalExecutions">0</div>
+                        <div class="stat-label">Executions</div>
+                    </div>
+                </div>
+                <div class="controls">
+                    <button class="button" onclick="refreshStats()">Refresh Stats</button>
+                    <button class="button secondary" onclick="showSystemInfo()">System Info</button>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3>Active Agents</h3>
+                <div class="agent-grid" id="agentGrid">
+                    <!-- Agents will be populated here -->
+                </div>
+                <div class="controls">
+                    <button class="button" onclick="refreshAgents()">Refresh Agents</button>
+                    <button class="button secondary" onclick="createAgent()">Create Agent</button>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3>Workflow Management</h3>
+                <ul class="workflow-list" id="workflowList">
+                    <!-- Workflows will be populated here -->
+                </ul>
+                <div class="controls">
+                    <button class="button" onclick="createWorkflow()">Create Workflow</button>
+                    <button class="button secondary" onclick="executeWorkflow()">Execute</button>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3>Automation Engine</h3>
+                <div class="stats">
+                    <div class="stat">
+                        <div class="stat-value" id="automationCount">0</div>
+                        <div class="stat-label">Automations</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-value" id="triggerCount">0</div>
+                        <div class="stat-label">Triggers</div>
+                    </div>
+                </div>
+                <div class="controls">
+                    <button class="button" onclick="createAutomation()">Create Automation</button>
+                    <button class="button secondary" onclick="viewAutomations()">View All</button>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3>Activity Log</h3>
+                <div class="log" id="activityLog">
+                    <div>System initialized...</div>
+                    <div>Waiting for connection...</div>
+                </div>
+                <div class="controls">
+                    <button class="button secondary" onclick="clearLog()">Clear Log</button>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3>Quick Actions</h3>
+                <div class="controls">
+                    <button class="button" onclick="runDataProcessing()">Run Data Processing</button>
+                    <button class="button" onclick="runOptimization()">Run Optimization</button>
+                    <button class="button" onclick="runAnalysis()">Run Analysis</button>
+                    <button class="button secondary" onclick="emergencyStop()">Emergency Stop</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let ws = null;
+        let reconnectInterval = null;
+
+        // Initialize WebSocket connection
+        function connectWebSocket() {
+            const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+            const wsUrl = `${protocol}//${window.location.host}`;
+
+            ws = new WebSocket(wsUrl);
+
+            ws.onopen = function() {
+                updateConnectionStatus(true);
+                log('Connected to Work Redesign Platform');
+                refreshStats();
+                refreshAgents();
+
+                if (reconnectInterval) {
+                    clearInterval(reconnectInterval);
+                    reconnectInterval = null;
+                }
+            };
+
+            ws.onmessage = function(event) {
+                const data = JSON.parse(event.data);
+                handleWebSocketMessage(data);
+            };
+
+            ws.onclose = function() {
+                updateConnectionStatus(false);
+                log('Connection lost. Attempting to reconnect...');
+
+                if (!reconnectInterval) {
+                    reconnectInterval = setInterval(connectWebSocket, 3000);
+                }
+            };
+
+            ws.onerror = function(error) {
+                log('WebSocket error: ' + error);
+            };
+        }
+
+        function updateConnectionStatus(connected) {
+            const statusElement = document.getElementById('connectionStatus');
+            const statusText = document.getElementById('statusText');
+
+            if (connected) {
+                statusElement.className = 'connection-status connected';
+                statusText.textContent = 'Connected';
+            } else {
+                statusElement.className = 'connection-status disconnected';
+                statusText.textContent = 'Disconnected';
+            }
+        }
+
+        function sendMessage(message) {
+            if (ws && ws.readyState === WebSocket.OPEN) {
+                ws.send(JSON.stringify(message));
+            } else {
+                log('Cannot send message: WebSocket not connected');
+            }
+        }
+
+        function handleWebSocketMessage(data) {
+            if (data.type === 'stats') {
+                updateStats(data.data);
+            } else if (data.type === 'agents') {
+                updateAgents(data.data);
+            } else if (data.type === 'workflows') {
+                updateWorkflows(data.data);
+            } else if (data.type === 'log') {
+                log(data.message);
+            } else if (data.error) {
+                log('Error: ' + data.error);
+            }
+        }
+
+        function log(message) {
+            const logElement = document.getElementById('activityLog');
+            const timestamp = new Date().toLocaleTimeString();
+            const logEntry = document.createElement('div');
+            logEntry.textContent = `[${timestamp}] ${message}`;
+            logElement.appendChild(logEntry);
+            logElement.scrollTop = logElement.scrollHeight;
+        }
+
+        function updateStats(stats) {
+            document.getElementById('totalAgents').textContent = stats.totalAgents || 0;
+            document.getElementById('activeWorkflows').textContent = stats.totalWorkflows || 0;
+            document.getElementById('totalExecutions').textContent = stats.totalExecutions || 0;
+            document.getElementById('automationCount').textContent = stats.automationStats?.totalAutomations || 0;
+            document.getElementById('triggerCount').textContent = stats.automationStats?.activeTriggers || 0;
+        }
+
+        function updateAgents(agents) {
+            const agentGrid = document.getElementById('agentGrid');
+            agentGrid.innerHTML = '';
+
+            agents.forEach(agent => {
+                const agentCard = document.createElement('div');
+                agentCard.className = `agent-card ${agent.status}`;
+                agentCard.innerHTML = `
+                    <div class="agent-type">${agent.type}</div>
+                    <div class="agent-status">${agent.status}</div>
+                    <div style="font-size: 0.8rem; color: #999; margin-top: 4px;">${agent.id.substring(0, 8)}</div>
+                `;
+                agentGrid.appendChild(agentCard);
+            });
+        }
+
+        function updateWorkflows(workflows) {
+            const workflowList = document.getElementById('workflowList');
+            workflowList.innerHTML = '';
+
+            workflows.forEach(workflow => {
+                const workflowItem = document.createElement('li');
+                workflowItem.className = `workflow-item ${workflow.status}`;
+                workflowItem.innerHTML = `
+                    <div>
+                        <strong>${workflow.name}</strong>
+                        <div style="font-size: 0.9rem; color: #666;">${workflow.description || 'No description'}</div>
+                    </div>
+                    <div class="status-indicator status-${workflow.status}">${workflow.status}</div>
+                `;
+                workflowList.appendChild(workflowItem);
+            });
+        }
+
+        // UI Actions
+        function refreshStats() {
+            sendMessage({ type: 'get_stats' });
+        }
+
+        function refreshAgents() {
+            sendMessage({ type: 'get_agents' });
+        }
+
+        function createAgent() {
+            const agentType = prompt('Enter agent type (task, analysis, coordinator, optimization):');
+            if (agentType) {
+                sendMessage({ type: 'create_agent', data: { type: agentType } });
+                log(`Creating ${agentType} agent...`);
+            }
+        }
+
+        function createWorkflow() {
+            const workflowName = prompt('Enter workflow name:');
+            if (workflowName) {
+                const workflow = {
+                    name: workflowName,
+                    description: 'Custom workflow created from UI',
+                    template: 'data_processing',
+                    type: 'custom'
+                };
+                sendMessage({ type: 'create_workflow', data: workflow });
+                log(`Creating workflow: ${workflowName}`);
+            }
+        }
+
+        function executeWorkflow() {
+            const workflowId = prompt('Enter workflow ID to execute:');
+            if (workflowId) {
+                sendMessage({ type: 'execute_workflow', data: { workflowId, context: {} } });
+                log(`Executing workflow: ${workflowId}`);
+            }
+        }
+
+        function createAutomation() {
+            const automationName = prompt('Enter automation name:');
+            if (automationName) {
+                const automation = {
+                    name: automationName,
+                    type: 'scheduled',
+                    triggers: [{
+                        type: 'schedule',
+                        config: { schedule: 'every_hour' }
+                    }],
+                    actions: [{
+                        type: 'log',
+                        config: { message: 'Automated task executed' }
+                    }]
+                };
+                sendMessage({ type: 'create_automation', data: automation });
+                log(`Creating automation: ${automationName}`);
+            }
+        }
+
+        function viewAutomations() {
+            sendMessage({ type: 'list_automations' });
+            log('Fetching automation list...');
+        }
+
+        function runDataProcessing() {
+            const workflow = {
+                name: 'Quick Data Processing',
+                template: 'data_processing',
+                context: { source: 'ui_trigger' }
+            };
+            sendMessage({ type: 'create_and_execute_workflow', data: workflow });
+            log('Starting data processing workflow...');
+        }
+
+        function runOptimization() {
+            sendMessage({
+                type: 'delegate_task',
+                data: {
+                    task: {
+                        type: 'performance_optimization',
+                        name: 'Quick Performance Optimization',
+                        payload: {
+                            system: { id: 'main_system' },
+                            currentMetrics: { responseTime: 1000, throughput: 100 },
+                            targetMetrics: { responseTime: 500, throughput: 200 }
+                        }
+                    },
+                    agentType: 'optimization'
+                }
+            });
+            log('Running optimization analysis...');
+        }
+
+        function runAnalysis() {
+            sendMessage({
+                type: 'delegate_task',
+                data: {
+                    task: {
+                        type: 'performance_analysis',
+                        name: 'Quick Performance Analysis',
+                        payload: {
+                            metrics: {
+                                responseTimes: [100, 150, 120, 180, 200],
+                                requests: 1000,
+                                errors: 5
+                            },
+                            timeframe: 3600
+                        }
+                    },
+                    agentType: 'analysis'
+                }
+            });
+            log('Running performance analysis...');
+        }
+
+        function emergencyStop() {
+            if (confirm('Are you sure you want to stop all active processes?')) {
+                sendMessage({ type: 'emergency_stop' });
+                log('Emergency stop initiated...');
+            }
+        }
+
+        function showSystemInfo() {
+            sendMessage({ type: 'get_system_info' });
+            log('Fetching system information...');
+        }
+
+        function clearLog() {
+            document.getElementById('activityLog').innerHTML = '';
+        }
+
+        // Initialize the application
+        window.addEventListener('load', function() {
+            connectWebSocket();
+            log('Work Redesign Platform UI loaded');
+        });
+
+        // Handle page visibility changes
+        document.addEventListener('visibilitychange', function() {
+            if (!document.hidden && (!ws || ws.readyState === WebSocket.CLOSED)) {
+                connectWebSocket();
+            }
+        });
+    </script>
+</body>
+</html>
