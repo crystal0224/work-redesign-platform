@@ -1,0 +1,106 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Test Database
+  postgres:
+    image: postgres:15-alpine
+    container_name: work-redesign-db-test
+    environment:
+      POSTGRES_DB: work_redesign_test
+      POSTGRES_USER: test_user
+      POSTGRES_PASSWORD: test_password
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_test_data:/var/lib/postgresql/data
+      - ./backend/database/init.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U test_user"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - test-network
+
+  # Redis Test Cache
+  redis:
+    image: redis:7-alpine
+    container_name: work-redesign-cache-test
+    command: redis-server --appendonly yes
+    ports:
+      - "6380:6379"
+    volumes:
+      - redis_test_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - test-network
+
+  # Test Backend (Optional - for integration testing)
+  backend-test:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+      target: dev
+    container_name: work-redesign-api-test
+    environment:
+      - NODE_ENV=test
+      - PORT=4001
+      - DATABASE_URL=postgresql://test_user:test_password@postgres:5432/work_redesign_test
+      - REDIS_URL=redis://redis:6379
+      - ANTHROPIC_API_KEY=test_key_mock_only
+      - JWT_SECRET=test_jwt_secret
+      - LOG_LEVEL=error
+    ports:
+      - "4001:4001"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    volumes:
+      - ./backend:/app
+      - /app/node_modules
+      - ./backend/tests:/app/tests
+    networks:
+      - test-network
+    profiles:
+      - integration
+
+  # Test Frontend (Optional - for E2E testing)
+  frontend-test:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      target: dev
+    container_name: work-redesign-web-test
+    environment:
+      - NODE_ENV=test
+      - NEXT_PUBLIC_API_URL=http://backend-test:4001
+      - NEXT_PUBLIC_WS_URL=ws://backend-test:4001
+      - NEXT_TELEMETRY_DISABLED=1
+    ports:
+      - "3001:3000"
+    depends_on:
+      - backend-test
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+      - /app/.next
+    networks:
+      - test-network
+    profiles:
+      - e2e
+
+volumes:
+  postgres_test_data:
+    driver: local
+  redis_test_data:
+    driver: local
+
+networks:
+  test-network:
+    driver: bridge

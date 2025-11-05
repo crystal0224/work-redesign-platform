@@ -1,0 +1,1662 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Work Redesign - 팀장 경험 데모</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 900px;
+            width: 100%;
+            background: white;
+            border-radius: 24px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+            position: relative;
+        }
+
+        .screen {
+            display: none;
+            padding: 60px 40px 40px;
+            animation: slideIn 0.5s ease;
+            min-height: 600px;
+            position: relative;
+        }
+
+        .screen.active {
+            display: block;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .progress-bar {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: #e9ecef;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            transition: width 0.5s ease;
+        }
+
+        .thought-bubble {
+            background: #f0f4ff;
+            border-left: 4px solid #667eea;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            font-style: italic;
+            color: #495057;
+            position: relative;
+            animation: fadeIn 0.8s ease;
+        }
+
+        .thought-bubble::before {
+            content: "💭 스크님의 생각";
+            position: absolute;
+            top: -10px;
+            left: 20px;
+            background: white;
+            padding: 0 10px;
+            font-size: 12px;
+            color: #667eea;
+            font-style: normal;
+            font-weight: 600;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        h1 {
+            color: #212529;
+            margin-bottom: 10px;
+            font-size: 32px;
+            font-weight: 700;
+        }
+
+        h2 {
+            color: #343a40;
+            margin-bottom: 30px;
+            font-size: 24px;
+            font-weight: 600;
+        }
+
+        p {
+            color: #495057;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 14px 32px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            margin: 10px 5px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: #e9ecef;
+            color: #495057;
+        }
+
+        .btn-secondary:hover {
+            background: #dee2e6;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .input-group {
+            margin: 30px 0;
+        }
+
+        .domain-input {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+            animation: slideIn 0.3s ease;
+        }
+
+        .domain-number {
+            width: 30px;
+            height: 30px;
+            background: #667eea;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            margin-right: 15px;
+        }
+
+        input[type="text"], textarea {
+            flex: 1;
+            padding: 12px 16px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        input[type="text"]:focus, textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        textarea {
+            width: 100%;
+            min-height: 200px;
+            resize: vertical;
+            font-family: inherit;
+        }
+
+        .file-upload {
+            border: 2px dashed #dee2e6;
+            border-radius: 12px;
+            padding: 40px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: #f8f9fa;
+        }
+
+        .file-upload:hover {
+            border-color: #667eea;
+            background: #f0f4ff;
+        }
+
+        .ai-loading {
+            text-align: center;
+            padding: 60px 0;
+        }
+
+        .spinner {
+            width: 60px;
+            height: 60px;
+            border: 4px solid #e9ecef;
+            border-top-color: #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 30px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .task-card {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 20px;
+            border: 2px solid #e9ecef;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .task-card:hover {
+            border-color: #667eea;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+
+        .task-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .task-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #343a40;
+        }
+
+        .task-time {
+            background: white;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 14px;
+            color: #6c757d;
+        }
+
+        .task-steps {
+            display: none;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #dee2e6;
+        }
+
+        .task-card.expanded .task-steps {
+            display: block;
+            animation: slideDown 0.3s ease;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                max-height: 0;
+            }
+            to {
+                opacity: 1;
+                max-height: 500px;
+            }
+        }
+
+        .step {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 12px;
+            padding-left: 20px;
+        }
+
+        .step-number {
+            min-width: 25px;
+            font-weight: 600;
+            color: #667eea;
+            margin-right: 10px;
+        }
+
+        .automation-badge {
+            display: inline-block;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            margin: 5px;
+        }
+
+        .automation-full {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .automation-partial {
+            background: #cce5ff;
+            color: #004085;
+        }
+
+        .automation-assisted {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .automation-manual {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .automation-card {
+            background: white;
+            border: 2px solid #e9ecef;
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 25px;
+            transition: all 0.3s ease;
+        }
+
+        .automation-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            border-color: #667eea;
+        }
+
+        .automation-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .automation-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            margin-right: 20px;
+        }
+
+        .automation-full .automation-icon {
+            background: #d4edda;
+        }
+
+        .automation-partial .automation-icon {
+            background: #cce5ff;
+        }
+
+        .case-study {
+            background: #f0f4ff;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+            border-left: 4px solid #667eea;
+        }
+
+        .case-study-title {
+            font-weight: 600;
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        .results-summary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border-radius: 16px;
+            padding: 40px;
+            text-align: center;
+            margin: 30px 0;
+        }
+
+        .big-number {
+            font-size: 48px;
+            font-weight: 700;
+            margin: 20px 0;
+        }
+
+        .chat-container {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .chat-message {
+            margin-bottom: 15px;
+            animation: slideUp 0.3s ease;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .chat-ai {
+            background: white;
+            padding: 12px 16px;
+            border-radius: 8px 8px 8px 0;
+            color: #495057;
+        }
+
+        .chat-user {
+            background: #667eea;
+            color: white;
+            padding: 12px 16px;
+            border-radius: 8px 8px 0 8px;
+            margin-left: auto;
+            max-width: 70%;
+        }
+
+        .quick-replies {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+
+        .quick-reply {
+            padding: 8px 16px;
+            background: white;
+            border: 2px solid #667eea;
+            color: #667eea;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .quick-reply:hover {
+            background: #667eea;
+            color: white;
+        }
+
+        .time-indicator {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 10px 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            font-size: 12px;
+            color: #6c757d;
+            z-index: 1000;
+        }
+
+        .step-indicator {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 40px;
+            padding: 0 20px;
+        }
+
+        .step-dot {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #e9ecef;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            color: #6c757d;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .step-dot.active {
+            background: #667eea;
+            color: white;
+            transform: scale(1.1);
+        }
+
+        .step-dot.completed {
+            background: #28a745;
+            color: white;
+        }
+
+        .step-dot::after {
+            content: '';
+            position: absolute;
+            width: 100px;
+            height: 2px;
+            background: #e9ecef;
+            left: 50px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        .step-dot:last-child::after {
+            display: none;
+        }
+
+        .priority-list {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 25px;
+            margin: 30px 0;
+        }
+
+        .priority-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 15px;
+            background: white;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .priority-item:hover {
+            transform: translateX(5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .priority-number {
+            width: 30px;
+            height: 30px;
+            background: #667eea;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+        }
+
+        .priority-name {
+            flex: 1;
+            margin: 0 20px;
+            font-weight: 500;
+        }
+
+        .priority-time {
+            background: #d4edda;
+            color: #155724;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .flow-diagram {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 30px;
+            margin: 30px 0;
+            text-align: center;
+        }
+
+        .flow-node {
+            background: white;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            padding: 15px 20px;
+            margin: 10px auto;
+            max-width: 300px;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .flow-node:hover {
+            border-color: #667eea;
+            transform: scale(1.05);
+        }
+
+        .flow-node::after {
+            content: '↓';
+            position: absolute;
+            bottom: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 20px;
+            color: #6c757d;
+        }
+
+        .flow-node:last-child::after {
+            display: none;
+        }
+
+        .flow-node.automated {
+            background: #d4edda;
+            border-color: #28a745;
+        }
+
+        .flow-node.partial {
+            background: #cce5ff;
+            border-color: #007bff;
+        }
+
+        .download-section {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 30px;
+            text-align: center;
+            margin: 30px 0;
+        }
+
+        .download-options {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 30px;
+            flex-wrap: wrap;
+        }
+
+        .download-card {
+            background: white;
+            border: 2px solid #e9ecef;
+            border-radius: 12px;
+            padding: 20px;
+            width: 150px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .download-card:hover {
+            border-color: #667eea;
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+
+        .download-icon {
+            font-size: 40px;
+            margin-bottom: 10px;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                border-radius: 0;
+                min-height: 100vh;
+            }
+            
+            .screen {
+                padding: 40px 20px;
+            }
+            
+            h1 {
+                font-size: 24px;
+            }
+            
+            .time-indicator {
+                position: static;
+                margin-bottom: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="time-indicator">
+        <span id="timer">0:00</span>
+    </div>
+
+    <div class="container">
+        <div class="progress-bar">
+            <div class="progress-fill" id="progressBar"></div>
+        </div>
+
+        <!-- Screen 0: 안내 페이지 -->
+        <div class="screen active" id="screen0">
+            <div style="text-align: center; padding: 40px 20px;">
+                <div style="display: flex; align-items: center; justify-content: center; gap: 20px; margin-bottom: 30px;">
+                    <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='40'%3E%3Ctext x='0' y='30' font-size='24' font-weight='bold' fill='%23667eea'%3ESK%3C/text%3E%3C/svg%3E" alt="SK">
+                    <div>
+                        <h1 style="font-size: 24px; margin: 0;">Work Redesign 사용자 경험 시나리오</h1>
+                        <p style="font-size: 16px; color: #6c757d; margin: 5px 0;">SK 아카데미 신임리더 교육과정 - AI 업무 혁신</p>
+                    </div>
+                </div>
+                
+                <p style="font-size: 18px; color: #495057; margin-bottom: 40px;">
+                    <strong style="color: #667eea;">SK텔레콤 마케팅팀 김스크 팀장</strong>이
+                    업무를 AI 관점에서 재설계하는 과정입니다.
+                </p>
+            </div>
+
+            <div style="background: #f8f9fa; border-radius: 12px; padding: 30px 20px; margin-bottom: 40px;">
+                <h2 style="font-size: 20px; color: #343a40; margin-bottom: 25px; text-align: center;">🔄 전체 플로우</h2>
+                <div style="display: grid; grid-template-columns: repeat(6, 1fr); gap: 15px;">
+                    <div style="background: white; padding: 15px 10px; border-radius: 8px; text-align: center; border-top: 3px solid #667eea;">
+                        <div style="font-size: 24px; margin-bottom: 10px;">📝</div>
+                        <strong style="font-size: 14px;">1. 도메인 정의</strong><br>
+                        <small style="color: #6c757d;">업무 영역 분류</small>
+                    </div>
+                    <div style="background: white; padding: 15px 10px; border-radius: 8px; text-align: center; border-top: 3px solid #667eea;">
+                        <div style="font-size: 24px; margin-bottom: 10px;">📁</div>
+                        <strong style="font-size: 14px;">2. 자료 입력</strong><br>
+                        <small style="color: #6c757d;">문서 업로드</small>
+                    </div>
+                    <div style="background: white; padding: 15px 10px; border-radius: 8px; text-align: center; border-top: 3px solid #667eea;">
+                        <div style="font-size: 24px; margin-bottom: 10px;">🤖</div>
+                        <strong style="font-size: 14px;">3. AI 분석</strong><br>
+                        <small style="color: #6c757d;">업무 구조화</small>
+                    </div>
+                    <div style="background: white; padding: 15px 10px; border-radius: 8px; text-align: center; border-top: 3px solid #667eea;">
+                        <div style="font-size: 24px; margin-bottom: 10px;">⚡</div>
+                        <strong style="font-size: 14px;">4. 자동화 분류</strong><br>
+                        <small style="color: #6c757d;">AI Agent 매칭</small>
+                    </div>
+                    <div style="background: white; padding: 15px 10px; border-radius: 8px; text-align: center; border-top: 3px solid #667eea;">
+                        <div style="font-size: 24px; margin-bottom: 10px;">🎯</div>
+                        <strong style="font-size: 14px;">5. 우선순위</strong><br>
+                        <small style="color: #6c757d;">Quick Win 선정</small>
+                    </div>
+                    <div style="background: white; padding: 15px 10px; border-radius: 8px; text-align: center; border-top: 3px solid #667eea;">
+                        <div style="font-size: 24px; margin-bottom: 10px;">🚀</div>
+                        <strong style="font-size: 14px;">6. 실행도구</strong><br>
+                        <small style="color: #6c757d;">프롬프트 제공</small>
+                    </div>
+                </div>
+            </div>
+
+            <div style="text-align: center;">
+                <button class="btn" onclick="nextScreen()" style="padding: 16px 40px; font-size: 18px;">워크샵 시작 →</button>
+            </div>
+        </div>
+
+        <!-- Screen 1: SK 아카데미 교육 시작 -->
+        <div class="screen" id="screen1">
+            <div style="text-align: center; padding: 40px 0;">
+                <h1 style="color: #343a40; font-size: 36px;">SK 아카데미 신임리더 교육</h1>
+                <h2 style="color: #667eea; margin: 20px 0;">AI 시대의 업무 재설계 워크샵</h2>
+                
+                <div style="background: #f8f9fa; border-radius: 16px; padding: 30px; margin: 30px 0;">
+                    <p style="font-size: 18px; line-height: 1.8; text-align: left;">
+                        안녕하세요, 김스크 팀장님.<br><br>
+                        오늘은 AI를 활용한 업무 재설계 실습을 진행합니다.<br>
+                        본 워크샵을 통해 현재 업무의 자동화 가능성을 발견하고,<br>
+                        즉시 적용 가능한 도구를 얻어가실 수 있습니다.
+                    </p>
+                </div>
+            </div>
+            
+            <div class="thought-bubble">
+                "신임팀장 교육이라... AI로 업무를 재설계한다는게 뭘까? 우리 팀 업무가 정말 자동화될 수 있을까?"
+            </div>
+
+            <div style="text-align: center;">
+                <button class="btn" onclick="nextScreen()">워크샵 시작 →</button>
+            </div>
+        </div>
+
+        <!-- Screen 2: 랜딩 -->
+        <div class="screen" id="screen2">
+            <div style="text-align: center;">
+                <h1 style="font-size: 48px; background: linear-gradient(135deg, #667eea, #764ba2); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Work Redesign</h1>
+                <h2>당신의 업무를 AI와 함께 재설계하기</h2>
+                
+                <div style="margin: 40px 0;">
+                    <div style="font-size: 60px; margin-bottom: 20px;">🤖 + 👨‍💼 = ⚡</div>
+                    <p style="font-size: 18px;">AI가 단순 작업을, 당신은 전략적 사고를</p>
+                </div>
+
+                <div style="display: flex; justify-content: center; gap: 60px; margin: 40px 0;">
+                    <div>
+                        <div style="font-size: 36px; font-weight: 700; color: #667eea;">30-50%</div>
+                        <div style="color: #6c757d;">업무시간 절감</div>
+                    </div>
+                    <div>
+                        <div style="font-size: 36px; font-weight: 700; color: #667eea;">500+</div>
+                        <div style="color: #6c757d;">사용 팀장</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="thought-bubble">
+                "오, 생각보다 깔끔한데? 진짜 30-50% 절감이 가능한가? 일단 시작해보자."
+            </div>
+
+            <div style="text-align: center;">
+                <button class="btn" onclick="nextScreen()">시작하기 →</button>
+            </div>
+        </div>
+
+        <!-- Screen 3: 도메인 정의 -->
+        <div class="screen" id="screen3">
+            <h2>1단계: 당신의 업무를 3-5개 영역으로 나눠주세요</h2>
+            
+            <div class="step-indicator">
+                <div class="step-dot active">1</div>
+                <div class="step-dot">2</div>
+                <div class="step-dot">3</div>
+                <div class="step-dot">4</div>
+                <div class="step-dot">5</div>
+                <div class="step-dot">6</div>
+            </div>
+
+            <p>마케팅팀장으로서 주요 업무 영역을 입력해주세요.</p>
+
+            <div class="thought-bubble">
+                "음... 내 업무를 크게 나누면 뭐가 있지? 캠페인 기획, 콘텐츠 제작, 데이터 분석... 아, 팀 관리도 있고 보고도 있네."
+            </div>
+
+            <div class="input-group">
+                <div class="domain-input">
+                    <div class="domain-number">1</div>
+                    <input type="text" value="디지털 광고 캠페인 기획 및 실행" readonly>
+                </div>
+                <div class="domain-input">
+                    <div class="domain-number">2</div>
+                    <input type="text" value="콘텐츠 마케팅 (블로그, SNS)" readonly>
+                </div>
+                <div class="domain-input">
+                    <div class="domain-number">3</div>
+                    <input type="text" value="마케팅 데이터 분석 및 보고" readonly>
+                </div>
+                <div class="domain-input">
+                    <div class="domain-number">4</div>
+                    <input type="text" value="팀원 관리 및 협업" readonly>
+                </div>
+            </div>
+
+            <button class="btn" onclick="nextScreen()">다음 단계 →</button>
+        </div>
+
+        <!-- Screen 4: 자료 입력 -->
+        <div class="screen" id="screen4">
+            <h2>2단계: 업무 자료를 넣어주세요</h2>
+            
+            <div class="step-indicator">
+                <div class="step-dot completed">✓</div>
+                <div class="step-dot active">2</div>
+                <div class="step-dot">3</div>
+                <div class="step-dot">4</div>
+                <div class="step-dot">5</div>
+                <div class="step-dot">6</div>
+            </div>
+
+            <p>기획서, 업무일지, 리포트 등 모든 자료를 붙여넣거나 업로드하세요.</p>
+
+            <div class="thought-bubble">
+                "노션에 있는 업무 프로세스 문서랑 주간 업무 일지 복사해서 넣으면 되겠네. 아, 엑셀로 관리하는 캠페인 현황표도 있었지."
+            </div>
+
+            <textarea placeholder="여기에 텍스트를 붙여넣으세요...">
+[2024 마케팅팀 업무 프로세스]
+
+1. 메타 광고 캠페인 운영
+- 월 평균 15개 캠페인 운영
+- 캠페인 기획 → 소재 제작 → 세팅 → 모니터링 → 최적화 → 리포팅
+- 일일 모니터링: 오전 9시, 오후 3시 체크
+- 주간 리포트: 매주 월요일 작성 (2-3시간 소요)
+
+2. 콘텐츠 제작
+- 블로그 포스트: 주 2회 발행 (회당 4시간)
+- SNS 콘텐츠: 일 2회 포스팅 (회당 30분)
+- 뉴스레터: 월 2회 발송 (회당 3시간)
+
+3. 데이터 분석
+- GA4, 페이스북 애즈 매니저, 구글 애즈 데이터 수집
+- 엑셀로 통합 후 대시보드 업데이트 (주 2회, 회당 2시간)
+- 월간 성과 분석 리포트 작성 (월 1회, 5시간)</textarea>
+
+            <div class="file-upload">
+                <div style="font-size: 48px; margin-bottom: 15px;">📁</div>
+                <p>추가 파일이 있다면 여기에 드래그하세요</p>
+                <p style="font-size: 14px; color: #6c757d;">Word, Excel, PDF 지원</p>
+            </div>
+
+            <button class="btn" onclick="showLoading()">AI 분석 시작 →</button>
+        </div>
+
+        <!-- Screen 5: AI 분석 중 -->
+        <div class="screen" id="screen5">
+            <div class="ai-loading">
+                <div class="spinner"></div>
+                <h2>AI가 당신의 업무를 분석하고 있어요...</h2>
+                
+                <div class="thought-bubble">
+                    "오... 진짜 빠르네? 내가 올린 자료를 다 이해하고 있는 건가?"
+                </div>
+
+                <div style="margin: 40px 0;">
+                    <p style="color: #28a745;">✓ 문서 파싱 완료</p>
+                    <p style="color: #28a745;">✓ 도메인별 분류 완료</p>
+                    <p style="color: #667eea;">⏳ 세부 단계 생성 중...</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Screen 6: 업무 구조 확인 -->
+        <div class="screen" id="screen6">
+            <h2>3단계: AI가 분석한 업무 구조를 확인해주세요</h2>
+            
+            <div class="step-indicator">
+                <div class="step-dot completed">✓</div>
+                <div class="step-dot completed">✓</div>
+                <div class="step-dot active">3</div>
+                <div class="step-dot">4</div>
+                <div class="step-dot">5</div>
+                <div class="step-dot">6</div>
+            </div>
+
+            <p style="text-align: center; color: #6c757d;">김스크 팀장님의 업무를 4개 도메인, 32개 주요 업무로 구조화했습니다.</p>
+
+            <div class="thought-bubble">
+                "와, 내 업무가 이렇게 체계적으로 정리되는구나. 그런데 광고 소재 제작 부분은 좀 더 세분화가 필요한 것 같은데..."
+            </div>
+
+            <!-- 칸반 보드 스타일 -->
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; margin: 30px 0;">
+                
+                <!-- 도메인 1: 디지털 광고 -->
+                <div style="background: #f8f9fa; border-radius: 12px; padding: 20px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                        <h3 style="font-size: 18px; margin: 0;">📊 디지털 광고 캠페인</h3>
+                        <span style="background: #667eea; color: white; padding: 4px 8px; border-radius: 12px; font-size: 12px;">8개 업무</span>
+                    </div>
+                    
+                    <div class="task-card" style="background: white; padding: 15px; margin-bottom: 12px; border-radius: 8px; cursor: pointer;">
+                        <div style="display: flex; justify-content: space-between; align-items: start;">
+                            <div>
+                                <strong style="font-size: 14px;">메타 광고 캠페인 운영</strong>
+                                <p style="font-size: 12px; color: #6c757d; margin: 5px 0;">11개 세부 단계 • 주 15시간</p>
+                            </div>
+                            <button style="background: none; border: none; cursor: pointer;">✏️</button>
+                        </div>
+                    </div>
+                    
+                    <div class="task-card" style="background: white; padding: 15px; margin-bottom: 12px; border-radius: 8px;">
+                        <div style="display: flex; justify-content: space-between; align-items: start;">
+                            <div>
+                                <strong style="font-size: 14px;">구글 애즈 관리</strong>
+                                <p style="font-size: 12px; color: #6c757d; margin: 5px 0;">8개 세부 단계 • 주 10시간</p>
+                            </div>
+                            <button style="background: none; border: none; cursor: pointer;">✏️</button>
+                        </div>
+                    </div>
+                    
+                    <div class="task-card" style="background: #fff3cd; padding: 15px; margin-bottom: 12px; border-radius: 8px; border: 2px solid #ffc107;">
+                        <div style="display: flex; justify-content: space-between; align-items: start;">
+                            <div>
+                                <strong style="font-size: 14px;">광고 소재 제작 ⚠️</strong>
+                                <p style="font-size: 12px; color: #856404; margin: 5px 0;">불명확 - 세분화 필요</p>
+                            </div>
+                            <button style="background: none; border: none; cursor: pointer;">🔧</button>
+                        </div>
+                    </div>
+                    
+                    <div style="text-align: center; margin-top: 15px;">
+                        <button style="background: none; border: 1px dashed #dee2e6; padding: 8px 16px; border-radius: 8px; color: #6c757d; font-size: 14px; cursor: pointer;">+ 업무 추가</button>
+                    </div>
+                </div>
+
+                <!-- 도메인 2: 콘텐츠 마케팅 -->
+                <div style="background: #f8f9fa; border-radius: 12px; padding: 20px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                        <h3 style="font-size: 18px; margin: 0;">✍️ 콘텐츠 마케팅</h3>
+                        <span style="background: #667eea; color: white; padding: 4px 8px; border-radius: 12px; font-size: 12px;">7개 업무</span>
+                    </div>
+                    
+                    <div class="task-card" style="background: white; padding: 15px; margin-bottom: 12px; border-radius: 8px;">
+                        <div style="display: flex; justify-content: space-between; align-items: start;">
+                            <div>
+                                <strong style="font-size: 14px;">블로그 콘텐츠 제작</strong>
+                                <p style="font-size: 12px; color: #6c757d; margin: 5px 0;">9개 세부 단계 • 주 8시간</p>
+                            </div>
+                            <button style="background: none; border: none; cursor: pointer;">✏️</button>
+                        </div>
+                    </div>
+                    
+                    <div class="task-card" style="background: white; padding: 15px; margin-bottom: 12px; border-radius: 8px;">
+                        <div style="display: flex; justify-content: space-between; align-items: start;">
+                            <div>
+                                <strong style="font-size: 14px;">SNS 콘텐츠 운영</strong>
+                                <p style="font-size: 12px; color: #6c757d; margin: 5px 0;">6개 세부 단계 • 주 5시간</p>
+                            </div>
+                            <button style="background: none; border: none; cursor: pointer;">✏️</button>
+                        </div>
+                    </div>
+                    
+                    <div class="task-card" style="background: white; padding: 15px; margin-bottom: 12px; border-radius: 8px;">
+                        <div style="display: flex; justify-content: space-between; align-items: start;">
+                            <div>
+                                <strong style="font-size: 14px;">뉴스레터 발송</strong>
+                                <p style="font-size: 12px; color: #6c757d; margin: 5px 0;">7개 세부 단계 • 월 6시간</p>
+                            </div>
+                            <button style="background: none; border: none; cursor: pointer;">✏️</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 도메인 3: 데이터 분석 -->
+                <div style="background: #f8f9fa; border-radius: 12px; padding: 20px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                        <h3 style="font-size: 18px; margin: 0;">📈 데이터 분석 및 보고</h3>
+                        <span style="background: #667eea; color: white; padding: 4px 8px; border-radius: 12px; font-size: 12px;">9개 업무</span>
+                    </div>
+                    
+                    <div class="task-card" style="background: white; padding: 15px; margin-bottom: 12px; border-radius: 8px;">
+                        <div style="display: flex; justify-content: space-between; align-items: start;">
+                            <div>
+                                <strong style="font-size: 14px;">주간 대시보드 업데이트</strong>
+                                <p style="font-size: 12px; color: #6c757d; margin: 5px 0;">5개 세부 단계 • 주 2시간</p>
+                            </div>
+                            <button style="background: none; border: none; cursor: pointer;">✏️</button>
+                        </div>
+                    </div>
+                    
+                    <div class="task-card" style="background: white; padding: 15px; margin-bottom: 12px; border-radius: 8px;">
+                        <div style="display: flex; justify-content: space-between; align-items: start;">
+                            <div>
+                                <strong style="font-size: 14px;">월간 성과 리포트</strong>
+                                <p style="font-size: 12px; color: #6c757d; margin: 5px 0;">8개 세부 단계 • 월 5시간</p>
+                            </div>
+                            <button style="background: none; border: none; cursor: pointer;">✏️</button>
+                        </div>
+                    </div>
+                    
+                    <div class="task-card" style="background: white; padding: 15px; margin-bottom: 12px; border-radius: 8px;">
+                        <div style="display: flex; justify-content: space-between; align-items: start;">
+                            <div>
+                                <strong style="font-size: 14px;">경쟁사 분석</strong>
+                                <p style="font-size: 12px; color: #6c757d; margin: 5px 0;">6개 세부 단계 • 주 3시간</p>
+                            </div>
+                            <button style="background: none; border: none; cursor: pointer;">✏️</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 도메인 4: 팀 관리 -->
+                <div style="background: #f8f9fa; border-radius: 12px; padding: 20px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                        <h3 style="font-size: 18px; margin: 0;">👥 팀원 관리 및 협업</h3>
+                        <span style="background: #667eea; color: white; padding: 4px 8px; border-radius: 12px; font-size: 12px;">8개 업무</span>
+                    </div>
+                    
+                    <div class="task-card" style="background: white; padding: 15px; margin-bottom: 12px; border-radius: 8px;">
+                        <div style="display: flex; justify-content: space-between; align-items: start;">
+                            <div>
+                                <strong style="font-size: 14px;">주간 팀 미팅</strong>
+                                <p style="font-size: 12px; color: #6c757d; margin: 5px 0;">4개 세부 단계 • 주 2시간</p>
+                            </div>
+                            <button style="background: none; border: none; cursor: pointer;">✏️</button>
+                        </div>
+                    </div>
+                    
+                    <div class="task-card" style="background: white; padding: 15px; margin-bottom: 12px; border-radius: 8px;">
+                        <div style="display: flex; justify-content: space-between; align-items: start;">
+                            <div>
+                                <strong style="font-size: 14px;">1:1 면담</strong>
+                                <p style="font-size: 12px; color: #6c757d; margin: 5px 0;">3개 세부 단계 • 주 4시간</p>
+                            </div>
+                            <button style="background: none; border: none; cursor: pointer;">✏️</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- AI 대화 인터페이스 -->
+            <div class="chat-container" style="max-width: 800px; margin: 0 auto;">
+                <div class="chat-message">
+                    <div class="chat-ai">
+                        💬 AI: "광고 소재 제작이 불명확하다고 표시했어요. 디자이너와 협업하시나요, 아니면 직접 제작하시나요?"
+                    </div>
+                </div>
+                <div class="chat-message">
+                    <div class="chat-user">디자이너와 협업해요. 브리핑 작성하고 피드백 주는 역할이에요.</div>
+                </div>
+                <div class="chat-message">
+                    <div class="chat-ai">
+                        알겠습니다! 그럼 '광고 소재 제작'을 다음과 같이 세분화할게요:<br>
+                        1) 크리에이티브 브리핑 작성 (30분)<br>
+                        2) 레퍼런스 수집 및 공유 (20분)<br>
+                        3) 디자이너 미팅 (30분)<br>
+                        4) 1차 시안 검토 및 피드백 (20분)<br>
+                        5) 최종 승인 (10분)<br><br>
+                        이렇게 수정할까요?
+                    </div>
+                </div>
+                <div style="display: flex; gap: 10px; margin-top: 15px;">
+                    <button class="btn btn-secondary" style="font-size: 14px;">네, 반영해주세요</button>
+                    <button class="btn btn-secondary" style="font-size: 14px;">조금 수정할게요</button>
+                </div>
+            </div>
+
+            <div style="text-align: center; margin-top: 40px;">
+                <button class="btn" onclick="nextScreen()">업무 구조 확정 →</button>
+            </div>
+        </div>
+
+        <!-- Screen 7: AI Agent 자동화 시나리오 -->
+        <div class="screen" id="screen7">
+            <h2>4단계: AI Agent 자동화 시나리오</h2>
+            
+            <div class="step-indicator">
+                <div class="step-dot completed">✓</div>
+                <div class="step-dot completed">✓</div>
+                <div class="step-dot completed">✓</div>
+                <div class="step-dot active">4</div>
+                <div class="step-dot">5</div>
+                <div class="step-dot">6</div>
+            </div>
+
+            <div class="results-summary" style="background: #f8f9fa; color: #343a40;">
+                <p style="font-size: 20px;">32개 업무를 분석했습니다</p>
+                <div style="font-size: 32px; font-weight: 600; margin: 20px 0;">AI Agent 매칭 완료</div>
+                <p style="font-size: 18px;">각 업무별 최적 Agent와 시나리오 준비</p>
+            </div>
+
+            <div class="thought-bubble">
+                "오호... 각 업무마다 적합한 AI Agent가 있구나. 대시보드는 Data Agent, 콘텐츠는 Writing Agent라니 신기하네!"
+            </div>
+
+            <div class="automation-card automation-full">
+                <div class="automation-header">
+                    <div class="automation-icon">🤖</div>
+                    <div>
+                        <h3>Data Analysis Agent - 완전 자동화</h3>
+                        <p style="color: #6c757d;">매일 오전 9시 자동 실행</p>
+                    </div>
+                </div>
+                
+                <div style="background: white; border-radius: 8px; padding: 20px; margin: 20px 0;">
+                    <h4>📊 마케팅 대시보드 Agent 시나리오</h4>
+                    
+                    <div style="background: #f0f4ff; border-radius: 8px; padding: 15px; margin: 15px 0;">
+                        <strong>Agent 작동 프로세스:</strong>
+                        <ol style="margin: 10px 0; padding-left: 20px;">
+                            <li><strong>09:00</strong> - Agent 자동 기동</li>
+                            <li><strong>09:01</strong> - GA4, Meta Ads, Google Ads API 데이터 수집</li>
+                            <li><strong>09:05</strong> - 이상치 감지 및 전일 대비 분석</li>
+                            <li><strong>09:08</strong> - Looker Studio 대시보드 업데이트</li>
+                            <li><strong>09:10</strong> - 주요 인사이트 3줄 요약</li>
+                            <li><strong>09:11</strong> - Slack 채널에 알림 전송</li>
+                        </ol>
+                    </div>
+                    
+                    <div style="background: #e7f5ff; border-radius: 8px; padding: 15px; margin: 15px 0;">
+                        <strong>🎯 Agent 프롬프트 예시:</strong>
+                        <pre style="background: white; padding: 10px; border-radius: 4px; margin-top: 10px; font-size: 13px; overflow-x: auto;">
+"당신은 SK텔레콤 마케팅팀의 Data Analysis Agent입니다.
+매일 오전 9시에 다음 작업을 수행하세요:
+1. 3개 광고 플랫폼 API에서 전일 데이터 수집
+2. CTR 3% 이하 또는 CPC 30% 상승 시 경고
+3. 상위 5개 캠페인 ROAS 계산
+4. 이상치 발견 시 즉시 알림
+
+출력 형식:
+📈 전일 성과: [총 지출] / [총 전환]
+⚠️ 주의 필요: [이상 캠페인 리스트]
+💡 오늘의 인사이트: [1줄 요약]"</pre>
+                    </div>
+                    
+                    <div style="display: flex; gap: 10px; margin-top: 15px;">
+                        <button class="btn btn-secondary" style="font-size: 14px;">Agent 설정 파일</button>
+                        <button class="btn btn-secondary" style="font-size: 14px;">API 연동 가이드</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="automation-card automation-partial">
+                <div class="automation-header">
+                    <div class="automation-icon">✍️</div>
+                    <div>
+                        <h3>Content Writing Agent - 부분 자동화</h3>
+                        <p style="color: #6c757d;">AI 초안 생성 + 인간 검수</p>
+                    </div>
+                </div>
+                
+                <div style="background: white; border-radius: 8px; padding: 20px; margin: 20px 0;">
+                    <h4>📝 블로그 콘텐츠 Agent 시나리오</h4>
+                    
+                    <div style="background: #f0f4ff; border-radius: 8px; padding: 15px; margin: 15px 0;">
+                        <strong>Agent 협업 워크플로우:</strong>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 15px;">
+                            <div>
+                                <strong style="color: #667eea;">🤖 Agent 담당 (60%)</strong>
+                                <ul style="margin-top: 10px; font-size: 14px;">
+                                    <li>트렌드 리서치 & 키워드 분석</li>
+                                    <li>경쟁사 콘텐츠 벤치마킹</li>
+                                    <li>SEO 최적화 아웃라인</li>
+                                    <li>1,500자 초안 생성</li>
+                                    <li>이미지 추천 3개</li>
+                                </ul>
+                            </div>
+                            <div>
+                                <strong style="color: #667eea;">👤 김스크 팀장 (40%)</strong>
+                                <ul style="margin-top: 10px; font-size: 14px;">
+                                    <li>브랜드 톤 조정</li>
+                                    <li>SK 사례 추가</li>
+                                    <li>전문 용어 검증</li>
+                                    <li>최종 승인</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div style="background: #e7f5ff; border-radius: 8px; padding: 15px; margin: 15px 0;">
+                        <strong>🎯 Writing Agent 프롬프트:</strong>
+                        <pre style="background: white; padding: 10px; border-radius: 4px; margin-top: 10px; font-size: 13px; overflow-x: auto;">
+"역할: SK텔레콤 콘텐츠 마케팅 전문가 Agent
+
+작업: {주제}에 대한 블로그 초안 작성
+
+톤앤매너:
+- 전문적이면서 친근한
+- 데이터 기반의 설득력
+- SK T의 혁신적 이미지
+
+필수 포함 요소:
+1. SEO 키워드 5개 자연스럽게 배치
+2. 통계/데이터 최소 3개
+3. 실무 적용 팁 2개
+4. CTA: 'SK T 서비스 알아보기'
+
+글자 수: 1,500자 (±10%)"</pre>
+                    </div>
+                    
+                    <div style="display: flex; gap: 10px; margin-top: 15px;">
+                        <button class="btn btn-secondary" style="font-size: 14px;">프롬프트 템플릿 10종</button>
+                        <button class="btn btn-secondary" style="font-size: 14px;">브랜드 가이드라인</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="automation-card" style="background: #fff3cd;">
+                <div class="automation-header">
+                    <div class="automation-icon" style="background: #fff3cd;">🔔</div>
+                    <div>
+                        <h3>Monitoring Agent - 24/7 감시</h3>
+                        <p style="color: #6c757d;">실시간 이상 감지 및 알림</p>
+                    </div>
+                </div>
+                
+                <div style="background: white; border-radius: 8px; padding: 20px; margin: 20px 0;">
+                    <h4>👁️ 광고 성과 모니터링 Agent</h4>
+                    
+                    <div style="background: #f0f4ff; border-radius: 8px; padding: 15px; margin: 15px 0;">
+                        <strong>Agent 트리거 조건:</strong>
+                        <ul style="margin-top: 10px; font-size: 14px; list-style: none;">
+                            <li>🔴 <strong>긴급:</strong> 일 예산 150% 초과 시 → 즉시 일시정지 + 전화 알림</li>
+                            <li>🟡 <strong>주의:</strong> CTR 2% 미만 지속 → 카톡 알림 + 개선안 제시</li>
+                            <li>🟢 <strong>기회:</strong> ROAS 300% 돌파 → 예산 증액 제안</li>
+                        </ul>
+                    </div>
+                    
+                    <div style="display: flex; gap: 10px; margin-top: 15px;">
+                        <button class="btn btn-secondary" style="font-size: 14px;">알림 규칙 설정</button>
+                        <button class="btn btn-secondary" style="font-size: 14px;">Agent 학습 데이터</button>
+                    </div>
+                </div>
+            </div>
+
+            <button class="btn" onclick="nextScreen()">우선순위 선택하기 →</button>
+        </div>
+
+        <!-- Screen 8: 우선순위 선택 -->
+        <div class="screen" id="screen8">
+            <h2>5단계: 실행 우선순위 선택</h2>
+            
+            <div class="step-indicator">
+                <div class="step-dot completed">✓</div>
+                <div class="step-dot completed">✓</div>
+                <div class="step-dot completed">✓</div>
+                <div class="step-dot completed">✓</div>
+                <div class="step-dot active">5</div>
+                <div class="step-dot">6</div>
+            </div>
+
+            <p>가장 먼저 구축하고 싶은 자동화 도구 3가지를 선택하세요.</p>
+
+            <div class="thought-bubble">
+                "대시보드는 매주 반복하는 작업이니까 필수고... 광고 모니터링도 자동화되면 좋겠다. 블로그는 일단 프롬프트부터 테스트해보자."
+            </div>
+
+            <div class="priority-list">
+                <h3 style="margin-bottom: 20px;">🎯 선택한 자동화 도구</h3>
+                
+                <div class="priority-item">
+                    <div class="priority-number">1</div>
+                    <div class="priority-name">Looker Studio 대시보드</div>
+                    <div style="background: #e7f5ff; color: #1c7ed6; padding: 6px 12px; border-radius: 20px; font-size: 14px;">
+                        즉시 구축 가능
+                    </div>
+                </div>
+                
+                <div class="priority-item">
+                    <div class="priority-number">2</div>
+                    <div class="priority-name">n8n 광고 모니터링</div>
+                    <div style="background: #e7f5ff; color: #1c7ed6; padding: 6px 12px; border-radius: 20px; font-size: 14px;">
+                        템플릿 제공
+                    </div>
+                </div>
+                
+                <div class="priority-item">
+                    <div class="priority-number">3</div>
+                    <div class="priority-name">AI 콘텐츠 프롬프트</div>
+                    <div style="background: #e7f5ff; color: #1c7ed6; padding: 6px 12px; border-radius: 20px; font-size: 14px;">
+                        바로 테스트
+                    </div>
+                </div>
+                
+                <div style="background: #f8f9fa; padding: 15px; border-radius: 8px; margin-top: 20px; text-align: center;">
+                    <strong>3가지 도구 모두 오늘부터 사용 가능</strong>
+                </div>
+            </div>
+
+            <button class="btn" onclick="nextScreen()">플로우 확인하기 →</button>
+        </div>
+
+        <!-- Screen 9: 플로우 시각화 -->
+        <div class="screen" id="screen9">
+            <h2>자동화 플로우 확인</h2>
+            
+            <div class="step-indicator">
+                <div class="step-dot completed">✓</div>
+                <div class="step-dot completed">✓</div>
+                <div class="step-dot completed">✓</div>
+                <div class="step-dot completed">✓</div>
+                <div class="step-dot completed">✓</div>
+                <div class="step-dot active">6</div>
+            </div>
+
+            <div class="thought-bubble">
+                "이렇게 시각화해서 보니까 정말 많은 부분을 자동화할 수 있구나. 특히 반복적인 데이터 작업들은 거의 다 AI가 할 수 있네."
+            </div>
+
+            <div class="flow-diagram">
+                <h3>📊 주간 대시보드 업데이트 플로우</h3>
+                
+                <div class="flow-node automated">
+                    🤖 데이터 자동 수집<br>
+                    <small>GA4, Meta, Google Ads API</small>
+                </div>
+                
+                <div class="flow-node automated">
+                    🤖 데이터 자동 정리<br>
+                    <small>Looker Studio</small>
+                </div>
+                
+                <div class="flow-node automated">
+                    🤖 차트 자동 생성<br>
+                    <small>실시간 업데이트</small>
+                </div>
+                
+                <div class="flow-node partial">
+                    🤝 인사이트 추가<br>
+                    <small>AI 초안 + 당신의 분석</small>
+                </div>
+                
+                <div class="flow-node automated">
+                    🤖 팀 자동 공유<br>
+                    <small>Slack 알림</small>
+                </div>
+            </div>
+
+            <button class="btn" onclick="nextScreen()">최종 결과 보기 →</button>
+        </div>
+
+        <!-- Screen 10: 최종 결과 -->
+        <div class="screen" id="screen10">
+            <h1 style="text-align: center;">🎯 Work Redesign 완료!</h1>
+            
+            <div class="results-summary" style="background: #f8f9fa; color: #343a40;">
+                <p style="font-size: 20px;">김스크 팀장님의 업무 재설계 완료</p>
+                <div style="font-size: 36px; font-weight: 700; margin: 20px 0;">3가지 자동화 도구 준비 완료</div>
+                <p>Claude Code, Cursor, n8n에서 바로 사용 가능</p>
+            </div>
+
+            <div class="thought-bubble">
+                "와, 이렇게 구체적인 프롬프트랑 템플릿을 받을 수 있구나. 내일 바로 Claude Code에 넣어서 테스트해봐야겠다!"
+            </div>
+
+            <div style="background: #fff; border: 2px solid #667eea; border-radius: 12px; padding: 30px; margin: 30px 0;">
+                <h3 style="color: #667eea; margin-bottom: 20px;">📝 1. 대시보드 자동화 프롬프트</h3>
+                <pre style="background: #f8f9fa; padding: 20px; border-radius: 8px; overflow-x: auto; font-size: 14px;">
+# Claude Code / Cursor 프롬프트
+
+마케팅 대시보드 자동화 스크립트를 작성해줘.
+
+요구사항:
+1. GA4, Meta Ads, Google Ads API 연동
+2. 매일 오전 9시 자동 실행
+3. Looker Studio로 데이터 전송
+4. Slack 채널에 요약 알림
+
+데이터 포인트:
+- 일일 광고 지출
+- CPC, CTR, CVR
+- 채널별 ROAS
+- 상위 5개 캠페인 성과
+
+출력 형식: Python 스크립트 + cron 설정
+                </pre>
+                
+                <div style="margin-top: 20px;">
+                    <button class="btn btn-secondary" style="font-size: 14px;">📋 프롬프트 복사</button>
+                    <button class="btn btn-secondary" style="font-size: 14px;">📥 .py 파일 다운로드</button>
+                </div>
+            </div>
+
+            <div style="background: #fff; border: 2px solid #667eea; border-radius: 12px; padding: 30px; margin: 30px 0;">
+                <h3 style="color: #667eea; margin-bottom: 20px;">🔄 2. n8n 워크플로우 템플릿</h3>
+                <pre style="background: #f8f9fa; padding: 20px; border-radius: 8px; overflow-x: auto; font-size: 14px;">
+{
+  "name": "Marketing_Dashboard_Automation",
+  "nodes": [
+    {
+      "name": "Schedule",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "parameters": {
+        "rule": {"interval": [{"field": "hours", "triggerAtHour": 9}]}
+      }
+    },
+    {
+      "name": "GA4_Data",
+      "type": "n8n-nodes-base.googleAnalytics",
+      "parameters": {
+        "resource": "report",
+        "metrics": ["sessions", "conversions", "revenue"]
+      }
+    }
+    // ... 추가 노드 설정
+  ]
+}
+                </pre>
+                
+                <div style="margin-top: 20px;">
+                    <button class="btn btn-secondary" style="font-size: 14px;">📥 n8n 템플릿 다운로드</button>
+                    <button class="btn btn-secondary" style="font-size: 14px;">🔗 Make/Zapier 버전</button>
+                </div>
+            </div>
+
+            <div style="background: #fff; border: 2px solid #667eea; border-radius: 12px; padding: 30px; margin: 30px 0;">
+                <h3 style="color: #667eea; margin-bottom: 20px;">✍️ 3. 콘텐츠 생성 프롬프트 템플릿</h3>
+                <pre style="background: #f8f9fa; padding: 20px; border-radius: 8px; overflow-x: auto; font-size: 14px;">
+# 블로그 콘텐츠 자동 생성 프롬프트
+
+역할: SK텔레콤 마케팅 콘텐츠 전문가
+
+브랜드 톤: 전문적이면서 친근한, 혁신적, 고객 중심
+
+작업: {주제}에 대한 블로그 포스트 작성
+
+구조:
+1. SEO 최적화 제목 (60자 이내)
+2. 메타 설명 (155자)
+3. 도입 (후크 + 문제 제기)
+4. 본문 (3-5개 섹션, 각 300-400자)
+5. 실제 사례 또는 데이터
+6. 결론 및 CTA
+
+키워드: {primary_keyword}, {secondary_keywords}
+타겟: B2B 마케터, 디지털 담당자
+                </pre>
+                
+                <div style="margin-top: 20px;">
+                    <button class="btn btn-secondary" style="font-size: 14px;">📋 템플릿 복사</button>
+                    <button class="btn btn-secondary" style="font-size: 14px;">🎨 추가 템플릿 10개</button>
+                </div>
+            </div>
+
+            <div style="background: #f8f9fa; border-radius: 12px; padding: 30px; margin: 30px 0;">
+                <h3>📅 실행 로드맵</h3>
+                
+                <div style="margin: 20px 0;">
+                    <h4>Week 1: 대시보드 자동화</h4>
+                    <p>✓ Looker Studio 계정 설정</p>
+                    <p>✓ API 키 발급 및 연동</p>
+                    <p>✓ 첫 자동 리포트 테스트</p>
+                </div>
+                
+                <div style="margin: 20px 0;">
+                    <h4>Week 2-3: 워크플로우 구축</h4>
+                    <p>✓ n8n 설치 및 템플릿 import</p>
+                    <p>✓ 광고 모니터링 자동화</p>
+                    <p>✓ 이상 감지 알림 설정</p>
+                </div>
+                
+                <div style="margin: 20px 0;">
+                    <h4>Week 4: AI 콘텐츠 도구 활용</h4>
+                    <p>✓ Claude/ChatGPT 프롬프트 최적화</p>
+                    <p>✓ 콘텐츠 생성 파이프라인 구축</p>
+                </div>
+            </div>
+
+            <div class="download-section">
+                <h3>📦 전체 패키지 다운로드</h3>
+                <p>즉시 실행 가능한 모든 도구를 한번에 받으세요</p>
+                
+                <div class="download-options">
+                    <div class="download-card">
+                        <div class="download-icon">📝</div>
+                        <div>프롬프트 라이브러리</div>
+                        <small>15개 템플릿</small>
+                    </div>
+                    <div class="download-card">
+                        <div class="download-icon">🔄</div>
+                        <div>자동화 워크플로우</div>
+                        <small>n8n, Zapier, Make</small>
+                    </div>
+                    <div class="download-card">
+                        <div class="download-icon">💻</div>
+                        <div>코드 스니펫</div>
+                        <small>Python, JavaScript</small>
+                    </div>
+                    <div class="download-card">
+                        <div class="download-icon">🔧</div>
+                        <div>API 설정 가이드</div>
+                        <small>단계별 매뉴얼</small>
+                    </div>
+                </div>
+            </div>
+
+            <div style="text-align: center; margin: 40px 0;">
+                <button class="btn" onclick="alert('work_redesign_toolkit.zip 다운로드 시작!')">🚀 전체 툴킷 다운로드</button>
+                <button class="btn btn-secondary" onclick="restart()">처음으로</button>
+            </div>
+
+            <div style="background: #e7f5ff; border-radius: 12px; padding: 25px; margin-top: 30px;">
+                <h3 style="color: #1c7ed6;">📚 SK 아카데미 추가 리소스</h3>
+                <p>• AI 도구 활용 가이드북</p>
+                <p>• 신임리더 커뮤니티 (실습 결과 공유)</p>
+                <p>• 월간 AI 트렌드 웨비나 참여권</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentScreen = 0;
+        let startTime = Date.now();
+        let timerInterval;
+
+        function nextScreen() {
+            const screens = document.querySelectorAll('.screen');
+            screens[currentScreen].classList.remove('active');
+            currentScreen++;
+            
+            if (currentScreen < screens.length) {
+                setTimeout(() => {
+                    screens[currentScreen].classList.add('active');
+                    updateProgress();
+                }, 300);
+            }
+
+            // Start timer when workshop begins (after intro screen)
+            if (currentScreen === 2 && !timerInterval) {
+                startTimer();
+            }
+        }
+
+        function updateProgress() {
+            const progress = (currentScreen / 11) * 100;
+            document.getElementById('progressBar').style.width = progress + '%';
+        }
+
+        function startTimer() {
+            timerInterval = setInterval(() => {
+                const elapsed = Math.floor((Date.now() - startTime) / 1000);
+                const minutes = Math.floor(elapsed / 60);
+                const seconds = elapsed % 60;
+                document.getElementById('timer').textContent =
+                    `${minutes}:${seconds.toString().padStart(2, '0')}`;
+            }, 1000);
+        }
+
+        function showLoading() {
+            nextScreen();
+            setTimeout(() => {
+                nextScreen();
+            }, 3000);
+        }
+
+        function toggleTask(element) {
+            element.classList.toggle('expanded');
+        }
+
+        function addUserReply() {
+            const chatContainer = document.querySelector('.chat-container');
+            const userReply = document.createElement('div');
+            userReply.className = 'chat-message';
+            userReply.innerHTML = `
+                <div class="chat-user">디자이너와 협업해요</div>
+            `;
+            chatContainer.appendChild(userReply);
+
+            setTimeout(() => {
+                const aiReply = document.createElement('div');
+                aiReply.className = 'chat-message';
+                aiReply.innerHTML = `
+                    <div class="chat-ai">
+                        이해했습니다! 그럼 소재 제작을 세분화해서 분석할게요.<br>
+                        1) 디자인 브리핑 작성 (30분)<br>
+                        2) 디자이너 작업 대기 (1일)<br>
+                        3) 피드백 및 수정 (30분)<br>
+                        이 중 브리핑 작성은 AI가 도와드릴 수 있어요!
+                    </div>
+                `;
+                chatContainer.appendChild(aiReply);
+                chatContainer.scrollTop = chatContainer.scrollHeight;
+            }, 1500);
+        }
+
+        function shareResults() {
+            alert('📧 결과가 이메일로 전송되었습니다!\n\n팀원들과 공유할 수 있는 링크도 함께 발송했어요.');
+        }
+
+        function restart() {
+            currentScreen = 0;
+            clearInterval(timerInterval);
+            timerInterval = null;
+            startTime = Date.now();
+            document.getElementById('timer').textContent = '0:00';
+            
+            const screens = document.querySelectorAll('.screen');
+            screens.forEach(s => s.classList.remove('active'));
+            screens[0].classList.add('active');
+            updateProgress();
+        }
+
+        // Simulate realistic interactions
+        document.addEventListener('DOMContentLoaded', () => {
+            // Add subtle animations
+            const buttons = document.querySelectorAll('.btn');
+            buttons.forEach(btn => {
+                btn.addEventListener('mouseenter', () => {
+                    btn.style.transform = 'translateY(-2px)';
+                });
+                btn.addEventListener('mouseleave', () => {
+                    btn.style.transform = 'translateY(0)';
+                });
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,29 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(chmod:*)",
+      "Bash(node:*)",
+      "Bash(npm --version)",
+      "Bash(docker:*)",
+      "Bash(docker-compose:*)",
+      "Bash(npm install)",
+      "Bash(npm install:*)",
+      "Bash(./deploy.sh:*)",
+      "Bash(npm start)",
+      "Bash(curl:*)",
+      "Bash(python:*)",
+      "Bash(./test-runner.sh lint:*)",
+      "Bash(lsof:*)",
+      "Bash(xargs kill:*)",
+      "Bash(pkill:*)",
+      "Bash(awk:*)",
+      "WebFetch(domain:localhost)",
+      "Bash(cat:*)",
+      "Bash(grep:*)",
+      "Bash(timeout:*)",
+      "Read(///**)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}
