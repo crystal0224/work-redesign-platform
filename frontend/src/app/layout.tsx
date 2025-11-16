@@ -11,7 +11,6 @@ export const metadata: Metadata = {
   description: 'AI-powered work redesign workshop tool for SK Group managers',
   keywords: ['work redesign', 'automation', 'AI', 'SK Group', 'workshop'],
   authors: [{ name: 'SK Academy' }],
-  viewport: 'width=device-width, initial-scale=1',
   robots: 'noindex, nofollow', // Development only
   openGraph: {
     title: 'Work Redesign Platform',
