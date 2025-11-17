@@ -21,7 +21,18 @@
       "Bash(cat:*)",
       "Bash(grep:*)",
       "Bash(timeout:*)",
-      "Read(///**)"
+      "Read(///**)",
+      "Bash(git push:*)",
+      "Bash(git stash:*)",
+      "Read(//private/tmp/**)",
+      "Bash(npx tsc:*)",
+      "Bash(npm run type-check:*)",
+      "Bash(npm run dev:*)",
+      "Bash(PORT=3003 node workshop-server.js)",
+      "Bash(sort:*)",
+      "Bash(npm run lint)",
+      "Bash(npm run build:*)",
+      "Bash(git add:*)"
     ],
     "deny": [],
     "ask": []

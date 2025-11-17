@@ -17,9 +17,9 @@ import {
 } from '@/components/ui/dropdown-menu'
 
 import { TaskCard } from './TaskCard'
-import { AddTaskDialog } from './AddTaskDialog'
-import { useWorkshopStore } from '@/store/workshopStore'
-import { useWebSocket } from '@/hooks/useWebSocket'
+// import { AddTaskDialog } from './AddTaskDialog'
+// import { useWorkshopStore } from '@/store/workshopStore'
+// import { useWebSocket } from '@/hooks/useWebSocket'
 import { cn } from '@/lib/utils'
 
 interface Task {
@@ -52,8 +52,14 @@ interface Column {
 }
 
 export function KanbanBoard() {
-  const { currentSession, tasks, updateTask, reorderTasks } = useWorkshopStore()
-  const { socket, isConnected } = useWebSocket()
+  // const { currentSession, tasks, updateTask, reorderTasks } = useWorkshopStore()
+  // const { socket, isConnected } = useWebSocket()
+  const currentSession = null
+  const tasks: Task[] = []
+  const updateTask = (id: string, updates: any) => {}
+  const reorderTasks = (ids: string[]) => {}
+  const socket = null
+  const isConnected = false
 
   const [searchTerm, setSearchTerm] = useState('')
   const [filterDomain, setFilterDomain] = useState<string>('all')
@@ -97,7 +103,7 @@ export function KanbanBoard() {
   ]
 
   // 도메인 목록 추출
-  const domains = ['all', ...new Set(tasks.map(task => task.domain))]
+  const domains = ['all', ...Array.from(new Set(tasks.map(task => task.domain)))]
 
   // 필터링된 컬럼들
   const filteredColumns = columns.map(column => ({
@@ -341,11 +347,11 @@ export function KanbanBoard() {
       </DragDropContext>
 
       {/* 새 태스크 추가 다이얼로그 */}
-      <AddTaskDialog
+      {/*<AddTaskDialog
         open={showAddDialog}
         onOpenChange={setShowAddDialog}
         defaultStatus={selectedColumn}
-      />
+      />*/}
     </div>
   )
 }

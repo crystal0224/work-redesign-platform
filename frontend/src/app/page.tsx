@@ -6,6 +6,34 @@ import { useRouter } from 'next/navigation'
 export default function LandingPage() {
   const [isStarting, setIsStarting] = useState(false)
   const [currentSlide, setCurrentSlide] = useState(0)
+  const router = useRouter()
+
+  const handleStartWorkshop = () => {
+    console.log('워크샵 시작 버튼 클릭됨')
+    setIsStarting(true)
+    setTimeout(() => {
+      console.log('워크샵 페이지로 이동 시도')
+      router.push('/workshop')
+    }, 1000)
+  }
+
+  const nextSlide = () => {
+    console.log('Next slide clicked, current:', currentSlide)
+    setCurrentSlide((prev) => {
+      const newSlide = (prev + 1) % automationCases.length
+      console.log('Moving to slide:', newSlide)
+      return newSlide
+    })
+  }
+
+  const prevSlide = () => {
+    console.log('Previous slide clicked, current:', currentSlide)
+    setCurrentSlide((prev) => {
+      const newSlide = (prev - 1 + automationCases.length) % automationCases.length
+      console.log('Moving to slide:', newSlide)
+      return newSlide
+    })
+  }
 
   // 키보드 네비게이션 추가
   useEffect(() => {
@@ -20,16 +48,6 @@ export default function LandingPage() {
     window.addEventListener('keydown', handleKeyPress)
     return () => window.removeEventListener('keydown', handleKeyPress)
   }, [currentSlide])
-  const router = useRouter()
-
-  const handleStartWorkshop = () => {
-    console.log('워크샵 시작 버튼 클릭됨')
-    setIsStarting(true)
-    setTimeout(() => {
-      console.log('워크샵 페이지로 이동 시도')
-      router.push('/workshop')
-    }, 1000)
-  }
 
   // 전체 프로세스 자동화 사례 데이터 (8개)
   const automationCases = [
@@ -284,24 +302,6 @@ export default function LandingPage() {
       }
     }
   ]
-
-  const nextSlide = () => {
-    console.log('Next slide clicked, current:', currentSlide)
-    setCurrentSlide((prev) => {
-      const newSlide = (prev + 1) % automationCases.length
-      console.log('Moving to slide:', newSlide)
-      return newSlide
-    })
-  }
-
-  const prevSlide = () => {
-    console.log('Previous slide clicked, current:', currentSlide)
-    setCurrentSlide((prev) => {
-      const newSlide = (prev - 1 + automationCases.length) % automationCases.length
-      console.log('Moving to slide:', newSlide)
-      return newSlide
-    })
-  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-blue-900 relative overflow-hidden">
