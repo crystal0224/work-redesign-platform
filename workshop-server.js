@@ -11,6 +11,10 @@ const mammoth = require('mammoth');
 const pdfParse = require('pdf-parse');
 const xlsx = require('xlsx');
 const Anthropic = require('@anthropic-ai/sdk');
+const { z } = require('zod');
+
+// 중복 제거 시스템 (P1 Priority)
+const { deduplicateTasks, validateTaskIntegration } = require('./deduplication-system');
 
 // 환경 변수 설정
 require('dotenv').config({ path: './backend/.env' });
@@ -79,6 +83,58 @@ const anthropic = new Anthropic({
 // 메모리 저장소
 const workshopsDB = new Map();
 const filesDB = new Map();
+
+// Zod 스키마 정의 - Task 검증
+const TaskSchema = z.object({
+  title: z.string()
+    .min(1, '업무명은 필수입니다')
+    .max(50, '업무명은 50자를 초과할 수 없습니다'),
+
+  description: z.string()
+    .min(10, '업무 설명은 최소 10자 이상이어야 합니다')
+    .max(500, '업무 설명은 500자를 초과할 수 없습니다'),
+
+  domain: z.string()
+    .min(1, '업무 영역은 필수입니다'),
+
+  estimatedStatus: z.enum(['Progress', 'Planned', 'Not Started', 'Completed'], {
+    errorMap: () => ({ message: 'estimatedStatus는 Progress, Planned, Not Started, Completed 중 하나여야 합니다' })
+  }),
+
+  frequency: z.enum(['Daily', 'Weekly', 'Monthly', 'Quarterly', 'Yearly', 'Ad-hoc'], {
+    errorMap: () => ({ message: 'frequency는 Daily, Weekly, Monthly, Quarterly, Yearly, Ad-hoc 중 하나여야 합니다' })
+  }),
+
+  automationPotential: z.enum(['High', 'Medium', 'Low'], {
+    errorMap: () => ({ message: 'automationPotential은 High, Medium, Low 중 하나여야 합니다' })
+  }),
+
+  source: z.enum(['uploaded', 'manual'], {
+    errorMap: () => ({ message: 'source는 uploaded 또는 manual이어야 합니다' })
+  }),
+
+  timeSpent: z.number()
+    .min(0.1, '소요 시간은 최소 0.1시간 이상이어야 합니다')
+    .max(24, '소요 시간은 24시간을 초과할 수 없습니다'),
+
+  automationMethod: z.string().optional(),
+
+  estimatedSavings: z.number()
+    .min(0, '예상 절감 시간은 0 이상이어야 합니다')
+    .max(1000, '예상 절감 시간은 1000시간을 초과할 수 없습니다'),
+
+  complexity: z.enum(['simple', 'moderate', 'complex'], {
+    errorMap: () => ({ message: 'complexity는 simple, moderate, complex 중 하나여야 합니다' })
+  }),
+
+  priority: z.enum(['high', 'medium', 'low'], {
+    errorMap: () => ({ message: 'priority는 high, medium, low 중 하나여야 합니다' })
+  }),
+
+  tags: z.array(z.string())
+    .min(0, 'tags는 배열이어야 합니다')
+    .max(10, 'tags는 최대 10개까지 가능합니다')
+});
 
 // 유틸리티 함수들
 function generateId(prefix) {
@@ -190,11 +246,247 @@ function getPromptTemplate() {
   return cachedPromptTemplate;
 }
 
+// JSON 추출 헬퍼 함수 (Robust 파싱 로직)
+function extractJSON(text, retryCount = 0) {
+  const MAX_RETRIES = 3;
+  const strategies = [
+    // Strategy 1: 원본 텍스트에서 JSON 추출
+    (text) => {
+      const match = text.match(/\[[\s\S]*\]/);
+      return match ? match[0] : null;
+    },
+    // Strategy 2: 코드블록 제거 후 추출
+    (text) => {
+      const cleanedText = text.replace(/```json\s*/g, '').replace(/```\s*/g, '');
+      const match = cleanedText.match(/\[[\s\S]*\]/);
+      return match ? match[0] : null;
+    },
+    // Strategy 3: 중첩 배열 고려한 추출 (첫 [ 부터 마지막 ] 까지)
+    (text) => {
+      const firstBracket = text.indexOf('[');
+      const lastBracket = text.lastIndexOf(']');
+      if (firstBracket !== -1 && lastBracket !== -1 && lastBracket > firstBracket) {
+        return text.substring(firstBracket, lastBracket + 1);
+      }
+      return null;
+    }
+  ];
+
+  console.log(`\n🔍 JSON 추출 시도 ${retryCount + 1}/${MAX_RETRIES}`);
+  console.log(`📝 원본 텍스트 길이: ${text.length}자`);
+  console.log(`📝 원본 텍스트 미리보기: ${text.substring(0, 200)}...`);
+
+  // 현재 전략 선택
+  const strategy = strategies[retryCount] || strategies[0];
+  const jsonString = strategy(text);
+
+  if (!jsonString) {
+    console.error(`❌ 전략 ${retryCount + 1} 실패: JSON 배열을 찾을 수 없습니다`);
+    console.error(`📄 분석 실패한 텍스트 샘플:\n${text.substring(0, 500)}\n...`);
+
+    if (retryCount < MAX_RETRIES - 1) {
+      console.log(`🔄 다음 전략으로 재시도...`);
+      return extractJSON(text, retryCount + 1);
+    }
+
+    console.error(`❌ 모든 재시도 실패 (${MAX_RETRIES}회)`);
+    return { success: false, error: 'JSON_NOT_FOUND', rawText: text.substring(0, 1000) };
+  }
+
+  console.log(`✅ JSON 문자열 추출 성공 (길이: ${jsonString.length}자)`);
+  console.log(`📝 추출된 JSON 미리보기: ${jsonString.substring(0, 200)}...`);
+
+  // JSON 파싱 시도
+  try {
+    const parsed = JSON.parse(jsonString);
+
+    // 배열인지 확인
+    if (!Array.isArray(parsed)) {
+      throw new Error('파싱 결과가 배열이 아닙니다');
+    }
+
+    console.log(`✅ JSON 파싱 성공: ${parsed.length}개 항목`);
+    return { success: true, data: parsed };
+
+  } catch (parseError) {
+    console.error(`❌ JSON 파싱 실패 (전략 ${retryCount + 1}):`, parseError.message);
+
+    // 파싱 실패 위치 표시
+    if (parseError instanceof SyntaxError) {
+      const errorMatch = parseError.message.match(/position (\d+)/);
+      if (errorMatch) {
+        const position = parseInt(errorMatch[1]);
+        const contextStart = Math.max(0, position - 50);
+        const contextEnd = Math.min(jsonString.length, position + 50);
+        console.error(`📍 오류 위치 근처:\n...${jsonString.substring(contextStart, contextEnd)}...`);
+      }
+    }
+
+    console.error(`📄 파싱 실패한 JSON 샘플:\n${jsonString.substring(0, 500)}\n...`);
+
+    if (retryCount < MAX_RETRIES - 1) {
+      console.log(`🔄 다음 전략으로 재시도...`);
+      return extractJSON(text, retryCount + 1);
+    }
+
+    console.error(`❌ 모든 재시도 실패 (${MAX_RETRIES}회)`);
+    return {
+      success: false,
+      error: 'JSON_PARSE_ERROR',
+      parseError: parseError.message,
+      rawJson: jsonString.substring(0, 1000)
+    };
+  }
+}
+
+// 한국어 시간 표현 전처리 시스템
+function normalizeKoreanTime(text) {
+  console.log('⏰ 한국어 시간 표현 전처리 시작');
+
+  const result = {
+    timeSpent: null,
+    frequency: null,
+    rawMatches: []
+  };
+
+  // 시간 표현 패턴들
+  const timePatterns = [
+    // "X시간 Y분" 패턴
+    {
+      regex: /(\d+)\s*시간\s*(\d+)\s*분/g,
+      handler: (match) => {
+        const hours = parseInt(match[1]);
+        const minutes = parseInt(match[2]);
+        return hours + (minutes / 60);
+      }
+    },
+    // "X시간" 패턴
+    {
+      regex: /(\d+(?:\.\d+)?)\s*시간/g,
+      handler: (match) => parseFloat(match[1])
+    },
+    // "X분" 패턴
+    {
+      regex: /(\d+)\s*분/g,
+      handler: (match) => parseInt(match[1]) / 60
+    },
+    // "일 X시간" 패턴 (일일 기준)
+    {
+      regex: /일\s*(\d+(?:\.\d+)?)\s*시간/g,
+      handler: (match) => parseFloat(match[1])
+    },
+    // "주 X시간" 패턴 (주 5일 기준으로 일일 환산)
+    {
+      regex: /주\s*(\d+(?:\.\d+)?)\s*시간/g,
+      handler: (match) => parseFloat(match[1]) / 5
+    },
+    // "월 X시간" 패턴 (월 20일 기준으로 일일 환산)
+    {
+      regex: /월\s*(\d+(?:\.\d+)?)\s*시간/g,
+      handler: (match) => parseFloat(match[1]) / 20
+    },
+    // "주 X회, 각 Y시간" 패턴 (1회당 시간)
+    {
+      regex: /주\s*(\d+)\s*회[,\s]*각\s*(\d+(?:\.\d+)?)\s*시간/g,
+      handler: (match) => parseFloat(match[2])
+    },
+    // "주 X회, Y시간씩" 패턴
+    {
+      regex: /주\s*(\d+)\s*회[,\s]*(\d+(?:\.\d+)?)\s*시간\s*씩/g,
+      handler: (match) => parseFloat(match[2])
+    },
+    // "하루 X시간" 패턴
+    {
+      regex: /하루\s*(\d+(?:\.\d+)?)\s*시간/g,
+      handler: (match) => parseFloat(match[1])
+    },
+    // "X시간 반" 패턴
+    {
+      regex: /(\d+)\s*시간\s*반/g,
+      handler: (match) => parseFloat(match[1]) + 0.5
+    }
+  ];
+
+  // 빈도 표현 패턴들
+  const frequencyPatterns = [
+    { regex: /매일|일일|하루|매\s*일/g, value: 'Daily' },
+    { regex: /주간|주\s*\d+\s*회|매\s*주|주별|주단위/g, value: 'Weekly' },
+    { regex: /월간|월\s*\d+\s*회|매\s*월|월별|월단위/g, value: 'Monthly' },
+    { regex: /분기|분기별|분기\s*\d+\s*회/g, value: 'Quarterly' },
+    { regex: /연간|연\s*\d+\s*회|매\s*년|연별|연단위/g, value: 'Yearly' },
+    { regex: /필요시|비정기|수시|가끔/g, value: 'Ad-hoc' }
+  ];
+
+  // 시간 표현 추출
+  let maxTimeSpent = 0;
+  const timeMatches = [];
+
+  timePatterns.forEach(pattern => {
+    let match;
+    const regex = new RegExp(pattern.regex);
+    while ((match = regex.exec(text)) !== null) {
+      const timeValue = pattern.handler(match);
+      timeMatches.push(match[0]);
+
+      if (timeValue > maxTimeSpent) {
+        maxTimeSpent = timeValue;
+      }
+    }
+  });
+
+  if (maxTimeSpent > 0) {
+    result.timeSpent = Math.round(maxTimeSpent * 100) / 100; // 소수점 2자리까지
+  }
+
+  // 빈도 표현 추출 (첫 번째 매칭 사용)
+  for (const pattern of frequencyPatterns) {
+    const match = text.match(pattern.regex);
+    if (match) {
+      result.frequency = pattern.value;
+      timeMatches.push(match[0]);
+      break;
+    }
+  }
+
+  result.rawMatches = [...new Set(timeMatches)]; // 중복 제거
+
+  if (result.timeSpent || result.frequency) {
+    console.log('✅ 시간 정보 추출 성공:', result);
+  } else {
+    console.log('⚠️ 시간 정보를 찾지 못했습니다');
+  }
+
+  return result;
+}
+
 // Claude AI 분석 함수
 async function analyzeTasks(documentText, domains, manualInput = '') {
   console.log('🤖 Claude AI 분석 시작');
   console.log(`📝 문서 길이: ${documentText.length}자`);
   console.log(`📝 수동 입력 길이: ${manualInput.length}자`);
+
+  // 전체 텍스트에서 시간 정보 전처리
+  const fullText = `${documentText}\n${manualInput}`;
+  const normalizedTimeInfo = normalizeKoreanTime(fullText);
+
+  // 정규화된 시간 정보를 힌트로 추가
+  let timeHints = '';
+  if (normalizedTimeInfo.timeSpent || normalizedTimeInfo.frequency || normalizedTimeInfo.rawMatches.length > 0) {
+    timeHints = `\n\n## 🕐 시간 정보 전처리 결과 (참고용 힌트)\n\n`;
+    timeHints += `다음은 문서에서 자동 추출된 시간 정보입니다. 이를 참고하여 각 업무의 timeSpent와 frequency를 더 정확하게 추출하세요:\n\n`;
+
+    if (normalizedTimeInfo.timeSpent) {
+      timeHints += `- 추출된 소요 시간: ${normalizedTimeInfo.timeSpent}시간\n`;
+    }
+    if (normalizedTimeInfo.frequency) {
+      timeHints += `- 추출된 빈도: ${normalizedTimeInfo.frequency}\n`;
+    }
+    if (normalizedTimeInfo.rawMatches.length > 0) {
+      timeHints += `- 원본 표현: ${normalizedTimeInfo.rawMatches.join(', ')}\n`;
+    }
+
+    timeHints += `\n이 정보를 업무 추출 시 참고하되, 각 업무별로 별도의 시간 정보가 명시된 경우 해당 정보를 우선 사용하세요.\n`;
+  }
 
   // 프롬프트 템플릿 로드
   const promptTemplate = getPromptTemplate();
@@ -202,11 +494,11 @@ async function analyzeTasks(documentText, domains, manualInput = '') {
   let systemPrompt;
 
   if (promptTemplate) {
-    // 프롬프트 파일에서 로딩한 경우, 변수 치환
+    // 프롬프트 파일에서 로딩한 경우, 변수 치환 및 시간 힌트 추가
     systemPrompt = promptTemplate
       .replace('{domains}', domains.join(', '))
       .replace('{uploadedDocuments}', documentText || '(업로드된 문서 없음)')
-      .replace('{manualInput}', manualInput || '(직접 입력한 내용 없음)');
+      .replace('{manualInput}', (manualInput || '(직접 입력한 내용 없음)') + timeHints);
   } else {
     // 기본 프롬프트 (fallback)
     systemPrompt = `당신은 10년 경력의 업무 재설계 및 프로세스 최적화 컨설턴트입니다.
@@ -258,26 +550,105 @@ JSON 배열 형식으로만 응답하세요. 최소 30분 이상 소요되는 �
     const textContent = response.content[0];
 
     if (textContent.type !== 'text') {
+      console.error('❌ 예상치 못한 응답 타입:', textContent.type);
       throw new Error('Unexpected response type from Claude');
     }
 
-    // JSON 추출
-    const jsonMatch = textContent.text.match(/\[[\s\S]*\]/);
-    if (!jsonMatch) {
-      console.error('JSON 형식 없음:', textContent.text.substring(0, 500));
-      return [];
+    console.log('✅ Claude API 응답 수신 완료');
+    console.log(`📝 응답 길이: ${textContent.text.length}자`);
+
+    // Robust JSON 추출 (재시도 로직 포함)
+    const extractResult = extractJSON(textContent.text);
+
+    if (!extractResult.success) {
+      // Fallback: 빈 배열 반환 (크래시 방지)
+      console.error('❌ JSON 추출 완전 실패 - Fallback 실행');
+      console.error('📄 에러 상세:', JSON.stringify(extractResult, null, 2));
+
+      // 분석용 로그 저장
+      const errorLog = {
+        timestamp: new Date().toISOString(),
+        error: extractResult.error,
+        parseError: extractResult.parseError,
+        rawTextSample: extractResult.rawText || extractResult.rawJson,
+        domains: domains,
+        documentTextLength: documentText.length
+      };
+      console.error('📊 디버깅 정보:', JSON.stringify(errorLog, null, 2));
+
+      return []; // 빈 배열 반환하여 크래시 방지
     }
 
-    const tasks = JSON.parse(jsonMatch[0]);
+    const tasks = extractResult.data;
     console.log(`✅ ${tasks.length}개 업무 추출됨`);
 
-    // 데이터 검증
-    const validTasks = tasks.filter(task => {
-      return task.title && task.description && task.domain;
+    // Zod 스키마 기반 데이터 검증
+    const validTasks = [];
+    const invalidTasks = [];
+
+    tasks.forEach((task, index) => {
+      try {
+        // Zod 검증 수행
+        const validatedTask = TaskSchema.parse(task);
+        validTasks.push(validatedTask);
+        console.log(`✅ Task ${index + 1} 검증 성공: "${task.title}"`);
+      } catch (error) {
+        // 검증 실패 시 상세 에러 로그
+        console.error(`❌ Task ${index + 1} 검증 실패: "${task.title || '(제목 없음)'}"`);
+
+        if (error instanceof z.ZodError) {
+          error.errors.forEach((err) => {
+            console.error(`   - ${err.path.join('.')}: ${err.message}`);
+          });
+        } else {
+          console.error(`   - 알 수 없는 에러:`, error.message);
+        }
+
+        // 실패한 태스크 정보 저장
+        invalidTasks.push({
+          index: index + 1,
+          task: task,
+          error: error instanceof z.ZodError ? error.errors : error.message
+        });
+      }
     });
 
-    console.log(`✅ 검증 완료: ${validTasks.length}개 유효한 업무`);
-    return validTasks;
+    // 검증 결과 로그
+    console.log(`\n📊 검증 결과 요약:`);
+    console.log(`   ✅ 유효한 업무: ${validTasks.length}개`);
+    console.log(`   ❌ 무효한 업무: ${invalidTasks.length}개`);
+
+    if (invalidTasks.length > 0) {
+      console.log(`\n⚠️  무효한 업무 목록:`);
+      invalidTasks.forEach((item) => {
+        console.log(`   - Task ${item.index}: ${item.task.title || '(제목 없음)'}`);
+      });
+    }
+
+    // ============================================================
+    // 중복 제거 및 검증 파이프라인 (P1 Priority)
+    // ============================================================
+
+    console.log('\n🔄 중복 제거 파이프라인 시작...');
+
+    // 1단계: 중복 업무 제거
+    const deduplicatedTasks = deduplicateTasks(validTasks);
+
+    // 2단계: 통합 검증
+    const validationResult = validateTaskIntegration(deduplicatedTasks);
+
+    // 검증 경고가 있으면 로그 출력
+    if (validationResult.warnings.length > 0) {
+      console.log('\n⚠️  검증 경고 사항:');
+      validationResult.warnings.forEach((warning, idx) => {
+        console.log(`   ${idx + 1}. ${warning}`);
+      });
+    }
+
+    console.log('✅ 중복 제거 파이프라인 완료\n');
+
+    // 중복 제거된 태스크 반환 (부분 실패 허용)
+    return deduplicatedTasks;
 
   } catch (error) {
     console.error('Claude API 에러:', error);
