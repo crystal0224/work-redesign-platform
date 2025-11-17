@@ -467,6 +467,7 @@ export default function WorkshopPage() {
     selectedTaskIds: []
   });
   const [uploadedFiles, setUploadedFiles] = useState<UploadedFile[]>([]);
+  const [manualInput, setManualInput] = useState<string>('');
   const [extractedWorkItems, setExtractedWorkItems] = useState<ExtractedWorkItem[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -896,6 +897,69 @@ export default function WorkshopPage() {
     if (workshop.domains.length > 1) {
       const newDomains = workshop.domains.filter((_, i) => i !== index);
       setWorkshop(prev => ({ ...prev, domains: newDomains }));
+    }
+  };
+
+  // 워크샵 생성 함수 (Step 3에서도 사용)
+  const handleWorkshopCreate = async () => {
+    if (!workshop.id) {
+      // 워크샵이 아직 생성되지 않았다면 생성
+      setLoading(true);
+      try {
+        const response = await fetch('http://localhost:3001/api/workshops', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            name: `워크샵_${new Date().toISOString()}`,
+            domains: workshop.domains.filter(d => d.trim()),
+            participantCount: 1
+          }),
+        });
+        const data = await response.json();
+        if (data.success) {
+          setWorkshop(prev => ({ ...prev, id: data.id }));
+
+          // 파일 업로드 처리
+          if (uploadedFiles.length > 0) {
+            await handleFilesUploadToServer(data.id);
+          }
+
+          setCurrentStep(4);
+        } else {
+          setError(data.error);
+        }
+      } catch (error) {
+        setError('워크샵 생성 중 오류가 발생했습니다');
+      } finally {
+        setLoading(false);
+      }
+    } else {
+      setCurrentStep(4);
+    }
+  };
+
+  // 파일 업로드 처리
+  const handleFilesUploadToServer = async (workshopId: string) => {
+    const formData = new FormData();
+    uploadedFiles.forEach(({ file }) => {
+      formData.append('files', file);
+    });
+    formData.append('workshopId', workshopId);
+
+    try {
+      const response = await fetch('http://localhost:3001/api/upload', {
+        method: 'POST',
+        body: formData,
+      });
+
+      const data = await response.json();
+      if (data.success) {
+        setWorkshop(prev => ({ ...prev, fileIds: data.fileIds }));
+      } else {
+        setError(data.error);
+      }
+    } catch (error) {
+      console.error('File upload error:', error);
     }
   };
 
@@ -1515,20 +1579,23 @@ export default function WorkshopPage() {
                     </h3>
 
                     <div className="space-y-4">
-                      {workshop.domains.filter(d => d.trim()).map((domain, index) => (
-                        <div key={index}>
-                          <label className="block text-base font-semibold text-slate-800 mb-2">
-                            {domain} 관련 업무
-                          </label>
-                          <textarea
-                            value={manualTaskInput[domain] || ''}
-                            onChange={(e) => setManualTaskInput(prev => ({ ...prev, [domain]: e.target.value }))}
-                            placeholder={`${domain} 영역의 업무를 구체적으로 작성해주세요...`}
-                            className="w-full px-4 py-3 backdrop-blur-sm bg-white/90 border-2 border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-400/50 focus:border-indigo-400 transition-all resize-none"
-                            rows={5}
-                          />
-                        </div>
-                      ))}
+                      <label className="block text-base font-semibold text-slate-800 mb-2">
+                        업무 내용 직접 입력
+                      </label>
+                      <textarea
+                        value={manualInput}
+                        onChange={(e) => setManualInput(e.target.value)}
+                        placeholder={`담당하시는 업무를 자유롭게 작성해주세요...
+예시:
+- 매일 오전 9시 고객 문의 메일 확인 및 답변 (30분 소요)
+- 주간 매출 데이터 수집 및 보고서 작성 (매주 월요일, 2시간 소요)
+- 월간 재고 현황 파악 및 발주 처리 (매월 말, 3시간 소요)
+- ${workshop.domains.filter(d => d.trim()).join(', ')} 관련 업무들...`}
+                        className="w-full h-64 px-4 py-3 backdrop-blur-sm bg-white/90 border-2 border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-400/50 focus:border-indigo-400 transition-all resize-none"
+                      />
+                      <p className="text-sm text-slate-600">
+                        * 업무별로 한 줄씩 작성하면 AI가 더 정확하게 분석합니다
+                      </p>
                     </div>
                   </div>
                 </div>
@@ -1536,13 +1603,20 @@ export default function WorkshopPage() {
                 {/* Bottom button */}
                 <div className="flex justify-end">
                   <button
-                    onClick={analyzeWorkContent}
-                    disabled={loading || (uploadedFiles.length === 0 && Object.values(manualTaskInput).every(v => !v || !v.trim()))}
+                    onClick={() => {
+                      // 워크샵이 생성되지 않았다면 먼저 생성
+                      if (!workshop.id) {
+                        handleWorkshopCreate();
+                      } else {
+                        setCurrentStep(4);
+                      }
+                    }}
+                    disabled={loading || (uploadedFiles.length === 0 && !manualInput.trim())}
                     className="inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-semibold rounded-2xl hover:shadow-2xl hover:scale-105 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    {loading ? '분석 중...' : 'AI 분석 시작'}
+                    {loading ? '처리 중...' : '다음 단계로'}
                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                     </svg>
                   </button>
                 </div>
@@ -1559,7 +1633,7 @@ export default function WorkshopPage() {
                 setWorkshop(prev => ({ ...prev, tasks }));
                 setCurrentStep(5);
               }}
-              manualInput=""
+              manualInput={manualInput}
             />
           )}
 
