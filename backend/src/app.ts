@@ -12,7 +12,7 @@ import { connectDatabase, checkDatabaseHealth } from './config/database';
 // Import middleware
 import { errorHandler } from './middleware/errorHandler';
 import { requestLogger } from './middleware/requestLogger';
-import { authMiddleware } from './middleware/auth';
+import { authMiddleware } from './middleware';
 
 // Import routes
 import authRoutes from './routes/auth';
@@ -29,7 +29,7 @@ import { initializeWebSocket } from './services/websocket';
 export class App {
   public app: express.Application;
   public server: HttpServer;
-  public io: SocketIOServer;
+  public io!: SocketIOServer; // Use definite assignment assertion since it's initialized in initializeWebSocket
 
   constructor() {
     this.app = express();

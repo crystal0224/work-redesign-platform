@@ -32,7 +32,11 @@
       "Bash(sort:*)",
       "Bash(npm run lint)",
       "Bash(npm run build:*)",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(PORT=3001 node:*)",
+      "Bash(npx eslint:*)",
+      "Bash(npx next lint:*)"
     ],
     "deny": [],
     "ask": []

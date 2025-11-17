@@ -22,6 +22,9 @@ router.post('/upload',
   workshopController.uploadFiles
 );
 
+// 업무 추출
+router.post('/workshops/:id/extract-tasks', workshopController.extractTasks);
+
 // 템플릿 생성
 router.post('/generate-templates', workshopController.generateTemplates);
 
