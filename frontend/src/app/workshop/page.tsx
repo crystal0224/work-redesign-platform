@@ -3,6 +3,9 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { io, Socket } from 'socket.io-client';
 import { useDropzone } from 'react-dropzone';
+import Step4TaskExtraction from '@/components/workshop/Step4TaskExtraction';
+import Step5AIConsultant from '@/components/workshop/Step5AIConsultant';
+import Step6WorkflowDesign from '@/components/workshop/Step6WorkflowDesign';
 
 // 이미지 생성을 위한 동적 import
 const captureElement = async (element: HTMLElement) => {
@@ -109,11 +112,9 @@ const WORKSHOP_STEPS = [
   { id: 2, title: '업무영역 정의', description: '담당 업무 영역 설정', icon: '📋' },
   { id: 3, title: '업무 정보 입력', description: '문서 업로드 또는 직접 입력', icon: '📁' },
   { id: 4, title: '업무 현황 검토', description: '추출된 업무 확인', icon: '📝' },
-  { id: 5, title: '업무 상세화', description: '업무별 상세 정보 입력', icon: '⚙️' },
-  { id: 6, title: '업무 정리', description: '전체 업무 시각화 및 보완', icon: '📋' },
-  { id: 7, title: 'AI 자동화 분석', description: '자동화 방안 도출', icon: '🔧' },
-  { id: 8, title: '결과 검토', description: '자동화 방안 검토 및 선택', icon: '📊' },
-  { id: 9, title: '완료', description: '워크샵 완료', icon: '🎉' }
+  { id: 5, title: 'AI 자동화 컨설팅', description: 'AI와 대화하며 솔루션 설계', icon: '💬' },
+  { id: 6, title: '워크플로우 설계', description: '자동화 워크플로우 상세 설계', icon: '🔧' },
+  { id: 7, title: '결과 확인', description: '최종 결과 검토 및 다운로드', icon: '🎉' }
 ];
 
 // 현재 단계가 속한 그룹 찾기
@@ -456,25 +457,7 @@ function TaskDetailsModal({
 }
 
 export default function WorkshopPage() {
-  // Add custom styles for animations
-  useEffect(() => {
-    const style = document.createElement('style');
-    style.textContent = `
-      @keyframes fadeIn {
-        from { opacity: 0; transform: translateY(20px); }
-        to { opacity: 1; transform: translateY(0); }
-      }
-      .animate-fadeIn {
-        animation: fadeIn 0.6s ease-out forwards;
-      }
-    `;
-    document.head.appendChild(style);
-    return () => {
-      if (document.head.contains(style)) {
-        document.head.removeChild(style);
-      }
-    };
-  }, []);
+  // ALL useState HOOKS FIRST
   const [currentStep, setCurrentStep] = useState(1);
   const [workshop, setWorkshop] = useState<Workshop>({
     id: '',
@@ -501,37 +484,6 @@ export default function WorkshopPage() {
     done: Task[];
   }>({ todo: [], inProgress: [], done: [] });
 
-  // Kanban board functions
-  const initializeKanban = () => {
-    const selectedTasks = workshop.tasks.filter(task => workshop.selectedTaskIds.includes(task.id));
-    setKanbanTasks({
-      todo: selectedTasks,
-      inProgress: [],
-      done: []
-    });
-  };
-
-  const moveTask = (taskId: string, newStatus: 'todo' | 'inProgress' | 'done') => {
-    setKanbanTasks(prev => {
-      const allTasks = [...prev.todo, ...prev.inProgress, ...prev.done];
-      const taskToMove = allTasks.find(t => t.id === taskId);
-      if (!taskToMove) return prev;
-
-      return {
-        todo: newStatus === 'todo' ? [...prev.todo.filter(t => t.id !== taskId), taskToMove] : prev.todo.filter(t => t.id !== taskId),
-        inProgress: newStatus === 'inProgress' ? [...prev.inProgress.filter(t => t.id !== taskId), taskToMove] : prev.inProgress.filter(t => t.id !== taskId),
-        done: newStatus === 'done' ? [...prev.done.filter(t => t.id !== taskId), taskToMove] : prev.done.filter(t => t.id !== taskId)
-      };
-    });
-  };
-
-  // Initialize kanban when selected tasks change
-  useEffect(() => {
-    if (workshop.selectedTaskIds.length > 0 && currentStep === 5) {
-      initializeKanban();
-    }
-  }, [workshop.selectedTaskIds, currentStep]);
-
   // 텍스트 입력 관련 상태
   const [manualTaskInput, setManualTaskInput] = useState<{[domain: string]: string}>({});
   const [activeTextInputTab, setActiveTextInputTab] = useState<string>('general');
@@ -542,25 +494,37 @@ export default function WorkshopPage() {
   const [taskDetailsModal, setTaskDetailsModal] = useState(false);
   const [detailsCompletedTasks, setDetailsCompletedTasks] = useState<Set<string>>(new Set());
 
+  // ALL useRef HOOKS
   const fileInputRef = useRef<HTMLInputElement>(null);
   const workflowAnalysisRef = useRef<HTMLDivElement>(null);
 
-  // Dropzone configuration
-  const onDrop = (acceptedFiles: File[]) => {
-    handleFileSelection(acceptedFiles);
-  };
+  // ALL useEffect HOOKS
+  // Add custom styles for animations
+  useEffect(() => {
+    const style = document.createElement('style');
+    style.textContent = `
+      @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+      .animate-fadeIn {
+        animation: fadeIn 0.6s ease-out forwards;
+      }
+    `;
+    document.head.appendChild(style);
+    return () => {
+      if (document.head.contains(style)) {
+        document.head.removeChild(style);
+      }
+    };
+  }, []);
 
-  const { getRootProps, getInputProps, isDragActive } = useDropzone({
-    onDrop,
-    accept: {
-      'application/vnd.openxmlformats-officedocument.wordprocessingml.document': ['.docx'],
-      'application/pdf': ['.pdf'],
-      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': ['.xlsx'],
-      'application/vnd.ms-excel': ['.xls']
-    },
-    maxFiles: 10,
-    maxSize: 50 * 1024 * 1024, // 50MB
-  });
+  // Initialize kanban when selected tasks change
+  useEffect(() => {
+    if (workshop.selectedTaskIds.length > 0 && currentStep === 5) {
+      initializeKanban();
+    }
+  }, [workshop.selectedTaskIds, currentStep]);
 
   // Socket.IO 연결 설정
   useEffect(() => {
@@ -601,6 +565,46 @@ export default function WorkshopPage() {
       socketConnection.disconnect();
     };
   }, []);
+
+  // CUSTOM HOOKS (useDropzone)
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({
+    onDrop: (acceptedFiles: File[]) => {
+      handleFileSelection(acceptedFiles);
+    },
+    accept: {
+      'application/vnd.openxmlformats-officedocument.wordprocessingml.document': ['.docx'],
+      'application/pdf': ['.pdf'],
+      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': ['.xlsx'],
+      'application/vnd.ms-excel': ['.xls']
+    },
+    maxFiles: 10,
+    maxSize: 50 * 1024 * 1024, // 50MB
+  });
+
+  // REGULAR FUNCTIONS (after all hooks)
+  // Kanban board functions
+  const initializeKanban = () => {
+    const selectedTasks = workshop.tasks.filter(task => workshop.selectedTaskIds.includes(task.id));
+    setKanbanTasks({
+      todo: selectedTasks,
+      inProgress: [],
+      done: []
+    });
+  };
+
+  const moveTask = (taskId: string, newStatus: 'todo' | 'inProgress' | 'done') => {
+    setKanbanTasks(prev => {
+      const allTasks = [...prev.todo, ...prev.inProgress, ...prev.done];
+      const taskToMove = allTasks.find(t => t.id === taskId);
+      if (!taskToMove) return prev;
+
+      return {
+        todo: newStatus === 'todo' ? [...prev.todo.filter(t => t.id !== taskId), taskToMove] : prev.todo.filter(t => t.id !== taskId),
+        inProgress: newStatus === 'inProgress' ? [...prev.inProgress.filter(t => t.id !== taskId), taskToMove] : prev.inProgress.filter(t => t.id !== taskId),
+        done: newStatus === 'done' ? [...prev.done.filter(t => t.id !== taskId), taskToMove] : prev.done.filter(t => t.id !== taskId)
+      };
+    });
+  };
 
   // File handling functions
   const handleFileSelection = (files: File[]) => {
@@ -1026,45 +1030,6 @@ export default function WorkshopPage() {
     return map[complexity] || complexity;
   };
 
-  // 네비게이션 컴포넌트
-  const renderNavigation = () => (
-    <div className="flex justify-between items-center mt-8 px-6 py-4 bg-white border-t border-gray-200">
-      <button
-        onClick={() => currentStep > 1 && setCurrentStep(currentStep - 1)}
-        disabled={currentStep === 1}
-        className={`inline-flex items-center px-6 py-3 font-medium rounded-lg transition-colors ${
-          currentStep === 1
-            ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-            : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-        }`}
-      >
-        <svg className="mr-2 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-        </svg>
-        이전
-      </button>
-
-      <div className="text-sm text-gray-500">
-        {currentStep} / {WORKSHOP_STEPS.length}
-      </div>
-
-      <button
-        onClick={() => currentStep < WORKSHOP_STEPS.length && setCurrentStep(currentStep + 1)}
-        disabled={currentStep === WORKSHOP_STEPS.length}
-        className={`inline-flex items-center px-6 py-3 font-medium rounded-lg transition-colors ${
-          currentStep === WORKSHOP_STEPS.length
-            ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-            : 'bg-blue-600 text-white hover:bg-blue-700'
-        }`}
-      >
-        다음
-        <svg className="ml-2 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-        </svg>
-      </button>
-    </div>
-  );
-
   return (
     <div className="h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 flex flex-col relative overflow-hidden">
       {/* Background animated blobs */}
@@ -1082,8 +1047,8 @@ export default function WorkshopPage() {
               {[
                 { title: '워크샵 시작', range: [1, 2], icon: '🚀' },
                 { title: '업무 분석', range: [3, 4], icon: '📊' },
-                { title: '솔루션 설계', range: [5, 8], icon: '✨' },
-                { title: '결과 확인', range: [9, 9], icon: '🎯' }
+                { title: '솔루션 설계', range: [5, 6], icon: '✨' },
+                { title: '결과 확인', range: [7, 7], icon: '🎯' }
               ].map((section, index) => {
                 const isActive = currentStep >= section.range[0] && currentStep <= section.range[1];
                 const isCompleted = currentStep > section.range[1];
@@ -1587,294 +1552,41 @@ export default function WorkshopPage() {
 
           {/* Step 4: 업무 추출 결과 */}
           {currentStep === 4 && (
-            <div className="relative min-h-screen -m-6 p-6 animate-fadeIn">
-              {/* Animated gradient background */}
-              <div className="absolute inset-0 bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 overflow-hidden">
-                <div className="absolute top-0 -left-4 w-96 h-96 bg-purple-300 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob"></div>
-                <div className="absolute top-0 -right-4 w-96 h-96 bg-blue-300 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob animation-delay-2000"></div>
-                <div className="absolute -bottom-8 left-20 w-96 h-96 bg-indigo-300 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob animation-delay-4000"></div>
-              </div>
-
-              <div className="relative">
-                <div className="backdrop-blur-xl bg-white/40 border border-white/60 rounded-3xl p-8 shadow-2xl shadow-indigo-200/50">
-                  <div className="text-center mb-8">
-                    <div className="w-20 h-20 bg-gradient-to-br from-indigo-600 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-6">
-                      <span className="text-3xl">📊</span>
-                    </div>
-                    <h2 className="text-3xl font-semibold text-slate-900 mb-4 tracking-tight">
-                      업무 추출 결과
-                    </h2>
-                    <p className="text-lg text-slate-600 max-w-2xl mx-auto">
-                      AI가 분석한 반복 업무들을 검토하고 자동화할 업무를 선택하세요.
-                    </p>
-                  </div>
-
-                  {workshop.tasks.length > 0 ? (
-                    <>
-                      {/* 업무 요약 */}
-                      <div className="grid md:grid-cols-3 gap-4 mb-8">
-                        <div className="backdrop-blur-xl bg-white/50 border border-white/60 rounded-2xl p-6 shadow-xl text-center">
-                          <div className="text-2xl font-bold text-indigo-600">{workshop.tasks.length}</div>
-                          <div className="text-sm text-slate-600">추출된 업무</div>
-                        </div>
-                        <div className="backdrop-blur-xl bg-white/50 border border-white/60 rounded-2xl p-6 shadow-xl text-center">
-                          <div className="text-2xl font-bold text-purple-600">
-                            {workshop.tasks.filter(t => t.automation === 'high').length}
-                          </div>
-                          <div className="text-sm text-slate-600">자동화 가능</div>
-                        </div>
-                        <div className="backdrop-blur-xl bg-white/50 border border-white/60 rounded-2xl p-6 shadow-xl text-center">
-                          <div className="text-2xl font-bold text-indigo-600">
-                            {workshop.tasks.reduce((sum, t) => sum + (t.timeSpent || 0), 0)}
-                          </div>
-                          <div className="text-sm text-slate-600">총 소요시간(시간/주)</div>
-                        </div>
-                      </div>
-
-                      {/* 업무 목록 */}
-                      <div className="space-y-4 mb-8">
-                        {workshop.tasks.map((task) => (
-                          <div
-                            key={task.id}
-                            className={`backdrop-blur-xl rounded-2xl p-6 cursor-pointer transition-all duration-300 hover:scale-[1.01] ${
-                              workshop.selectedTaskIds.includes(task.id)
-                                ? 'bg-indigo-100/60 border-2 border-indigo-400 shadow-xl'
-                                : 'bg-white/50 border border-white/60 shadow-xl hover:shadow-2xl'
-                            }`}
-                            onClick={() => toggleTaskSelection(task.id)}
-                          >
-                            <div className="flex items-start justify-between">
-                              <div className="flex-1">
-                                <div className="flex items-center space-x-3 mb-3">
-                                  <input
-                                    type="checkbox"
-                                    checked={workshop.selectedTaskIds.includes(task.id)}
-                                    onChange={() => toggleTaskSelection(task.id)}
-                                    className="rounded border-slate-300"
-                                  />
-                                  <h4 className="font-semibold text-lg text-slate-900">{task.title}</h4>
-                                  <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                                    task.automation === 'high' ? 'bg-green-100 text-green-800' :
-                                    task.automation === 'medium' ? 'bg-yellow-100 text-yellow-800' :
-                                    'bg-red-100 text-red-800'
-                                  }`}>
-                                    {translateAutomation(task.automation)}
-                                  </span>
-                                </div>
-                                <p className="text-slate-600 mb-3">{task.description}</p>
-                                <div className="flex items-center space-x-4 text-sm text-slate-500">
-                                  <span>⏰ {task.timeSpent}시간/{translateFrequency(task.frequency)}</span>
-                                  <span>📁 {task.category}</span>
-                                  <span>📄 {task.sourceFilename}</span>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-
-                      {/* 에러 메시지 */}
-                      {error && (
-                        <div className="mb-6 p-4 backdrop-blur-xl bg-red-50/90 border border-red-200 rounded-2xl">
-                          <p className="text-red-600">{error}</p>
-                        </div>
-                      )}
-
-                    </>
-                  ) : (
-                    <div className="backdrop-blur-xl bg-white/50 border border-white/60 rounded-2xl p-12 text-center shadow-xl">
-                      <div className="text-6xl mb-4">📋</div>
-                      <h3 className="text-xl font-semibold text-slate-900 mb-2">분석된 업무가 없습니다</h3>
-                      <p className="text-slate-600 mb-6">먼저 4단계에서 업무 문서를 업로드하고 분석해주세요.</p>
-                      <button
-                        onClick={() => setCurrentStep(4)}
-                        className="px-6 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-semibold rounded-2xl hover:shadow-2xl hover:scale-105 transition-all duration-300"
-                      >
-                        ← 문서 업로드하러 가기
-                      </button>
-                    </div>
-                  )}
-                </div>
-              </div>
-            </div>
+            <Step4TaskExtraction
+              tasks={workshop.tasks}
+              selectedTaskIds={workshop.selectedTaskIds}
+              toggleTaskSelection={toggleTaskSelection}
+              error={error}
+              onBack={() => setCurrentStep(3)}
+              onNext={() => setCurrentStep(5)}
+            />
           )}
 
           {/* Step 5: 업무 상세화 */}
           {currentStep === 5 && (
-            <div className="relative min-h-screen -m-6 p-6 animate-fadeIn">
-              {/* Animated gradient background */}
-              <div className="absolute inset-0 bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 overflow-hidden">
-                <div className="absolute top-0 -left-4 w-96 h-96 bg-purple-300 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob"></div>
-                <div className="absolute top-0 -right-4 w-96 h-96 bg-blue-300 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob animation-delay-2000"></div>
-                <div className="absolute -bottom-8 left-20 w-96 h-96 bg-indigo-300 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob animation-delay-4000"></div>
-              </div>
-
-              <div className="relative">
-                <div className="backdrop-blur-xl bg-white/40 border border-white/60 rounded-3xl p-8 shadow-2xl shadow-indigo-200/50">
-                  <div className="text-center mb-8">
-                    <div className="w-20 h-20 bg-gradient-to-br from-indigo-600 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-6">
-                      <span className="text-3xl">📋</span>
-                    </div>
-                    <h2 className="text-3xl font-semibold text-slate-900 mb-4 tracking-tight">
-                      업무 칸반 보드
-                    </h2>
-                    <p className="text-lg text-slate-600 max-w-2xl mx-auto">
-                      추출된 업무들을 단계별로 관리하고 진행 상황을 추적하세요.
-                    </p>
-                  </div>
-
-                  {workshop.selectedTaskIds.length > 0 ? (
-                    <>
-                      {/* 칸반 보드 */}
-                      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                        {/* To Do 컬럼 */}
-                        <div className="backdrop-blur-xl bg-white/50 border border-white/60 rounded-2xl p-6 shadow-xl">
-                          <div className="flex items-center mb-4">
-                            <div className="w-3 h-3 bg-slate-400 rounded-full mr-2"></div>
-                            <h3 className="font-semibold text-slate-900">📝 분석 대기</h3>
-                            <span className="ml-auto bg-slate-200 text-slate-600 text-xs px-2 py-1 rounded-full">
-                              {kanbanTasks.todo.length}
-                            </span>
-                          </div>
-                          <div className="space-y-3 min-h-[200px]">
-                            {kanbanTasks.todo.map((task) => (
-                              <div
-                                key={task.id}
-                                className="backdrop-blur-sm bg-white/90 border-2 border-slate-200 rounded-xl p-3 cursor-pointer hover:shadow-lg hover:scale-105 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-indigo-400/50 focus:border-indigo-400"
-                                onClick={() => moveTask(task.id, 'inProgress')}
-                              >
-                                <h4 className="font-medium text-slate-900 text-sm mb-1">{task.title}</h4>
-                                <p className="text-xs text-slate-600 mb-2 line-clamp-2">{task.description}</p>
-                                <div className="flex items-center justify-between text-xs">
-                                  <span className={`px-2 py-1 rounded text-xs ${
-                                    task.automation === 'high' ? 'bg-green-100 text-green-700' :
-                                    task.automation === 'medium' ? 'bg-yellow-100 text-yellow-700' :
-                                    'bg-red-100 text-red-700'
-                                  }`}>
-                                    {task.automation === 'high' ? '자동화 가능' :
-                                     task.automation === 'medium' ? '부분 자동화' : '자동화 어려움'}
-                                  </span>
-                                </div>
-                              </div>
-                            ))}
-                          </div>
-                        </div>
-
-                        {/* In Progress 컬럼 */}
-                        <div className="backdrop-blur-xl bg-white/50 border border-white/60 rounded-2xl p-6 shadow-xl">
-                          <div className="flex items-center mb-4">
-                            <div className="w-3 h-3 bg-indigo-500 rounded-full mr-2"></div>
-                            <h3 className="font-semibold text-slate-900">⚡ 솔루션 개발</h3>
-                            <span className="ml-auto bg-indigo-200 text-indigo-600 text-xs px-2 py-1 rounded-full">
-                              {kanbanTasks.inProgress.length}
-                            </span>
-                          </div>
-                          <div className="space-y-3 min-h-[200px]">
-                            {kanbanTasks.inProgress.map((task) => (
-                              <div
-                                key={task.id}
-                                className="backdrop-blur-sm bg-white/90 border-2 border-slate-200 rounded-xl p-3 cursor-pointer hover:shadow-lg hover:scale-105 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-indigo-400/50 focus:border-indigo-400"
-                                onClick={() => moveTask(task.id, 'done')}
-                              >
-                                <h4 className="font-medium text-slate-900 text-sm mb-1">{task.title}</h4>
-                                <p className="text-xs text-slate-600 mb-2 line-clamp-2">{task.description}</p>
-                                <div className="flex items-center justify-between text-xs">
-                                  <span className="text-indigo-600">🔄 개발 중</span>
-                                  <span className="text-slate-500">{task.timeSpent}h/주</span>
-                                </div>
-                              </div>
-                            ))}
-                          </div>
-                        </div>
-
-                        {/* Done 컬럼 */}
-                        <div className="backdrop-blur-xl bg-white/50 border border-white/60 rounded-2xl p-6 shadow-xl">
-                          <div className="flex items-center mb-4">
-                            <div className="w-3 h-3 bg-purple-500 rounded-full mr-2"></div>
-                            <h3 className="font-semibold text-slate-900">✅ 완료</h3>
-                            <span className="ml-auto bg-purple-200 text-purple-600 text-xs px-2 py-1 rounded-full">
-                              {kanbanTasks.done.length}
-                            </span>
-                          </div>
-                          <div className="space-y-3 min-h-[200px]">
-                            {kanbanTasks.done.map((task) => (
-                              <div
-                                key={task.id}
-                                className="backdrop-blur-sm bg-white/90 border-2 border-slate-200 rounded-xl p-3"
-                              >
-                                <h4 className="font-medium text-slate-900 text-sm mb-1">{task.title}</h4>
-                                <p className="text-xs text-slate-600 mb-2 line-clamp-2">{task.description}</p>
-                                <div className="flex items-center justify-between text-xs">
-                                  <span className="text-purple-600">✅ 완료</span>
-                                  <span className="text-slate-500">절약: {task.timeSpent}h/주</span>
-                                </div>
-                              </div>
-                            ))}
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* 진행 상황 요약 */}
-                      <div className="backdrop-blur-xl bg-white/50 border border-white/60 rounded-2xl p-6 shadow-xl mb-6">
-                        <h3 className="font-semibold text-slate-900 mb-4">📊 진행 현황</h3>
-                        <div className="grid grid-cols-3 gap-4 text-center">
-                          <div>
-                            <div className="text-2xl font-bold text-slate-600">{kanbanTasks.todo.length}</div>
-                            <div className="text-sm text-slate-500">대기</div>
-                          </div>
-                          <div>
-                            <div className="text-2xl font-bold text-indigo-600">{kanbanTasks.inProgress.length}</div>
-                            <div className="text-sm text-indigo-500">진행</div>
-                          </div>
-                          <div>
-                            <div className="text-2xl font-bold text-purple-600">{kanbanTasks.done.length}</div>
-                            <div className="text-sm text-purple-500">완료</div>
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* 액션 버튼 */}
-                      <div className="flex justify-between">
-                        <button
-                          onClick={() => setCurrentStep(5)}
-                          className="px-6 py-3 backdrop-blur-sm bg-slate-500/80 text-white font-semibold rounded-2xl hover:shadow-xl hover:scale-105 transition-all duration-300"
-                        >
-                          ← 이전 단계
-                        </button>
-                        <button
-                          onClick={() => setCurrentStep(7)}
-                          className="px-6 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-semibold rounded-2xl hover:shadow-2xl hover:scale-105 transition-all duration-300"
-                        >
-                          자동화 솔루션 생성 →
-                        </button>
-                      </div>
-                    </>
-                  ) : (
-                    <div className="backdrop-blur-xl bg-white/50 border border-white/60 rounded-2xl p-6 shadow-xl text-center">
-                      <div className="flex items-center justify-center mb-4">
-                        <span className="text-3xl">📝</span>
-                      </div>
-                      <p className="text-slate-900 font-semibold mb-2">선택된 업무가 없습니다</p>
-                      <p className="text-slate-600 text-sm mb-4">
-                        칸반 보드를 사용하려면 먼저 이전 단계에서 업무를 선택해주세요.
-                      </p>
-                      <div className="text-center">
-                        <button
-                          onClick={() => setCurrentStep(5)}
-                          className="px-6 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-semibold rounded-2xl hover:shadow-2xl hover:scale-105 transition-all duration-300"
-                        >
-                          업무 선택하러 가기
-                        </button>
-                      </div>
-                    </div>
-                  )}
-                </div>
-              </div>
-            </div>
+            <Step5AIConsultant
+              selectedTaskIds={workshop.selectedTaskIds}
+              kanbanTasks={kanbanTasks}
+              moveTask={moveTask}
+              onBack={() => setCurrentStep(4)}
+              onNext={() => setCurrentStep(6)}
+            />
           )}
 
-          {/* Steps 7-9: 자동화 솔루션 생성 */}
-          {currentStep >= 7 && currentStep <= 9 && (
+          {/* Step 6: 워크플로우 설계 */}
+          {currentStep === 6 && (
+            <Step6WorkflowDesign
+              taskTitle={workshop.tasks.find(t => workshop.selectedTaskIds.includes(t.id))?.title || '선택된 업무'}
+              conversationInsights={{}}
+              onComplete={(workflow) => {
+                console.log('Workflow completed:', workflow);
+                setCurrentStep(7);
+              }}
+            />
+          )}
+
+          {/* Step 7: 자동화 솔루션 생성 */}
+          {currentStep === 7 && (
             <div className="relative min-h-screen -m-6 p-6 animate-fadeIn">
               {/* Animated gradient background */}
               <div className="absolute inset-0 bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 overflow-hidden">
@@ -2053,7 +1765,7 @@ export default function WorkshopPage() {
                       ← 이전 단계
                     </button>
                     <button
-                      onClick={() => setCurrentStep(10)}
+                      onClick={() => setCurrentStep(8)}
                       disabled={automationSolutions.length === 0}
                       className="px-6 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-semibold rounded-2xl hover:shadow-2xl hover:scale-105 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
@@ -2065,7 +1777,7 @@ export default function WorkshopPage() {
             </div>
           )}
           {/* 최종 단계: 임원급 자동화 전략 보고서 */}
-          {currentStep === 9 && (
+          {currentStep === 8 && (
             <div className="relative min-h-screen -m-6 p-6 animate-fadeIn">
               {/* Animated gradient background */}
               <div className="absolute inset-0 bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 overflow-hidden">
@@ -2410,9 +2122,6 @@ export default function WorkshopPage() {
 
         </div>
       </div>
-
-      {/* 네비게이션 버튼 */}
-      {renderNavigation()}
 
       {/* 업무 상세화 모달 */}
       {taskDetailsModal && selectedTaskForDetails && (
