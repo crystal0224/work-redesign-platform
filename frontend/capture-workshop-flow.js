@@ -138,28 +138,37 @@ async function captureWorkshopFlow() {
       if (nextButton) nextButton.click();
     });
 
-    // 4. Step 3: 업무 내용 입력
+    // 4. Step 3: 업무 내용 입력 (영역별)
     console.log('📸 [4/9] 업무 내용 입력...');
     await delay(2000);
 
-    // 직접 입력 내용 추가
+    // 업무 영역별로 직접 입력
     await page.evaluate(() => {
-      const textarea = document.querySelector('textarea[placeholder*="담당하시는 업무"]');
-      if (textarea) {
-        textarea.value = `- 매일 오전 9시 고객 문의 메일 확인 및 답변 (일 30분 소요)
-- 주간 마케팅 캠페인 성과 데이터 수집 및 정리 (주 2시간 소요)
+      const textareas = document.querySelectorAll('textarea');
+      const domainTasks = {
+        '고객 지원 및 CS 관리': `- 매일 오전 9시 고객 문의 메일 확인 및 답변 (일 30분 소요)
 - 월간 고객 만족도 조사 실시 및 보고서 작성 (월 3시간 소요)
+- 고객 VOC 수집 및 개선 사항 도출 (주 1시간 소요)`,
+        '마케팅 캠페인 운영': `- 주간 마케팅 캠페인 성과 데이터 수집 및 정리 (주 2시간 소요)
 - 분기별 경쟁사 마케팅 전략 분석 리포트 작성 (분기 5시간 소요)
 - 신규 마케팅 캠페인 기획 및 실행 계획 수립 (월 2회, 각 4시간 소요)
-- 고객 VOC 수집 및 개선 사항 도출 (주 1시간 소요)
-- 마케팅 자동화 도구 관리 및 운영 (일 1시간 소요)
-- A/B 테스트 설계 및 결과 분석 (주 3시간 소요)`;
-        textarea.dispatchEvent(new Event('input', { bubbles: true }));
-        textarea.style.height = 'auto';
-        textarea.style.height = textarea.scrollHeight + 'px';
-      }
+- 마케팅 자동화 도구 관리 및 운영 (일 1시간 소요)`,
+        '데이터 분석 및 리포팅': `- A/B 테스트 설계 및 결과 분석 (주 3시간 소요)
+- 주간 데이터 트렌드 분석 및 인사이트 도출 (주 2시간 소요)
+- 월간 KPI 리포트 작성 및 발표 (월 4시간 소요)`
+      };
+
+      textareas.forEach((textarea, index) => {
+        const values = Object.values(domainTasks);
+        if (index < values.length) {
+          textarea.value = values[index];
+          textarea.dispatchEvent(new Event('input', { bubbles: true }));
+          textarea.style.height = 'auto';
+          textarea.style.height = textarea.scrollHeight + 'px';
+        }
+      });
     });
-    await delay(1500);
+    await delay(2000);
 
     await page.screenshot({
       path: path.join(SCREENSHOTS_DIR, '05_workshop_step3_input.png'),
@@ -175,6 +184,18 @@ async function captureWorkshopFlow() {
 
     // 5. Step 4: 업무 추출 결과
     console.log('📸 [5/9] 업무 추출 결과...');
+    await delay(3000); // 페이지 로드 대기
+
+    // 업무 추출 버튼 클릭
+    await page.evaluate(() => {
+      const buttons = Array.from(document.querySelectorAll('button'));
+      const extractButton = buttons.find(btn =>
+        btn.textContent.includes('업무 추출') ||
+        btn.textContent.includes('분석 시작')
+      );
+      if (extractButton) extractButton.click();
+    });
+
     await delay(5000); // AI 분석 대기
 
     await page.screenshot({
