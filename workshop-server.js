@@ -5,6 +5,7 @@ const cors = require('cors');
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs').promises;
+const fsSync = require('fs');
 const archiver = require('archiver');
 const mammoth = require('mammoth');
 const pdfParse = require('pdf-parse');
@@ -159,34 +160,93 @@ async function parseDocument(filePath, mimeType) {
   }
 }
 
-// Claude AI 분석 함수
-async function analyzeTasks(documentText, domains) {
-  console.log('🤖 Claude AI 분석 시작');
+// 프롬프트 파일 로딩 함수
+function loadPromptTemplate() {
+  try {
+    const promptPath = path.join(__dirname, 'prompts', 'task-extraction-prompt.md');
+    console.log('📄 프롬프트 파일 로딩:', promptPath);
 
-  const systemPrompt = `당신은 업무 재설계 전문가입니다.
-제공된 문서를 분석하여 반복적인 업무를 추출하고 자동화 방안을 제시하세요.
+    if (fsSync.existsSync(promptPath)) {
+      const promptContent = fsSync.readFileSync(promptPath, 'utf-8');
+      console.log('✅ 프롬프트 파일 로딩 완료');
+      return promptContent;
+    } else {
+      console.warn('⚠️ 프롬프트 파일을 찾을 수 없습니다. 기본 프롬프트 사용');
+      return null;
+    }
+  } catch (error) {
+    console.error('❌ 프롬프트 파일 로딩 실패:', error.message);
+    return null;
+  }
+}
+
+// 프롬프트 템플릿 캐싱
+let cachedPromptTemplate = null;
+
+function getPromptTemplate() {
+  if (!cachedPromptTemplate) {
+    cachedPromptTemplate = loadPromptTemplate();
+  }
+  return cachedPromptTemplate;
+}
+
+// Claude AI 분석 함수
+async function analyzeTasks(documentText, domains, manualInput = '') {
+  console.log('🤖 Claude AI 분석 시작');
+  console.log(`📝 문서 길이: ${documentText.length}자`);
+  console.log(`📝 수동 입력 길이: ${manualInput.length}자`);
+
+  // 프롬프트 템플릿 로드
+  const promptTemplate = getPromptTemplate();
+
+  let systemPrompt;
+
+  if (promptTemplate) {
+    // 프롬프트 파일에서 로딩한 경우, 변수 치환
+    systemPrompt = promptTemplate
+      .replace('{domains}', domains.join(', '))
+      .replace('{uploadedDocuments}', documentText || '(업로드된 문서 없음)')
+      .replace('{manualInput}', manualInput || '(직접 입력한 내용 없음)');
+  } else {
+    // 기본 프롬프트 (fallback)
+    systemPrompt = `당신은 10년 경력의 업무 재설계 및 프로세스 최적화 컨설턴트입니다.
+제공된 문서와 팀장의 입력 내용을 분석하여 반복 가능한 업무를 정밀하게 추출하고, 실행 가능한 자동화 방안을 제시하세요.
 
 업무 영역: ${domains.join(', ')}
 
+업로드된 문서:
+${documentText || '(없음)'}
+
+팀장 직접 입력:
+${manualInput || '(없음)'}
+
 각 업무는 다음 정보를 포함해야 합니다:
-- title: 업무명 (간결하게)
-- description: 업무 설명
-- timeSpent: 소요 시간 (시간 단위, 숫자)
-- frequency: 빈도 (daily/weekly/monthly)
-- automation: 자동화 가능성 (high/medium/low)
-- automationMethod: 자동화 방법 제안 (구체적으로)
-- category: 업무 영역 (위 도메인 중 하나)
+- title: 업무명 (15자 이내)
+- description: 업무 설명 (100-300자)
+- domain: 업무 영역 (제공된 도메인 중 하나 또는 '기타')
+- estimatedStatus: Progress | Planned | Not Started | Completed
+- frequency: Daily | Weekly | Monthly | Quarterly | Yearly | Ad-hoc
+- automationPotential: High | Medium | Low
+- source: uploaded | manual
+- timeSpent: 소요 시간 (숫자, 시간 단위)
+- automationMethod: 자동화 방법 (구체적으로)
+- estimatedSavings: 예상 절감 시간 (시간/월, 숫자)
+- complexity: simple | moderate | complex
+- priority: high | medium | low
+- tags: 키워드 배열
 
-JSON 배열 형식으로만 응답하세요.`;
+JSON 배열 형식으로만 응답하세요. 최소 30분 이상 소요되는 반복 업무만 추출하세요.`;
+  }
 
-  const userMessage = `다음 문서에서 반복적인 업무를 추출해주세요:
-
-${documentText.substring(0, 8000)}`;
+  const userMessage = promptTemplate
+    ? "위 지침에 따라 업무를 추출하고 분류해주세요. 오직 JSON 배열만 출력하세요."
+    : "위 정보를 바탕으로 업무를 추출하여 JSON 배열로 응답해주세요.";
 
   try {
+    console.log('🔄 Claude API 호출 중...');
     const response = await anthropic.messages.create({
       model: 'claude-3-5-sonnet-20241022',
-      max_tokens: 4000,
+      max_tokens: 8000,
       temperature: 0.3,
       system: systemPrompt,
       messages: [{
@@ -197,17 +257,27 @@ ${documentText.substring(0, 8000)}`;
 
     const textContent = response.content[0];
 
+    if (textContent.type !== 'text') {
+      throw new Error('Unexpected response type from Claude');
+    }
+
     // JSON 추출
     const jsonMatch = textContent.text.match(/\[[\s\S]*\]/);
     if (!jsonMatch) {
-      console.error('JSON 형식 없음:', textContent.text);
+      console.error('JSON 형식 없음:', textContent.text.substring(0, 500));
       return [];
     }
 
     const tasks = JSON.parse(jsonMatch[0]);
     console.log(`✅ ${tasks.length}개 업무 추출됨`);
 
-    return tasks;
+    // 데이터 검증
+    const validTasks = tasks.filter(task => {
+      return task.title && task.description && task.domain;
+    });
+
+    console.log(`✅ 검증 완료: ${validTasks.length}개 유효한 업무`);
+    return validTasks;
 
   } catch (error) {
     console.error('Claude API 에러:', error);
