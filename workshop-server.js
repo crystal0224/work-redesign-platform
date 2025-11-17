@@ -216,6 +216,159 @@ ${documentText.substring(0, 8000)}`;
 }
 
 // API 라우트들
+
+// 업무 추출 엔드포인트 추가
+app.post('/api/workshops/:id/extract-tasks', async (req, res) => {
+  const { id: workshopId } = req.params;
+  const { manualInput } = req.body;
+
+  console.log(`📊 업무 추출 요청 - Workshop: ${workshopId}`);
+  console.log(`📝 입력 내용:`, manualInput);
+
+  try {
+    const workshop = workshopsDB.get(workshopId);
+    if (!workshop) {
+      return res.status(404).json({
+        success: false,
+        error: '워크샵을 찾을 수 없습니다'
+      });
+    }
+
+    // manualInput을 업무 영역별로 파싱
+    const domainTasks = {};
+    if (manualInput) {
+      const domainSections = manualInput.split(/\[([^\]]+)\]/);
+      for (let i = 1; i < domainSections.length; i += 2) {
+        const domain = domainSections[i];
+        const tasks = domainSections[i + 1];
+        if (tasks && tasks.trim()) {
+          domainTasks[domain] = tasks.trim().split('\n').filter(line => line.trim() && line.trim() !== '');
+        }
+      }
+    }
+
+    console.log(`📂 파싱된 영역별 업무:`, domainTasks);
+
+    // 입력된 업무를 기반으로 태스크 생성
+    const mockTasks = [];
+
+    Object.entries(domainTasks).forEach(([domain, tasks]) => {
+      tasks.forEach((taskLine, idx) => {
+        // 업무 내용에서 주요 정보 추출
+        const cleanLine = taskLine.replace(/^-\s*/, '').trim();
+        const title = cleanLine.split('(')[0].trim();
+        const automationPotentials = ['High', 'Medium', 'Low'];
+        const frequencies = ['Daily', 'Weekly', 'Monthly', 'Quarterly'];
+
+        mockTasks.push({
+          id: generateId('task'),
+          title: title || `${domain} 관련 업무 ${idx + 1}`,
+          description: cleanLine,
+          domain: domain,
+          estimatedStatus: 'Progress',
+          frequency: frequencies[Math.min(idx, 3)],
+          automationPotential: automationPotentials[idx % 3],
+          source: 'manual'
+        });
+      });
+    });
+
+    // 입력이 없거나 부족하면 기본 샘플 추가
+    if (mockTasks.length === 0) {
+      mockTasks.push(
+      {
+        id: generateId('task'),
+        title: '고객 문의 메일 확인 및 답변',
+        description: '매일 오전 9시 고객 문의 메일을 확인하고 답변을 작성합니다.',
+        domain: workshop.domains[0] || '고객 지원',
+        estimatedStatus: 'Progress',
+        frequency: 'Daily',
+        automationPotential: 'High',
+        source: 'manual'
+      },
+      {
+        id: generateId('task'),
+        title: '주간 마케팅 성과 리포트 작성',
+        description: '매주 월요일 마케팅 캠페인 성과를 분석하고 보고서를 작성합니다.',
+        domain: workshop.domains[1] || '마케팅',
+        estimatedStatus: 'Progress',
+        frequency: 'Weekly',
+        automationPotential: 'Medium',
+        source: 'manual'
+      },
+      {
+        id: generateId('task'),
+        title: '월간 데이터 분석 대시보드 업데이트',
+        description: '매월 초 전체 비즈니스 데이터를 분석하고 대시보드를 업데이트합니다.',
+        domain: workshop.domains[2] || '데이터 분석',
+        estimatedStatus: 'Planned',
+        frequency: 'Monthly',
+        automationPotential: 'High',
+        source: 'uploaded'
+      },
+      {
+        id: generateId('task'),
+        title: '고객 VOC 수집 및 분석',
+        description: '고객 피드백을 수집하고 주요 이슈를 분석하여 개선점을 도출합니다.',
+        domain: workshop.domains[0] || '고객 지원',
+        estimatedStatus: 'Progress',
+        frequency: 'Weekly',
+        automationPotential: 'Medium',
+        source: 'manual'
+      },
+      {
+        id: generateId('task'),
+        title: '경쟁사 마케팅 전략 분석',
+        description: '분기별로 경쟁사의 마케팅 전략을 분석하고 인사이트를 도출합니다.',
+        domain: workshop.domains[1] || '마케팅',
+        estimatedStatus: 'Planned',
+        frequency: 'Quarterly',
+        automationPotential: 'Low',
+        source: 'uploaded'
+      },
+      {
+        id: generateId('task'),
+        title: '신규 캠페인 A/B 테스트 설계',
+        description: '마케팅 캠페인의 효과를 측정하기 위한 A/B 테스트를 설계합니다.',
+        domain: workshop.domains[1] || '마케팅',
+        estimatedStatus: 'Not Started',
+        frequency: 'Ad-hoc',
+        automationPotential: 'Medium',
+        source: 'manual'
+      },
+      {
+        id: generateId('task'),
+        title: '재고 현황 모니터링',
+        description: '실시간으로 재고 현황을 모니터링하고 부족 시 알림을 발송합니다.',
+        domain: '기타',
+        estimatedStatus: 'Progress',
+        frequency: 'Daily',
+        automationPotential: 'High',
+        source: 'uploaded'
+      }
+      );
+    }
+
+    // 워크샵에 업무 저장
+    workshop.tasks = mockTasks;
+    workshopsDB.set(workshopId, workshop);
+
+    res.json({
+      success: true,
+      tasks: mockTasks,
+      count: mockTasks.length,
+      message: `${mockTasks.length}개 업무가 추출되었습니다`
+    });
+
+  } catch (error) {
+    console.error('업무 추출 오류:', error);
+    res.status(500).json({
+      success: false,
+      error: error.message || '업무 추출 중 오류가 발생했습니다'
+    });
+  }
+});
+
 app.post('/api/workshops', (req, res) => {
   try {
     const { name, domains, participantCount } = req.body;

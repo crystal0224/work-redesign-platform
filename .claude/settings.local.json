@@ -37,7 +37,9 @@
       "Bash(PORT=3001 node:*)",
       "Bash(npx eslint:*)",
       "Bash(npx next lint:*)",
-      "Bash(npx next build:*)"
+      "Bash(npx next build:*)",
+      "Bash(npx ts-node:*)",
+      "Bash(PORT=3002 npm run dev:*)"
     ],
     "deny": [],
     "ask": []

@@ -826,7 +826,17 @@ export default function Step4TaskExtraction({ workshopId, domains, onNext, manua
             </div>
 
             {/* Next Button */}
-            <div className="flex justify-end">
+            <div className="flex justify-between">
+              <button
+                onClick={() => window.history.back()}
+                className="px-6 py-3 bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold rounded-xl transition-all flex items-center gap-2"
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                </svg>
+                이전 단계
+              </button>
+
               <button
                 onClick={handleNext}
                 className="px-8 py-4 bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-semibold rounded-2xl hover:shadow-2xl hover:scale-105 transition-all duration-300 flex items-center gap-2"
