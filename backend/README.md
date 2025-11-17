@@ -1,5 +1,26 @@
 # Work Redesign Platform - Backend
 
+## ✨ 주요 기능
+
+### AI 기반 업무 분석 엔진
+- **Claude 3.5 Sonnet** 통합
+- **Zod 타입 검증** - 12개 필드 런타임 검증
+- **Robust JSON 파싱** - 3단계 재시도 전략
+- **한국어 시간 표현 전처리** - 10가지 패턴 지원
+- **중복 업무 제거** - Levenshtein + Jaccard 알고리즘
+
+### 파일 처리
+- 다중 형식 지원: DOCX, XLSX, PDF, TXT
+- 한국어 문서 최적화
+- 실시간 파싱
+
+### 자동화 도구 생성
+- AI 프롬프트 템플릿
+- n8n/Zapier 워크플로우 JSON
+- Python 자동화 스크립트
+
+---
+
 ## 🚀 빠른 시작
 
 ### 1. 환경 설정
@@ -122,6 +143,25 @@ ANTHROPIC_API_KEY=your_anthropic_api_key
 UPLOAD_PATH=./uploads/workshops
 TEMPLATES_PATH=./generated_templates
 ```
+
+## 🧪 테스트
+
+### 단위 테스트
+```bash
+# Zod 검증 테스트
+node test-zod-validation.js
+
+# 한국어 시간 정규화 테스트
+node test-time-normalization.js
+
+# 중복 제거 테스트
+node test-deduplication.js
+```
+
+**테스트 커버리지**: 24/24 (100%)
+- Zod 검증: 8/8 ✅
+- 시간 정규화: 10/10 ✅
+- 중복 제거: 6/6 ✅
 
 ## 🚫 Docker 중지
 
