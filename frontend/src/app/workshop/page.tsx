@@ -1553,23 +1553,24 @@ export default function WorkshopPage() {
           {/* Step 4: 업무 추출 결과 */}
           {currentStep === 4 && (
             <Step4TaskExtraction
-              tasks={workshop.tasks}
-              selectedTaskIds={workshop.selectedTaskIds}
-              toggleTaskSelection={toggleTaskSelection}
-              error={error}
-              onBack={() => setCurrentStep(3)}
-              onNext={() => setCurrentStep(5)}
+              workshopId={workshop.id || 'temp-workshop-id'}
+              domains={workshop.domains}
+              onNext={(tasks) => {
+                setWorkshop(prev => ({ ...prev, tasks }));
+                setCurrentStep(5);
+              }}
+              manualInput=""
             />
           )}
 
           {/* Step 5: 업무 상세화 */}
           {currentStep === 5 && (
             <Step5AIConsultant
-              selectedTaskIds={workshop.selectedTaskIds}
-              kanbanTasks={kanbanTasks}
-              moveTask={moveTask}
-              onBack={() => setCurrentStep(4)}
-              onNext={() => setCurrentStep(6)}
+              tasks={workshop.tasks}
+              onComplete={(selectedTask, insights) => {
+                console.log('AI Consultant completed:', selectedTask, insights);
+                setCurrentStep(6);
+              }}
             />
           )}
 
