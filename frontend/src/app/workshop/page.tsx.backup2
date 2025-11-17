@@ -1,0 +1,2478 @@
+'use client';
+
+import React, { useState, useEffect, useRef } from 'react';
+import { io, Socket } from 'socket.io-client';
+
+// 워크샵 데이터 타입들
+interface Workshop {
+  id: string;
+  domains: string[];
+  fileIds: string[];
+  tasks: Task[];
+  selectedTaskIds: string[];
+}
+
+interface Task {
+  id: string;
+  title: string;
+  description: string;
+  timeSpent: number;
+  frequency: string;
+  automation: 'high' | 'medium' | 'low';
+  automationMethod: string;
+  category: string;
+  sourceFileId: string;
+  sourceFilename: string;
+  details?: TaskDetails;
+}
+
+interface TaskDetails {
+  tools: string[];
+  inputData: string[];
+  outputResult: string;
+  constraints: string[];
+  exceptions: string;
+  automationPreference: number;
+  priority: number;
+  securityLevel: 'low' | 'medium' | 'high';
+  additionalContext: string;
+}
+
+interface UploadedFile {
+  file: File;
+  id: string;
+}
+
+interface ExtractedWorkItem {
+  id: string;
+  title: string;
+  description: string;
+  domain: string;
+  frequency: string;
+  timeSpent: number;
+  complexity: 'low' | 'medium' | 'high';
+  sourceFile: string;
+}
+
+// 워크샵 단계 그룹 정의 (10단계를 5그룹으로 시각화)
+const WORKSHOP_GROUPS = [
+  {
+    id: 1,
+    title: '시작 & 준비',
+    description: '워크샵 소개 및 업무영역 정의',
+    icon: '🚀',
+    steps: [1, 2],
+    stepNames: ['시작하기', '업무영역 정의']
+  },
+  {
+    id: 2,
+    title: '정보 수집',
+    description: '문서 업로드 및 내용 입력',
+    icon: '📁',
+    steps: [3],
+    stepNames: ['문서 & 내용 입력']
+  },
+  {
+    id: 3,
+    title: 'AI 분석',
+    description: 'AI 업무 분석 및 업무 발견',
+    icon: '🤖',
+    steps: [4, 5],
+    stepNames: ['AI 업무 분석', '업무 발견']
+  },
+  {
+    id: 4,
+    title: '업무 정리',
+    description: '업무 상세화 및 칸반 정리',
+    icon: '📝',
+    steps: [6, 7],
+    stepNames: ['업무 상세화', '칸반 정리']
+  },
+  {
+    id: 5,
+    title: '자동화 제안',
+    description: 'AI 자동화 분석 및 제안 완료',
+    icon: '✨',
+    steps: [8, 9, 10],
+    stepNames: ['AI 자동화 분석', '결과 검토', '제안 완료']
+  }
+];
+
+// 워크샵 단계 정보
+const WORKSHOP_STEPS = [
+  { id: 1, title: '시작하기', description: '업무 자동화 워크샵 시작', icon: '🚀' },
+  { id: 2, title: '업무영역 정의', description: '주요 업무 영역 3가지 입력', icon: '🎯' },
+  { id: 3, title: '문서 & 내용 입력', description: '업무 관련 문서 업로드', icon: '📁' },
+  { id: 4, title: 'AI 업무 분석', description: 'AI가 업무를 자동 분석', icon: '🤖' },
+  { id: 5, title: '업무 발견', description: '분석된 업무 목록 확인', icon: '🔍' },
+  { id: 6, title: '업무 상세화', description: '선택한 업무 상세 정보 입력', icon: '📝' },
+  { id: 7, title: '칸반 정리', description: '업무를 칸반 보드로 정리', icon: '📊' },
+  { id: 8, title: 'AI 자동화 분석', description: 'AI가 업무를 분석하고 자동화 방안 도출', icon: '🔧' },
+  { id: 9, title: '결과 검토', description: '발견된 업무 검토 및 선택', icon: '📊' },
+  { id: 10, title: '제안 완료', description: '자동화 제안 완료', icon: '🎉' }
+];
+
+// 현재 단계가 속한 그룹 찾기
+const getCurrentGroup = (step: number) => {
+  return WORKSHOP_GROUPS.find(group => group.steps.includes(step)) || WORKSHOP_GROUPS[0];
+};
+
+export default function WorkshopPage() {
+  // 상태 관리
+  const [currentStep, setCurrentStep] = useState(1);
+  const [workshop, setWorkshop] = useState<Workshop>({
+    id: '',
+    domains: ['', '', ''],
+    fileIds: [],
+    tasks: [],
+    selectedTaskIds: []
+  });
+
+  const [error, setError] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [analysisProgress, setAnalysisProgress] = useState(0);
+  const [analysisStatus, setAnalysisStatus] = useState('');
+
+  // 파일 업로드 관련 상태
+  const [uploadedFiles, setUploadedFiles] = useState<UploadedFile[]>([]);
+  const [loading, setLoading] = useState(false);
+
+  // 텍스트 입력 관련 상태
+  const [manualTaskInput, setManualTaskInput] = useState<{[domain: string]: string}>({});
+  const [activeTextInputTab, setActiveTextInputTab] = useState<string>('general');
+
+  // 업무 분석 결과 관련 상태
+  const [extractedWorkItems, setExtractedWorkItems] = useState<ExtractedWorkItem[]>([]);
+
+  // 업무 상세화 관련 상태
+  const [selectedTaskForDetails, setSelectedTaskForDetails] = useState<string | null>(null);
+  const [editingTask, setEditingTask] = useState<ExtractedWorkItem | null>(null);
+
+  // PoC 분석 관련 상태
+  const [selectedTaskForPoc, setSelectedTaskForPoc] = useState<string | null>(null);
+  const [showDetailedAnalysis, setShowDetailedAnalysis] = useState(false);
+  const [draggedTask, setDraggedTask] = useState<ExtractedWorkItem | null>(null);
+
+  // 자동화 솔루션 관련 상태
+  const [generatingSolutions, setGeneratingSolutions] = useState(false);
+  const [automationSolutions, setAutomationSolutions] = useState<any[]>([]);
+  const [analysisResult, setAnalysisResult] = useState<any>(null);
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
+
+  const socketRef = useRef<Socket>();
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // Socket.IO 연결 및 정리
+  useEffect(() => {
+    const socketConnection = io('http://localhost:3001');
+    socketRef.current = socketConnection;
+
+    socketConnection.on('connect', () => {
+      console.log('소켓 연결됨');
+    });
+
+    socketConnection.on('analysisProgress', (data) => {
+      setAnalysisProgress(data.progress);
+      setAnalysisStatus(data.status);
+    });
+
+    socketConnection.on('analysisComplete', (data) => {
+      setWorkshop(prev => ({ ...prev, tasks: data.tasks }));
+      setCurrentStep(5);
+      setAnalysisProgress(100);
+      setAnalysisStatus('분석 완료');
+      setIsLoading(false);
+    });
+
+    socketConnection.on('error', (error) => {
+      console.error('소켓 오류:', error);
+      setError(error.message || '분석 중 오류가 발생했습니다.');
+      setAnalysisProgress(0);
+      setAnalysisStatus('');
+      setIsLoading(false);
+    });
+
+    return () => {
+      socketConnection.disconnect();
+    };
+  }, []);
+
+  // 기본 함수들
+  const nextStep = () => {
+    if (currentStep < 10) {
+      setCurrentStep(currentStep + 1);
+    }
+  };
+
+  const prevStep = () => {
+    if (currentStep > 1) {
+      setCurrentStep(currentStep - 1);
+    }
+  };
+
+  const startAnalysis = () => {
+    if (!workshop.domains[0]) {
+      setError('최소 첫 번째 업무 영역은 필수입니다.');
+      return;
+    }
+
+    setError('');
+    setIsLoading(true);
+    setAnalysisProgress(0);
+    setAnalysisStatus('분석 시작');
+
+    const analysisData = {
+      domains: workshop.domains.filter(d => d.trim()),
+      fileIds: workshop.fileIds
+    };
+
+    if (socketRef.current) {
+      socketRef.current.emit('startAnalysis', analysisData);
+      setCurrentStep(4);
+    }
+  };
+
+  // 도메인 추가
+  const addDomain = () => {
+    if (workshop.domains.length < 10) {
+      setWorkshop(prev => ({ ...prev, domains: [...prev.domains, ''] }));
+    }
+  };
+
+  // 도메인 삭제
+  const removeDomain = (index: number) => {
+    if (workshop.domains.length > 1) {
+      const newDomains = workshop.domains.filter((_, i) => i !== index);
+      setWorkshop(prev => ({ ...prev, domains: newDomains }));
+    }
+  };
+
+  // 파일 업로드 관련 함수들
+  const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const files = event.target.files;
+    if (!files || files.length === 0) {
+      console.log('파일이 선택되지 않았습니다');
+      return;
+    }
+
+    console.log('파일 선택됨:', files);
+    console.log('FileList 길이:', files.length);
+
+    const newFiles: UploadedFile[] = [];
+    for (let i = 0; i < files.length; i++) {
+      const file = files[i];
+      console.log(`파일 ${i + 1}:`, {
+        name: file.name,
+        size: file.size,
+        type: file.type,
+        lastModified: new Date(file.lastModified).toLocaleString()
+      });
+
+      // 파일이 실제로 존재하는지 확인
+      if (!file || !file.name) {
+        console.error(`파일 ${i + 1}이 유효하지 않습니다`);
+        setError(`파일이 올바르지 않습니다`);
+        continue;
+      }
+
+      // 파일 크기 검증
+      if (file.size === 0) {
+        console.error(`${file.name}은(는) 빈 파일입니다 (0 bytes)`);
+        setError(`${file.name}은(는) 빈 파일입니다`);
+        continue;
+      }
+
+      if (file.size > 50 * 1024 * 1024) {
+        setError(`${file.name}은(는) 50MB를 초과합니다`);
+        continue;
+      }
+
+      // 파일 확장자 검증
+      const ext = file.name.split('.').pop()?.toLowerCase();
+      if (!['docx', 'pdf', 'xlsx', 'xls', 'txt'].includes(ext || '')) {
+        setError(`${file.name}은(는) 지원하지 않는 형식입니다 (지원 형식: docx, pdf, xlsx, xls, txt)`);
+        continue;
+      }
+
+      // 파일이 유효하면 추가
+      const newFile: UploadedFile = {
+        file,
+        id: `file_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
+      };
+
+      newFiles.push(newFile);
+      console.log(`✅ 파일 추가됨:`, newFile.id, file.name, `${file.size} bytes`);
+    }
+
+    if (uploadedFiles.length + newFiles.length > 10) {
+      setError('최대 10개 파일까지 업로드 가능합니다');
+      return;
+    }
+
+    console.log('총 새로 추가된 파일 수:', newFiles.length);
+    console.log('새로 추가된 파일들:', newFiles.map(f => ({ id: f.id, name: f.file.name, size: f.file.size })));
+
+    if (newFiles.length > 0) {
+      setUploadedFiles(prev => {
+        const updated = [...prev, ...newFiles];
+        console.log('전체 업로드 파일 목록:', updated.map(f => ({ id: f.id, name: f.file.name, size: f.file.size })));
+        return updated;
+      });
+      setError('');
+    } else {
+      console.warn('추가된 파일이 없습니다');
+    }
+
+    // 입력 요소 리셋
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+  };
+
+  const removeFile = (id: string) => {
+    console.log('파일 삭제:', id);
+    setUploadedFiles(prev => {
+      const updated = prev.filter(f => f.id !== id);
+      console.log('삭제 후 파일 목록:', updated.map(f => ({ id: f.id, name: f.file.name, size: f.file.size })));
+      return updated;
+    });
+  };
+
+  // 드래그 앤 드롭 핸들러
+  const handleDragOver = (event: React.DragEvent) => {
+    event.preventDefault();
+    event.stopPropagation();
+  };
+
+  const handleDragEnter = (event: React.DragEvent) => {
+    event.preventDefault();
+    event.stopPropagation();
+  };
+
+  const handleDragLeave = (event: React.DragEvent) => {
+    event.preventDefault();
+    event.stopPropagation();
+  };
+
+  const handleDrop = (event: React.DragEvent) => {
+    event.preventDefault();
+    event.stopPropagation();
+
+    const files = event.dataTransfer.files;
+    if (files && files.length > 0) {
+      console.log('드래그 앤 드롭으로 파일 선택됨:', files);
+
+      // 파일 입력 요소에 파일 설정 (input change 이벤트 트리거)
+      if (fileInputRef.current) {
+        fileInputRef.current.files = files;
+        // 수동으로 change 이벤트 트리거
+        const changeEvent = new Event('change', { bubbles: true });
+        fileInputRef.current.dispatchEvent(changeEvent);
+      }
+    }
+  };
+
+  const getFileIcon = (filename: string) => {
+    const ext = filename.split('.').pop()?.toLowerCase();
+    switch (ext) {
+      case 'pdf': return '📄';
+      case 'docx': case 'doc': return '📝';
+      case 'xlsx': case 'xls': return '📊';
+      default: return '📎';
+    }
+  };
+
+  // 파일 내용 읽기 함수 (간단한 DOCX 파싱 포함)
+  const readFileContent = async (file: File): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      const ext = file.name.split('.').pop()?.toLowerCase();
+
+      reader.onload = async (e) => {
+        try {
+          const result = e.target?.result;
+
+          if (ext === 'docx' && result instanceof ArrayBuffer) {
+            try {
+              // DOCX 파일을 ZIP으로 읽어서 document.xml에서 텍스트 추출
+              const arrayBuffer = result;
+              const uint8Array = new Uint8Array(arrayBuffer);
+
+              // ZIP 파일 시그니처 확인 (DOCX는 ZIP 기반)
+              if (uint8Array[0] === 0x50 && uint8Array[1] === 0x4B) {
+                // ZIP 파일이 맞으면 간단한 텍스트 추출 시도
+                const textContent = await extractTextFromDocx(arrayBuffer);
+                if (textContent && textContent.trim().length > 0) {
+                  resolve(textContent);
+                  return;
+                }
+              }
+
+              // 텍스트 추출 실패 시 샘플 업무 생성용 플래그
+              resolve('DOCX_PLACEHOLDER_FOR_SAMPLE_TASKS');
+            } catch (docxError) {
+              console.warn('DOCX 파싱 실패, 샘플 업무 생성:', docxError);
+              resolve('DOCX_PLACEHOLDER_FOR_SAMPLE_TASKS');
+            }
+          } else if (ext === 'txt' && typeof result === 'string') {
+            resolve(result);
+          } else if (['pdf', 'xlsx', 'xls'].includes(ext || '')) {
+            // 다른 바이너리 파일들은 샘플 업무 생성
+            resolve(`${ext?.toUpperCase()}_PLACEHOLDER_FOR_SAMPLE_TASKS`);
+          } else if (typeof result === 'string') {
+            resolve(result);
+          } else {
+            resolve('BINARY_PLACEHOLDER_FOR_SAMPLE_TASKS');
+          }
+        } catch (error) {
+          reject(error);
+        }
+      };
+
+      reader.onerror = () => reject(new Error('파일 읽기 실패'));
+
+      if (['docx', 'xlsx', 'pdf'].includes(ext || '')) {
+        reader.readAsArrayBuffer(file);
+      } else {
+        reader.readAsText(file, 'UTF-8');
+      }
+    });
+  };
+
+  // 향상된 DOCX 텍스트 추출 함수
+  const extractTextFromDocx = async (arrayBuffer: ArrayBuffer): Promise<string> => {
+    try {
+      const uint8Array = new Uint8Array(arrayBuffer);
+
+      // ZIP 파일 시그니처 확인 (DOCX는 ZIP 기반)
+      if (uint8Array.length < 4 || uint8Array[0] !== 0x50 || uint8Array[1] !== 0x4B) {
+        console.warn('유효하지 않은 DOCX 파일 형식');
+        return generateSampleTasks();
+      }
+
+      // 바이너리 데이터를 문자열로 변환 (UTF-8과 Latin-1 모두 시도)
+      let textContent = '';
+      try {
+        textContent = new TextDecoder('utf-8', { fatal: false }).decode(uint8Array);
+      } catch {
+        textContent = new TextDecoder('latin-1', { fatal: false }).decode(uint8Array);
+      }
+
+      // document.xml 섹션 찾기 (DOCX의 주 문서 내용)
+      const docXmlMatch = textContent.match(/document\.xml.*?<\/pkg:part>/s);
+      if (docXmlMatch) {
+        textContent = docXmlMatch[0];
+      }
+
+      // XML 태그 내 텍스트 추출을 위한 다양한 패턴
+      const patterns = [
+        /<w:t[^>]*>([^<]+)<\/w:t>/g,  // Word 텍스트 태그
+        /<text[^>]*>([^<]+)<\/text>/g,  // 일반 텍스트 태그
+        />[\s]*([가-힣a-zA-Z0-9][^<]*[가-힣a-zA-Z0-9])[\s]*</g,  // 한글/영문이 포함된 텍스트
+        />([^<]{10,})</g  // 10자 이상의 긴 텍스트
+      ];
+
+      const extractedLines = new Set<string>();
+
+      for (const pattern of patterns) {
+        let match;
+        while ((match = pattern.exec(textContent)) !== null) {
+          const text = match[1]?.trim();
+          if (text && isValidTaskText(text)) {
+            extractedLines.add(text);
+          }
+        }
+      }
+
+      // 추출된 라인들을 정리
+      const validLines = Array.from(extractedLines)
+        .filter(line => line.length >= 5 && line.length <= 200)
+        .slice(0, 15);
+
+      if (validLines.length >= 3) {
+        console.log('DOCX에서 추출된 업무들:', validLines);
+        return validLines.join('\n');
+      }
+
+      return generateSampleTasks();
+    } catch (error) {
+      console.error('DOCX 파싱 오류:', error);
+      return generateSampleTasks();
+    }
+  };
+
+  // 유효한 업무 텍스트인지 확인
+  const isValidTaskText = (text: string): boolean => {
+    if (!text || text.length < 5 || text.length > 200) return false;
+
+    // 한글 또는 영문이 최소 3자 이상 포함되어야 함
+    const hasValidContent = /[가-힣]{3,}|[a-zA-Z]{3,}/.test(text);
+    if (!hasValidContent) return false;
+
+    // 제외할 패턴들
+    const excludePatterns = [
+      /^[\d\s\-_.,:;!@#$%^&*()+=\[\]{}|\\`~"'<>?/\u00a0\u2000-\u200f\u2028-\u202f]*$/,  // 숫자와 특수문자만
+      /^(xmlns|encoding|version|standalone|docProps|word|document|pkg|Content_Types|rels|theme|styles|settings|fontTable|numbering)/i,  // XML 관련
+      /^[\s\n\r\t\u00a0\u2000-\u200f\u2028-\u202f]+$/,  // 공백문자만
+      /^\d{1,4}$/,  // 단순 숫자
+      /^[a-zA-Z\s]{1,3}$/,  // 3자 이하 영문
+      /^[가-힣\s]{1,2}$/,  // 2자 이하 한글
+      /^(true|false|null|undefined)$/i,  // 프로그래밍 키워드
+      /^[\u0000-\u001f\u007f-\u009f]+$/,  // 제어 문자
+      /^[ -⁯⁰-₟₠-⃏℀-⅏⅐-↏]+$/,  // 유니코드 특수 기호
+    ];
+
+    if (excludePatterns.some(pattern => pattern.test(text))) return false;
+
+    // 특수문자가 너무 많은 경우 제외 (50% 이상)
+    const specialCharRatio = (text.match(/[^\w가-힣\s]/g) || []).length / text.length;
+    if (specialCharRatio > 0.5) return false;
+
+    return true;
+  };
+
+  // 샘플 업무 생성
+  const generateSampleTasks = (): string => {
+    const sampleTasks = [
+      '주간 업무 보고서 작성 및 제출',
+      '고객 문의 이메일 처리 및 답변',
+      '프로젝트 진행 상황 모니터링',
+      '팀 회의 준비 및 회의록 정리',
+      '데이터 입력 및 정리 작업',
+      '월간 실적 데이터 분석 및 요약',
+      '거래처 연락 및 일정 조율',
+      '문서 검토 및 승인 요청 처리'
+    ];
+
+    return sampleTasks.slice(0, 5).join('\n');
+  };
+
+  // AI 분석 함수
+  const analyzeWorkContent = async () => {
+    setLoading(true);
+    setCurrentStep(4);
+    setAnalysisProgress(0);
+    setAnalysisStatus('분석 시작');
+    setExtractedWorkItems([]);
+
+    try {
+      const sampleTasks: ExtractedWorkItem[] = [];
+      const domains = workshop.domains.filter(d => d.trim());
+
+      // 1. 파일 내용 읽기 및 분석
+      if (uploadedFiles.length > 0) {
+        setAnalysisProgress(10);
+        setAnalysisStatus('파일 내용을 읽는 중...');
+
+        for (const uploadedFile of uploadedFiles) {
+          try {
+            const fileContent = await readFileContent(uploadedFile.file);
+            console.log(`${uploadedFile.file.name} 내용:`, fileContent.substring(0, 200));
+
+            // 파일 내용에서 업무 추출 (간단한 라인 기반 분석)
+            if (fileContent && !fileContent.includes('[바이너리 파일') && !fileContent.includes('[서버에서 처리')) {
+              const lines = fileContent.split('\n')
+                .filter(line => line.trim())
+                .filter(line => line.length > 10) // 너무 짧은 라인 제외
+                .slice(0, 20); // 최대 20개 라인
+
+              lines.forEach((line, index) => {
+                if (line.trim()) {
+                  const randomDomain = domains[Math.floor(Math.random() * domains.length)] || '기타';
+                  sampleTasks.push({
+                    id: `file_${uploadedFile.id}_line_${index}`,
+                    title: line.substring(0, 50) + (line.length > 50 ? '...' : ''),
+                    description: line,
+                    domain: randomDomain,
+                    frequency: ['daily', 'weekly', 'monthly'][Math.floor(Math.random() * 3)],
+                    timeSpent: Math.floor(Math.random() * 6) + 1,
+                    complexity: ['low', 'medium', 'high'][Math.floor(Math.random() * 3)] as 'low' | 'medium' | 'high',
+                    sourceFile: uploadedFile.file.name
+                  });
+                }
+              });
+            } else {
+              // 바이너리 파일이거나 서버 처리 필요한 파일의 경우 샘플 업무 생성
+              const randomDomain = domains[Math.floor(Math.random() * domains.length)] || '기타';
+              sampleTasks.push({
+                id: `file_${uploadedFile.id}_sample`,
+                title: `${uploadedFile.file.name}에서 추출된 업무`,
+                description: `${uploadedFile.file.name} 파일에서 발견된 주요 업무 항목입니다.`,
+                domain: randomDomain,
+                frequency: 'weekly',
+                timeSpent: 3,
+                complexity: 'medium',
+                sourceFile: uploadedFile.file.name
+              });
+            }
+          } catch (fileError) {
+            console.error(`${uploadedFile.file.name} 읽기 오류:`, fileError);
+            // 파일 읽기 실패 시 기본 업무 생성
+            const randomDomain = domains[Math.floor(Math.random() * domains.length)] || '기타';
+            sampleTasks.push({
+              id: `file_${uploadedFile.id}_error`,
+              title: `${uploadedFile.file.name} 관련 업무`,
+              description: `${uploadedFile.file.name} 파일과 관련된 업무입니다.`,
+              domain: randomDomain,
+              frequency: 'weekly',
+              timeSpent: 2,
+              complexity: 'medium',
+              sourceFile: uploadedFile.file.name
+            });
+          }
+        }
+      }
+
+      // 2. 텍스트 입력 내용 분석
+      setAnalysisProgress(40);
+      setAnalysisStatus('텍스트 내용 분석 중...');
+
+      // 도메인별 텍스트 분석
+      domains.forEach((domain, domainIndex) => {
+        const domainText = manualTaskInput[domain] || '';
+
+        if (domainText.trim()) {
+          const lines = domainText.split('\n').filter(line => line.trim());
+          lines.forEach((line, lineIndex) => {
+            if (line.trim()) {
+              sampleTasks.push({
+                id: `domain_${domainIndex}_${lineIndex}`,
+                title: line.substring(0, 50) + (line.length > 50 ? '...' : ''),
+                description: line,
+                domain: domain,
+                frequency: ['daily', 'weekly', 'monthly'][Math.floor(Math.random() * 3)],
+                timeSpent: Math.floor(Math.random() * 8) + 1,
+                complexity: ['low', 'medium', 'high'][Math.floor(Math.random() * 3)] as 'low' | 'medium' | 'high',
+                sourceFile: 'manual_input'
+              });
+            }
+          });
+        }
+      });
+
+      // 전체 업무 텍스트 분석
+      if (manualTaskInput.general?.trim()) {
+        const generalLines = manualTaskInput.general.split('\n').filter(line => line.trim());
+        generalLines.forEach((line, index) => {
+          if (line.trim()) {
+            const randomDomain = domains[Math.floor(Math.random() * domains.length)] || '기타';
+            sampleTasks.push({
+              id: `general_${index}`,
+              title: line.substring(0, 50) + (line.length > 50 ? '...' : ''),
+              description: line,
+              domain: randomDomain,
+              frequency: ['daily', 'weekly', 'monthly'][Math.floor(Math.random() * 3)],
+              timeSpent: Math.floor(Math.random() * 6) + 1,
+              complexity: ['low', 'medium', 'high'][Math.floor(Math.random() * 3)] as 'low' | 'medium' | 'high',
+              sourceFile: 'manual_input'
+            });
+          }
+        });
+      }
+
+      // 3. 분석 완료
+      setAnalysisProgress(70);
+      setAnalysisStatus('업무 분류 및 정리 중...');
+
+      await new Promise(resolve => setTimeout(resolve, 1000));
+
+      setAnalysisProgress(100);
+      setAnalysisStatus('분석 완료!');
+
+      console.log('추출된 총 업무 수:', sampleTasks.length);
+      console.log('추출된 업무들:', sampleTasks);
+
+      setExtractedWorkItems(sampleTasks);
+
+      await new Promise(resolve => setTimeout(resolve, 500));
+      setCurrentStep(5);
+      setLoading(false);
+
+    } catch (error) {
+      console.error('분석 오류:', error);
+      setError('분석 중 오류가 발생했습니다.');
+      setLoading(false);
+    }
+  };
+
+  const translateFrequency = (freq: string) => {
+    const map: { [key: string]: string } = {
+      daily: '일일',
+      weekly: '주간',
+      monthly: '월간'
+    };
+    return map[freq] || freq;
+  };
+
+  // 업무 수정 함수
+  const updateTask = (updatedTask: ExtractedWorkItem) => {
+    setExtractedWorkItems(prev =>
+      prev.map(item => item.id === updatedTask.id ? updatedTask : item)
+    );
+  };
+
+  // 업무 삭제 함수
+  const deleteTask = (taskId: string) => {
+    setExtractedWorkItems(prev => prev.filter(item => item.id !== taskId));
+  };
+
+  // 업무 영역 이동 함수
+  const handleTaskMove = (taskId: string, newDomain: string) => {
+    setExtractedWorkItems(prev =>
+      prev.map(item =>
+        item.id === taskId ? { ...item, domain: newDomain } : item
+      )
+    );
+  };
+
+  // 상세 분석 시작 함수
+  const startDetailedAnalysis = async () => {
+    setIsAnalyzing(true);
+
+    // 시뮬레이션을 위한 대기
+    await new Promise(resolve => setTimeout(resolve, 2000));
+
+    try {
+      // 업무 데이터를 엔터프라이즈 분석 테이블로 변환
+      const detailedAnalysis = extractedWorkItems.map((item, index) => {
+        // 기본 정보 추정
+        const frequencyPerMonth = item.frequency === 'daily' ? 22 : item.frequency === 'weekly' ? 4 : 1;
+        const avgDurationMin = item.timeSpent * 60;
+        const volumePerMonth = Math.floor(Math.random() * 20) + 5;
+        const variability = Math.floor(Math.random() * 3) + 2; // 2-5
+
+        // 자동화 적합성 평가
+        const automationType = evaluateAutomationType(item);
+        const aiPattern = determineAIPattern(item);
+        const enablingTech = determineEnablingTech(aiPattern);
+
+        // 점수 계산
+        const effectScore = calculateEffectScore(frequencyPerMonth, volumePerMonth, avgDurationMin);
+        const impactScore = calculateImpactScore(item.complexity, item.domain);
+        const feasibilityScore = calculateFeasibilityScore(automationType);
+        const confidenceScore = Math.floor(Math.random() * 2) + 3; // 3-5
+        const effortLevel = determineEffortLevel(automationType, item.complexity);
+        const effortPenalty = effortLevel === 'S' ? 0 : effortLevel === 'M' ? -0.5 : -1.0;
+        const priorityScore = Math.round((effectScore + impactScore + feasibilityScore + confidenceScore + effortPenalty) * 100) / 100;
+
+        return {
+          taskId: item.id,
+          taskName: item.title,
+          briefDescription: item.description,
+          frequencyPerMonth,
+          volumePerMonth,
+          avgDurationMin,
+          variability,
+          digitalInputs: Math.random() > 0.3 ? 'Yes' : 'No',
+          inputTypes: determineInputTypes(item),
+          downstreamOutput: determineOutput(item),
+          currentTools: determineCurrentTools(item),
+          containsSensitiveData: Math.random() > 0.7 ? 'Yes' : 'No',
+          errorRatePer100: Math.floor(Math.random() * 10) + 1,
+          slaOrDeadline: Math.floor(Math.random() * 24) + 1,
+          automationCandidate: automationType,
+          rationaleWhy: generateRationale(automationType, item),
+          aiPattern,
+          enablingTech,
+          solutionSketch: generateSolutionSketch(automationType, aiPattern, item),
+          requiredIntegrations: generateIntegrations(item),
+          keyRisks: generateKeyRisks(automationType),
+          effectScore,
+          impactScore,
+          feasibilityScore,
+          confidenceScore,
+          effortLevel,
+          priorityScore,
+          hitlNeeded: automationType !== 'Full' ? 'Yes' : 'No',
+          nextAction: priorityScore >= 12 ? 'PoC' : priorityScore >= 10 ? 'Discovery' : 'Backlog',
+          notes: generateNotes(item)
+        };
+      });
+
+      // 상위 5개 PoC 후보 선정
+      const sortedByPriority = [...detailedAnalysis].sort((a, b) => b.priorityScore - a.priorityScore);
+      const topCandidates = sortedByPriority.slice(0, 5).map((item, index) => ({
+        rank: index + 1,
+        taskId: item.taskId,
+        taskName: item.taskName,
+        priorityScore: item.priorityScore,
+        automationType: item.automationCandidate,
+        aiPattern: item.aiPattern,
+        enablingTech: item.enablingTech,
+        effortLevel: item.effortLevel,
+        rationale: item.rationaleWhy
+      }));
+
+      // 요약 통계
+      const summary = {
+        fullAutomation: detailedAnalysis.filter(item => item.automationCandidate === 'Full').length,
+        partialAutomation: detailedAnalysis.filter(item => item.automationCandidate === 'Partial').length,
+        aiAssist: detailedAnalysis.filter(item => item.automationCandidate === 'Assist').length,
+        noGo: detailedAnalysis.filter(item => item.automationCandidate === 'No-go').length,
+        avgPriorityScore: detailedAnalysis.reduce((sum, item) => sum + item.priorityScore, 0) / detailedAnalysis.length
+      };
+
+      // 추가 질문
+      const additionalQuestions = [
+        '각 업무의 현재 SLA 및 품질 요구사항은 무엇인가요?',
+        '보안 및 규정 준수 요구사항이 있나요?',
+        '현재 사용 중인 시스템과의 API 연동이 가능한가요?',
+        '예외 상황 발생 비율과 처리 방식은 어떻게 되나요?',
+        '자동화 도입에 대한 사용자 수용도는 어떤가요?',
+        '업무 프로세스가 자주 변경되나요?',
+        '데이터 품질과 정합성 수준은 어떤가요?',
+        'ROI 측정을 위한 비용 정보를 공유할 수 있나요?'
+      ];
+
+      // 리스크 & 보안 체크리스트
+      const riskChecklist = [
+        '데이터 개인정보 및 보안 요구사항 검토',
+        '자동화 오류 시 비즈니스 영향도 평가',
+        '기존 시스템 의존성 및 연동 리스크',
+        '사용자 교육 및 변화관리 요구사항',
+        '성능 모니터링 및 경고 체계 구축',
+        '비상 대응 및 롤백 전략 수립'
+      ];
+
+      const result = {
+        summary,
+        topCandidates,
+        detailedAnalysis,
+        additionalQuestions,
+        riskChecklist
+      };
+
+      setAnalysisResult(result);
+      console.log('분석 결과:', result);
+
+    } catch (error) {
+      console.error('분석 오류:', error);
+    } finally {
+      setIsAnalyzing(false);
+    }
+  };
+
+  // 도움 함수들
+  const evaluateAutomationType = (item: ExtractedWorkItem): string => {
+    if (item.complexity === 'low' && (item.frequency === 'daily' || item.frequency === 'weekly')) {
+      return 'Full';
+    } else if (item.complexity === 'medium') {
+      return 'Partial';
+    } else if (item.complexity === 'high') {
+      return 'Assist';
+    } else {
+      return 'No-go';
+    }
+  };
+
+  const determineAIPattern = (item: ExtractedWorkItem): string => {
+    const patterns = ['Extract', 'Classify', 'Generate', 'Summarize', 'Match', 'Route', 'Forecast'];
+    if (item.description.includes('번역') || item.description.includes('작성')) return 'Generate';
+    if (item.description.includes('분류') || item.description.includes('분석')) return 'Classify';
+    if (item.description.includes('요약') || item.description.includes('정리')) return 'Summarize';
+    if (item.description.includes('추출') || item.description.includes('찾기')) return 'Extract';
+    return patterns[Math.floor(Math.random() * patterns.length)];
+  };
+
+  const determineEnablingTech = (pattern: string): string => {
+    const techMap: { [key: string]: string } = {
+      'Extract': 'LLM/Vision',
+      'Classify': 'LLM/Rules',
+      'Generate': 'LLM',
+      'Summarize': 'LLM',
+      'Match': 'LLM/Rules',
+      'Route': 'Rules/RPA',
+      'Forecast': 'LLM/ETL'
+    };
+    return techMap[pattern] || 'LLM/RPA';
+  };
+
+  const calculateEffectScore = (freq: number, volume: number, duration: number): number => {
+    const totalMinutesPerMonth = freq * volume * (duration / 60);
+    if (totalMinutesPerMonth > 2000) return 5;
+    if (totalMinutesPerMonth > 1000) return 4;
+    if (totalMinutesPerMonth > 500) return 3;
+    if (totalMinutesPerMonth > 100) return 2;
+    return 1;
+  };
+
+  const calculateImpactScore = (complexity: string, domain: string): number => {
+    let score = 3; // 기본
+    if (complexity === 'high') score += 1;
+    if (domain.includes('고객') || domain.includes('마케팅')) score += 1;
+    return Math.min(score, 5);
+  };
+
+  const calculateFeasibilityScore = (automationType: string): number => {
+    const scoreMap: { [key: string]: number } = {
+      'Full': 5,
+      'Partial': 4,
+      'Assist': 3,
+      'No-go': 1
+    };
+    return scoreMap[automationType] || 3;
+  };
+
+  const determineEffortLevel = (automationType: string, complexity: string): string => {
+    if (automationType === 'Full' && complexity === 'low') return 'S';
+    if (automationType === 'Partial' || (automationType === 'Full' && complexity === 'medium')) return 'M';
+    return 'L';
+  };
+
+  const generateRationale = (automationType: string, item: ExtractedWorkItem): string => {
+    if (automationType === 'Full') {
+      return `반복적이고 정형화된 업무로 Full 자동화 가능. ${item.frequency} 빈도로 높은 ROI 기대`;
+    } else if (automationType === 'Partial') {
+      return `사람의 판단이 필요한 영역이 있으나 대부분 자동화 가능. 효율성 증대 예상`;
+    } else if (automationType === 'Assist') {
+      return `복잡한 업무로 AI 도움 수준. 사람의 전문성과 AI의 속도 결합`;
+    } else {
+      return `현재 기술로는 자동화가 어려움. 대안 솔루션 검토 필요`;
+    }
+  };
+
+  const generateSolutionSketch = (automationType: string, aiPattern: string, item: ExtractedWorkItem): string => {
+    return `${aiPattern} AI 패턴을 활용한 ${automationType} 자동화 솔루션.
+${item.sourceFile !== 'manual_input' ? '문서 기반 ' : ''}업무 프로세스를 디지털화하여
+처리 시간 단축 및 오류 감소 달성`;
+  };
+
+  const generateIntegrations = (item: ExtractedWorkItem): string => {
+    const integrations = ['Email/Outlook', 'ERP 시스템', 'CRM', '문서 매니지먼트', 'Slack/Teams'];
+    return integrations[Math.floor(Math.random() * integrations.length)];
+  };
+
+  const generateKeyRisks = (automationType: string): string => {
+    if (automationType === 'Full') return 'Accuracy, ChangeMgmt';
+    if (automationType === 'Partial') return 'Compliance, ChangeMgmt';
+    return 'Accuracy, Compliance';
+  };
+
+  const generateNotes = (item: ExtractedWorkItem): string => {
+    return `${item.domain} 영역의 핵심 업무. 성공 시 다른 유사 업무에 확산 가능`;
+  };
+
+  const determineInputTypes = (item: ExtractedWorkItem): string => {
+    if (item.sourceFile.includes('.pdf')) return 'PDF';
+    if (item.sourceFile.includes('.docx')) return 'Document';
+    if (item.sourceFile.includes('.xlsx')) return 'Spreadsheet';
+    return 'Email/Form';
+  };
+
+  const determineOutput = (item: ExtractedWorkItem): string => {
+    return '대시보드, 보고서, 알림';
+  };
+
+  const determineCurrentTools = (item: ExtractedWorkItem): string => {
+    return 'Excel, Email, 수동 작업';
+  };
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
+      {/* 새로운 5그룹 진행현황 헤더 */}
+      <div className="bg-white border-b border-gray-200 sticky top-0 z-40">
+        <div className="max-w-7xl mx-auto px-6 py-4">
+          <div className="max-w-5xl mx-auto">
+            <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-lg">
+              {/* 헤더 */}
+              <div className="flex justify-between items-center mb-6">
+                <div className="flex items-center space-x-4">
+                  <div className="w-12 h-12 bg-blue-600 rounded-xl flex items-center justify-center">
+                    <span className="text-2xl text-white">{getCurrentGroup(currentStep).icon}</span>
+                  </div>
+                  <div>
+                    <h1 className="text-xl font-bold text-gray-900">{getCurrentGroup(currentStep).title}</h1>
+                    <p className="text-gray-600 text-sm">{getCurrentGroup(currentStep).description}</p>
+                  </div>
+                </div>
+                <div className="text-right">
+                  <div className="text-sm text-gray-500">진행률</div>
+                  <div className="text-lg font-bold text-blue-600">{Math.round((currentStep - 1) / 9 * 100)}%</div>
+                </div>
+              </div>
+
+              {/* 5그룹 단계 표시 */}
+              <div className="grid grid-cols-5 gap-4">
+                {WORKSHOP_GROUPS.map((group) => {
+                  const currentGroupProgress = getCurrentGroup(currentStep);
+                  const isCurrentGroup = group.id === currentGroupProgress.id;
+                  const isCompletedGroup = group.steps.every(step => step < currentStep);
+                  const hasStartedGroup = group.steps.some(step => step <= currentStep);
+
+                  return (
+                    <div
+                      key={group.id}
+                      className={`relative p-4 rounded-xl transition-all duration-300 ${
+                        isCurrentGroup
+                          ? 'bg-gradient-to-br from-blue-500 to-blue-600 border-2 border-blue-300 shadow-lg text-white'
+                          : isCompletedGroup
+                          ? 'bg-white border-2 border-green-200 shadow-md text-gray-800'
+                          : hasStartedGroup
+                          ? 'bg-white border-2 border-blue-200 shadow-md text-gray-800'
+                          : 'bg-gray-50 border-2 border-gray-200 text-gray-500'
+                      }`}
+                    >
+                      {/* 그룹 아이콘 */}
+                      <div className="text-center mb-3">
+                        <div className={`text-2xl mb-2 ${isCurrentGroup ? 'animate-pulse' : ''}`}>
+                          {group.icon}
+                        </div>
+                        <div className={`text-sm font-semibold ${
+                          isCurrentGroup ? 'text-white' :
+                          isCompletedGroup ? 'text-green-700' :
+                          hasStartedGroup ? 'text-blue-700' : 'text-gray-500'
+                        }`}>
+                          {group.title}
+                        </div>
+                      </div>
+
+                      {/* 완료 표시 */}
+                      {isCompletedGroup && (
+                        <div className="absolute -top-2 -right-2 w-6 h-6 bg-green-500 rounded-full flex items-center justify-center">
+                          <span className="text-white text-xs">✓</span>
+                        </div>
+                      )}
+
+                      {/* 현재 진행 표시 */}
+                      {isCurrentGroup && (
+                        <div className="absolute -top-2 -right-2 w-6 h-6 bg-yellow-400 rounded-full animate-pulse">
+                          <span className="block w-full h-full bg-yellow-400 rounded-full animate-ping"></span>
+                        </div>
+                      )}
+
+                      {/* 하위 단계 표시 */}
+                      <div className="mt-3 flex justify-center space-x-1">
+                        {group.steps.map((stepNum) => (
+                          <div
+                            key={stepNum}
+                            className={`w-2 h-2 rounded-full transition-all duration-200 ${
+                              stepNum < currentStep
+                                ? 'bg-green-400'
+                                : stepNum === currentStep
+                                ? isCurrentGroup ? 'bg-white animate-pulse' : 'bg-blue-400 animate-pulse'
+                                : isCurrentGroup ? 'bg-white/30' : 'bg-gray-300'
+                            }`}
+                          />
+                        ))}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* 메인 컨텐츠 */}
+      <div className="max-w-7xl mx-auto px-6 py-8">
+        <div className="max-w-5xl mx-auto">
+
+          {/* 단계 1: 시작하기 */}
+          {currentStep === 1 && (
+            <div className="space-y-8">
+              <div className="bg-white rounded-xl p-8 shadow-lg border border-gray-100">
+                <div className="text-center">
+                  <div className="text-6xl mb-6">🚀</div>
+                  <h2 className="text-3xl font-bold text-gray-900 mb-4">Work Redesign 워크샵에 오신 것을 환영합니다!</h2>
+                  <p className="text-xl text-gray-600 mb-8 leading-relaxed">
+                    이 워크샵은 반복적인 업무뿐만 아니라<br/>
+                    AI가 더 잘할 수 있는 업무들을 찾아내어 자동화하는 과정입니다.
+                  </p>
+
+                  <div className="bg-gradient-to-r from-blue-50 to-purple-50 rounded-lg p-6 mb-8">
+                    <h3 className="text-lg font-semibold text-purple-900 mb-3">🤖 데이터 분석, 문서 정리, 패턴 인식 같은</h3>
+                    <h3 className="text-lg font-semibold text-blue-900 mb-4">AI가 잘하는 업무는 AI에게 맡기고</h3>
+                    <p className="text-gray-700 leading-relaxed">
+                      팀장님께서는 우리 팀의 일의 현황과 앞으로의 계획, 그리고<br/>
+                      창의적이고 전략적인 업무에 집중해주세요
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {/* 워크샵 전 질문 섹션 */}
+              <div className="bg-white rounded-xl p-8 shadow-lg border border-gray-100">
+                <div className="text-center mb-8">
+                  <div className="text-4xl mb-4">💭</div>
+                  <h3 className="text-2xl font-bold text-gray-900 mb-4">시작하기 전에...</h3>
+                  <p className="text-lg text-gray-600 leading-relaxed">
+                    AI로 자동화를 하는만큼 생산성이 높아지고, 구성원과 팀장님의 성장도 가능해질 수 있습니다!
+                  </p>
+                </div>
+
+                <div className="bg-blue-50 border border-blue-200 rounded-lg p-6">
+                  <div className="mb-4">
+                    <h4 className="text-lg font-semibold text-gray-900 mb-3">잠깐, 혹시 이런 것들이 있나요?</h4>
+                    <div className="text-sm text-gray-600 space-y-1">
+                      <p>• 눈앞에 닥친 일을 처리해내느라 차마 하지 못하고 미뤄왔던 일</p>
+                      <p>• 팀원들이 새로 배우고 싶어하거나 해보면 좋겠다고 생각했던 일</p>
+                      <p>• 팀장님 스스로 '아 이거 해야하는데..' 하는 일</p>
+                    </div>
+                  </div>
+
+                  <textarea
+                    className="w-full p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none"
+                    rows={4}
+                    placeholder="부담 갖지 마시고, 혹시 생각나는 것이 있다면 자유롭게 적어보세요 (선택사항)"
+                  />
+                </div>
+
+                <div className="mt-8 text-center">
+                  <button
+                    onClick={nextStep}
+                    className="bg-blue-600 text-white px-8 py-4 rounded-lg font-semibold text-lg hover:bg-blue-700 transition-colors shadow-lg"
+                  >
+                    다음 단계로 →
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* 단계 2: 업무영역 정의 */}
+          {currentStep === 2 && (
+            <div className="space-y-8">
+              <div className="text-center mb-8">
+                <div className="text-5xl mb-4">🎯</div>
+                <h2 className="text-3xl font-bold text-gray-900 mb-4">업무 영역을 정의해주세요</h2>
+                <p className="text-xl text-gray-600 leading-relaxed">
+                  팀 내에서 돌아가는 업무의 특성을 가장 잘 반영하는 방식으로<br/>
+                  팀장님이 가장 잘 알고 있는 방식으로 정의해 주세요
+                </p>
+              </div>
+
+              {/* 업무영역 정의 가이드 */}
+              <div className="bg-white rounded-xl p-8 shadow-lg border border-gray-100">
+                <div className="text-center mb-6">
+                  <h3 className="text-2xl font-bold text-gray-900 mb-3">💡 업무 영역 정의 방법 가이드</h3>
+                  <p className="text-gray-600">팀의 상황에 가장 적합한 방식을 선택해서 업무 영역을 나누어 보세요</p>
+                </div>
+
+                <div className="grid md:grid-cols-2 gap-6 mb-8">
+                  {/* 시계열별 */}
+                  <div className="bg-blue-50 border border-blue-200 rounded-lg p-6">
+                    <div className="flex items-center mb-3">
+                      <span className="text-2xl mr-3">📅</span>
+                      <h4 className="text-lg font-semibold text-gray-900">시계열별</h4>
+                    </div>
+                    <p className="text-sm text-gray-600 mb-3">업무가 진행되는 시간 순서대로 분류</p>
+                    <div className="bg-white rounded p-3 text-sm">
+                      <strong>예시:</strong><br/>
+                      • 월초 계획 수립<br/>
+                      • 월중 실행 및 모니터링<br/>
+                      • 월말 결과 정리 및 보고
+                    </div>
+                  </div>
+
+                  {/* 팀원 역할별 */}
+                  <div className="bg-green-50 border border-green-200 rounded-lg p-6">
+                    <div className="flex items-center mb-3">
+                      <span className="text-2xl mr-3">👥</span>
+                      <h4 className="text-lg font-semibold text-gray-900">팀원 역할별</h4>
+                    </div>
+                    <p className="text-sm text-gray-600 mb-3">팀원의 직무나 역할에 따라 분류</p>
+                    <div className="bg-white rounded p-3 text-sm">
+                      <strong>예시:</strong><br/>
+                      • 영업팀 고객 관리<br/>
+                      • 마케팅팀 캠페인 운영<br/>
+                      • 운영팀 데이터 분석
+                    </div>
+                  </div>
+
+                  {/* 프로세스별 */}
+                  <div className="bg-purple-50 border border-purple-200 rounded-lg p-6">
+                    <div className="flex items-center mb-3">
+                      <span className="text-2xl mr-3">⚙️</span>
+                      <h4 className="text-lg font-semibold text-gray-900">프로세스별</h4>
+                    </div>
+                    <p className="text-sm text-gray-600 mb-3">업무 프로세스 단계에 따라 분류</p>
+                    <div className="bg-white rounded p-3 text-sm">
+                      <strong>예시:</strong><br/>
+                      • 고객 문의 접수<br/>
+                      • 문의 분류 및 배정<br/>
+                      • 답변 작성 및 발송
+                    </div>
+                  </div>
+
+                  {/* 보고라인별 */}
+                  <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-6">
+                    <div className="flex items-center mb-3">
+                      <span className="text-2xl mr-3">📊</span>
+                      <h4 className="text-lg font-semibold text-gray-900">보고라인별</h4>
+                    </div>
+                    <p className="text-sm text-gray-600 mb-3">보고 체계나 조직 구조에 따라 분류</p>
+                    <div className="bg-white rounded p-3 text-sm">
+                      <strong>예시:</strong><br/>
+                      • 임원 보고 업무<br/>
+                      • 타 부서 협업 업무<br/>
+                      • 팀 내부 운영 업무
+                    </div>
+                  </div>
+
+                  {/* 카운터파트별 */}
+                  <div className="bg-red-50 border border-red-200 rounded-lg p-6">
+                    <div className="flex items-center mb-3">
+                      <span className="text-2xl mr-3">🤝</span>
+                      <h4 className="text-lg font-semibold text-gray-900">카운터파트별</h4>
+                    </div>
+                    <p className="text-sm text-gray-600 mb-3">업무 대상이나 협업 파트너별로 분류</p>
+                    <div className="bg-white rounded p-3 text-sm">
+                      <strong>예시:</strong><br/>
+                      • 고객 대응 업무<br/>
+                      • 협력업체 관리<br/>
+                      • 내부 팀 지원
+                    </div>
+                  </div>
+
+                  {/* 업무 성격별 */}
+                  <div className="bg-indigo-50 border border-indigo-200 rounded-lg p-6">
+                    <div className="flex items-center mb-3">
+                      <span className="text-2xl mr-3">🎭</span>
+                      <h4 className="text-lg font-semibold text-gray-900">업무 성격별</h4>
+                    </div>
+                    <p className="text-sm text-gray-600 mb-3">업무의 특성이나 유형에 따라 분류</p>
+                    <div className="bg-white rounded p-3 text-sm">
+                      <strong>예시:</strong><br/>
+                      • 반복적 정형업무<br/>
+                      • 창의적 기획업무<br/>
+                      • 분석 및 리포팅
+                    </div>
+                  </div>
+                </div>
+
+                <div className="bg-gray-50 border border-gray-200 rounded-lg p-6">
+                  <div className="flex items-start">
+                    <span className="text-2xl mr-3 mt-1">💡</span>
+                    <div>
+                      <h4 className="text-lg font-semibold text-gray-900 mb-2">어떤 방식을 선택해야 할까요?</h4>
+                      <p className="text-gray-700 leading-relaxed">
+                        위의 방식들을 조합해서 사용하거나, 팀의 특성에 맞는 고유한 방식을 사용해도 좋습니다.
+                        중요한 것은 <strong>팀원 모두가 이해하기 쉽고, 실제 업무 흐름을 잘 반영하는 방식</strong>을 선택하는 것입니다.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* 업무영역 입력 섹션 */}
+              <div className="bg-white rounded-xl p-8 shadow-lg border border-gray-100 mb-8">
+                <div className="text-center mb-6">
+                  <h3 className="text-xl font-bold text-gray-900 mb-2">업무 영역 입력</h3>
+                  <p className="text-gray-600">주요 업무 영역을 최대 10가지까지 입력해주세요. (첫 번째는 필수)</p>
+                </div>
+                <div className="space-y-4">
+                  {workshop.domains.map((domain, index) => (
+                    <div key={index} className="flex items-center space-x-4">
+                      <div className="flex-1">
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          업무 영역 {index + 1} {index === 0 && <span className="text-red-500">*</span>}
+                        </label>
+                        <input
+                          type="text"
+                          value={domain}
+                          onChange={(e) => {
+                            const newDomains = [...workshop.domains];
+                            newDomains[index] = e.target.value;
+                            setWorkshop(prev => ({ ...prev, domains: newDomains }));
+                            setError('');
+                          }}
+                          className="w-full p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-lg"
+                          placeholder={index === 0 ? "예: 고객 문의 처리" : `업무 영역 ${index + 1} (선택사항)`}
+                        />
+                      </div>
+                      {workshop.domains.length > 1 && (
+                        <button
+                          onClick={() => removeDomain(index)}
+                          className="flex-shrink-0 w-8 h-8 bg-red-500 text-white rounded-full flex items-center justify-center hover:bg-red-600 transition-colors"
+                        >
+                          ✕
+                        </button>
+                      )}
+                    </div>
+                  ))}
+
+                  {workshop.domains.length < 10 && (
+                    <button
+                      onClick={addDomain}
+                      className="flex items-center space-x-2 text-blue-600 hover:text-blue-700 font-medium"
+                    >
+                      <div className="w-8 h-8 border-2 border-dashed border-blue-600 rounded-full flex items-center justify-center">
+                        +
+                      </div>
+                      <span>업무 영역 추가</span>
+                    </button>
+                  )}
+                </div>
+
+                {error && (
+                  <div className="mt-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded-lg">
+                    {error}
+                  </div>
+                )}
+
+                <div className="flex justify-between mt-8">
+                  <button
+                    onClick={prevStep}
+                    className="bg-gray-500 text-white px-6 py-3 rounded-lg font-semibold hover:bg-gray-600 transition-colors"
+                  >
+                    ← 이전
+                  </button>
+                  <button
+                    onClick={nextStep}
+                    disabled={!workshop.domains[0]}
+                    className="bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed"
+                  >
+                    다음 →
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* 단계 3: 문서 & 내용 입력 */}
+          {currentStep === 3 && (
+            <div className="space-y-6">
+              <div className="text-center mb-8">
+                <div className="text-5xl mb-4">📁</div>
+                <h2 className="text-2xl font-bold text-gray-900 mb-2">업무 내용을 입력해주세요</h2>
+                <p className="text-gray-600">업무 관련 문서를 업로드하거나, 직접 업무 내용을 작성해서 AI 분석을 받아보세요</p>
+              </div>
+
+              <div className="bg-white rounded-xl p-8 shadow-lg border border-gray-100 mb-8">
+                {/* 문서 업로드 섹션 */}
+                <div className="mb-8">
+                  <h3 className="text-lg font-semibold text-gray-800 mb-4">📁 업무 관련 문서 업로드</h3>
+                  <p className="text-sm text-gray-500 mb-4">업무 목록, 일정표, 보고서 등 (지원 형식: .docx, .pdf, .xlsx | 최대 10개, 파일당 50MB)</p>
+                  <div
+                    className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-blue-400 hover:bg-blue-50 cursor-pointer mb-6 transition-colors"
+                    onClick={() => fileInputRef.current?.click()}
+                    onDragOver={handleDragOver}
+                    onDragEnter={handleDragEnter}
+                    onDragLeave={handleDragLeave}
+                    onDrop={handleDrop}
+                  >
+                    <div className="text-4xl mb-4">📄</div>
+                    <p className="text-sm text-gray-700 mb-1">파일을 여기로 드래그하거나 클릭하여 업로드</p>
+                    <p className="text-xs text-gray-500">DOCX, PDF, XLSX, TXT (최대 50MB)</p>
+                    <input
+                      ref={fileInputRef}
+                      type="file"
+                      multiple
+                      accept=".docx,.pdf,.xlsx,.xls,.txt"
+                      onChange={handleFileSelect}
+                      className="hidden"
+                    />
+                  </div>
+
+                  {/* 업로드된 파일 목록 */}
+                  {uploadedFiles.length > 0 && (
+                    <div>
+                      <h4 className="font-semibold text-gray-800 mb-4">업로드된 파일 ({uploadedFiles.length}개)</h4>
+                      <div className="space-y-2">
+                        {uploadedFiles.map((uploadedFile) => (
+                          <div key={uploadedFile.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                            <div className="flex items-center space-x-3">
+                              <span className="text-2xl">{getFileIcon(uploadedFile.file.name)}</span>
+                              <div>
+                                <p className="font-medium text-gray-800">{uploadedFile.file.name}</p>
+                                <p className="text-sm text-gray-500">
+                                  {uploadedFile.file.size === 0
+                                    ? '⚠️ 파일 크기: 0 bytes (업로드 실패)'
+                                    : uploadedFile.file.size < 1024
+                                      ? `${uploadedFile.file.size} bytes`
+                                      : uploadedFile.file.size < 1024 * 1024
+                                        ? `${(uploadedFile.file.size / 1024).toFixed(2)} KB`
+                                        : `${(uploadedFile.file.size / 1024 / 1024).toFixed(2)} MB`
+                                  }
+                                </p>
+                              </div>
+                            </div>
+                            <button
+                              onClick={() => removeFile(uploadedFile.id)}
+                              className="text-red-500 hover:text-red-700"
+                            >
+                              ✕
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                {/* 구분선 */}
+                <div className="border-t border-gray-200 my-6 pt-6">
+                  <h3 className="text-lg font-semibold text-gray-800 mb-4">✏️ 업무 내용 직접 입력</h3>
+
+                  {/* 탭 선택 */}
+                  <div className="flex space-x-2 mb-4">
+                    <button
+                      onClick={() => setActiveTextInputTab('general')}
+                      className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+                        activeTextInputTab === 'general'
+                          ? 'bg-blue-600 text-white'
+                          : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                      }`}
+                    >
+                      전체 업무
+                    </button>
+                    {workshop.domains.filter(d => d.trim()).map((domain) => (
+                      <button
+                        key={domain}
+                        onClick={() => setActiveTextInputTab(domain)}
+                        className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+                          activeTextInputTab === domain
+                            ? 'bg-blue-600 text-white'
+                            : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                        }`}
+                      >
+                        {domain}
+                      </button>
+                    ))}
+                  </div>
+
+                  {/* 텍스트 입력 영역 */}
+                  <div className="space-y-4">
+                    {activeTextInputTab === 'general' ? (
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          전체 업무 내용 (업무 목록, 할 일, 반복 작업 등을 자유롭게 입력하세요)
+                        </label>
+                        <textarea
+                          value={manualTaskInput['general'] || ''}
+                          onChange={(e) => setManualTaskInput(prev => ({ ...prev, general: e.target.value }))}
+                          placeholder="예시:
+• 매주 월요일 오전 마케팅 데이터 정리 및 주간 보고서 작성 (2시간)
+• 고객 문의 이메일 확인 및 답변 (일일 30분)
+• 소셜미디어 콘텐츠 기획 및 업로드 (주 3회, 회당 1시간)
+• 팀 회의록 정리 및 공유 (주간 1시간)
+• 경쟁사 분석 자료 수집 (월간 4시간)
+
+또는 기존 업무 목록을 복사해서 붙여넣기 하세요."
+                          rows={12}
+                          className="w-full p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none"
+                        />
+                      </div>
+                    ) : (
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          {activeTextInputTab} 영역의 구체적인 업무들
+                        </label>
+                        <textarea
+                          value={manualTaskInput[activeTextInputTab] || ''}
+                          onChange={(e) => setManualTaskInput(prev => ({ ...prev, [activeTextInputTab]: e.target.value }))}
+                          placeholder={`${activeTextInputTab} 영역의 구체적인 업무들을 작성해주세요:
+
+예시:
+• 업무명 - 소요시간 - 빈도
+• 고객 응대 - 일일 2시간
+• 데이터 입력 - 주간 4시간
+• 보고서 작성 - 월간 8시간`}
+                          rows={8}
+                          className="w-full p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none"
+                        />
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {/* 입력 상태 종합 표시 */}
+                {(uploadedFiles.length > 0 || Object.values(manualTaskInput).some(text => text && text.trim().length > 0)) && (
+                  <div className="mt-6 p-4 bg-gradient-to-r from-blue-50 to-green-50 rounded-lg border border-blue-200">
+                    <h4 className="text-sm font-semibold text-gray-800 mb-3 flex items-center">
+                      ✅ 입력된 내용
+                    </h4>
+                    <div className="grid md:grid-cols-2 gap-4">
+                      <div className="flex items-center space-x-2">
+                        <div className={`w-3 h-3 rounded-full ${uploadedFiles.length > 0 ? 'bg-green-500' : 'bg-gray-300'}`}></div>
+                        <span className="text-sm text-gray-700">
+                          📁 업로드된 파일: <strong>{uploadedFiles.length}개</strong>
+                        </span>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <div className={`w-3 h-3 rounded-full ${Object.values(manualTaskInput).some(text => text && text.trim().length > 0) ? 'bg-green-500' : 'bg-gray-300'}`}></div>
+                        <span className="text-sm text-gray-700">
+                          ✏️ 입력된 텍스트: <strong>{Object.values(manualTaskInput).reduce((total, text) => total + (text?.trim().length || 0), 0)}자</strong>
+                          {Object.entries(manualTaskInput).filter(([_, text]) => text && text.trim().length > 0).length > 0 && (
+                            <span className="text-blue-600 ml-1">
+                              ({Object.entries(manualTaskInput).filter(([_, text]) => text && text.trim().length > 0).length}개 영역)
+                            </span>
+                          )}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {error && (
+                  <div className="mt-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded-lg">
+                    {error}
+                  </div>
+                )}
+
+                <div className="flex justify-between mt-8">
+                  <button
+                    onClick={prevStep}
+                    className="bg-gray-500 text-white px-6 py-3 rounded-lg font-semibold hover:bg-gray-600 transition-colors"
+                  >
+                    ← 이전
+                  </button>
+                  <button
+                    onClick={async () => {
+                      if (uploadedFiles.length > 0 || Object.values(manualTaskInput).some(text => text && text.trim().length > 0)) {
+                        await analyzeWorkContent();
+                      }
+                    }}
+                    disabled={loading || (uploadedFiles.length === 0 && Object.values(manualTaskInput).every(text => !text || text.trim().length === 0))}
+                    className="bg-green-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-green-700 transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed"
+                  >
+                    {loading ? '분석 중...' : (() => {
+                      const files = uploadedFiles.length;
+                      const textInputs = Object.values(manualTaskInput).filter(text => text && text.trim().length > 0).length;
+
+                      if (files > 0 || textInputs > 0) {
+                        if (files > 0 && textInputs > 0) {
+                          return `AI 분석 시작 (파일 ${files}개 + 텍스트 ${textInputs}개)`;
+                        } else if (files > 0) {
+                          return `AI 분석 시작 (파일 ${files}개)`;
+                        } else {
+                          return `AI 분석 시작 (텍스트 ${textInputs}개)`;
+                        }
+                      } else {
+                        return '파일 업로드 또는 텍스트 입력 필요';
+                      }
+                    })()}
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* 단계 4: AI 분석 중 */}
+          {currentStep === 4 && (
+            <div className="space-y-6">
+              <div className="text-center mb-8">
+                <div className="text-5xl mb-4 animate-pulse">🤖</div>
+                <h2 className="text-2xl font-bold text-gray-900 mb-2">AI가 업무를 분석하고 있습니다...</h2>
+                <p className="text-gray-600">{analysisStatus || '분석을 준비하고 있습니다'}</p>
+              </div>
+
+              <div className="bg-white rounded-xl p-8 shadow-lg border border-gray-100 mb-8">
+                <div className="mb-6">
+                  <div className="flex justify-between items-center mb-2">
+                    <span className="text-sm font-medium text-gray-700">분석 진행률</span>
+                    <span className="text-sm text-gray-500">{analysisProgress}%</span>
+                  </div>
+                  <div className="w-full bg-gray-200 rounded-full h-3">
+                    <div
+                      className="bg-blue-600 h-3 rounded-full transition-all duration-300"
+                      style={{ width: `${analysisProgress}%` }}
+                    />
+                  </div>
+                </div>
+
+                <div className="text-center">
+                  <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4" />
+                  <p className="text-gray-600">잠시만 기다려주세요...</p>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* 단계 5: 업무 현황 검토 */}
+          {currentStep === 5 && (
+            <div className="space-y-6">
+              <div className="text-center mb-8">
+                <div className="text-5xl mb-4">🔍</div>
+                <h2 className="text-2xl font-bold text-gray-900 mb-2">업무 현황을 검토해주세요</h2>
+                <p className="text-gray-600">문서에서 추출한 업무들을 업무영역별로 정리했습니다. 카드를 클릭해서 수정하거나 드래그해서 다른 영역으로 이동할 수 있습니다.</p>
+              </div>
+
+              <div className="bg-white rounded-xl p-8 shadow-lg border border-gray-100 mb-8">
+                {/* 새 업무 추가 버튼 */}
+                <div className="mb-6 flex justify-between items-center">
+                  <div className="flex items-center space-x-4">
+                    <h3 className="text-lg font-semibold text-gray-800">추출된 업무 목록</h3>
+                    <div className="bg-blue-100 text-blue-800 text-sm px-3 py-1 rounded-full font-medium">
+                      총 {extractedWorkItems.length}개 업무
+                    </div>
+                  </div>
+                  <button
+                    onClick={() => setEditingTask({
+                      id: `new_${Date.now()}`,
+                      title: '',
+                      description: '',
+                      domain: workshop.domains.filter(d => d.trim())[0] || '',
+                      frequency: 'weekly',
+                      timeSpent: 1,
+                      complexity: 'medium' as 'medium',
+                      sourceFile: 'manual_input'
+                    })}
+                    className="bg-green-600 text-white px-4 py-2 rounded-lg font-semibold hover:bg-green-700 transition-colors flex items-center space-x-2"
+                  >
+                    <span>+</span>
+                    <span>새 업무 추가</span>
+                  </button>
+                </div>
+
+                {/* 칸반 보드 스타일 그리드 */}
+                <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6 mb-8">
+                  {workshop.domains.filter(domain => domain.trim()).map((domain) => {
+                    const domainItems = extractedWorkItems.filter(item => item.domain === domain);
+
+                    return (
+                      <div key={domain} className="bg-gray-50 rounded-xl p-4 h-fit">
+                        {/* 영역 헤더 */}
+                        <div className="flex items-center justify-between mb-4">
+                          <div className="flex items-center">
+                            <div className="w-3 h-3 bg-blue-500 rounded-full mr-2"></div>
+                            <h3 className="text-lg font-semibold text-gray-800">{domain}</h3>
+                          </div>
+                          <div className="bg-blue-100 text-blue-800 text-sm px-2 py-1 rounded-full font-medium">
+                            {domainItems.length}개
+                          </div>
+                        </div>
+
+                        {/* 업무 카드들 */}
+                        <div className="space-y-3"
+                             onDragOver={(e) => e.preventDefault()}
+                             onDrop={(e) => {
+                               e.preventDefault();
+                               if (draggedTask && draggedTask.domain !== domain) {
+                                 handleTaskMove(draggedTask.id, domain);
+                               }
+                               setDraggedTask(null);
+                             }}>
+                          {domainItems.map((item) => (
+                            <div
+                              key={item.id}
+                              className={`bg-white p-4 rounded-lg border border-gray-200 hover:border-blue-300 cursor-pointer transition-all ${
+                                draggedTask?.id === item.id ? 'opacity-50 transform scale-95' : ''
+                              }`}
+                              draggable
+                              onDragStart={() => setDraggedTask(item)}
+                              onDragEnd={() => setDraggedTask(null)}
+                              onClick={() => setEditingTask(item)}
+                            >
+                              <div className="flex justify-between items-start mb-2">
+                                <h4 className="font-medium text-gray-800 flex-1 mr-2">{item.title}</h4>
+                                <div className={`px-2 py-1 rounded text-xs font-medium ${
+                                  item.complexity === 'high' ? 'bg-red-100 text-red-800' :
+                                  item.complexity === 'medium' ? 'bg-yellow-100 text-yellow-800' :
+                                  'bg-green-100 text-green-800'
+                                }`}>
+                                  {item.complexity}
+                                </div>
+                              </div>
+                              <p className="text-sm text-gray-600 mb-3 line-clamp-2">{item.description}</p>
+                              <div className="flex justify-between items-center text-xs text-gray-500">
+                                <span>⏱️ {item.timeSpent}h/{translateFrequency(item.frequency)}</span>
+                                <span>📄 {item.sourceFile}</span>
+                              </div>
+                              <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                                <div className="text-xs text-gray-400">🖱️ 클릭 수정 | ↔️ 드래그 이동</div>
+                              </div>
+                            </div>
+                          ))}
+
+                          {domainItems.length === 0 && (
+                            <div className="text-center py-8 text-gray-400">
+                              <div className="text-3xl mb-2">📭</div>
+                              <p>추출된 업무가 없습니다</p>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+
+                {/* 업무 요약 */}
+                <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-6 mb-6">
+                  <h4 className="text-lg font-semibold text-gray-800 mb-4">📊 업무 요약</h4>
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <div className="text-center">
+                      <div className="text-2xl font-bold text-blue-600">{extractedWorkItems.length}</div>
+                      <div className="text-sm text-gray-500">총 업무</div>
+                    </div>
+                    <div className="text-center">
+                      <div className="text-2xl font-bold text-green-600">
+                        {Math.round(extractedWorkItems.reduce((sum, item) => sum + item.timeSpent, 0))}
+                      </div>
+                      <div className="text-sm text-gray-500">총 시간/주</div>
+                    </div>
+                    <div className="text-center">
+                      <div className="text-2xl font-bold text-orange-600">
+                        {extractedWorkItems.filter(item => item.complexity === 'high').length}
+                      </div>
+                      <div className="text-sm text-gray-500">복잡 업무</div>
+                    </div>
+                    <div className="text-center">
+                      <div className="text-2xl font-bold text-purple-600">{workshop.domains.filter(d => d.trim()).length}</div>
+                      <div className="text-sm text-gray-500">업무 영역</div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="flex justify-between">
+                  <button
+                    onClick={prevStep}
+                    className="bg-gray-500 text-white px-6 py-3 rounded-lg font-semibold hover:bg-gray-600 transition-colors"
+                  >
+                    ← 이전
+                  </button>
+                  <button
+                    onClick={nextStep}
+                    disabled={extractedWorkItems.length === 0}
+                    className="bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed flex items-center"
+                  >
+                    <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                    </svg>
+                    업무 상세화 하기 ({extractedWorkItems.length}개 업무)
+                  </button>
+                </div>
+              </div>
+
+              {/* 업무 수정 모달 */}
+              {editingTask && (
+                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                  <div className="bg-white rounded-xl p-8 max-w-lg w-full mx-4">
+                    <h3 className="text-xl font-bold text-gray-900 mb-6">업무 수정</h3>
+
+                    <div className="space-y-4">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">업무 제목</label>
+                        <input
+                          type="text"
+                          value={editingTask.title}
+                          onChange={(e) => setEditingTask({...editingTask, title: e.target.value})}
+                          className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">업무 설명</label>
+                        <textarea
+                          value={editingTask.description}
+                          onChange={(e) => setEditingTask({...editingTask, description: e.target.value})}
+                          rows={3}
+                          className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                        />
+                      </div>
+
+                      <div className="grid grid-cols-2 gap-4">
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-2">소요 시간</label>
+                          <input
+                            type="number"
+                            value={editingTask.timeSpent}
+                            onChange={(e) => setEditingTask({...editingTask, timeSpent: parseInt(e.target.value) || 1})}
+                            min="1"
+                            className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                          />
+                        </div>
+
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-2">빈도</label>
+                          <select
+                            value={editingTask.frequency}
+                            onChange={(e) => setEditingTask({...editingTask, frequency: e.target.value})}
+                            className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                          >
+                            <option value="daily">일일</option>
+                            <option value="weekly">주간</option>
+                            <option value="monthly">월간</option>
+                          </select>
+                        </div>
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">복잡도</label>
+                        <select
+                          value={editingTask.complexity}
+                          onChange={(e) => setEditingTask({...editingTask, complexity: e.target.value as 'low' | 'medium' | 'high'})}
+                          className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                        >
+                          <option value="low">낮음</option>
+                          <option value="medium">보통</option>
+                          <option value="high">높음</option>
+                        </select>
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">업무 영역</label>
+                        <select
+                          value={editingTask.domain}
+                          onChange={(e) => setEditingTask({...editingTask, domain: e.target.value})}
+                          className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                        >
+                          {workshop.domains.filter(d => d.trim()).map(domain => (
+                            <option key={domain} value={domain}>{domain}</option>
+                          ))}
+                        </select>
+                      </div>
+                    </div>
+
+                    <div className="flex space-x-4 mt-8">
+                      <button
+                        onClick={() => {
+                          if (editingTask.id.startsWith('new_')) {
+                            // 새 업무 추가
+                            const newTask = {
+                              ...editingTask,
+                              id: `manual_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
+                            };
+                            setExtractedWorkItems(prev => [...prev, newTask]);
+                          } else {
+                            // 기존 업무 수정
+                            updateTask(editingTask);
+                          }
+                          setEditingTask(null);
+                        }}
+                        className="flex-1 bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors"
+                      >
+                        {editingTask.id.startsWith('new_') ? '추가' : '저장'}
+                      </button>
+                      <button
+                        onClick={() => setEditingTask(null)}
+                        className="flex-1 bg-gray-500 text-white py-3 rounded-lg font-semibold hover:bg-gray-600 transition-colors"
+                      >
+                        취소
+                      </button>
+                      {!editingTask.id.startsWith('new_') && (
+                        <button
+                          onClick={() => {
+                            deleteTask(editingTask.id);
+                            setEditingTask(null);
+                          }}
+                          className="bg-red-500 text-white px-4 py-3 rounded-lg font-semibold hover:bg-red-600 transition-colors"
+                        >
+                          삭제
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* 단계 6: 업무 상세화 */}
+          {currentStep === 6 && (
+            <div className="space-y-6">
+              <div className="text-center mb-8">
+                <div className="text-5xl mb-4">📝</div>
+                <h2 className="text-2xl font-bold text-gray-900 mb-2">AI 업무 분석 및 상세화</h2>
+                <p className="text-gray-600">업무 목록을 AI가 엔터프라이즈 수준으로 분석하고 자동화 방안을 제안합니다</p>
+              </div>
+
+              <div className="bg-white rounded-xl p-8 shadow-lg border border-gray-100 mb-8">
+                {/* 분석 시작 버튼 */}
+                <div className="mb-8">
+                  <div className="bg-gradient-to-r from-blue-50 to-purple-50 rounded-lg p-6 mb-6">
+                    <h3 className="text-lg font-semibold text-gray-800 mb-3">🤖 AI 업무 분석 엔진</h3>
+                    <p className="text-gray-600 mb-4">당신의 업무 목록을 엔터프라이즈 자동화 전문가 수준으로 분석합니다.</p>
+
+                    <div className="grid md:grid-cols-3 gap-4 mb-6">
+                      <div className="bg-white rounded-lg p-4 shadow-sm">
+                        <div className="text-2xl mb-2">📋</div>
+                        <h4 className="font-semibold text-sm mb-1">정규화 테이블</h4>
+                        <p className="text-xs text-gray-600">업무 데이터 구조화</p>
+                      </div>
+                      <div className="bg-white rounded-lg p-4 shadow-sm">
+                        <div className="text-2xl mb-2">⚙️</div>
+                        <h4 className="font-semibold text-sm mb-1">자동화 적합성</h4>
+                        <p className="text-xs text-gray-600">Full/Partial/Assist 분류</p>
+                      </div>
+                      <div className="bg-white rounded-lg p-4 shadow-sm">
+                        <div className="text-2xl mb-2">🎯</div>
+                        <h4 className="font-semibold text-sm mb-1">우선순위 점수</h4>
+                        <p className="text-xs text-gray-600">ROI 기반 랭킹</p>
+                      </div>
+                    </div>
+
+                    <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6">
+                      <h4 className="text-sm font-semibold text-yellow-800 mb-2">현재 데이터</h4>
+                      <div className="grid grid-cols-2 md:grid-cols-4 gap-2 text-sm">
+                        <div className="text-yellow-700">업무 수: <span className="font-bold">{extractedWorkItems.length}개</span></div>
+                        <div className="text-yellow-700">영역 수: <span className="font-bold">{workshop.domains.filter(d => d.trim()).length}개</span></div>
+                        <div className="text-yellow-700">총 시간: <span className="font-bold">{extractedWorkItems.reduce((sum, item) => sum + item.timeSpent, 0)}h/주</span></div>
+                        <div className="text-yellow-700">파일 수: <span className="font-bold">{uploadedFiles.length}개</span></div>
+                      </div>
+                    </div>
+
+                    <button
+                      onClick={startDetailedAnalysis}
+                      disabled={isAnalyzing || extractedWorkItems.length === 0}
+                      className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-4 rounded-lg font-semibold hover:from-blue-700 hover:to-purple-700 transition-all disabled:bg-gray-300 disabled:cursor-not-allowed flex items-center justify-center space-x-3"
+                    >
+                      {isAnalyzing ? (
+                        <>
+                          <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white" />
+                          <span>분석 중...</span>
+                        </>
+                      ) : (
+                        <>
+                          <span>🤖</span>
+                          <span>AI 업무 분석 시작 ({extractedWorkItems.length}개 업무)</span>
+                        </>
+                      )}
+                    </button>
+                  </div>
+                </div>
+
+                {/* 분석 결과 표시 */}
+                {analysisResult && (
+                  <div className="space-y-6">
+                    <h3 className="text-xl font-bold text-gray-800 flex items-center space-x-2">
+                      <span>📊</span>
+                      <span>엔터프라이즈 자동화 분석 결과</span>
+                    </h3>
+
+                    {/* 요약 대시보드 */}
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+                      <div className="bg-green-50 rounded-lg p-4 text-center">
+                        <div className="text-2xl font-bold text-green-600">{analysisResult.summary.fullAutomation}</div>
+                        <div className="text-sm text-green-800">Full 자동화</div>
+                      </div>
+                      <div className="bg-blue-50 rounded-lg p-4 text-center">
+                        <div className="text-2xl font-bold text-blue-600">{analysisResult.summary.partialAutomation}</div>
+                        <div className="text-sm text-blue-800">Partial 자동화</div>
+                      </div>
+                      <div className="bg-yellow-50 rounded-lg p-4 text-center">
+                        <div className="text-2xl font-bold text-yellow-600">{analysisResult.summary.aiAssist}</div>
+                        <div className="text-sm text-yellow-800">AI 도움</div>
+                      </div>
+                      <div className="bg-purple-50 rounded-lg p-4 text-center">
+                        <div className="text-2xl font-bold text-purple-600">{analysisResult.summary.avgPriorityScore.toFixed(1)}</div>
+                        <div className="text-sm text-purple-800">평균 우선순위</div>
+                      </div>
+                    </div>
+
+                    {/* Top PoC 후보 */}
+                    <div className="bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl p-6">
+                      <h4 className="text-lg font-bold text-gray-800 mb-4 flex items-center space-x-2">
+                        <span>🏆</span>
+                        <span>Top 5 PoC 후보 (우선순위순)</span>
+                      </h4>
+                      <div className="space-y-3">
+                        {analysisResult.topCandidates.map((candidate: any, index: number) => (
+                          <div key={candidate.taskId} className="bg-white rounded-lg p-4 shadow-sm">
+                            <div className="flex items-center justify-between mb-2">
+                              <div className="flex items-center space-x-3">
+                                <div className="w-8 h-8 bg-green-600 text-white rounded-full flex items-center justify-center font-bold text-sm">
+                                  {index + 1}
+                                </div>
+                                <h5 className="font-semibold text-gray-800">{candidate.taskName}</h5>
+                              </div>
+                              <div className="flex items-center space-x-2">
+                                <span className="bg-blue-100 text-blue-800 px-2 py-1 rounded text-xs font-medium">
+                                  점수: {candidate.priorityScore}
+                                </span>
+                                <span className={`px-2 py-1 rounded text-xs font-medium ${
+                                  candidate.automationType === 'Full' ? 'bg-green-100 text-green-800' :
+                                  candidate.automationType === 'Partial' ? 'bg-blue-100 text-blue-800' :
+                                  'bg-yellow-100 text-yellow-800'
+                                }`}>
+                                  {candidate.automationType}
+                                </span>
+                              </div>
+                            </div>
+                            <p className="text-sm text-gray-600 mb-2">{candidate.rationale}</p>
+                            <div className="flex flex-wrap gap-2">
+                              <span className="text-xs bg-purple-100 text-purple-800 px-2 py-1 rounded">
+                                AI 패턴: {candidate.aiPattern}
+                              </span>
+                              <span className="text-xs bg-orange-100 text-orange-800 px-2 py-1 rounded">
+                                기술: {candidate.enablingTech}
+                              </span>
+                              <span className="text-xs bg-gray-100 text-gray-800 px-2 py-1 rounded">
+                                난이도: {candidate.effortLevel}
+                              </span>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* PoC 선택 섹션 */}
+                    <div className="bg-white rounded-xl border-2 border-blue-200 p-6">
+                      <h4 className="text-xl font-bold text-gray-900 mb-4 flex items-center space-x-2">
+                        <span>🎯</span>
+                        <span>PoC 진행할 업무를 선택해 주세요</span>
+                      </h4>
+                      <p className="text-gray-600 mb-6">위의 Top 5 후보 중 하나를 선택하여 자세한 정보를 수집하겠습니다.</p>
+
+                      <div className="grid gap-3 mb-6">
+                        {analysisResult.topCandidates.map((candidate: any, index: number) => (
+                          <label key={candidate.taskId} className="flex items-center p-4 border-2 rounded-lg cursor-pointer hover:bg-blue-50 transition-colors">
+                            <input
+                              type="radio"
+                              name="pocCandidate"
+                              value={candidate.taskId}
+                              className="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500"
+                            />
+                            <div className="ml-3 flex-1">
+                              <div className="flex items-center space-x-3 mb-1">
+                                <div className="w-6 h-6 bg-green-600 text-white rounded-full flex items-center justify-center font-bold text-xs">
+                                  {index + 1}
+                                </div>
+                                <h5 className="font-semibold text-gray-800">{candidate.taskName}</h5>
+                                <span className="bg-blue-100 text-blue-800 px-2 py-1 rounded text-xs font-medium">
+                                  점수: {candidate.priorityScore}
+                                </span>
+                              </div>
+                              <p className="text-sm text-gray-600">{candidate.rationale}</p>
+                            </div>
+                          </label>
+                        ))}
+                      </div>
+
+                      <button className="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors">
+                        선택한 업무 상세 분석 시작
+                      </button>
+                    </div>
+
+                    {/* AI 대화형 분석 섹션 (선택 후 표시) */}
+                    <div className="bg-gradient-to-r from-purple-50 to-blue-50 rounded-xl p-6">
+                      <h4 className="text-xl font-bold text-gray-900 mb-4 flex items-center space-x-2">
+                        <span>🤖</span>
+                        <span>AI와 업무 상세 분석</span>
+                      </h4>
+                      <p className="text-gray-600 mb-6">선택하신 업무에 대해 AI와 대화하며 자동화에 필요한 정보를 수집합니다.</p>
+
+                      {/* 수집할 정보 항목 */}
+                      <div className="grid md:grid-cols-2 gap-4 mb-6">
+                        <div className="bg-white rounded-lg p-4">
+                          <h5 className="font-semibold text-gray-800 mb-2 flex items-center">
+                            <span className="text-purple-600 mr-2">📋</span>
+                            업무의 목적
+                          </h5>
+                          <p className="text-sm text-gray-600">이 업무가 왜 필요한지, 어떤 목표를 달성하려는지</p>
+                        </div>
+
+                        <div className="bg-white rounded-lg p-4">
+                          <h5 className="font-semibold text-gray-800 mb-2 flex items-center">
+                            <span className="text-blue-600 mr-2">⚙️</span>
+                            구체적인 프로세스
+                          </h5>
+                          <p className="text-sm text-gray-600">업무 진행 단계별 상세 프로세스</p>
+                        </div>
+
+                        <div className="bg-white rounded-lg p-4">
+                          <h5 className="font-semibold text-gray-800 mb-2 flex items-center">
+                            <span className="text-green-600 mr-2">👥</span>
+                            투입 리소스
+                          </h5>
+                          <p className="text-sm text-gray-600">필요한 인력, 시간, 도구 등</p>
+                        </div>
+
+                        <div className="bg-white rounded-lg p-4">
+                          <h5 className="font-semibold text-gray-800 mb-2 flex items-center">
+                            <span className="text-orange-600 mr-2">📈</span>
+                            기대 효과
+                          </h5>
+                          <p className="text-sm text-gray-600">자동화 시 예상되는 효과와 개선점</p>
+                        </div>
+                      </div>
+
+                      {/* 대화 영역 */}
+                      <div className="bg-white rounded-lg border border-gray-200 h-96 mb-4 p-4 overflow-y-auto">
+                        <div className="text-gray-500 text-center py-8">
+                          <div className="text-4xl mb-4">💬</div>
+                          <p>업무를 선택하시면 AI와의 대화가 시작됩니다.</p>
+                        </div>
+                      </div>
+
+                      {/* 입력창 */}
+                      <div className="flex space-x-2">
+                        <input
+                          type="text"
+                          placeholder="AI에게 질문하거나 업무에 대해 설명해 주세요..."
+                          className="flex-1 p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                          disabled
+                        />
+                        <button
+                          className="bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors disabled:bg-gray-300"
+                          disabled
+                        >
+                          전송
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* 상세 분석 테이블 */}
+                    <div className="bg-white rounded-xl border border-gray-200">
+                      <div className="p-4 border-b border-gray-200">
+                        <h4 className="text-lg font-bold text-gray-800">상세 분석 테이블</h4>
+                      </div>
+                      <div className="overflow-x-auto">
+                        <table className="w-full text-xs">
+                          <thead className="bg-gray-50">
+                            <tr>
+                              <th className="px-2 py-2 text-left font-medium text-gray-600">업무명</th>
+                              <th className="px-2 py-2 text-left font-medium text-gray-600">빈도</th>
+                              <th className="px-2 py-2 text-left font-medium text-gray-600">시간</th>
+                              <th className="px-2 py-2 text-left font-medium text-gray-600">자동화유형</th>
+                              <th className="px-2 py-2 text-left font-medium text-gray-600">우선순위</th>
+                              <th className="px-2 py-2 text-left font-medium text-gray-600">AI 패턴</th>
+                              <th className="px-2 py-2 text-left font-medium text-gray-600">기술스태</th>
+                              <th className="px-2 py-2 text-left font-medium text-gray-600">리스크</th>
+                            </tr>
+                          </thead>
+                          <tbody className="divide-y divide-gray-100">
+                            {analysisResult.detailedAnalysis.map((item: any) => (
+                              <tr key={item.taskId} className="hover:bg-gray-50">
+                                <td className="px-2 py-2">
+                                  <div className="font-medium text-gray-800">{item.taskName}</div>
+                                  <div className="text-gray-500 text-xs truncate max-w-xs">{item.briefDescription}</div>
+                                </td>
+                                <td className="px-2 py-2 text-gray-600">{item.frequencyPerMonth}/월</td>
+                                <td className="px-2 py-2 text-gray-600">{item.avgDurationMin}분</td>
+                                <td className="px-2 py-2">
+                                  <span className={`px-2 py-1 rounded text-xs font-medium ${
+                                    item.automationCandidate === 'Full' ? 'bg-green-100 text-green-800' :
+                                    item.automationCandidate === 'Partial' ? 'bg-blue-100 text-blue-800' :
+                                    item.automationCandidate === 'Assist' ? 'bg-yellow-100 text-yellow-800' :
+                                    'bg-gray-100 text-gray-800'
+                                  }`}>
+                                    {item.automationCandidate}
+                                  </span>
+                                </td>
+                                <td className="px-2 py-2">
+                                  <div className="font-bold text-blue-600">{item.priorityScore}</div>
+                                </td>
+                                <td className="px-2 py-2">
+                                  <span className="text-xs bg-purple-100 text-purple-800 px-1 py-1 rounded">
+                                    {item.aiPattern}
+                                  </span>
+                                </td>
+                                <td className="px-2 py-2">
+                                  <span className="text-xs bg-orange-100 text-orange-800 px-1 py-1 rounded">
+                                    {item.enablingTech}
+                                  </span>
+                                </td>
+                                <td className="px-2 py-2">
+                                  <span className="text-xs text-gray-600">{item.keyRisks}</span>
+                                </td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+
+                  </div>
+                )}
+
+                <div className="flex justify-between mt-8">
+                  <button
+                    onClick={prevStep}
+                    className="bg-gray-500 text-white px-6 py-3 rounded-lg font-semibold hover:bg-gray-600 transition-colors"
+                  >
+                    ← 이전
+                  </button>
+                  <button
+                    onClick={nextStep}
+                    disabled={!analysisResult}
+                    className="bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed"
+                  >
+                    다음 →
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* 단계 7: 칸반 정리 */}
+          {currentStep === 7 && (
+            <div className="space-y-6">
+              <div className="text-center mb-8">
+                <div className="text-5xl mb-4">📊</div>
+                <h2 className="text-2xl font-bold text-gray-900 mb-2">칸반 정리</h2>
+                <p className="text-gray-600">업무를 칸반 보드로 정리해주세요</p>
+              </div>
+
+              <div className="bg-white rounded-xl p-8 shadow-lg border border-gray-100 mb-8">
+                <div className="text-center py-12">
+                  <div className="text-4xl mb-4">📋</div>
+                  <h3 className="text-xl font-semibold text-gray-800 mb-4">업무 칸반 보드</h3>
+                  <p className="text-gray-600 mb-6">AI와 대화로 구체화한 업무 프로세스를<br/>칸반 보드로 시각화하고 관리하세요</p>
+
+                  <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg p-6 max-w-md mx-auto mb-6">
+                    <h4 className="font-semibold text-blue-900 mb-2">주요 기능</h4>
+                    <ul className="text-sm text-blue-800 space-y-1 text-left">
+                      <li>• 전체 업무 흐름도 시각화</li>
+                      <li>• 드래그 & 드롭으로 상태 변경</li>
+                      <li>• 상세 프로세스 확대 보기</li>
+                      <li>• 자동화 가능성 표시</li>
+                      <li>• 실시간 진행상황 추적</li>
+                    </ul>
+                  </div>
+
+                  <a
+                    href="/workshop/kanban"
+                    className="inline-flex items-center px-6 py-3 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition-colors shadow-md hover:shadow-lg"
+                  >
+                    <span className="mr-2">📊</span>
+                    칸반 보드로 이동
+                  </a>
+                </div>
+
+                <div className="flex justify-between">
+                  <button
+                    onClick={prevStep}
+                    className="bg-gray-500 text-white px-6 py-3 rounded-lg font-semibold hover:bg-gray-600 transition-colors"
+                  >
+                    ← 이전
+                  </button>
+                  <button
+                    onClick={nextStep}
+                    className="bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors"
+                  >
+                    다음 →
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* 단계 8: AI 자동화 후보 */}
+          {currentStep === 8 && (
+            <div className="space-y-6">
+              <div className="text-center mb-8">
+                <div className="text-5xl mb-4">🤖</div>
+                <h2 className="text-2xl font-bold text-gray-900 mb-2">AI 자동화 후보</h2>
+                <p className="text-gray-600">PoC 진행할 업무를 선택해 주세요</p>
+              </div>
+
+              {/* PoC 진행할 업무 선택 섹션 */}
+              <div className="bg-white rounded-xl p-8 shadow-lg border border-gray-100 mb-8">
+                <div className="mb-6">
+                  <h3 className="text-lg font-semibold text-gray-800 mb-2">자동화 분석 대상 업무</h3>
+                  <p className="text-sm text-gray-600">다음 업무들 중에서 자동화 가능성을 상세히 분석할 업무를 선택하세요</p>
+                </div>
+
+                {/* 업무 선택 카드들 */}
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
+                  {extractedWorkItems?.slice(0, 6).map((task, index) => (
+                    <div
+                      key={task.id}
+                      className={`p-4 rounded-lg border-2 cursor-pointer transition-all duration-200 hover:shadow-md ${
+                        selectedTaskForPoc === task.id
+                          ? 'border-blue-500 bg-blue-50'
+                          : 'border-gray-200 bg-white hover:border-blue-300'
+                      }`}
+                      onClick={() => setSelectedTaskForPoc(task.id)}
+                    >
+                      <div className="flex items-center justify-between mb-2">
+                        <h4 className="font-medium text-gray-900 text-sm">{task.title}</h4>
+                        <span className={`px-2 py-1 text-xs rounded-full text-white ${
+                          task.complexity === 'high' ? 'bg-red-500' :
+                          task.complexity === 'medium' ? 'bg-yellow-500' : 'bg-green-500'
+                        }`}>
+                          {task.complexity}
+                        </span>
+                      </div>
+                      <p className="text-xs text-gray-600 mb-2 line-clamp-2">{task.description}</p>
+                      <div className="text-xs text-gray-500">
+                        <span>소요시간: {task.timeSpent}분</span> •
+                        <span> 빈도: {task.frequency}</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                {/* 선택한 업무 상세 분석 시작 버튼 */}
+                {selectedTaskForPoc && (
+                  <div className="text-center border-t pt-6">
+                    <button
+                      onClick={() => setShowDetailedAnalysis(true)}
+                      className="inline-flex items-center px-6 py-3 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition-colors shadow-md hover:shadow-lg"
+                    >
+                      <span className="mr-2">🔍</span>
+                      선택한 업무 상세 분석 시작
+                    </button>
+                  </div>
+                )}
+              </div>
+
+              {/* AI와 업무 상세 분석 파트 (조건부 표시) */}
+              {showDetailedAnalysis && selectedTaskForPoc && (
+                <div className="bg-white rounded-xl p-8 shadow-lg border border-gray-100 mb-8">
+                  <div className="mb-6">
+                    <h3 className="text-lg font-semibold text-gray-800 mb-2">AI 자동화 전문가와 상세 분석</h3>
+                    <p className="text-sm text-gray-600">선택하신 업무에 대해 AI 전문가가 상세한 질문을 통해 자동화 방안을 도출합니다</p>
+                  </div>
+
+                  {/* 선택된 업무 정보 */}
+                  <div className="bg-blue-50 rounded-lg p-4 mb-6">
+                    <h4 className="font-medium text-blue-900 mb-2">분석 대상 업무</h4>
+                    {(() => {
+                      const selectedTask = extractedWorkItems?.find(task => task.id === selectedTaskForPoc);
+                      return selectedTask ? (
+                        <div className="text-sm text-blue-800">
+                          <p className="font-medium">{selectedTask.title}</p>
+                          <p className="mt-1">{selectedTask.description}</p>
+                        </div>
+                      ) : null;
+                    })()}
+                  </div>
+
+                  {/* AI 대화 영역 - 이 부분은 사용자가 프롬프트를 수정할 수 있도록 여유 공간을 둠 */}
+                  <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
+                    <div className="text-gray-500 mb-4">
+                      <div className="text-2xl mb-2">💬</div>
+                      <p className="text-sm">AI 자동화 전문가 대화 영역</p>
+                      <p className="text-xs text-gray-400 mt-2">
+                        * 이 영역에 AI 프롬프트 및 대화 기능이 추가될 예정입니다 *
+                      </p>
+                    </div>
+
+                    {/* 프롬프트 설정 영역 - 개발자가 수정 가능한 부분 */}
+                    <div className="bg-yellow-50 rounded-lg p-4 text-left">
+                      <h5 className="font-medium text-yellow-800 mb-2">🔧 개발자용 프롬프트 설정 영역</h5>
+                      <div className="text-xs text-yellow-700 space-y-1">
+                        <p>• AI 역할: 자동화 전문가로서 주도적으로 질문</p>
+                        <p>• 분석 범위: 앞선 맥락 파악 + 상세 업무 분석</p>
+                        <p>• 질문 스타일: 구체적이고 실무적인 관점</p>
+                        <p>• 최종 목표: PoC 실행 가능한 자동화 방안 도출</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              <div className="flex justify-between">
+                <button
+                  onClick={prevStep}
+                  className="bg-gray-500 text-white px-6 py-3 rounded-lg font-semibold hover:bg-gray-600 transition-colors"
+                >
+                  ← 이전
+                </button>
+                <button
+                  onClick={nextStep}
+                  className="bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors"
+                >
+                  다음 →
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* 단계 9: 결과 검토 */}
+          {currentStep === 9 && (
+            <div className="space-y-6">
+              <div className="text-center mb-8">
+                <div className="text-5xl mb-4">📊</div>
+                <h2 className="text-2xl font-bold text-gray-900 mb-2">결과 검토</h2>
+                <p className="text-gray-600">발견된 자동화 방안을 검토하고 선택해주세요</p>
+              </div>
+
+              <div className="bg-white rounded-xl p-8 shadow-lg border border-gray-100 mb-8">
+                <div className="text-center py-12">
+                  <div className="text-4xl mb-4">📋</div>
+                  <h3 className="text-xl font-semibold text-gray-800 mb-4">결과 검토 인터페이스 개발 예정</h3>
+                  <p className="text-gray-600 mb-6">AI가 제안한 자동화 솔루션을<br/>비교하고 선택할 수 있는 기능을 개발 중입니다.</p>
+                  <div className="bg-orange-50 rounded-lg p-6 max-w-lg mx-auto">
+                    <h4 className="font-semibold text-orange-900 mb-2">검토 기능</h4>
+                    <ul className="text-sm text-orange-800 space-y-1 text-left">
+                      <li>• 자동화 솔루션 비교표</li>
+                      <li>• 비용 및 ROI 계산기</li>
+                      <li>• 구현 난이도 평가</li>
+                      <li>• 예상 시간 절약 계산</li>
+                      <li>• 선택된 솔루션 우선순위 설정</li>
+                    </ul>
+                  </div>
+                </div>
+
+                <div className="flex justify-between">
+                  <button
+                    onClick={prevStep}
+                    className="bg-gray-500 text-white px-6 py-3 rounded-lg font-semibold hover:bg-gray-600 transition-colors"
+                  >
+                    ← 이전
+                  </button>
+                  <button
+                    onClick={nextStep}
+                    className="bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors"
+                  >
+                    다음 →
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* 단계 10: 제안 완료 */}
+          {currentStep === 10 && (
+            <div className="space-y-6">
+              <div className="text-center mb-8">
+                <div className="text-5xl mb-4">🎉</div>
+                <h2 className="text-2xl font-bold text-gray-900 mb-2">제안 완료</h2>
+                <p className="text-gray-600">자동화 제안이 완료되었습니다!</p>
+              </div>
+
+              <div className="bg-white rounded-xl p-8 shadow-lg border border-gray-100 mb-8">
+                <div className="text-center py-12">
+                  <div className="text-6xl mb-6">✨</div>
+                  <h3 className="text-2xl font-bold text-gray-800 mb-4">워크샵 완료!</h3>
+                  <p className="text-lg text-gray-600 mb-8">당신의 업무에 맞는 자동화 제안이 준비되었습니다.<br/>이제 실제 구현을 시작해보세요!</p>
+
+                  <div className="bg-gradient-to-r from-green-50 to-blue-50 rounded-xl p-8 mb-8">
+                    <h4 className="text-lg font-semibold text-gray-800 mb-4">다음 단계</h4>
+                    <div className="grid md:grid-cols-2 gap-6">
+                      <div className="bg-white rounded-lg p-4 shadow-sm">
+                        <div className="text-2xl mb-2">🛠️</div>
+                        <h5 className="font-semibold text-gray-800 mb-2">도구 구현</h5>
+                        <p className="text-sm text-gray-600">제안된 자동화 도구를 실제로 개발하고 배포합니다.</p>
+                      </div>
+                      <div className="bg-white rounded-lg p-4 shadow-sm">
+                        <div className="text-2xl mb-2">📈</div>
+                        <h5 className="font-semibold text-gray-800 mb-2">효과 측정</h5>
+                        <p className="text-sm text-gray-600">자동화 도입 전후의 효율성을 비교 분석합니다.</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="flex justify-center space-x-4">
+                  <button
+                    onClick={() => {
+                      setCurrentStep(1);
+                      setWorkshop({
+                        id: '',
+                        domains: ['', '', ''],
+                        fileIds: [],
+                        tasks: [],
+                        selectedTaskIds: []
+                      });
+                      setExtractedWorkItems([]);
+                      setUploadedFiles([]);
+                      setManualTaskInput({});
+                      setError('');
+                    }}
+                    className="bg-green-600 text-white px-8 py-4 rounded-lg font-semibold hover:bg-green-700 transition-colors flex items-center space-x-2"
+                  >
+                    <span>🔄</span>
+                    <span>새 워크샵 시작</span>
+                  </button>
+                  <button
+                    onClick={() => window.print()}
+                    className="bg-blue-600 text-white px-8 py-4 rounded-lg font-semibold hover:bg-blue-700 transition-colors flex items-center space-x-2"
+                  >
+                    <span>📝</span>
+                    <span>결과 리포트 인쇄</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+
+        </div>
+      </div>
+    </div>
+  );
+}
