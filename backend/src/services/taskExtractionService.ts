@@ -67,13 +67,8 @@ export class TaskExtractionService {
     // Load prompt template
     const promptTemplate = await this.loadPromptTemplate();
 
-    // Extract the actual prompt from the markdown (skip header and metadata)
-    const promptMatch = promptTemplate.match(/## 프롬프트\n\n([\s\S]+)/);
-    if (!promptMatch) {
-      throw new Error('프롬프트 템플릿 형식이 올바르지 않습니다');
-    }
-
-    const basePrompt = promptMatch[1];
+    // Use the entire template as the prompt
+    const basePrompt = promptTemplate;
 
     // Prepare document content
     const documentsText = uploadedDocuments
