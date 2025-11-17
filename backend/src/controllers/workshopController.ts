@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { WorkshopService } from '../services/workshopService';
 import { DocumentProcessor } from '../services/documentProcessor';
+import { TaskExtractionService } from '../services/taskExtractionService';
 import { cleanupUploadedFiles } from '../middleware/workshopUpload';
 import {
   CreateWorkshopRequest,
@@ -13,9 +14,11 @@ import { logger } from '../utils/logger';
 
 export class WorkshopController {
   private workshopService: WorkshopService;
+  private taskExtractionService: TaskExtractionService;
 
   constructor() {
     this.workshopService = new WorkshopService();
+    this.taskExtractionService = new TaskExtractionService();
   }
 
   // POST /api/workshops - 워크샵 생성
@@ -126,6 +129,83 @@ export class WorkshopController {
       res.status(500).json({
         success: false,
         error: error instanceof Error ? error.message : '파일 업로드 중 오류가 발생했습니다'
+      });
+    }
+  };
+
+  // POST /api/workshops/:id/extract-tasks - 업무 추출
+  extractTasks = async (req: Request, res: Response): Promise<void> => {
+    try {
+      const { id: workshopId } = req.params;
+      const { manualInput } = req.body;
+
+      // Workshop 확인
+      const workshop = this.workshopService.getWorkshop(workshopId);
+      if (!workshop) {
+        res.status(404).json({
+          success: false,
+          error: '워크샵을 찾을 수 없습니다'
+        });
+        return;
+      }
+
+      logger.info(`📊 Starting task extraction for workshop ${workshopId}`);
+
+      // 업로드된 파일 내용 가져오기
+      const uploadedDocuments = await Promise.all(
+        workshop.fileIds.map(async (fileId) => {
+          const fileRecord = this.workshopService.getFile(fileId);
+          if (!fileRecord) {
+            logger.warn(`File not found: ${fileId}`);
+            return null;
+          }
+
+          // 파일이 아직 파싱되지 않았다면 파싱
+          if (!fileRecord.content) {
+            logger.info(`📄 Parsing file: ${fileRecord.originalName}`);
+            const content = await DocumentProcessor.parseDocument(
+              fileRecord.path,
+              fileRecord.mimetype
+            );
+            fileRecord.content = content;
+            fileRecord.status = 'parsed';
+          }
+
+          return {
+            filename: fileRecord.originalName,
+            content: fileRecord.content
+          };
+        })
+      );
+
+      // null 제거 및 타입 확정
+      const validDocuments = uploadedDocuments.filter(
+        (doc): doc is { filename: string; content: string } => doc !== null
+      );
+
+      logger.info(`📁 Processing ${validDocuments.length} documents and manual input`);
+
+      // 업무 추출
+      const extractedTasks = await this.taskExtractionService.extractTasks({
+        domains: workshop.domains,
+        uploadedDocuments: validDocuments,
+        manualInput: manualInput || undefined
+      });
+
+      logger.info(`✅ Extracted ${extractedTasks.length} tasks`);
+
+      res.json({
+        success: true,
+        tasks: extractedTasks,
+        count: extractedTasks.length,
+        message: `${extractedTasks.length}개 업무가 추출되었습니다`
+      });
+
+    } catch (error) {
+      logger.error('Task extraction error:', error);
+      res.status(500).json({
+        success: false,
+        error: error instanceof Error ? error.message : '업무 추출 중 오류가 발생했습니다'
       });
     }
   };

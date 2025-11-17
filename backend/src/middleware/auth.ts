@@ -302,3 +302,7 @@ export const optionalAuth = async (
     next(); // Continue even if there's an error
   }
 };
+
+// Export authenticate as authMiddleware for backwards compatibility
+export const authMiddleware = authenticate;
+export default authenticate;

@@ -448,4 +448,6 @@ export const broadcastToSession = (io: SocketIOServer, sessionId: string, event:
   io.to(`session:${sessionId}`).emit(event, data);
 };
 
+// Export setupSocketIO as initializeWebSocket for backwards compatibility
+export const initializeWebSocket = setupSocketIO;
 export default setupSocketIO;
