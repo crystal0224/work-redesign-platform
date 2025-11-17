@@ -23,9 +23,10 @@ interface Message {
 interface Step5AIConsultantProps {
   tasks: ExtractedTask[];
   onComplete: (selectedTask: ExtractedTask, insights: any) => void;
+  onPrevious?: () => void;
 }
 
-export default function Step5AIConsultant({ tasks, onComplete }: Step5AIConsultantProps) {
+export default function Step5AIConsultant({ tasks, onComplete, onPrevious }: Step5AIConsultantProps) {
   const [selectedTask, setSelectedTask] = useState<ExtractedTask | null>(null);
   const [showChat, setShowChat] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
@@ -223,6 +224,19 @@ export default function Step5AIConsultant({ tasks, onComplete }: Step5AIConsulta
                 ))}
               </div>
             </div>
+
+            {/* Navigation button */}
+            <div className="mt-8 flex justify-start">
+              <button
+                onClick={onPrevious}
+                className="px-6 py-3 bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold rounded-xl transition-all flex items-center gap-2"
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                </svg>
+                이전 단계
+              </button>
+            </div>
           </>
         ) : (
           // AI 컨설턴트 대화 화면
@@ -309,12 +323,23 @@ export default function Step5AIConsultant({ tasks, onComplete }: Step5AIConsulta
               </div>
 
               {messages.length >= 4 && (
-                <button
-                  onClick={() => onComplete(selectedTask!, { messages })}
-                  className="mt-4 w-full py-3 bg-gradient-to-r from-emerald-600 to-green-600 text-white rounded-xl font-semibold hover:shadow-xl hover:scale-[1.02] transition-all"
-                >
-                  대화 완료 - 워크플로우 설계로 이동
-                </button>
+                <div className="mt-4 flex justify-between gap-4">
+                  <button
+                    onClick={onPrevious}
+                    className="px-6 py-3 bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold rounded-xl transition-all flex items-center gap-2"
+                  >
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                    </svg>
+                    이전 단계
+                  </button>
+                  <button
+                    onClick={() => onComplete(selectedTask!, { messages })}
+                    className="flex-1 py-3 bg-gradient-to-r from-emerald-600 to-green-600 text-white rounded-xl font-semibold hover:shadow-xl hover:scale-[1.02] transition-all"
+                  >
+                    대화 완료 - 워크플로우 설계로 이동
+                  </button>
+                </div>
               )}
             </div>
           </div>

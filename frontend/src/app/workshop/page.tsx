@@ -1403,6 +1403,16 @@ export default function WorkshopPage() {
                 {/* Bottom buttons */}
                 <div className="flex items-center justify-between">
                   <button
+                    onClick={() => setCurrentStep(1)}
+                    className="px-6 py-3 bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold rounded-xl transition-all flex items-center gap-2"
+                  >
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                    </svg>
+                    이전 단계
+                  </button>
+
+                  <button
                     onClick={addDomain}
                     disabled={workshop.domains.length >= 10}
                     className="inline-flex items-center gap-2 px-6 py-3 backdrop-blur-xl bg-white/50 border border-indigo-300 border-dashed text-indigo-700 font-semibold rounded-xl hover:bg-white/70 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
@@ -1410,6 +1420,7 @@ export default function WorkshopPage() {
                     <span className="text-xl">+</span>
                     업무 영역 추가
                   </button>
+
                   <button
                     onClick={handleDomainsSubmit}
                     disabled={loading}
@@ -1575,25 +1586,34 @@ export default function WorkshopPage() {
                   <div className="backdrop-blur-xl bg-white/50 border border-white/60 rounded-3xl p-6 shadow-xl">
                     <h3 className="text-xl font-semibold text-slate-900 mb-4 flex items-center gap-2 tracking-tight">
                       <span className="text-2xl">✏️</span>
-                      직접 작성
+                      업무 영역별 직접 작성
                     </h3>
 
-                    <div className="space-y-4">
-                      <label className="block text-base font-semibold text-slate-800 mb-2">
-                        업무 내용 직접 입력
-                      </label>
-                      <textarea
-                        value={manualInput}
-                        onChange={(e) => setManualInput(e.target.value)}
-                        placeholder={`담당하시는 업무를 자유롭게 작성해주세요...
+                    <div className="space-y-4 max-h-96 overflow-y-auto pr-2">
+                      {workshop.domains.filter(d => d.trim()).map((domain, index) => (
+                        <div key={index} className="backdrop-blur-md bg-white/70 border border-white/60 rounded-2xl p-4 shadow-md">
+                          <label className="block text-base font-semibold text-slate-800 mb-2 flex items-center gap-2">
+                            <span className="w-6 h-6 bg-gradient-to-br from-indigo-500 to-purple-500 text-white rounded-full flex items-center justify-center text-sm">
+                              {index + 1}
+                            </span>
+                            {domain}
+                          </label>
+                          <textarea
+                            value={manualTaskInput[domain] || ''}
+                            onChange={(e) => setManualTaskInput(prev => ({
+                              ...prev,
+                              [domain]: e.target.value
+                            }))}
+                            placeholder={`${domain} 영역의 업무를 작성해주세요...
 예시:
 - 매일 오전 9시 고객 문의 메일 확인 및 답변 (30분 소요)
 - 주간 매출 데이터 수집 및 보고서 작성 (매주 월요일, 2시간 소요)
-- 월간 재고 현황 파악 및 발주 처리 (매월 말, 3시간 소요)
-- ${workshop.domains.filter(d => d.trim()).join(', ')} 관련 업무들...`}
-                        className="w-full h-64 px-4 py-3 backdrop-blur-sm bg-white/90 border-2 border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-400/50 focus:border-indigo-400 transition-all resize-none"
-                      />
-                      <p className="text-sm text-slate-600">
+- 월간 재고 현황 파악 및 발주 처리 (매월 말, 3시간 소요)`}
+                            className="w-full h-40 px-4 py-3 backdrop-blur-sm bg-white/90 border-2 border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-400/50 focus:border-indigo-400 transition-all resize-none text-sm"
+                          />
+                        </div>
+                      ))}
+                      <p className="text-sm text-slate-600 px-2">
                         * 업무별로 한 줄씩 작성하면 AI가 더 정확하게 분석합니다
                       </p>
                     </div>
@@ -1601,9 +1621,27 @@ export default function WorkshopPage() {
                 </div>
 
                 {/* Bottom button */}
-                <div className="flex justify-end">
+                <div className="flex justify-between">
+                  <button
+                    onClick={() => setCurrentStep(2)}
+                    className="px-6 py-3 bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold rounded-xl transition-all flex items-center gap-2"
+                  >
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                    </svg>
+                    이전 단계
+                  </button>
+
                   <button
                     onClick={() => {
+                      // 업무 영역별 입력을 하나의 문자열로 통합
+                      const combinedInput = Object.entries(manualTaskInput)
+                        .filter(([domain, tasks]) => tasks.trim())
+                        .map(([domain, tasks]) => `[${domain}]\n${tasks}`)
+                        .join('\n\n');
+
+                      setManualInput(combinedInput);
+
                       // 워크샵이 생성되지 않았다면 먼저 생성
                       if (!workshop.id) {
                         handleWorkshopCreate();
@@ -1611,7 +1649,7 @@ export default function WorkshopPage() {
                         setCurrentStep(4);
                       }
                     }}
-                    disabled={loading || (uploadedFiles.length === 0 && !manualInput.trim())}
+                    disabled={loading || (uploadedFiles.length === 0 && Object.values(manualTaskInput).every(v => !v.trim()))}
                     className="inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-semibold rounded-2xl hover:shadow-2xl hover:scale-105 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     {loading ? '처리 중...' : '다음 단계로'}
@@ -1645,6 +1683,7 @@ export default function WorkshopPage() {
                 console.log('AI Consultant completed:', selectedTask, insights);
                 setCurrentStep(6);
               }}
+              onPrevious={() => setCurrentStep(4)}
             />
           )}
 
@@ -1657,6 +1696,7 @@ export default function WorkshopPage() {
                 console.log('Workflow completed:', workflow);
                 setCurrentStep(7);
               }}
+              onPrevious={() => setCurrentStep(5)}
             />
           )}
 
@@ -1835,16 +1875,22 @@ export default function WorkshopPage() {
                   <div className="flex justify-between pt-6">
                     <button
                       onClick={() => setCurrentStep(6)}
-                      className="px-6 py-3 backdrop-blur-sm bg-slate-500/80 text-white font-semibold rounded-2xl hover:shadow-xl hover:scale-105 transition-all duration-300"
+                      className="px-6 py-3 bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold rounded-xl transition-all flex items-center gap-2"
                     >
-                      ← 이전 단계
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                      </svg>
+                      이전 단계
                     </button>
                     <button
                       onClick={() => setCurrentStep(8)}
                       disabled={automationSolutions.length === 0}
-                      className="px-6 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-semibold rounded-2xl hover:shadow-2xl hover:scale-105 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="px-8 py-4 bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-semibold rounded-2xl hover:shadow-2xl hover:scale-105 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
                     >
-                      최종 보고서 보기 →
+                      최종 보고서 보기
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                      </svg>
                     </button>
                   </div>
                 </div>
@@ -2189,6 +2235,30 @@ export default function WorkshopPage() {
                         </div>
                       </div>
                     </div>
+                  </div>
+                </div>
+
+                {/* 네비게이션 버튼 */}
+                <div className="backdrop-blur-xl bg-white/40 border border-white/60 rounded-2xl p-6 shadow-xl">
+                  <div className="flex justify-between">
+                    <button
+                      onClick={() => setCurrentStep(7)}
+                      className="px-6 py-3 bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold rounded-xl transition-all flex items-center gap-2"
+                    >
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                      </svg>
+                      이전 단계
+                    </button>
+                    <button
+                      onClick={() => window.location.href = '/'}
+                      className="px-8 py-4 bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-semibold rounded-2xl hover:shadow-2xl hover:scale-105 transition-all duration-300 flex items-center gap-2"
+                    >
+                      워크샵 완료
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                      </svg>
+                    </button>
                   </div>
                 </div>
               </div>

@@ -84,6 +84,7 @@
     "msw": "^2.0.11",
     "prettier": "^3.1.0",
     "prettier-plugin-tailwindcss": "^0.5.7",
+    "puppeteer": "^24.30.0",
     "tailwind-merge": "^2.0.0"
   },
   "engines": {

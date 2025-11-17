@@ -17,12 +17,14 @@ interface Step6WorkflowDesignProps {
   taskTitle: string;
   conversationInsights: any;
   onComplete: (workflow: WorkflowNode[]) => void;
+  onPrevious?: () => void;
 }
 
 export default function Step6WorkflowDesign({
   taskTitle,
   conversationInsights,
-  onComplete
+  onComplete,
+  onPrevious
 }: Step6WorkflowDesignProps) {
   const [nodes, setNodes] = useState<WorkflowNode[]>([
     {
@@ -311,12 +313,23 @@ export default function Step6WorkflowDesign({
               <h3 className="text-lg font-semibold text-slate-900 mb-1">워크플로우 설계 완료</h3>
               <p className="text-sm text-slate-600">설계된 워크플로우를 저장하고 다음 단계로 진행합니다</p>
             </div>
-            <button
-              onClick={() => onComplete(nodes)}
-              className="px-8 py-3 bg-gradient-to-r from-emerald-600 to-green-600 text-white rounded-xl font-semibold hover:shadow-xl hover:scale-105 transition-all"
-            >
-              완료하고 계속하기
-            </button>
+            <div className="flex gap-4">
+              <button
+                onClick={onPrevious}
+                className="px-6 py-3 bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold rounded-xl transition-all flex items-center gap-2"
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                </svg>
+                이전 단계
+              </button>
+              <button
+                onClick={() => onComplete(nodes)}
+                className="px-8 py-3 bg-gradient-to-r from-emerald-600 to-green-600 text-white rounded-xl font-semibold hover:shadow-xl hover:scale-105 transition-all"
+              >
+                완료하고 계속하기
+              </button>
+            </div>
           </div>
         </div>
       </div>
