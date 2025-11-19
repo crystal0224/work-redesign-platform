@@ -887,7 +887,7 @@ export default function WorkshopPage() {
 
   // 도메인 추가
   const addDomain = () => {
-    if (workshop.domains.length < 10) {
+    if (workshop.domains.length < 5) {
       setWorkshop(prev => ({ ...prev, domains: [...prev.domains, ''] }));
     }
   };
@@ -966,8 +966,12 @@ export default function WorkshopPage() {
   // 2단계: 도메인 입력
   const handleDomainsSubmit = async () => {
     const validDomains = workshop.domains.filter(domain => domain.trim().length >= 3);
-    if (validDomains.length === 0) {
-      setError('최소 1개 이상의 업무 영역을 입력해주세요 (3글자 이상)');
+    if (validDomains.length < 2) {
+      setError('최소 2개 이상의 업무 영역을 입력해주세요 (3글자 이상)');
+      return;
+    }
+    if (validDomains.length > 5) {
+      setError('최대 5개까지만 업무 영역을 입력할 수 있습니다');
       return;
     }
 
@@ -1414,11 +1418,11 @@ export default function WorkshopPage() {
 
                   <button
                     onClick={addDomain}
-                    disabled={workshop.domains.length >= 10}
+                    disabled={workshop.domains.length >= 5}
                     className="inline-flex items-center gap-2 px-6 py-3 backdrop-blur-xl bg-white/50 border border-indigo-300 border-dashed text-indigo-700 font-semibold rounded-xl hover:bg-white/70 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     <span className="text-xl">+</span>
-                    업무 영역 추가
+                    업무 영역 추가 ({workshop.domains.length}/5)
                   </button>
 
                   <button
@@ -1679,6 +1683,7 @@ export default function WorkshopPage() {
           {currentStep === 5 && (
             <Step5AIConsultant
               tasks={workshop.tasks}
+              workshopId={workshop.id}
               onComplete={(selectedTask, insights) => {
                 console.log('AI Consultant completed:', selectedTask, insights);
                 setCurrentStep(6);

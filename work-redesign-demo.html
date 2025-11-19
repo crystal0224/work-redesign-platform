@@ -230,6 +230,11 @@
             to { transform: rotate(360deg); }
         }
 
+        @keyframes pulse {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 1; }
+        }
+
         .task-card {
             background: #f8f9fa;
             border-radius: 12px;
@@ -886,10 +891,14 @@
 - 엑셀로 통합 후 대시보드 업데이트 (주 2회, 회당 2시간)
 - 월간 성과 분석 리포트 작성 (월 1회, 5시간)</textarea>
 
-            <div class="file-upload">
+            <div class="file-upload" onclick="document.getElementById('fileInput').click()"
+                 ondrop="handleFileDrop(event)" ondragover="event.preventDefault()">
+                <input type="file" id="fileInput" multiple accept=".pdf,.docx,.xlsx"
+                       style="display: none;" onchange="handleFileSelect(event)">
                 <div style="font-size: 48px; margin-bottom: 15px;">📁</div>
                 <p>추가 파일이 있다면 여기에 드래그하세요</p>
                 <p style="font-size: 14px; color: #6c757d;">Word, Excel, PDF 지원</p>
+                <div id="fileList" style="margin-top: 15px;"></div>
             </div>
 
             <button class="btn" onclick="showLoading()">AI 분석 시작 →</button>
@@ -1083,30 +1092,16 @@
             </div>
 
             <!-- AI 대화 인터페이스 -->
-            <div class="chat-container" style="max-width: 800px; margin: 0 auto;">
-                <div class="chat-message">
-                    <div class="chat-ai">
-                        💬 AI: "광고 소재 제작이 불명확하다고 표시했어요. 디자이너와 협업하시나요, 아니면 직접 제작하시나요?"
-                    </div>
-                </div>
-                <div class="chat-message">
-                    <div class="chat-user">디자이너와 협업해요. 브리핑 작성하고 피드백 주는 역할이에요.</div>
-                </div>
-                <div class="chat-message">
-                    <div class="chat-ai">
-                        알겠습니다! 그럼 '광고 소재 제작'을 다음과 같이 세분화할게요:<br>
-                        1) 크리에이티브 브리핑 작성 (30분)<br>
-                        2) 레퍼런스 수집 및 공유 (20분)<br>
-                        3) 디자이너 미팅 (30분)<br>
-                        4) 1차 시안 검토 및 피드백 (20분)<br>
-                        5) 최종 승인 (10분)<br><br>
-                        이렇게 수정할까요?
-                    </div>
-                </div>
-                <div style="display: flex; gap: 10px; margin-top: 15px;">
-                    <button class="btn btn-secondary" style="font-size: 14px;">네, 반영해주세요</button>
-                    <button class="btn btn-secondary" style="font-size: 14px;">조금 수정할게요</button>
-                </div>
+            <div class="chat-container" id="chatContainer" style="max-width: 800px; margin: 0 auto;">
+                <!-- 대화 내용이 여기에 동적으로 추가됩니다 -->
+            </div>
+
+            <!-- 사용자 입력 영역 -->
+            <div style="max-width: 800px; margin: 20px auto; display: flex; gap: 10px;">
+                <input type="text" id="userInput" placeholder="AI 컨설턴트에게 답변하세요..."
+                       style="flex: 1; padding: 15px; border: 2px solid #e9ecef; border-radius: 10px; font-size: 14px;"
+                       onkeypress="if(event.key === 'Enter') sendMessage()">
+                <button class="btn" onclick="sendMessage()" style="padding: 15px 30px;">전송</button>
             </div>
 
             <div style="text-align: center; margin-top: 40px;">
@@ -1561,11 +1556,20 @@
             const screens = document.querySelectorAll('.screen');
             screens[currentScreen].classList.remove('active');
             currentScreen++;
-            
+
             if (currentScreen < screens.length) {
                 setTimeout(() => {
                     screens[currentScreen].classList.add('active');
                     updateProgress();
+
+                    // Screen 6 (업무 구조 확인)에 도달하면 채팅 초기화
+                    // screen0부터 시작하므로 screen6 = currentScreen 6
+                    if (currentScreen === 6) {
+                        setTimeout(() => {
+                            console.log('🎯 Screen 6 도달 - 채팅 초기화');
+                            initializeChat();
+                        }, 500);
+                    }
                 }, 300);
             }
 
@@ -1590,41 +1594,273 @@
             }, 1000);
         }
 
-        function showLoading() {
+        async function showLoading() {
+            // 워크샵 ID 가져오기 (없으면 생성)
+            let workshopId = localStorage.getItem('currentWorkshopId');
+
+            if (!workshopId) {
+                // 워크샵 생성
+                try {
+                    const response = await fetch('http://localhost:3001/api/workshops', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            name: '마케팅팀 업무 재설계',
+                            domains: ['디지털 광고', '콘텐츠 마케팅', '데이터 분석'],
+                            participantCount: 1
+                        })
+                    });
+                    const data = await response.json();
+                    if (data.success) {
+                        workshopId = data.id;
+                        localStorage.setItem('currentWorkshopId', workshopId);
+                        console.log('✅ 워크샵 생성:', workshopId);
+                    }
+                } catch (error) {
+                    console.error('❌ 워크샵 생성 오류:', error);
+                }
+            }
+
+            // 로딩 화면으로 이동
             nextScreen();
-            setTimeout(() => {
-                nextScreen();
-            }, 3000);
+
+            // 1. 파일 업로드 (있는 경우)
+            if (selectedFiles.length > 0 && workshopId) {
+                console.log('📤 파일 업로드 시작:', selectedFiles.length, '개');
+                await uploadFiles(workshopId);
+            }
+
+            // 2. 텍스트 분석
+            const textarea = document.querySelector('#screen4 textarea');
+            const textContent = textarea ? textarea.value : '';
+
+            if (textContent && workshopId) {
+                try {
+                    console.log('🤖 AI 텍스트 분석 시작...');
+                    const response = await fetch('http://localhost:3001/api/analyze-text', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            workshopId: workshopId,
+                            textContent: textContent,
+                            domains: ['디지털 광고', '콘텐츠 마케팅', '데이터 분석']
+                        })
+                    });
+
+                    const data = await response.json();
+                    console.log('✅ AI 분석 완료:', data);
+
+                    // 분석 완료 후 다음 화면으로 (최소 3초 대기)
+                    setTimeout(() => {
+                        nextScreen();
+                    }, 3000);
+                } catch (error) {
+                    console.error('❌ AI 분석 오류:', error);
+                    // 에러 발생해도 데모 계속 진행
+                    setTimeout(() => {
+                        nextScreen();
+                    }, 3000);
+                }
+            } else {
+                // 텍스트가 없거나 워크샵 ID가 없으면 기본 동작
+                console.log('⚠️ 텍스트 또는 워크샵 ID 없음 - 데모 모드');
+                setTimeout(() => {
+                    nextScreen();
+                }, 3000);
+            }
+        }
+
+        let selectedFiles = [];
+
+        function handleFileSelect(event) {
+            selectedFiles = Array.from(event.target.files);
+            displayFileList();
+        }
+
+        function handleFileDrop(event) {
+            event.preventDefault();
+            selectedFiles = Array.from(event.dataTransfer.files);
+            displayFileList();
+        }
+
+        function displayFileList() {
+            const fileList = document.getElementById('fileList');
+            if (selectedFiles.length > 0) {
+                fileList.innerHTML = selectedFiles.map((file, index) => `
+                    <div style="background: white; padding: 10px; margin: 5px 0; border-radius: 8px; display: flex; justify-content: space-between; align-items: center;">
+                        <span>📄 ${file.name} (${(file.size / 1024 / 1024).toFixed(2)} MB)</span>
+                        <button onclick="removeFile(${index}); event.stopPropagation();"
+                                style="background: none; border: none; color: #dc3545; cursor: pointer; font-size: 18px;">❌</button>
+                    </div>
+                `).join('');
+            } else {
+                fileList.innerHTML = '';
+            }
+        }
+
+        function removeFile(index) {
+            selectedFiles.splice(index, 1);
+            displayFileList();
+        }
+
+        async function uploadFiles(workshopId) {
+            if (selectedFiles.length === 0) return;
+
+            const formData = new FormData();
+            formData.append('workshopId', workshopId);
+            selectedFiles.forEach(file => {
+                formData.append('files', file);
+            });
+
+            try {
+                const response = await fetch('http://localhost:3001/api/upload', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const data = await response.json();
+                console.log('✅ 파일 업로드 완료:', data);
+                return data;
+            } catch (error) {
+                console.error('❌ 파일 업로드 오류:', error);
+                return null;
+            }
         }
 
         function toggleTask(element) {
             element.classList.toggle('expanded');
         }
 
-        function addUserReply() {
-            const chatContainer = document.querySelector('.chat-container');
-            const userReply = document.createElement('div');
-            userReply.className = 'chat-message';
-            userReply.innerHTML = `
-                <div class="chat-user">디자이너와 협업해요</div>
-            `;
-            chatContainer.appendChild(userReply);
+        // 대화 히스토리 저장
+        let conversationHistory = [];
 
+        // Screen 6 진입 시 첫 AI 메시지 표시
+        function initializeChat() {
+            const chatContainer = document.getElementById('chatContainer');
+            const workshopId = localStorage.getItem('currentWorkshopId');
+
+            if (!workshopId) {
+                console.error('❌ 워크샵 ID 없음');
+                // 워크샵 없어도 데모용 메시지 표시
+                const initialMessage = "안녕하세요! AI 자동화 컨설턴트입니다.<br><br>분석한 업무 중 <strong>\"광고 소재 제작\"</strong> 업무가 명확하지 않아 보입니다. 이 업무에 대해 몇 가지 여쭤보겠습니다.<br><br>디자이너와 협업하시나요, 아니면 직접 제작하시나요?";
+                addAIMessage(initialMessage);
+                return;
+            }
+
+            // 실제 API를 통한 첫 질문
             setTimeout(() => {
-                const aiReply = document.createElement('div');
-                aiReply.className = 'chat-message';
-                aiReply.innerHTML = `
-                    <div class="chat-ai">
-                        이해했습니다! 그럼 소재 제작을 세분화해서 분석할게요.<br>
-                        1) 디자인 브리핑 작성 (30분)<br>
-                        2) 디자이너 작업 대기 (1일)<br>
-                        3) 피드백 및 수정 (30분)<br>
-                        이 중 브리핑 작성은 AI가 도와드릴 수 있어요!
-                    </div>
-                `;
-                chatContainer.appendChild(aiReply);
-                chatContainer.scrollTop = chatContainer.scrollHeight;
-            }, 1500);
+                sendConsultingMessage("광고 소재 제작 업무를 자동화하고 싶습니다");
+            }, 500);
+        }
+
+        // AI 메시지 추가
+        function addAIMessage(message) {
+            const chatContainer = document.getElementById('chatContainer');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'chat-message';
+            messageDiv.innerHTML = `
+                <div class="chat-ai">${message}</div>
+            `;
+            chatContainer.appendChild(messageDiv);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+
+        // 사용자 메시지 추가
+        function addUserMessage(message) {
+            const chatContainer = document.getElementById('chatContainer');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'chat-message';
+            messageDiv.innerHTML = `
+                <div class="chat-user">${message}</div>
+            `;
+            chatContainer.appendChild(messageDiv);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+
+        // 로딩 메시지 표시
+        function showChatLoading() {
+            const chatContainer = document.getElementById('chatContainer');
+            const loadingDiv = document.createElement('div');
+            loadingDiv.className = 'chat-message';
+            loadingDiv.id = 'chatLoading';
+            loadingDiv.innerHTML = `
+                <div class="chat-ai" style="color: #6c757d;">
+                    <span style="animation: pulse 1.5s infinite;">●</span>
+                    <span style="animation: pulse 1.5s infinite; animation-delay: 0.2s;">●</span>
+                    <span style="animation: pulse 1.5s infinite; animation-delay: 0.4s;">●</span>
+                </div>
+            `;
+            chatContainer.appendChild(loadingDiv);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+
+        function removeChatLoading() {
+            const loadingDiv = document.getElementById('chatLoading');
+            if (loadingDiv) loadingDiv.remove();
+        }
+
+        // 사용자 메시지 전송
+        async function sendMessage() {
+            const input = document.getElementById('userInput');
+            const message = input.value.trim();
+
+            if (!message) return;
+
+            // 사용자 메시지 표시
+            addUserMessage(message);
+            input.value = '';
+
+            // AI 응답 요청
+            await sendConsultingMessage(message);
+        }
+
+        // 컨설팅 API 호출
+        async function sendConsultingMessage(message) {
+            const workshopId = localStorage.getItem('currentWorkshopId');
+
+            if (!workshopId) {
+                console.error('❌ 워크샵 ID 없음');
+                addAIMessage('워크샵 세션을 먼저 생성해주세요.');
+                return;
+            }
+
+            showChatLoading();
+
+            try {
+                const response = await fetch('http://localhost:3001/api/consulting/chat', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        workshopId: workshopId,
+                        message: message,
+                        conversationHistory: conversationHistory
+                    })
+                });
+
+                const data = await response.json();
+                removeChatLoading();
+
+                if (data.success) {
+                    console.log('✅ AI 응답 받음:', data);
+
+                    // 대화 히스토리 업데이트
+                    conversationHistory = data.conversationHistory || [];
+
+                    // AI 응답 표시
+                    const aiMessage = data.message || '응답을 받지 못했습니다.';
+                    addAIMessage(aiMessage.replace(/\n/g, '<br>'));
+                } else {
+                    addAIMessage('죄송합니다. 오류가 발생했습니다. 다시 시도해주세요.');
+                }
+            } catch (error) {
+                console.error('❌ 컨설팅 API 오류:', error);
+                removeChatLoading();
+                addAIMessage('서버 연결에 실패했습니다. 잠시 후 다시 시도해주세요.');
+            }
+        }
+
+        function addUserReply() {
+            // 이전 버전 호환성 유지 (사용 안 함)
         }
 
         function shareResults() {

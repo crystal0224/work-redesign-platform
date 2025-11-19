@@ -22,11 +22,12 @@ interface Message {
 
 interface Step5AIConsultantProps {
   tasks: ExtractedTask[];
+  workshopId: string;
   onComplete: (selectedTask: ExtractedTask, insights: any) => void;
   onPrevious?: () => void;
 }
 
-export default function Step5AIConsultant({ tasks, onComplete, onPrevious }: Step5AIConsultantProps) {
+export default function Step5AIConsultant({ tasks, workshopId, onComplete, onPrevious }: Step5AIConsultantProps) {
   const [selectedTask, setSelectedTask] = useState<ExtractedTask | null>(null);
   const [showChat, setShowChat] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
@@ -39,18 +40,53 @@ export default function Step5AIConsultant({ tasks, onComplete, onPrevious }: Ste
     task => task.automationPotential === 'High' || task.automationPotential === 'Medium'
   );
 
-  // 초기 컨설턴트 메시지
+  // 초기 컨설턴트 메시지 - API 호출
   useEffect(() => {
     if (showChat && messages.length === 0) {
-      const initialMessage: Message = {
-        id: Date.now().toString(),
-        role: 'consultant',
-        content: `안녕하세요! AI 자동화 컨설턴트입니다. "${selectedTask?.title}" 업무의 자동화 방안을 함께 설계해보겠습니다.\n\n먼저, 이 업무의 주요 목적과 현재 어떤 방식으로 수행되고 있는지 설명해주시겠어요?`,
-        timestamp: new Date(),
+      const fetchInitialMessage = async () => {
+        try {
+          console.log('🔄 초기 메시지 로딩 시작, WorkshopId:', workshopId);
+
+          // 초기 메시지 API 호출
+          const response = await fetch('http://localhost:3001/api/consulting/chat', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              workshopId: workshopId,
+              message: `${selectedTask?.title} 업무를 자동화하고 싶습니다`,
+              conversationHistory: []
+            })
+          });
+
+          const data = await response.json();
+
+          if (data.success) {
+            const initialMessage: Message = {
+              id: Date.now().toString(),
+              role: 'consultant',
+              content: data.message,
+              timestamp: new Date(),
+            };
+            setMessages([initialMessage]);
+          } else {
+            throw new Error('API call failed');
+          }
+        } catch (error) {
+          console.error('❌ 초기 메시지 로드 실패, Fallback 사용:', error);
+          // Fallback: 기존 하드코딩된 메시지
+          const initialMessage: Message = {
+            id: Date.now().toString(),
+            role: 'consultant',
+            content: `안녕하세요! AI 자동화 컨설턴트입니다. "${selectedTask?.title}" 업무의 자동화 방안을 함께 설계해보겠습니다.\n\n먼저, 이 업무의 주요 목적과 현재 어떤 방식으로 수행되고 있는지 설명해주시겠어요?`,
+            timestamp: new Date(),
+          };
+          setMessages([initialMessage]);
+        }
       };
-      setMessages([initialMessage]);
+
+      fetchInitialMessage();
     }
-  }, [showChat]);
+  }, [showChat, selectedTask]);
 
   // 자동 스크롤
   useEffect(() => {
@@ -79,8 +115,42 @@ export default function Step5AIConsultant({ tasks, onComplete, onPrevious }: Ste
     setInputMessage('');
     setIsTyping(true);
 
-    // AI 응답 시뮬레이션 (실제로는 Claude API 호출)
-    setTimeout(() => {
+    try {
+      console.log('💬 메시지 전송, WorkshopId:', workshopId);
+
+      // 대화 히스토리 구성
+      const conversationHistory = messages.map(msg => ({
+        role: msg.role === 'consultant' ? 'assistant' : 'user',
+        content: msg.content
+      }));
+
+      const response = await fetch('http://localhost:3001/api/consulting/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          workshopId: workshopId,
+          message: inputMessage,
+          conversationHistory: conversationHistory
+        })
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        const consultantMessage: Message = {
+          id: (Date.now() + 1).toString(),
+          role: 'consultant',
+          content: data.message,
+          timestamp: new Date(),
+        };
+        setMessages(prev => [...prev, consultantMessage]);
+      } else {
+        // API 실패 시 Fallback
+        throw new Error('API call failed');
+      }
+    } catch (error) {
+      console.error('❌ API 호출 실패, Fallback 사용:', error);
+      // Fallback: 기존 시뮬레이션 사용
       const consultantResponse = generateConsultantResponse(messages.length, inputMessage);
       const consultantMessage: Message = {
         id: (Date.now() + 1).toString(),
@@ -89,8 +159,9 @@ export default function Step5AIConsultant({ tasks, onComplete, onPrevious }: Ste
         timestamp: new Date(),
       };
       setMessages(prev => [...prev, consultantMessage]);
+    } finally {
       setIsTyping(false);
-    }, 1500);
+    }
   };
 
   const generateConsultantResponse = (messageCount: number, userInput: string): string => {
@@ -322,7 +393,7 @@ export default function Step5AIConsultant({ tasks, onComplete, onPrevious }: Ste
                 </button>
               </div>
 
-              {messages.length >= 4 && (
+              {messages.length >= 2 && (
                 <div className="mt-4 flex justify-between gap-4">
                   <button
                     onClick={onPrevious}
