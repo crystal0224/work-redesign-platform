@@ -39,7 +39,14 @@
       "Bash(npx next lint:*)",
       "Bash(npx next build:*)",
       "Bash(npx ts-node:*)",
-      "Bash(PORT=3002 npm run dev:*)"
+      "Bash(PORT=3002 npm run dev:*)",
+      "Bash(ls:*)",
+      "Bash(kill:*)",
+      "Bash(./demo-start.sh)",
+      "Bash(open:*)",
+      "Bash(./demo-stop.sh)",
+      "Bash(git reset:*)",
+      "Bash(git restore:*)"
     ],
     "deny": [],
     "ask": []
