@@ -46,7 +46,8 @@
       "Bash(open:*)",
       "Bash(./demo-stop.sh)",
       "Bash(git reset:*)",
-      "Bash(git restore:*)"
+      "Bash(git restore:*)",
+      "Bash(git checkout:*)"
     ],
     "deny": [],
     "ask": []
