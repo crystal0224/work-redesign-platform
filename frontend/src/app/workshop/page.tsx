@@ -1282,46 +1282,56 @@ export default function WorkshopPage() {
         <div className="absolute -bottom-8 left-20 w-96 h-96 bg-indigo-300 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-4000"></div>
       </div>
 
-      {/* Progress header with glassmorphism */}
-      <div className="relative backdrop-blur-2xl bg-gradient-to-r from-slate-900/95 via-indigo-900/95 to-slate-900/95 border-b border-white/10 shadow-2xl">
-        <div className="max-w-7xl mx-auto px-6 py-6">
+      {/* Progress header - Simple & Modern Design */}
+      <div className="relative backdrop-blur-2xl bg-gradient-to-r from-slate-900/95 via-indigo-900/95 to-slate-900/95 border-b border-white/10 shadow-xl">
+        <div className="max-w-7xl mx-auto px-6 py-3">
           <div className="max-w-6xl mx-auto">
-            <div className="grid grid-cols-2 gap-6">
+            <div className="grid grid-cols-2 gap-4">
               {[
                 { title: '우리 팀 일 분석하기', range: [1, 7], icon: '📊', activeColor: 'from-emerald-600 to-green-600', completedColor: 'from-emerald-700 to-green-700' },
                 { title: 'AI로 일 자동화하기', range: [8, 11], icon: '🤖', activeColor: 'from-purple-600 to-indigo-600', completedColor: 'from-purple-700 to-indigo-700' }
               ].map((section, index) => {
                 const isActive = currentStep >= section.range[0] && currentStep <= section.range[1];
                 const isCompleted = currentStep > section.range[1];
+                const currentStepInfo = isActive ? WORKSHOP_STEPS[currentStep - 1] : null;
+                const progress = isActive ? Math.round(((currentStep - section.range[0] + 1) / (section.range[1] - section.range[0] + 1)) * 100) : (isCompleted ? 100 : 0);
 
                 return (
-                  <div key={index} className={`backdrop-blur-md p-5 rounded-2xl transition-all shadow-lg ${
-                    isActive ? `bg-gradient-to-br ${section.activeColor} text-white shadow-xl` :
-                    isCompleted ? `bg-gradient-to-br ${section.completedColor} text-white shadow-lg` :
+                  <div key={index} className={`backdrop-blur-md p-3 rounded-xl transition-all ${
+                    isActive ? `bg-gradient-to-br ${section.activeColor} text-white shadow-lg shadow-${index === 0 ? 'emerald' : 'purple'}-500/30` :
+                    isCompleted ? `bg-gradient-to-br ${section.completedColor} text-white shadow-md` :
                     'bg-white/10 text-gray-300 hover:bg-white/15'
                   }`}>
-                    <div className="flex items-center justify-between mb-2">
-                      <span className="text-3xl">{section.icon}</span>
-                      <span className="text-xs font-medium opacity-70">
-                        Step {section.range[0]}-{section.range[1]}
-                      </span>
-                    </div>
-                    <h3 className="font-bold text-lg mb-1">{section.title}</h3>
-                    <div className="text-xs opacity-80 mb-3">
-                      {isActive && `현재 Step ${currentStep}`}
-                      {isCompleted && '완료'}
-                      {!isActive && !isCompleted && '대기 중'}
-                    </div>
-                    {isActive && (
-                      <div className="mt-3 w-full h-2 bg-white/30 rounded-full overflow-hidden">
-                        <div
-                          className="h-full bg-white rounded-full transition-all duration-500 shadow-lg"
-                          style={{
-                            width: `${((currentStep - section.range[0] + 1) / (section.range[1] - section.range[0] + 1)) * 100}%`
-                          }}
-                        />
+                    <div className="flex items-center justify-between gap-4">
+                      {/* 왼쪽: 섹션명 */}
+                      <div className="flex items-center gap-2 flex-shrink-0">
+                        <span className="text-xl">{section.icon}</span>
+                        <h3 className="font-bold text-sm whitespace-nowrap">{section.title}</h3>
                       </div>
-                    )}
+
+                      {/* 중앙: 현재 step 정보 (활성화된 섹션만) */}
+                      {isActive && currentStepInfo && (
+                        <div className="flex items-center gap-2 flex-1 min-w-0 px-3 border-l border-white/20">
+                          <span className="text-sm">{currentStepInfo.icon}</span>
+                          <span className="text-xs font-medium truncate">{currentStepInfo.title}</span>
+                        </div>
+                      )}
+
+                      {/* 우측: 진행률 바 + 퍼센트 */}
+                      <div className="flex items-center gap-3 flex-shrink-0">
+                        <div className="w-24 h-1.5 bg-white/30 rounded-full overflow-hidden">
+                          <div
+                            className="h-full bg-white rounded-full transition-all duration-500 shadow-sm"
+                            style={{ width: `${progress}%` }}
+                          />
+                        </div>
+                        <span className="text-xs font-semibold w-10 text-right">
+                          {currentStep >= section.range[0] && currentStep <= section.range[1]
+                            ? `${currentStep}/${section.range[1]}`
+                            : isCompleted ? '✓' : '–'}
+                        </span>
+                      </div>
+                    </div>
                   </div>
                 );
               })}
