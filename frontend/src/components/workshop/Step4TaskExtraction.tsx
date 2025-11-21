@@ -575,7 +575,7 @@ export default function Step4TaskExtraction({ workshopId, domains, onNext, manua
     setError('');
 
     try {
-      const response = await fetch(`http://localhost:3001/api/workshops/${workshopId}/extract-tasks`, {
+      const response = await fetch(`http://localhost:4000/api/workshops/${workshopId}/extract-tasks`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ manualInput }),
@@ -589,8 +589,9 @@ export default function Step4TaskExtraction({ workshopId, domains, onNext, manua
       const data = await response.json();
 
       if (data.success) {
-        setExtractedTasks(data.tasks);
-        if (data.tasks.length === 0) {
+        const tasks = data.data?.tasks || data.tasks || [];
+        setExtractedTasks(tasks);
+        if (tasks.length === 0) {
           setError('추출된 업무가 없습니다. 문서나 입력 내용을 확인해주세요.');
         }
       } else {

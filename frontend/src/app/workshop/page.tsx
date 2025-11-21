@@ -466,6 +466,7 @@ function TaskDetailsModal({
 export default function WorkshopPage() {
   // ALL useState HOOKS FIRST
   const [currentStep, setCurrentStep] = useState(1);
+  const [devMode, setDevMode] = useState(false); // 개발 모드 플래그
   const [workshop, setWorkshop] = useState<Workshop>({
     id: '',
     domains: ['', '', ''],
@@ -475,6 +476,7 @@ export default function WorkshopPage() {
   });
   const [uploadedFiles, setUploadedFiles] = useState<UploadedFile[]>([]);
   const [manualInput, setManualInput] = useState<string>('');
+  const [manualTaskInput, setManualTaskInput] = useState<Record<string, string>>({});
   const [extractedWorkItems, setExtractedWorkItems] = useState<ExtractedWorkItem[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -485,6 +487,84 @@ export default function WorkshopPage() {
   const [generatingSolutions, setGeneratingSolutions] = useState(false);
   const [automationSolutions, setAutomationSolutions] = useState<any[]>([]);
 
+  // 개발 모드: 모든 단계 자동 채우기
+  const fillDevData = () => {
+    if (currentStep === 1) {
+      setCurrentStep(2);
+    } else if (currentStep === 2) {
+      setWorkshop(prev => ({
+        ...prev,
+        domains: ['고객 문의 처리', '데이터 분석', '보고서 작성']
+      }));
+      setTimeout(() => setCurrentStep(3), 500);
+    } else if (currentStep === 3) {
+      // Step3 팀 현황 자동 채우기 - 다음 단계로
+      setTimeout(() => setCurrentStep(4), 500);
+    } else if (currentStep === 4) {
+      // 업무 영역 자동 입력
+      setWorkshop(prev => ({
+        ...prev,
+        domains: ['고객 문의 처리', '데이터 분석 및 리포트', '회의 및 보고']
+      }));
+      setTimeout(() => setCurrentStep(5), 500);
+    } else if (currentStep === 5) {
+      // 업무 내용 자동 입력
+      setManualTaskInput({
+        '고객 문의 처리': '매일 오전 9시 이메일 확인 (30분)\n고객 문의 분류 및 답변 (2시간)\n긴급 문의 처리 (1시간)',
+        '데이터 분석 및 리포트': '주간 데이터 수집 (1시간)\nExcel 데이터 정제 (2시간)\n리포트 작성 및 차트 생성 (3시간)',
+        '회의 및 보고': '일일 스탠드업 미팅 (30분)\n주간 팀 회의 (1시간)\n월간 보고서 작성 (4시간)'
+      });
+
+      // 워크샵 생성 및 다음 단계로
+      setWorkshop(prev => ({
+        ...prev,
+        id: `dev_workshop_${Date.now()}`,
+        tasks: [
+          {
+            id: 'task1',
+            title: '고객 이메일 확인 및 분류',
+            description: '매일 오전 9시 고객 이메일을 확인하고 긴급/일반/기술 문의로 분류',
+            timeSpent: 30,
+            frequency: '매일',
+            automation: 'high' as const,
+            automationMethod: 'AI 이메일 분류 시스템',
+            category: '고객 문의 처리',
+            sourceFileId: 'manual',
+            sourceFilename: '직접 입력'
+          },
+          {
+            id: 'task2',
+            title: '주간 데이터 수집 및 정제',
+            description: '매주 금요일 데이터베이스에서 주간 데이터를 추출하고 Excel로 정제',
+            timeSpent: 180,
+            frequency: '주간',
+            automation: 'medium' as const,
+            automationMethod: 'Python 스크립트 자동화',
+            category: '데이터 분석 및 리포트',
+            sourceFileId: 'manual',
+            sourceFilename: '직접 입력'
+          },
+          {
+            id: 'task3',
+            title: '월간 보고서 작성',
+            description: '매월 말 월간 성과 보고서를 작성하고 경영진에게 보고',
+            timeSpent: 240,
+            frequency: '월간',
+            automation: 'low' as const,
+            automationMethod: '템플릿 활용',
+            category: '회의 및 보고',
+            sourceFileId: 'manual',
+            sourceFilename: '직접 입력'
+          }
+        ]
+      }));
+      setTimeout(() => setCurrentStep(6), 500);
+    } else if (currentStep === 6) {
+      // 다음 단계로
+      setTimeout(() => setCurrentStep(7), 500);
+    }
+  };
+
   // Kanban board state
   const [kanbanTasks, setKanbanTasks] = useState<{
     todo: Task[];
@@ -493,7 +573,6 @@ export default function WorkshopPage() {
   }>({ todo: [], inProgress: [], done: [] });
 
   // 텍스트 입력 관련 상태
-  const [manualTaskInput, setManualTaskInput] = useState<{ [domain: string]: string }>({});
   const [activeTextInputTab, setActiveTextInputTab] = useState<string>('general');
   const [showDomainTips, setShowDomainTips] = useState(false);
 
@@ -950,7 +1029,7 @@ export default function WorkshopPage() {
       // 워크샵이 아직 생성되지 않았다면 생성
       setLoading(true);
       try {
-        const response = await fetch('http://localhost:3001/api/workshops', {
+        const response = await fetch('/api/workshops', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -1144,6 +1223,14 @@ export default function WorkshopPage() {
 
   return (
     <div className="h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 flex flex-col relative overflow-hidden">
+      {/* Dev Mode Button - Fixed position */}
+      <button
+        onClick={fillDevData}
+        className="fixed top-4 right-4 z-50 px-4 py-2 bg-gradient-to-r from-orange-500 to-red-500 text-white font-bold rounded-lg shadow-lg hover:shadow-xl hover:scale-105 transition-all"
+      >
+        ⚡ 빠른 테스트 (Step {currentStep})
+      </button>
+
       {/* Background animated blobs */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-0 -left-4 w-96 h-96 bg-purple-300 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob"></div>
