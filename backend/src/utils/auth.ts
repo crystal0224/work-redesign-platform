@@ -1,4 +1,4 @@
-import jwt from 'jsonwebtoken';
+import jwt, { SignOptions } from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
 import { config } from '@/config';
 import { AuthTokenPayload } from '@/types';
@@ -11,6 +11,7 @@ export class JwtUtil {
    * Generate JWT token
    */
   static generateToken(payload: AuthTokenPayload): string {
+    // @ts-ignore - TypeScript has issues with jwt.sign overloads
     return jwt.sign(payload, config.auth.jwtSecret, {
       expiresIn: config.auth.jwtExpiresIn,
       issuer: 'work-redesign-platform',

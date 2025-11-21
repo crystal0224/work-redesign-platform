@@ -12,7 +12,7 @@ const corsOptions: cors.CorsOptions = {
     // In development, allow configured origin
     if (config.app.isDevelopment) {
       const allowedOrigins = [
-        config.cors.origin,
+        ...(Array.isArray(config.cors.origin) ? config.cors.origin : [config.cors.origin]),
         'http://localhost:3000',
         'http://127.0.0.1:3000',
         'http://localhost:3001', // For testing
@@ -25,7 +25,8 @@ const corsOptions: cors.CorsOptions = {
 
     // In production, only allow configured origin
     if (config.app.isProduction) {
-      if (origin === config.cors.origin) {
+      const allowedOrigins = Array.isArray(config.cors.origin) ? config.cors.origin : [config.cors.origin];
+      if (allowedOrigins.includes(origin)) {
         return callback(null, true);
       }
     }

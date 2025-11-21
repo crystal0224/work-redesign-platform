@@ -1,6 +1,6 @@
 import { PrismaClient } from '@prisma/client';
 import Redis from 'ioredis';
-import { logger } from './logger';
+import logger from '../utils/logger';
 
 // Prisma Client Setup
 export const prisma = new PrismaClient({
@@ -46,15 +46,18 @@ prisma.$on('warn', (e) => {
 });
 
 // Redis Client Setup
-const redisConfig = {
+const redisConfig: any = {
   host: process.env.REDIS_HOST || 'localhost',
   port: parseInt(process.env.REDIS_PORT || '6379'),
-  password: process.env.REDIS_PASSWORD || undefined,
   db: parseInt(process.env.REDIS_DB || '0'),
-  retryDelayOnFailover: 100,
-  maxRetriesPerRequest: 3,
+  retryStrategy: () => null, // Don't retry on failure
   lazyConnect: true,
 };
+
+// Only add password if it exists
+if (process.env.REDIS_PASSWORD) {
+  redisConfig.password = process.env.REDIS_PASSWORD;
+}
 
 export const redis = new Redis(redisConfig);
 
@@ -198,3 +201,6 @@ export const session = {
     await redis.expire(`session:${sessionId}`, ttlSeconds);
   },
 };
+
+// Export getPrismaClient for compatibility
+export const getPrismaClient = () => prisma;

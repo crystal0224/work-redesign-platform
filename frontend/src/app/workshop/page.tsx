@@ -486,7 +486,7 @@ export default function WorkshopPage() {
   }>({ todo: [], inProgress: [], done: [] });
 
   // 텍스트 입력 관련 상태
-  const [manualTaskInput, setManualTaskInput] = useState<{[domain: string]: string}>({});
+  const [manualTaskInput, setManualTaskInput] = useState<{ [domain: string]: string }>({});
   const [activeTextInputTab, setActiveTextInputTab] = useState<string>('general');
   const [showDomainTips, setShowDomainTips] = useState(false);
 
@@ -522,7 +522,7 @@ export default function WorkshopPage() {
 
   // Initialize kanban when selected tasks change
   useEffect(() => {
-    if (workshop.selectedTaskIds.length > 0 && currentStep === 5) {
+    if (workshop.selectedTaskIds.length > 0 && currentStep === 7) {
       initializeKanban();
     }
   }, [workshop.selectedTaskIds, currentStep]);
@@ -924,7 +924,7 @@ export default function WorkshopPage() {
             await handleFilesUploadToServer(data.id);
           }
 
-          setCurrentStep(4);
+          setCurrentStep(6);
         } else {
           setError(data.error);
         }
@@ -934,7 +934,7 @@ export default function WorkshopPage() {
         setLoading(false);
       }
     } else {
-      setCurrentStep(4);
+      setCurrentStep(6);
     }
   };
 
@@ -1122,11 +1122,10 @@ export default function WorkshopPage() {
                 const isCompleted = currentStep > section.range[1];
 
                 return (
-                  <div key={index} className={`backdrop-blur-md p-4 rounded-2xl transition-all shadow-lg ${
-                    isActive ? 'bg-gradient-to-br from-indigo-600 to-purple-600 text-white shadow-indigo-500/50' :
+                  <div key={index} className={`backdrop-blur-md p-4 rounded-2xl transition-all shadow-lg ${isActive ? 'bg-gradient-to-br from-indigo-600 to-purple-600 text-white shadow-indigo-500/50' :
                     isCompleted ? 'bg-gradient-to-br from-green-600 to-emerald-600 text-white shadow-green-500/30' :
-                    'bg-white/10 text-gray-300 hover:bg-white/15'
-                  }`}>
+                      'bg-white/10 text-gray-300 hover:bg-white/15'
+                    }`}>
                     <div className="flex items-center justify-between mb-2">
                       <span className="text-2xl">{section.icon}</span>
                       <span className="text-xs font-medium opacity-70">
@@ -1156,222 +1155,778 @@ export default function WorkshopPage() {
       <div className="flex-1 overflow-auto">
         <div className="max-w-6xl mx-auto p-6">
 
-          {/* Step 1: 워크샵 시작하기 - 글래스모피즘 디자인 */}
+          {/* Step 1: 워크샵 시작하기 - Dynamic & Immersive Design */}
           {currentStep === 1 && (
-            <div className="relative min-h-screen -m-6 p-6 animate-fadeIn">
-              {/* 애니메이션 배경 그라디언트 */}
-              <div className="absolute inset-0 bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 overflow-hidden">
-                <div className="absolute top-0 -left-4 w-96 h-96 bg-purple-300 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob"></div>
-                <div className="absolute top-0 -right-4 w-96 h-96 bg-blue-300 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob animation-delay-2000"></div>
-                <div className="absolute -bottom-8 left-20 w-96 h-96 bg-indigo-300 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob animation-delay-4000"></div>
+            <div className="relative min-h-screen -m-6 flex flex-col animate-fadeIn overflow-hidden">
+              {/* Dynamic Gradient Background */}
+              <div className="absolute inset-0 fixed bg-gradient-to-br from-blue-50 via-indigo-50/30 to-purple-50/20">
+                <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_30%,rgba(59,130,246,0.15),transparent_50%)]"></div>
+                <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_70%,rgba(147,51,234,0.1),transparent_50%)]"></div>
+                <div className="absolute inset-0 backdrop-blur-3xl bg-white/40"></div>
               </div>
 
-              {/* 메인 컨텐츠 */}
-              <div className="relative z-10 max-w-6xl mx-auto py-12">
-                {/* 헤더 글래스 카드 */}
-                <div className="backdrop-blur-xl bg-white/40 border border-white/60 rounded-3xl p-8 mb-12 shadow-2xl shadow-indigo-200/50">
+              {/* Main Content Container */}
+              <div className="relative z-10 flex-1 flex items-center justify-center px-6 py-16">
+                <div className="w-full max-w-5xl mx-auto">
+
+                  {/* Hero Section */}
+                  <div className="text-center mb-16">
+                    {/* Badge with Animation */}
+                    <div className="inline-flex items-center gap-2.5 px-4 py-2 bg-white/80 backdrop-blur-sm border border-blue-200/50 rounded-full mb-8 shadow-lg shadow-blue-500/10">
+                      <div className="relative">
+                        <div className="w-2 h-2 bg-blue-600 rounded-full animate-pulse"></div>
+                        <div className="absolute inset-0 bg-blue-400 rounded-full animate-ping"></div>
+                      </div>
+                      <span className="text-xs font-bold text-blue-900 uppercase tracking-widest">팀장 워크샵</span>
+                    </div>
+
+                    {/* Simple Title */}
+                    <h1 className="text-5xl md:text-6xl font-black tracking-tight">
+                      <span className="bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 bg-clip-text text-transparent">
+                        Work Re-design
+                      </span>
+                    </h1>
+                  </div>
+
+                  {/* Impactful Message Section - Moved to top */}
+                  <div className="text-center mb-16">
+                    <div className="space-y-6">
+                      {/* Philosophy */}
+                      <div className="space-y-2">
+                        <p className="text-base text-slate-600">
+                          단순한 업무 자동화가 아닌
+                        </p>
+                        <p className="text-3xl md:text-4xl font-bold text-slate-900 leading-tight">
+                          일하는 방식의{' '}
+                          <span className="relative inline-block">
+                            <span className="relative z-10 bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 bg-clip-text text-transparent">
+                              근본적인 혁신
+                            </span>
+                            <span className="absolute bottom-1 left-0 right-0 h-4 bg-gradient-to-r from-blue-200 via-indigo-200 to-purple-200 -z-0 blur-sm"></span>
+                          </span>
+                        </p>
+                      </div>
+
+                      {/* Divider */}
+                      <div className="flex items-center justify-center gap-3 py-3">
+                        <div className="w-16 h-0.5 bg-gradient-to-r from-transparent via-blue-300 to-transparent"></div>
+                        <div className="w-2 h-2 rounded-full bg-blue-500"></div>
+                        <div className="w-16 h-0.5 bg-gradient-to-r from-transparent via-blue-300 to-transparent"></div>
+                      </div>
+
+                      {/* Main CTA Message */}
+                      <div>
+                        <p className="text-2xl md:text-3xl font-black text-slate-900 leading-tight tracking-tight">
+                          팀장님께서는{' '}
+                          <span className="bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 bg-clip-text text-transparent">
+                            &apos;진짜 일&apos;
+                          </span>
+                          에<br />
+                          집중하세요!
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* 2x2 Grid Layout */}
+                  <div className="max-w-4xl mx-auto mb-20">
+                    <div className="grid md:grid-cols-2 gap-6">
+                      {/* Step 1 - Blue Theme */}
+                      <div className="group relative transform hover:scale-[1.02] transition-all duration-300">
+                        <div className="absolute -inset-0.5 bg-gradient-to-r from-blue-500 to-blue-600 rounded-2xl opacity-0 group-hover:opacity-100 blur transition duration-500"></div>
+                        <div className="relative flex items-center gap-6 bg-white rounded-2xl p-7 shadow-lg shadow-slate-200/50 group-hover:shadow-2xl group-hover:shadow-blue-200/50 transition-all duration-300">
+                          <div className="flex-shrink-0">
+                            <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-blue-500 to-blue-700 flex items-center justify-center text-white font-bold text-xl shadow-xl shadow-blue-500/30">
+                              01
+                            </div>
+                          </div>
+                          <div className="flex-1">
+                            <h3 className="text-2xl font-bold text-slate-900 mb-1.5 group-hover:text-blue-700 transition-colors">일의 본질에 집중</h3>
+                            <p className="text-slate-600 text-base leading-relaxed">
+                              진짜 목적과 가치를 발견합니다
+                            </p>
+                          </div>
+                          <div className="flex-shrink-0 opacity-0 group-hover:opacity-100 transition-opacity">
+                            <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" />
+                            </svg>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Step 2 - Indigo Theme */}
+                      <div className="group relative transform hover:scale-[1.02] transition-all duration-300">
+                        <div className="absolute -inset-0.5 bg-gradient-to-r from-indigo-500 to-indigo-600 rounded-2xl opacity-0 group-hover:opacity-100 blur transition duration-500"></div>
+                        <div className="relative flex items-center gap-6 bg-white rounded-2xl p-7 shadow-lg shadow-slate-200/50 group-hover:shadow-2xl group-hover:shadow-indigo-200/50 transition-all duration-300">
+                          <div className="flex-shrink-0">
+                            <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-indigo-500 to-indigo-700 flex items-center justify-center text-white font-bold text-xl shadow-xl shadow-indigo-500/30">
+                              02
+                            </div>
+                          </div>
+                          <div className="flex-1">
+                            <h3 className="text-2xl font-bold text-slate-900 mb-1.5 group-hover:text-indigo-700 transition-colors">관점을 확장</h3>
+                            <p className="text-slate-600 text-base leading-relaxed">
+                              새로운 접근법을 탐색합니다
+                            </p>
+                          </div>
+                          <div className="flex-shrink-0 opacity-0 group-hover:opacity-100 transition-opacity">
+                            <svg className="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" />
+                            </svg>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Step 3 - Purple Theme */}
+                      <div className="group relative transform hover:scale-[1.02] transition-all duration-300">
+                        <div className="absolute -inset-0.5 bg-gradient-to-r from-purple-500 to-purple-600 rounded-2xl opacity-0 group-hover:opacity-100 blur transition duration-500"></div>
+                        <div className="relative flex items-center gap-6 bg-white rounded-2xl p-7 shadow-lg shadow-slate-200/50 group-hover:shadow-2xl group-hover:shadow-purple-200/50 transition-all duration-300">
+                          <div className="flex-shrink-0">
+                            <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-purple-500 to-purple-700 flex items-center justify-center text-white font-bold text-xl shadow-xl shadow-purple-500/30">
+                              03
+                            </div>
+                          </div>
+                          <div className="flex-1">
+                            <h3 className="text-2xl font-bold text-slate-900 mb-1.5 group-hover:text-purple-700 transition-colors">워크플로우를 재설계</h3>
+                            <p className="text-slate-600 text-base leading-relaxed">
+                              프로세스를 최적화합니다
+                            </p>
+                          </div>
+                          <div className="flex-shrink-0 opacity-0 group-hover:opacity-100 transition-opacity">
+                            <svg className="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" />
+                            </svg>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Step 4 - Emerald Theme */}
+                      <div className="group relative transform hover:scale-[1.02] transition-all duration-300">
+                        <div className="absolute -inset-0.5 bg-gradient-to-r from-emerald-500 to-emerald-600 rounded-2xl opacity-0 group-hover:opacity-100 blur transition duration-500"></div>
+                        <div className="relative flex items-center gap-6 bg-white rounded-2xl p-7 shadow-lg shadow-slate-200/50 group-hover:shadow-2xl group-hover:shadow-emerald-200/50 transition-all duration-300">
+                          <div className="flex-shrink-0">
+                            <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-emerald-500 to-emerald-700 flex items-center justify-center text-white font-bold text-xl shadow-xl shadow-emerald-500/30">
+                              04
+                            </div>
+                          </div>
+                          <div className="flex-1">
+                            <h3 className="text-2xl font-bold text-slate-900 mb-1.5 group-hover:text-emerald-700 transition-colors">ERRC로 실행</h3>
+                            <p className="text-slate-600 text-base leading-relaxed">
+                              제거·축소·강화·창조합니다
+                            </p>
+                          </div>
+                          <div className="flex-shrink-0 opacity-0 group-hover:opacity-100 transition-opacity">
+                            <svg className="w-6 h-6 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" />
+                            </svg>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Prominent CTA Button */}
                   <div className="text-center">
-                    <h2 className="text-3xl font-semibold text-slate-900 mb-3 tracking-tight">
-                      <span className="font-bold text-slate-900 bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">Work Re-design</span> 워크샵이 시작됩니다
-                    </h2>
-                    <p className="text-lg text-slate-600 leading-relaxed max-w-2xl mx-auto">
-                      반복 업무를 넘어 AI가 더 잘할 수 있는 업무를 찾아<br />
-                      자동화 가능성을 탐색하고 팀의 미래를 설계합니다
-                    </p>
-                  </div>
-                </div>
-
-                {/* 메인 글래스 카드 - 본격적인 시작에 앞서 */}
-                <div className="backdrop-blur-2xl bg-white/50 border border-white/60 rounded-3xl p-12 mb-12 shadow-2xl shadow-indigo-300/30 hover:shadow-indigo-300/50 transition-all duration-500 hover:scale-[1.01]">
-                  <h3 className="text-3xl font-semibold text-slate-900 mb-8 tracking-tight">
-                    본격적인 시작에 앞서
-                  </h3>
-                  <div className="space-y-5 text-slate-700 text-lg leading-normal mb-10">
-                    <p>
-                      바쁜 일상 속에서 눈앞의 업무를 처리하느라 <span className="font-semibold text-slate-900 bg-gradient-to-r from-indigo-100 to-purple-100 px-2 py-0.5 rounded">미처 시도하지 못했던 일들</span>이 있으실 겁니다.
-                    </p>
-                    <p>
-                      팀원들이 <span className="font-semibold text-slate-900 bg-gradient-to-r from-blue-100 to-indigo-100 px-2 py-0.5 rounded">배우고 싶어 하거나 경험했으면 하는 것들</span>, 혹은 팀장님께서 팀의 성장을 위해 <span className="font-semibold text-slate-900 bg-gradient-to-r from-purple-100 to-pink-100 px-2 py-0.5 rounded">시간을 투자하고 싶었던 영역들</span> 말이죠.
-                    </p>
-                    <p className="text-slate-600">
-                      잠시 멈춰서서 그런 것들에 대해 생각해보는 시간을 가져보면 어떨까요?
-                    </p>
-                  </div>
-
-                  {/* 입력 영역 - 네스티드 글래스 */}
-                  <div className="backdrop-blur-md bg-white/60 border-2 border-indigo-200/50 rounded-2xl p-8 shadow-xl">
-                    <div className="flex items-center gap-2 mb-5">
-                      <svg className="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                    <button
+                      onClick={handleStart}
+                      disabled={loading}
+                      className="group relative inline-flex items-center justify-center gap-3 px-12 py-5 bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 text-white text-xl font-bold rounded-2xl shadow-2xl shadow-blue-500/40 hover:shadow-3xl hover:shadow-indigo-500/50 hover:scale-[1.05] transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed overflow-hidden"
+                    >
+                      <div className="absolute inset-0 bg-gradient-to-r from-blue-400 via-indigo-400 to-purple-400 opacity-0 group-hover:opacity-20 transition-opacity duration-300"></div>
+                      <span className="relative">{loading ? '준비 중...' : '워크샵 시작하기'}</span>
+                      <svg className="relative w-6 h-6 group-hover:translate-x-2 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M13 7l5 5m0 0l-5 5m5-5H6" />
                       </svg>
-                      <p className="text-slate-900 font-semibold text-base leading-snug">
-                        현재 하고 있는 일이 아닌, 미처 해보지 못한 일이 있다면 간단히 적어주세요
-                      </p>
-                    </div>
-                    <div className="relative">
-                      <textarea
-                        className="w-full px-6 py-4 backdrop-blur-sm bg-white/90 border-2 border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-400/50 focus:border-indigo-400 focus:bg-white focus:shadow-lg focus:shadow-indigo-200/50 transition-all resize-none text-slate-800 text-base placeholder-slate-400 leading-relaxed"
-                        rows={5}
-                        placeholder="예: 팀원 역량 개발 프로그램 기획, 업무 프로세스 개선 연구, 신기술 도입 검토 등"
-                      />
-                      <div className="absolute bottom-3 right-3 text-xs text-slate-400">
-                        자유롭게 작성해주세요
-                      </div>
-                    </div>
+                    </button>
                   </div>
-                </div>
 
-                {/* 워크샵 진행 흐름 - 미니 글래스 카드 */}
-                <div className="mb-10">
-                  <h3 className="text-xl font-semibold text-slate-800 mb-5 text-center tracking-tight">워크샵 진행 흐름</h3>
-                  <div className="grid grid-cols-3 gap-5">
-                    <div className="backdrop-blur-lg bg-white/40 border border-white/60 rounded-2xl p-5 shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300">
-                      <div className="flex items-center gap-3 mb-3">
-                        <div className="w-10 h-10 backdrop-blur-md bg-gradient-to-br from-blue-500/30 to-indigo-500/30 border border-blue-300/50 rounded-lg flex items-center justify-center flex-shrink-0">
-                          <svg className="w-5 h-5 text-blue-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-                          </svg>
-                        </div>
-                        <h4 className="font-semibold text-slate-900 text-base">업무 분석</h4>
-                      </div>
-                      <p className="text-slate-600 text-sm leading-relaxed">
-                        현재 수행 중인 업무를 AI가 상세히 분석합니다
-                      </p>
-                    </div>
-
-                    <div className="backdrop-blur-lg bg-white/40 border border-white/60 rounded-2xl p-5 shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300">
-                      <div className="flex items-center gap-3 mb-3">
-                        <div className="w-10 h-10 backdrop-blur-md bg-gradient-to-br from-purple-500/30 to-pink-500/30 border border-purple-300/50 rounded-lg flex items-center justify-center flex-shrink-0">
-                          <svg className="w-5 h-5 text-purple-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-                          </svg>
-                        </div>
-                        <h4 className="font-semibold text-slate-900 text-base">자동화 솔루션 설계</h4>
-                      </div>
-                      <p className="text-slate-600 text-sm leading-relaxed">
-                        자동화 가능 영역을 찾고 최적 솔루션을 제안합니다
-                      </p>
-                    </div>
-
-                    <div className="backdrop-blur-lg bg-white/40 border border-white/60 rounded-2xl p-5 shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300">
-                      <div className="flex items-center gap-3 mb-3">
-                        <div className="w-10 h-10 backdrop-blur-md bg-gradient-to-br from-green-500/30 to-emerald-500/30 border border-green-300/50 rounded-lg flex items-center justify-center flex-shrink-0">
-                          <svg className="w-5 h-5 text-green-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                          </svg>
-                        </div>
-                        <h4 className="font-semibold text-slate-900 text-base">결과 확인 및 실습</h4>
-                      </div>
-                      <p className="text-slate-600 text-sm leading-relaxed">
-                        자동화 방안을 검토하고 우선순위를 설정합니다
-                      </p>
-                    </div>
-                  </div>
-                </div>
-
-                {/* AI 활용 안내 */}
-                <div className="backdrop-blur-md bg-white/30 border border-white/50 rounded-2xl p-4 mb-12">
-                  <div className="flex items-center justify-center gap-2">
-                    <svg className="w-5 h-5 text-indigo-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
-                    </svg>
-                    <p className="text-slate-600 text-sm leading-relaxed">
-                      워크샵 진행 중에도 AI를 활용하여 <strong className="text-slate-800">작성보다는 사고에 집중</strong>할 수 있도록 설계했습니다
-                    </p>
-                  </div>
-                </div>
-
-                {/* 시작하기 버튼 */}
-                <div className="text-center">
-                  <button
-                    onClick={handleStart}
-                    disabled={loading}
-                    className="group relative inline-flex items-center px-14 py-6 backdrop-blur-md bg-gradient-to-r from-indigo-600 to-purple-600 text-white text-xl font-medium rounded-2xl overflow-hidden shadow-2xl shadow-indigo-300/50 hover:shadow-indigo-400/60 transition-all duration-300 hover:scale-105"
-                  >
-                    <div className="absolute inset-0 bg-gradient-to-r from-indigo-600 via-purple-600 to-indigo-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                    <span className="relative">워크샵 시작하기</span>
-                    <svg className="relative ml-3 w-6 h-6 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
-                    </svg>
-                  </button>
                 </div>
               </div>
             </div>
           )}
 
-          {/* Step 2: 업무영역 정의 */}
+          {/* Step 2: 미션 작성하기 */}
           {currentStep === 2 && (
-            <div className="relative min-h-screen -m-6 p-6 animate-fadeIn">
-              {/* Animated gradient background */}
-              <div className="absolute inset-0 bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 overflow-hidden">
-                <div className="absolute top-0 -left-4 w-96 h-96 bg-purple-300 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob"></div>
-                <div className="absolute top-0 -right-4 w-96 h-96 bg-blue-300 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob animation-delay-2000"></div>
-                <div className="absolute -bottom-8 left-20 w-96 h-96 bg-indigo-300 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob animation-delay-4000"></div>
+            <div className="relative min-h-screen -m-6 flex flex-col animate-fadeIn overflow-hidden">
+              {/* Background */}
+              <div className="absolute inset-0 fixed bg-gradient-to-br from-blue-50 via-indigo-50/30 to-purple-50/20">
+                <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_30%,rgba(59,130,246,0.1),transparent_50%)]"></div>
+                <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_70%,rgba(147,51,234,0.08),transparent_50%)]"></div>
               </div>
 
-              {/* Content */}
-              <div className="relative">
-                {/* Header glass card */}
-                <div className="backdrop-blur-xl bg-white/40 border border-white/60 rounded-3xl p-8 mb-8 shadow-2xl shadow-indigo-200/50">
-                  <h2 className="text-3xl font-semibold text-slate-900 mb-3 tracking-tight text-center">
-                    업무 영역 정의
-                  </h2>
-                  <p className="text-lg text-slate-600 text-center">
-                    담당하고 계신 주요 업무 영역을 입력해주세요
-                  </p>
-                </div>
+              {/* Main Content */}
+              <div className="relative z-10 flex-1 overflow-auto px-6 py-12">
+                <div className="w-full max-w-5xl mx-auto">
 
-                {/* Guide section - glass card */}
-                <div className="backdrop-blur-xl bg-white/50 border border-white/60 rounded-3xl p-8 mb-8 shadow-xl">
-                  <div className="flex items-start gap-5">
-                    <div className="w-14 h-14 backdrop-blur-md bg-gradient-to-br from-green-500/30 to-emerald-500/30 border border-green-300/50 rounded-2xl flex items-center justify-center flex-shrink-0">
-                      <span className="text-3xl">💡</span>
+                  {/* Header */}
+                  <div className="text-center mb-12">
+                    <div className="inline-flex items-center gap-2 px-3 py-1 bg-white/80 backdrop-blur-sm border border-indigo-200/50 rounded-full mb-6">
+                      <span className="text-xs font-medium text-indigo-700 uppercase tracking-wide">Step 2</span>
                     </div>
-                    <div className="flex-1">
-                      <h3 className="text-2xl font-semibold text-slate-900 mb-5 tracking-tight">효과적인 업무 영역 정의 방법</h3>
-                      <div className="grid md:grid-cols-2 gap-x-8 gap-y-4 text-slate-700">
-                        <div className="flex items-start gap-3">
-                          <span className="text-green-600 text-xl font-bold mt-0.5">✓</span>
-                          <div>
-                            <strong className="text-slate-900">구체적으로 작성</strong>
-                            <p className="text-sm text-slate-600 mt-1">"기타업무" → "고객 문의 응답 및 클레임 처리"</p>
+                    <h2 className="text-4xl md:text-5xl font-black text-slate-900 mb-4 tracking-tight">
+                      미션 작성하기
+                    </h2>
+                    <p className="text-lg text-slate-600 max-w-2xl mx-auto">
+                      우리 팀의 존재 이유와 목표를 명확히 정의해봅시다
+                    </p>
+                  </div>
+
+                  {/* Main Questions */}
+                  <div className="space-y-6 mb-12">
+                    {/* Question 1 */}
+                    <div className="group bg-white rounded-3xl p-8 shadow-lg border border-slate-200/60 hover:shadow-xl hover:border-blue-300 transition-all duration-300">
+                      <div className="flex items-start gap-4 mb-6">
+                        <div className="flex-shrink-0 w-12 h-12 rounded-xl bg-gradient-to-br from-blue-500 to-blue-700 flex items-center justify-center text-white font-bold text-lg shadow-lg">
+                          01
+                        </div>
+                        <div className="flex-1">
+                          <h3 className="text-2xl font-bold text-slate-900 mb-3 leading-tight">
+                            우리 팀이 올해 무엇을 어떻게 하면<br />
+                            <span className="text-blue-600">잘했다</span>라고 평가할 수 있을까요?
+                          </h3>
+                          <p className="text-slate-600 text-sm mb-4">
+                            팀의 성공 기준과 목표를 구체적으로 작성해주세요
+                          </p>
+                        </div>
+                      </div>
+                      <textarea
+                        rows={4}
+                        placeholder="예시: 고객 만족도 90% 달성, 신규 고객 100개사 확보, 프로세스 자동화로 업무 시간 30% 단축"
+                        className="w-full px-5 py-4 bg-slate-50 border-2 border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400/50 focus:border-blue-400 text-base transition-all resize-none"
+                      />
+
+                      {/* 미션 작성 가이드 */}
+                      <div className="mt-6 bg-blue-50 rounded-xl border border-blue-200 p-6">
+                        <div className="flex items-start gap-3 mb-4">
+                          <span className="text-2xl">💡</span>
+                          <h5 className="font-bold text-slate-900 text-base">미션 작성 가이드</h5>
+                        </div>
+                        <div className="grid md:grid-cols-2 gap-4">
+                          {/* 잘 모르겠으면 */}
+                          <div className="bg-white rounded-xl p-4 border border-blue-200/60">
+                            <div className="flex items-start gap-2 mb-2">
+                              <span className="text-xl">🤔</span>
+                              <h6 className="font-bold text-slate-900 text-sm">잘 모르겠으면?</h6>
+                            </div>
+                            <p className="text-xs text-slate-600 leading-relaxed">
+                              <strong className="text-slate-900">팀이 없다면 어떤 문제가 생길까요?</strong><br />
+                              그 문제를 해결하는 것이 바로 우리 팀의 미션입니다.
+                            </p>
+                          </div>
+
+                          {/* 단순하게밖에 표현 못하겠으면 */}
+                          <div className="bg-white rounded-xl p-4 border border-blue-200/60">
+                            <div className="flex items-start gap-2 mb-2">
+                              <span className="text-xl">✏️</span>
+                              <h6 className="font-bold text-slate-900 text-sm">단순하게밖에 표현 못하겠으면?</h6>
+                            </div>
+                            <p className="text-xs text-slate-600 leading-relaxed">
+                              <strong className="text-slate-900">괜찮습니다!</strong><br />
+                              "고객 만족도 높이기"부터 시작하세요. 구체적인 방법은 나중에 추가할 수 있습니다.
+                            </p>
+                          </div>
+
+                          {/* 너무 여러가지 하고 있으면 */}
+                          <div className="bg-white rounded-xl p-4 border border-blue-200/60">
+                            <div className="flex items-start gap-2 mb-2">
+                              <span className="text-xl">🎯</span>
+                              <h6 className="font-bold text-slate-900 text-sm">너무 여러가지 하고 있으면?</h6>
+                            </div>
+                            <p className="text-xs text-slate-600 leading-relaxed">
+                              <strong className="text-slate-900">우선순위를 정하세요.</strong><br />
+                              가장 중요한 3가지만 선택하세요. 나머지는 부차적인 활동입니다.
+                            </p>
+                          </div>
+
+                          {/* 너무 짧게 쓰는게 어려우면 */}
+                          <div className="bg-white rounded-xl p-4 border border-blue-200/60">
+                            <div className="flex items-start gap-2 mb-2">
+                              <span className="text-xl">📝</span>
+                              <h6 className="font-bold text-slate-900 text-sm">너무 짧게 쓰는게 어려우면?</h6>
+                            </div>
+                            <p className="text-xs text-slate-600 leading-relaxed">
+                              <strong className="text-slate-900">일단 길게 써보세요.</strong><br />
+                              핵심 키워드를 뽑아서 한 문장으로 요약하면 됩니다. 예: "빠르고 정확한 고객 지원"
+                            </p>
                           </div>
                         </div>
-                        <div className="flex items-start gap-3">
-                          <span className="text-green-600 text-xl font-bold mt-0.5">✓</span>
-                          <div>
-                            <strong className="text-slate-900">기능별로 분류</strong>
-                            <p className="text-sm text-slate-600 mt-1">"영업", "관리", "분석" 등으로 구분</p>
-                          </div>
+                      </div>
+                    </div>
+
+                    {/* Question 2 */}
+                    <div className="group bg-white rounded-3xl p-8 shadow-lg border border-slate-200/60 hover:shadow-xl hover:border-indigo-300 transition-all duration-300">
+                      <div className="flex items-start gap-4 mb-6">
+                        <div className="flex-shrink-0 w-12 h-12 rounded-xl bg-gradient-to-br from-indigo-500 to-indigo-700 flex items-center justify-center text-white font-bold text-lg shadow-lg">
+                          02
                         </div>
-                        <div className="flex items-start gap-3">
-                          <span className="text-green-600 text-xl font-bold mt-0.5">✓</span>
-                          <div>
-                            <strong className="text-slate-900">시간 비중 고려</strong>
-                            <p className="text-sm text-slate-600 mt-1">많은 시간을 할애하는 업무를 우선 입력</p>
-                          </div>
+                        <div className="flex-1">
+                          <h3 className="text-2xl font-bold text-slate-900 mb-3 leading-tight">
+                            우리 업무의 고객은 누구이고<br />
+                            어떤 <span className="text-indigo-600">가치</span>를 만들어내야 할까요?
+                          </h3>
+                          <p className="text-slate-600 text-sm mb-4">
+                            내부/외부 고객과 제공하는 핵심 가치를 명확히 해주세요
+                          </p>
                         </div>
-                        <div className="flex items-start gap-3">
-                          <span className="text-green-600 text-xl font-bold mt-0.5">✓</span>
-                          <div>
-                            <strong className="text-slate-900">예시 참고</strong>
-                            <p className="text-sm text-slate-600 mt-1">"매출 데이터 분석", "고객사 미팅 준비"</p>
+                      </div>
+                      <textarea
+                        rows={4}
+                        placeholder="예시: 고객사 담당자들에게 빠르고 정확한 문제 해결을 제공하여 신뢰를 구축하고, 내부 영업팀에게 데이터 기반 인사이트를 제공"
+                        className="w-full px-5 py-4 bg-slate-50 border-2 border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-400/50 focus:border-indigo-400 text-base transition-all resize-none"
+                      />
+
+                      {/* 가치 작성이 어려울 때 참고하세요 */}
+                      <div className="mt-6 bg-indigo-50 rounded-xl border border-indigo-200 p-6">
+                        <div className="flex items-start gap-3 mb-4">
+                          <span className="text-2xl">🎯</span>
+                          <h5 className="font-bold text-slate-900 text-base">가치 작성이 어려울 때 참고하세요</h5>
+                        </div>
+                        <div className="grid md:grid-cols-2 gap-4">
+                          {/* 고객이 누군지 모르겠으면 */}
+                          <div className="bg-white rounded-xl p-4 border border-indigo-200/60">
+                            <div className="flex items-start gap-2 mb-2">
+                              <span className="text-xl">👥</span>
+                              <h6 className="font-bold text-slate-900 text-sm">고객이 누군지 모르겠으면?</h6>
+                            </div>
+                            <p className="text-xs text-slate-600 leading-relaxed">
+                              <strong className="text-slate-900">우리 팀 결과물을 누가 받아서 사용하나요?</strong><br />
+                              보고서를 받는 사람, 서비스를 이용하는 사람이 바로 고객입니다.
+                            </p>
+                          </div>
+
+                          {/* 가치가 뭔지 모르겠으면 */}
+                          <div className="bg-white rounded-xl p-4 border border-indigo-200/60">
+                            <div className="flex items-start gap-2 mb-2">
+                              <span className="text-xl">💎</span>
+                              <h6 className="font-bold text-slate-900 text-sm">가치가 뭔지 모르겠으면?</h6>
+                            </div>
+                            <p className="text-xs text-slate-600 leading-relaxed">
+                              <strong className="text-slate-900">고객의 어떤 문제를 해결해주나요?</strong><br />
+                              시간 절약? 정확한 정보? 빠른 의사결정? 그것이 바로 가치입니다.
+                            </p>
+                          </div>
+
+                          {/* 내부 고객과 외부 고객이 헷갈리면 */}
+                          <div className="bg-white rounded-xl p-4 border border-indigo-200/60">
+                            <div className="flex items-start gap-2 mb-2">
+                              <span className="text-xl">🔄</span>
+                              <h6 className="font-bold text-slate-900 text-sm">내부/외부 고객이 헷갈리면?</h6>
+                            </div>
+                            <p className="text-xs text-slate-600 leading-relaxed">
+                              <strong className="text-slate-900">둘 다 적어도 괜찮습니다!</strong><br />
+                              영업팀(내부)과 고객사(외부) 모두에게 가치를 제공할 수 있습니다.
+                            </p>
+                          </div>
+
+                          {/* 추상적으로밖에 표현 못하겠으면 */}
+                          <div className="bg-white rounded-xl p-4 border border-indigo-200/60">
+                            <div className="flex items-start gap-2 mb-2">
+                              <span className="text-xl">✨</span>
+                              <h6 className="font-bold text-slate-900 text-sm">추상적으로밖에 표현 못하겠으면?</h6>
+                            </div>
+                            <p className="text-xs text-slate-600 leading-relaxed">
+                              <strong className="text-slate-900">구체적인 예시를 하나만 추가하세요.</strong><br />
+                              "신뢰 구축" → "2시간 내 응답으로 신뢰 구축"처럼 방법을 덧붙이면 됩니다.
+                            </p>
                           </div>
                         </div>
                       </div>
                     </div>
                   </div>
-                </div>
 
-                {error && (
-                  <div className="backdrop-blur-xl bg-red-50/90 border border-red-200 rounded-2xl px-5 py-4 mb-6 shadow-lg">
-                    <p className="text-red-700 font-medium">⚠️ {error}</p>
+                  {/* Navigation Buttons */}
+                  <div className="flex items-center justify-between">
+                    <button
+                      onClick={() => setCurrentStep(1)}
+                      className="inline-flex items-center gap-2 px-6 py-3 bg-white text-slate-700 font-semibold rounded-xl border border-slate-300 hover:bg-slate-50 transition-all"
+                    >
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                      </svg>
+                      이전
+                    </button>
+                    <button
+                      onClick={() => setCurrentStep(3)}
+                      className="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 text-white text-lg font-bold rounded-xl shadow-xl shadow-blue-500/30 hover:shadow-2xl hover:shadow-indigo-500/40 hover:scale-[1.02] transition-all"
+                    >
+                      다음 단계로
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" />
+                      </svg>
+                    </button>
                   </div>
-                )}
 
-                {/* Input area - glass card */}
-                <div className="backdrop-blur-xl bg-white/50 border border-white/60 rounded-3xl p-8 mb-6 shadow-xl">
-                  <h3 className="text-xl font-semibold text-slate-900 mb-6 tracking-tight">업무 영역 입력</h3>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Step 3: 팀 상황 확인하기 */}
+          {currentStep === 3 && (
+            <div className="relative min-h-screen -m-6 flex flex-col animate-fadeIn overflow-hidden">
+              {/* Background */}
+              <div className="absolute inset-0 fixed bg-gradient-to-br from-blue-50 via-indigo-50/30 to-purple-50/20">
+                <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_30%,rgba(59,130,246,0.1),transparent_50%)]"></div>
+                <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_70%,rgba(147,51,234,0.08),transparent_50%)]"></div>
+              </div>
+
+              {/* Main Content */}
+              <div className="relative z-10 flex-1 overflow-auto px-6 py-12">
+                <div className="w-full max-w-5xl mx-auto">
+
+                  {/* Header */}
+                  <div className="text-center mb-12">
+                    <div className="inline-flex items-center gap-2 px-3 py-1 bg-white/80 backdrop-blur-sm border border-purple-200/50 rounded-full mb-6">
+                      <span className="text-xs font-medium text-purple-700 uppercase tracking-wide">Step 3</span>
+                    </div>
+                    <h2 className="text-4xl md:text-5xl font-black text-slate-900 mb-4 tracking-tight">
+                      팀 상황 확인하기
+                    </h2>
+                    <p className="text-lg text-slate-600 max-w-2xl mx-auto">
+                      우리 팀 구성원들을 떠올려보며 팀의 현재 모습을 파악해봅시다
+                    </p>
+                  </div>
+
+                  {/* Main Question Card */}
+                  <div className="bg-white rounded-3xl p-8 shadow-xl border border-slate-200/60 mb-8">
+                    <div className="flex items-start gap-4 mb-8">
+                      <div className="flex-shrink-0 w-12 h-12 rounded-xl bg-gradient-to-br from-purple-500 to-purple-700 flex items-center justify-center text-white font-bold text-lg shadow-lg">
+                        👥
+                      </div>
+                      <div className="flex-1">
+                        <h3 className="text-2xl font-bold text-slate-900 mb-3 leading-tight">
+                          현재 우리 팀은 어떤 사람들로 구성되어 있나요?
+                        </h3>
+                        <p className="text-slate-600 text-sm">
+                          팀원들의 이름, 역할, 특징을 자유롭게 작성해주세요
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* Team Member Input Area */}
+                    <div className="space-y-4">
+                      {/* Quick Stats */}
+                      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+                        <div className="bg-gradient-to-br from-blue-50 to-blue-100/50 rounded-xl p-4 border border-blue-200">
+                          <div className="text-xs text-blue-700 font-semibold mb-1 uppercase">팀 인원</div>
+                          <input
+                            type="number"
+                            placeholder="5"
+                            className="w-full bg-transparent text-2xl font-bold text-blue-900 border-none outline-none placeholder:text-blue-400/50"
+                          />
+                        </div>
+                        <div className="bg-gradient-to-br from-indigo-50 to-indigo-100/50 rounded-xl p-4 border border-indigo-200">
+                          <div className="text-xs text-indigo-700 font-semibold mb-1 uppercase">평균 연차</div>
+                          <input
+                            type="text"
+                            placeholder="3년"
+                            className="w-full bg-transparent text-2xl font-bold text-indigo-900 border-none outline-none placeholder:text-indigo-400/50"
+                          />
+                        </div>
+                        <div className="bg-gradient-to-br from-purple-50 to-purple-100/50 rounded-xl p-4 border border-purple-200">
+                          <div className="text-xs text-purple-700 font-semibold mb-1 uppercase">신입/경력</div>
+                          <input
+                            type="text"
+                            placeholder="2/3"
+                            className="w-full bg-transparent text-2xl font-bold text-purple-900 border-none outline-none placeholder:text-purple-400/50"
+                          />
+                        </div>
+                        <div className="bg-gradient-to-br from-pink-50 to-pink-100/50 rounded-xl p-4 border border-pink-200">
+                          <div className="text-xs text-pink-700 font-semibold mb-1 uppercase">팀 나이</div>
+                          <input
+                            type="text"
+                            placeholder="2년차"
+                            className="w-full bg-transparent text-2xl font-bold text-pink-900 border-none outline-none placeholder:text-pink-400/50"
+                          />
+                        </div>
+                      </div>
+
+                      {/* Team Members Detail */}
+                      <div className="bg-slate-50 rounded-2xl p-6 border border-slate-200">
+                        <h4 className="font-bold text-slate-900 mb-4 flex items-center gap-2">
+                          <span className="text-lg">✍️</span>
+                          팀원 한 명씩 떠올려보세요
+                        </h4>
+                        <textarea
+                          rows={6}
+                          placeholder="예시:&#10;• 김민수 (5년차) - 데이터 분석 전문,꼼꼼하고 분석적&#10;• 이지은 (2년차) - 고객 응대, 친절하고 소통 능력 좋음&#10;• 박준호 (신입) - 시스템 관리, 배우려는 의지가 강함&#10;• 최서연 (3년차) - 프로젝트 관리, 리더십 있고 추진력 강함"
+                          className="w-full px-5 py-4 bg-white border-2 border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-400/50 focus:border-purple-400 text-base transition-all resize-none"
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Guide Section */}
+                  <div className="bg-gradient-to-br from-slate-50 to-purple-50/50 rounded-3xl p-8 mb-8 border border-slate-200">
+                    <div className="flex items-start gap-4 mb-6">
+                      <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center text-2xl shadow-sm">
+                        💡
+                      </div>
+                      <div>
+                        <h4 className="text-xl font-bold text-slate-900 mb-2">팀원 파악 가이드</h4>
+                        <p className="text-slate-600 text-sm">팀원들의 특징을 잘 포착하는 방법</p>
+                      </div>
+                    </div>
+
+                    <div className="grid md:grid-cols-3 gap-4">
+                      {/* 기본 정보 */}
+                      <div className="bg-white rounded-2xl p-6 border border-slate-200/60 shadow-sm">
+                        <div className="flex items-start gap-3 mb-3">
+                          <span className="text-2xl">📋</span>
+                          <h5 className="font-bold text-slate-900 text-base">기본 정보</h5>
+                        </div>
+                        <ul className="text-sm text-slate-600 space-y-2">
+                          <li className="flex items-start gap-2">
+                            <span className="text-purple-500 mt-1">•</span>
+                            <span>이름과 연차</span>
+                          </li>
+                          <li className="flex items-start gap-2">
+                            <span className="text-purple-500 mt-1">•</span>
+                            <span>주요 담당 업무</span>
+                          </li>
+                          <li className="flex items-start gap-2">
+                            <span className="text-purple-500 mt-1">•</span>
+                            <span>전문 분야/스킬</span>
+                          </li>
+                        </ul>
+                      </div>
+
+                      {/* 업무 특징 */}
+                      <div className="bg-white rounded-2xl p-6 border border-slate-200/60 shadow-sm">
+                        <div className="flex items-start gap-3 mb-3">
+                          <span className="text-2xl">⚡</span>
+                          <h5 className="font-bold text-slate-900 text-base">업무 특징</h5>
+                        </div>
+                        <ul className="text-sm text-slate-600 space-y-2">
+                          <li className="flex items-start gap-2">
+                            <span className="text-purple-500 mt-1">•</span>
+                            <span>잘하는 것</span>
+                          </li>
+                          <li className="flex items-start gap-2">
+                            <span className="text-purple-500 mt-1">•</span>
+                            <span>개선이 필요한 점</span>
+                          </li>
+                          <li className="flex items-start gap-2">
+                            <span className="text-purple-500 mt-1">•</span>
+                            <span>업무 스타일</span>
+                          </li>
+                        </ul>
+                      </div>
+
+                      {/* 성향/특성 */}
+                      <div className="bg-white rounded-2xl p-6 border border-slate-200/60 shadow-sm">
+                        <div className="flex items-start gap-3 mb-3">
+                          <span className="text-2xl">🎭</span>
+                          <h5 className="font-bold text-slate-900 text-base">성향/특성</h5>
+                        </div>
+                        <ul className="text-sm text-slate-600 space-y-2">
+                          <li className="flex items-start gap-2">
+                            <span className="text-purple-500 mt-1">•</span>
+                            <span>성격 (꼼꼼함, 적극성 등)</span>
+                          </li>
+                          <li className="flex items-start gap-2">
+                            <span className="text-purple-500 mt-1">•</span>
+                            <span>협업 스타일</span>
+                          </li>
+                          <li className="flex items-start gap-2">
+                            <span className="text-purple-500 mt-1">•</span>
+                            <span>성장 가능성</span>
+                          </li>
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Insight Box */}
+                  <div className="bg-gradient-to-r from-purple-500 to-indigo-600 rounded-3xl p-8 mb-8 text-white shadow-2xl">
+                    <div className="flex items-start gap-4">
+                      <div className="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center text-2xl">
+                        💭
+                      </div>
+                      <div>
+                        <h4 className="text-xl font-bold mb-3">왜 팀원들을 먼저 떠올리나요?</h4>
+                        <p className="text-white/90 leading-relaxed">
+                          팀원 한 명 한 명을 생각하다 보면, 누가 어떤 업무를 하고 있는지 자연스럽게 떠오릅니다.
+                          <strong className="text-white"> "김민수는 데이터 분석을 하니까 분석 업무가 있고, 이지은이는 고객 응대를 하니까..."</strong>
+                          이렇게 실제 사람을 기준으로 생각하면 업무 영역을 더 정확하고 구체적으로 정의할 수 있습니다.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Example Section */}
+                  <div className="bg-white rounded-3xl p-8 mb-8 border border-slate-200 shadow-lg">
+                    <div className="flex items-start gap-4 mb-6">
+                      <div className="w-12 h-12 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-xl flex items-center justify-center text-white text-2xl shadow-lg">
+                        ✨
+                      </div>
+                      <div>
+                        <h4 className="text-xl font-bold text-slate-900 mb-2">작성 예시</h4>
+                        <p className="text-slate-600 text-sm">이렇게 작성하면 좋습니다</p>
+                      </div>
+                    </div>
+
+                    <div className="bg-emerald-50 rounded-2xl p-6 border border-emerald-200">
+                      <div className="font-semibold text-slate-900 mb-4">📊 데이터분석팀 (5명, 평균 3년차)</div>
+                      <div className="space-y-3 text-sm text-slate-700">
+                        <div className="flex gap-3">
+                          <span className="font-semibold text-emerald-700 w-20 flex-shrink-0">팀장</span>
+                          <span>박준영 (7년) - 전략 수립, 통찰력 있고 의사결정 빠름</span>
+                        </div>
+                        <div className="flex gap-3">
+                          <span className="font-semibold text-blue-600 w-20 flex-shrink-0">시니어</span>
+                          <span>김민지 (5년) - 데이터 분석, SQL 전문가, 꼼꼼하고 분석적</span>
+                        </div>
+                        <div className="flex gap-3">
+                          <span className="font-semibold text-indigo-600 w-20 flex-shrink-0">주니어</span>
+                          <span>이서준 (2년) - 대시보드 제작, 시각화 능력 좋고 배우려는 의지 강함</span>
+                        </div>
+                        <div className="flex gap-3">
+                          <span className="font-semibold text-purple-600 w-20 flex-shrink-0">주니어</span>
+                          <span>최예린 (2년) - 리포트 작성, 커뮤니케이션 능력 뛰어남</span>
+                        </div>
+                        <div className="flex gap-3">
+                          <span className="font-semibold text-pink-600 w-20 flex-shrink-0">신입</span>
+                          <span>정하늘 (신입) - 데이터 수집, 성실하고 빠르게 성장 중</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Navigation Buttons */}
+                  <div className="flex items-center justify-between">
+                    <button
+                      onClick={() => setCurrentStep(2)}
+                      className="inline-flex items-center gap-2 px-6 py-3 bg-white text-slate-700 font-semibold rounded-xl border border-slate-300 hover:bg-slate-50 transition-all"
+                    >
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                      </svg>
+                      이전
+                    </button>
+                    <button
+                      onClick={() => setCurrentStep(4)}
+                      className="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-purple-600 to-indigo-600 text-white text-lg font-bold rounded-xl shadow-xl shadow-purple-500/30 hover:shadow-2xl hover:shadow-indigo-500/40 hover:scale-[1.02] transition-all"
+                    >
+                      다음 단계로
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" />
+                      </svg>
+                    </button>
+                  </div>
+
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Step 4: 업무 영역 작성하기 */}
+          {currentStep === 4 && (
+            <div className="relative min-h-screen -m-6 flex flex-col animate-fadeIn overflow-hidden">
+              {/* Background */}
+              <div className="absolute inset-0 fixed bg-gradient-to-br from-blue-50 via-indigo-50/30 to-purple-50/20">
+                <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_30%,rgba(59,130,246,0.1),transparent_50%)]"></div>
+                <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_70%,rgba(147,51,234,0.08),transparent_50%)]"></div>
+              </div>
+
+              {/* Main Content */}
+              <div className="relative z-10 flex-1 overflow-auto px-6 py-12">
+                <div className="w-full max-w-5xl mx-auto">
+
+                  {/* Header */}
+                  <div className="text-center mb-12">
+                    <div className="inline-flex items-center gap-2 px-3 py-1 bg-white/80 backdrop-blur-sm border border-emerald-200/50 rounded-full mb-6">
+                      <span className="text-xs font-medium text-emerald-700 uppercase tracking-wide">Step 4</span>
+                    </div>
+                    <h2 className="text-4xl md:text-5xl font-black text-slate-900 mb-4 tracking-tight">
+                      업무 영역 작성하기
+                    </h2>
+                    <p className="text-lg text-slate-600 max-w-2xl mx-auto">
+                      앞서 떠올린 팀원들을 생각하며 우리 팀의 주요 업무 영역을 정의해봅시다
+                    </p>
+                  </div>
+
+                  {/* Reminder Box */}
+                  <div className="bg-gradient-to-r from-purple-100 to-indigo-100 border border-purple-200 rounded-2xl p-6 mb-8">
+                    <div className="flex items-start gap-3">
+                      <span className="text-2xl">💭</span>
+                      <div>
+                        <p className="text-slate-700 leading-relaxed">
+                          <strong className="text-slate-900">팀원들을 떠올려보세요!</strong><br />
+                          김민수는 데이터 분석, 이지은이는 고객 응대... 각 팀원이 하는 일을 생각하면 업무 영역이 자연스럽게 나옵니다.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Guide Section */}
+                  <div className="bg-gradient-to-br from-slate-50 to-emerald-50/50 rounded-3xl p-8 mb-8 border border-slate-200">
+                    <div className="flex items-start gap-4 mb-6">
+                      <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center text-2xl shadow-sm">
+                        💡
+                      </div>
+                      <div>
+                        <h4 className="text-xl font-bold text-slate-900 mb-2">업무 영역 작성 가이드</h4>
+                        <p className="text-slate-600 text-sm">효과적으로 작성하는 방법</p>
+                      </div>
+                    </div>
+
+                    <div className="grid md:grid-cols-2 gap-4">
+                      <div className="bg-white rounded-2xl p-6 border border-slate-200/60 shadow-sm">
+                        <div className="flex items-start gap-3 mb-3">
+                          <span className="text-emerald-600 text-xl font-bold">✓</span>
+                          <h5 className="font-bold text-slate-900 text-base">구체적으로 작성</h5>
+                        </div>
+                        <p className="text-sm text-slate-600 leading-relaxed">
+                          "기타업무" ❌<br />
+                          "고객 문의 응답 및 클레임 처리" ✅
+                        </p>
+                      </div>
+
+                      <div className="bg-white rounded-2xl p-6 border border-slate-200/60 shadow-sm">
+                        <div className="flex items-start gap-3 mb-3">
+                          <span className="text-emerald-600 text-xl font-bold">✓</span>
+                          <h5 className="font-bold text-slate-900 text-base">기능별로 분류</h5>
+                        </div>
+                        <p className="text-sm text-slate-600 leading-relaxed">
+                          "영업", "관리", "분석" 등<br />
+                          명확한 카테고리로 구분
+                        </p>
+                      </div>
+
+                      <div className="bg-white rounded-2xl p-6 border border-slate-200/60 shadow-sm">
+                        <div className="flex items-start gap-3 mb-3">
+                          <span className="text-emerald-600 text-xl font-bold">✓</span>
+                          <h5 className="font-bold text-slate-900 text-base">시간 비중 고려</h5>
+                        </div>
+                        <p className="text-sm text-slate-600 leading-relaxed">
+                          많은 시간을 할애하는<br />
+                          업무를 우선 입력
+                        </p>
+                      </div>
+
+                      <div className="bg-white rounded-2xl p-6 border border-slate-200/60 shadow-sm">
+                        <div className="flex items-start gap-3 mb-3">
+                          <span className="text-emerald-600 text-xl font-bold">✓</span>
+                          <h5 className="font-bold text-slate-900 text-base">팀원 기준으로</h5>
+                        </div>
+                        <p className="text-sm text-slate-600 leading-relaxed">
+                          각 팀원이 담당하는<br />
+                          업무를 떠올려보세요
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {error && (
+                    <div className="bg-red-50 border border-red-200 rounded-2xl px-5 py-4 mb-6">
+                      <p className="text-red-700 font-medium">⚠️ {error}</p>
+                    </div>
+                  )}
+
+                  {/* Input area */}
+                  <div className="bg-white rounded-3xl p-8 mb-6 shadow-lg border border-slate-200">
+                    <h3 className="text-xl font-bold text-slate-900 mb-6 tracking-tight">업무 영역 입력</h3>
                   <div className="space-y-4">
                     {workshop.domains.map((domain, index) => (
                       <div key={index} className="flex items-center gap-4">
@@ -1404,146 +1959,92 @@ export default function WorkshopPage() {
                   </div>
                 </div>
 
-                {/* Bottom buttons */}
-                <div className="flex items-center justify-between">
-                  <button
-                    onClick={() => setCurrentStep(1)}
-                    className="px-6 py-3 bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold rounded-xl transition-all flex items-center gap-2"
-                  >
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                    </svg>
-                    이전 단계
-                  </button>
+                  {/* Bottom buttons */}
+                  <div className="flex items-center justify-between">
+                    <button
+                      onClick={() => setCurrentStep(3)}
+                      className="inline-flex items-center gap-2 px-6 py-3 bg-white text-slate-700 font-semibold rounded-xl border border-slate-300 hover:bg-slate-50 transition-all"
+                    >
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                      </svg>
+                      이전
+                    </button>
 
-                  <button
-                    onClick={addDomain}
-                    disabled={workshop.domains.length >= 5}
-                    className="inline-flex items-center gap-2 px-6 py-3 backdrop-blur-xl bg-white/50 border border-indigo-300 border-dashed text-indigo-700 font-semibold rounded-xl hover:bg-white/70 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    <span className="text-xl">+</span>
-                    업무 영역 추가 ({workshop.domains.length}/5)
-                  </button>
+                    <button
+                      onClick={addDomain}
+                      disabled={workshop.domains.length >= 5}
+                      className="inline-flex items-center gap-2 px-6 py-3 bg-white border border-emerald-300 border-dashed text-emerald-700 font-semibold rounded-xl hover:bg-emerald-50 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      <span className="text-xl">+</span>
+                      업무 영역 추가 ({workshop.domains.length}/5)
+                    </button>
 
-                  <button
-                    onClick={handleDomainsSubmit}
-                    disabled={loading}
-                    className="inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-semibold rounded-2xl hover:shadow-2xl hover:scale-105 transition-all duration-300 disabled:opacity-50"
-                  >
-                    {loading ? '처리 중...' : '다음 단계로'}
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                    </svg>
-                  </button>
+                    <button
+                      onClick={() => setCurrentStep(5)}
+                      className="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-emerald-600 to-green-600 text-white text-lg font-bold rounded-xl shadow-xl shadow-emerald-500/30 hover:shadow-2xl hover:shadow-green-500/40 hover:scale-[1.02] transition-all"
+                    >
+                      다음 단계로
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" />
+                      </svg>
+                    </button>
+                  </div>
+
                 </div>
               </div>
             </div>
           )}
 
-          {/* Step 3: 업무 내용 입력 */}
-          {currentStep === 3 && (
-            <div className="relative min-h-screen -m-6 p-6 animate-fadeIn">
-              {/* Animated gradient background */}
-              <div className="absolute inset-0 bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 overflow-hidden">
-                <div className="absolute top-0 -left-4 w-96 h-96 bg-purple-300 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob"></div>
-                <div className="absolute top-0 -right-4 w-96 h-96 bg-blue-300 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob animation-delay-2000"></div>
-                <div className="absolute -bottom-8 left-20 w-96 h-96 bg-indigo-300 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob animation-delay-4000"></div>
+          {/* Step 5: 업무 내용 작성하기 */}
+          {currentStep === 5 && (
+            <div className="relative min-h-screen -m-6 flex flex-col animate-fadeIn overflow-hidden">
+              {/* Background */}
+              <div className="absolute inset-0 fixed bg-gradient-to-br from-blue-50 via-indigo-50/30 to-purple-50/20">
+                <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_30%,rgba(59,130,246,0.1),transparent_50%)]"></div>
+                <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_70%,rgba(147,51,234,0.08),transparent_50%)]"></div>
               </div>
 
-              {/* Content */}
-              <div className="relative">
-                {/* Header glass card */}
-                <div className="backdrop-blur-xl bg-white/40 border border-white/60 rounded-3xl p-8 mb-8 shadow-2xl shadow-indigo-200/50">
-                  <h2 className="text-3xl font-semibold text-slate-900 mb-3 tracking-tight text-center">
-                    업무 내용 입력
-                  </h2>
-                  <p className="text-lg text-slate-600 text-center">
-                    문서 업로드 또는 직접 작성 중 선택하여 업무 내용을 입력해주세요
-                  </p>
-                </div>
+              {/* Main Content */}
+              <div className="relative z-10 flex-1 overflow-auto px-6 py-12">
+                <div className="w-full max-w-5xl mx-auto">
 
-                {/* Guide section - glass card */}
-                <div className="backdrop-blur-xl bg-white/50 border border-white/60 rounded-3xl p-8 mb-8 shadow-xl">
-                  <div className="flex items-start gap-5">
-                    <div className="w-14 h-14 backdrop-blur-md bg-gradient-to-br from-purple-500/30 to-pink-500/30 border border-purple-300/50 rounded-2xl flex items-center justify-center flex-shrink-0">
-                      <span className="text-3xl">📚</span>
+                  {/* Header */}
+                  <div className="text-center mb-12">
+                    <div className="inline-flex items-center gap-2 px-3 py-1 bg-white/80 backdrop-blur-sm border border-pink-200/50 rounded-full mb-6">
+                      <span className="text-xs font-medium text-pink-700 uppercase tracking-wide">Step 5</span>
                     </div>
-                    <div className="flex-1">
-                      <h3 className="text-2xl font-semibold text-slate-900 mb-5 tracking-tight">업무 내용 입력 가이드</h3>
-                      <div className="grid md:grid-cols-2 gap-6">
-                        <div className="backdrop-blur-md bg-white/70 border border-white/60 rounded-2xl p-6 shadow-lg">
-                          <h4 className="font-semibold text-slate-900 mb-4 flex items-center gap-2 text-lg">
-                            <span className="text-2xl">📄</span>
-                            문서 업로드 시
-                          </h4>
-                          <div className="space-y-2.5 text-slate-700 text-sm">
-                            <div className="flex items-start gap-2">
-                              <span className="text-purple-600 mt-0.5">•</span>
-                              <span>업무 매뉴얼, 프로세스 문서</span>
-                            </div>
-                            <div className="flex items-start gap-2">
-                              <span className="text-purple-600 mt-0.5">•</span>
-                              <span>보고서 템플릿, 양식 파일</span>
-                            </div>
-                            <div className="flex items-start gap-2">
-                              <span className="text-purple-600 mt-0.5">•</span>
-                              <span>업무 관련 스프레드시트</span>
-                            </div>
-                            <div className="flex items-start gap-2">
-                              <span className="text-purple-600 mt-0.5">•</span>
-                              <span><strong>지원 형식:</strong> DOCX, PDF, XLSX</span>
-                            </div>
-                          </div>
-                        </div>
-                        <div className="backdrop-blur-md bg-white/70 border border-white/60 rounded-2xl p-6 shadow-lg">
-                          <h4 className="font-semibold text-slate-900 mb-4 flex items-center gap-2 text-lg">
-                            <span className="text-2xl">✍️</span>
-                            직접 입력 시
-                          </h4>
-                          <div className="space-y-2.5 text-slate-700 text-sm">
-                            <div className="flex items-start gap-2">
-                              <span className="text-purple-600 mt-0.5">•</span>
-                              <span>구체적인 업무 단계별 설명</span>
-                            </div>
-                            <div className="flex items-start gap-2">
-                              <span className="text-purple-600 mt-0.5">•</span>
-                              <span>반복 주기와 소요 시간 명시</span>
-                            </div>
-                            <div className="flex items-start gap-2">
-                              <span className="text-purple-600 mt-0.5">•</span>
-                              <span>사용하는 도구 및 시스템 언급</span>
-                            </div>
-                            <div className="flex items-start gap-2">
-                              <span className="text-purple-600 mt-0.5">•</span>
-                              <span><strong>예시:</strong> "매주 월요일 매출 데이터를..."</span>
-                            </div>
-                          </div>
-                        </div>
+                    <h2 className="text-4xl md:text-5xl font-black text-slate-900 mb-4 tracking-tight">
+                      업무 내용 작성하기
+                    </h2>
+                    <p className="text-lg text-slate-600 max-w-2xl mx-auto">
+                      문서를 업로드하거나 직접 작성하여 업무 내용을 입력해주세요
+                    </p>
+                  </div>
+
+                  {error && (
+                    <div className="bg-red-50 border border-red-200 rounded-2xl px-5 py-4 mb-6">
+                      <p className="text-red-700 font-medium">⚠️ {error}</p>
+                    </div>
+                  )}
+
+                  {/* File Upload Section */}
+                  <div className="bg-white rounded-3xl p-8 shadow-lg border border-slate-200 mb-8">
+                    <div className="flex items-start gap-4 mb-6">
+                      <div className="w-12 h-12 rounded-xl bg-blue-100 flex items-center justify-center text-2xl">
+                        📄
+                      </div>
+                      <div>
+                        <h3 className="text-2xl font-bold text-slate-900 mb-2">문서 업로드</h3>
+                        <p className="text-slate-600">업무 매뉴얼, 프로세스 문서 등을 업로드하여 자동으로 분석합니다</p>
                       </div>
                     </div>
-                  </div>
-                </div>
-
-                {error && (
-                  <div className="backdrop-blur-xl bg-red-50/90 border border-red-200 rounded-2xl px-5 py-4 mb-6 shadow-lg">
-                    <p className="text-red-700 font-medium">⚠️ {error}</p>
-                  </div>
-                )}
-
-                {/* Input areas - grid */}
-                <div className="grid md:grid-cols-2 gap-8 mb-6">
-                  {/* File upload section - glass card */}
-                  <div className="backdrop-blur-xl bg-white/50 border border-white/60 rounded-3xl p-6 shadow-xl">
-                    <h3 className="text-xl font-semibold text-slate-900 mb-4 flex items-center gap-2 tracking-tight">
-                      <span className="text-2xl">📎</span>
-                      파일 업로드
-                    </h3>
 
                     <div
                       onClick={() => fileInputRef.current?.click()}
-                      className="border-3 border-dashed border-indigo-300 backdrop-blur-md bg-gradient-to-br from-indigo-50/50 to-purple-50/50 p-10 rounded-2xl text-center cursor-pointer hover:border-indigo-400 hover:bg-indigo-50/70 transition-all"
+                      className="border-3 border-dashed border-blue-300 bg-gradient-to-br from-blue-50/50 to-indigo-50/50 p-10 rounded-2xl text-center cursor-pointer hover:border-blue-400 hover:bg-blue-50/70 transition-all"
                     >
-                      <div className="text-indigo-600 mb-4">
+                      <div className="text-blue-600 mb-4">
                         <svg className="w-16 h-16 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
                         </svg>
@@ -1564,7 +2065,7 @@ export default function WorkshopPage() {
                     {uploadedFiles.length > 0 && (
                       <div className="mt-5 space-y-3">
                         {uploadedFiles.map((file) => (
-                          <div key={file.id} className="flex items-center justify-between backdrop-blur-md bg-white/70 border border-white/60 p-4 rounded-xl shadow-md">
+                          <div key={file.id} className="flex items-center justify-between bg-slate-50 border border-slate-200 p-4 rounded-xl">
                             <div className="flex items-center gap-3">
                               <span className="text-2xl">{getFileIcon(file.file.name)}</span>
                               <div>
@@ -1574,7 +2075,7 @@ export default function WorkshopPage() {
                             </div>
                             <button
                               onClick={() => removeFile(file.id)}
-                              className="w-9 h-9 text-red-500 hover:bg-red-50 backdrop-blur-sm rounded-lg flex items-center justify-center transition-colors"
+                              className="w-9 h-9 text-red-500 hover:bg-red-50 rounded-lg flex items-center justify-center transition-colors"
                             >
                               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -1586,16 +2087,21 @@ export default function WorkshopPage() {
                     )}
                   </div>
 
-                  {/* Manual input section - glass card */}
-                  <div className="backdrop-blur-xl bg-white/50 border border-white/60 rounded-3xl p-6 shadow-xl">
-                    <h3 className="text-xl font-semibold text-slate-900 mb-4 flex items-center gap-2 tracking-tight">
-                      <span className="text-2xl">✏️</span>
-                      업무 영역별 직접 작성
-                    </h3>
+                  {/* Direct Input Section */}
+                  <div className="bg-white rounded-3xl p-8 shadow-lg border border-slate-200 mb-8">
+                    <div className="flex items-start gap-4 mb-6">
+                      <div className="w-12 h-12 rounded-xl bg-indigo-100 flex items-center justify-center text-2xl">
+                        ✍️
+                      </div>
+                      <div>
+                        <h3 className="text-2xl font-bold text-slate-900 mb-2">업무 영역별 직접 작성</h3>
+                        <p className="text-slate-600">각 업무 영역별로 업무 내용을 직접 입력합니다</p>
+                      </div>
+                    </div>
 
-                    <div className="space-y-4 max-h-96 overflow-y-auto pr-2">
+                    <div className="space-y-4">
                       {workshop.domains.filter(d => d.trim()).map((domain, index) => (
-                        <div key={index} className="backdrop-blur-md bg-white/70 border border-white/60 rounded-2xl p-4 shadow-md">
+                        <div key={index} className="bg-slate-50 border border-slate-200 rounded-2xl p-4">
                           <label className="block text-base font-semibold text-slate-800 mb-2 flex items-center gap-2">
                             <span className="w-6 h-6 bg-gradient-to-br from-indigo-500 to-purple-500 text-white rounded-full flex items-center justify-center text-sm">
                               {index + 1}
@@ -1613,7 +2119,7 @@ export default function WorkshopPage() {
 - 매일 오전 9시 고객 문의 메일 확인 및 답변 (30분 소요)
 - 주간 매출 데이터 수집 및 보고서 작성 (매주 월요일, 2시간 소요)
 - 월간 재고 현황 파악 및 발주 처리 (매월 말, 3시간 소요)`}
-                            className="w-full h-40 px-4 py-3 backdrop-blur-sm bg-white/90 border-2 border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-400/50 focus:border-indigo-400 transition-all resize-none text-sm"
+                            className="w-full h-40 px-4 py-3 bg-white border-2 border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-400/50 focus:border-indigo-400 transition-all resize-none text-sm"
                           />
                         </div>
                       ))}
@@ -1622,91 +2128,187 @@ export default function WorkshopPage() {
                       </p>
                     </div>
                   </div>
-                </div>
 
-                {/* Bottom button */}
-                <div className="flex justify-between">
-                  <button
-                    onClick={() => setCurrentStep(2)}
-                    className="px-6 py-3 bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold rounded-xl transition-all flex items-center gap-2"
-                  >
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                    </svg>
-                    이전 단계
-                  </button>
+                  {/* Guide Section */}
+                  <div className="bg-gradient-to-br from-slate-50 to-pink-50/50 rounded-3xl p-8 mb-8 border border-slate-200">
+                    <div className="flex items-start gap-4 mb-6">
+                      <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center text-2xl shadow-sm">
+                        💡
+                      </div>
+                      <div>
+                        <h4 className="text-xl font-bold text-slate-900 mb-2">업무 내용 작성 가이드</h4>
+                        <p className="text-slate-600 text-sm">어떤 내용을 작성하면 좋을까요?</p>
+                      </div>
+                    </div>
 
-                  <button
-                    onClick={() => {
-                      // 업무 영역별 입력을 하나의 문자열로 통합
-                      const combinedInput = Object.entries(manualTaskInput)
-                        .filter(([domain, tasks]) => tasks.trim())
-                        .map(([domain, tasks]) => `[${domain}]\n${tasks}`)
-                        .join('\n\n');
+                    <div className="grid md:grid-cols-2 gap-4">
+                      <div className="bg-white rounded-2xl p-6 border border-slate-200/60 shadow-sm">
+                        <div className="flex items-start gap-3 mb-3">
+                          <span className="text-2xl">📝</span>
+                          <h5 className="font-bold text-slate-900 text-base">구체적인 업무 프로세스</h5>
+                        </div>
+                        <p className="text-sm text-slate-600 leading-relaxed">
+                          "어떻게" 일하는지 단계별로<br />
+                          작성하면 AI가 더 정확하게 분석합니다
+                        </p>
+                      </div>
 
-                      setManualInput(combinedInput);
+                      <div className="bg-white rounded-2xl p-6 border border-slate-200/60 shadow-sm">
+                        <div className="flex items-start gap-3 mb-3">
+                          <span className="text-2xl">🔄</span>
+                          <h5 className="font-bold text-slate-900 text-base">반복 작업 위주로</h5>
+                        </div>
+                        <p className="text-sm text-slate-600 leading-relaxed">
+                          정기적으로 하는 업무,<br />
+                          패턴이 있는 업무를 우선 작성
+                        </p>
+                      </div>
 
-                      // 워크샵이 생성되지 않았다면 먼저 생성
-                      if (!workshop.id) {
-                        handleWorkshopCreate();
-                      } else {
-                        setCurrentStep(4);
-                      }
-                    }}
-                    disabled={loading || (uploadedFiles.length === 0 && Object.values(manualTaskInput).every(v => !v.trim()))}
-                    className="inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-semibold rounded-2xl hover:shadow-2xl hover:scale-105 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    {loading ? '처리 중...' : '다음 단계로'}
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                    </svg>
-                  </button>
+                      <div className="bg-white rounded-2xl p-6 border border-slate-200/60 shadow-sm">
+                        <div className="flex items-start gap-3 mb-3">
+                          <span className="text-2xl">⏱️</span>
+                          <h5 className="font-bold text-slate-900 text-base">시간이 많이 드는 업무</h5>
+                        </div>
+                        <p className="text-sm text-slate-600 leading-relaxed">
+                          하루에 1시간 이상 소요되는<br />
+                          업무부터 작성하세요
+                        </p>
+                      </div>
+
+                      <div className="bg-white rounded-2xl p-6 border border-slate-200/60 shadow-sm">
+                        <div className="flex items-start gap-3 mb-3">
+                          <span className="text-2xl">🎯</span>
+                          <h5 className="font-bold text-slate-900 text-base">개선하고 싶은 업무</h5>
+                        </div>
+                        <p className="text-sm text-slate-600 leading-relaxed">
+                          비효율적이거나 자동화하고 싶은<br />
+                          업무를 포함하세요
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Example Section */}
+                  <div className="bg-white rounded-3xl p-8 mb-8 border border-slate-200 shadow-lg">
+                    <div className="flex items-start gap-4 mb-6">
+                      <div className="w-12 h-12 bg-gradient-to-br from-pink-500 to-rose-600 rounded-xl flex items-center justify-center text-white text-2xl shadow-lg">
+                        ✨
+                      </div>
+                      <div>
+                        <h4 className="text-xl font-bold text-slate-900 mb-2">작성 예시</h4>
+                        <p className="text-slate-600 text-sm">실제 사례를 참고하세요</p>
+                      </div>
+                    </div>
+
+                    <div className="space-y-4">
+                      <div className="p-5 bg-blue-50 rounded-xl border border-blue-200">
+                        <div className="font-semibold text-slate-900 mb-2">💼 업무 영역: 고객 문의 처리</div>
+                        <p className="text-sm text-slate-700 leading-relaxed whitespace-pre-line">
+{`1. 매일 오전 9시, 이메일 확인 (약 30분)
+2. 고객 문의 내용 분류 (긴급/일반/기술)
+3. 각 유형별로 답변 템플릿 작성
+4. 기술 문의는 개발팀에 전달 후 회신 대기
+5. 답변 발송 후 고객 만족도 체크`}
+                        </p>
+                      </div>
+
+                      <div className="p-5 bg-indigo-50 rounded-xl border border-indigo-200">
+                        <div className="font-semibold text-slate-900 mb-2">📊 업무 영역: 주간 데이터 리포트 작성</div>
+                        <p className="text-sm text-slate-700 leading-relaxed whitespace-pre-line">
+{`1. 매주 금요일 오후, 데이터베이스에서 주간 데이터 추출
+2. Excel로 데이터 정제 및 집계
+3. 차트 5개 생성 (매출, 신규고객, 이탈률 등)
+4. PPT에 차트 붙여넣기 및 코멘트 작성
+5. 경영진에게 이메일 발송`}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Navigation Buttons */}
+                  <div className="flex items-center justify-between">
+                    <button
+                      onClick={() => setCurrentStep(4)}
+                      className="inline-flex items-center gap-2 px-6 py-3 bg-white text-slate-700 font-semibold rounded-xl border border-slate-300 hover:bg-slate-50 transition-all"
+                    >
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                      </svg>
+                      이전
+                    </button>
+                    <button
+                      onClick={() => {
+                        // 업무 영역별 입력을 하나의 문자열로 통합
+                        const combinedInput = Object.entries(manualTaskInput)
+                          .filter(([domain, tasks]) => tasks.trim())
+                          .map(([domain, tasks]) => `[${domain}]\n${tasks}`)
+                          .join('\n\n');
+
+                        setManualInput(combinedInput);
+
+                        // 워크샵이 생성되지 않았다면 먼저 생성
+                        if (!workshop.id) {
+                          handleWorkshopCreate();
+                        } else {
+                          setCurrentStep(6);
+                        }
+                      }}
+                      disabled={loading || (uploadedFiles.length === 0 && Object.values(manualTaskInput).every(v => !v.trim()))}
+                      className="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-pink-600 to-rose-600 text-white text-lg font-bold rounded-xl shadow-xl shadow-pink-500/30 hover:shadow-2xl hover:shadow-rose-500/40 hover:scale-[1.02] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      {loading ? '처리 중...' : '다음 단계로'}
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" />
+                      </svg>
+                    </button>
+                  </div>
+
                 </div>
               </div>
             </div>
           )}
 
-          {/* Step 4: 업무 추출 결과 */}
-          {currentStep === 4 && (
+          {/* Step 6: 업무 추출 결과 */}
+          {currentStep === 6 && (
             <Step4TaskExtraction
               workshopId={workshop.id || 'temp-workshop-id'}
               domains={workshop.domains}
               onNext={(tasks) => {
                 setWorkshop(prev => ({ ...prev, tasks }));
-                setCurrentStep(5);
+                setCurrentStep(7);
               }}
               manualInput={manualInput}
             />
           )}
 
-          {/* Step 5: 업무 상세화 */}
-          {currentStep === 5 && (
+          {/* Step 7: 업무 상세화 */}
+          {currentStep === 7 && (
             <Step5AIConsultant
               tasks={workshop.tasks}
               workshopId={workshop.id}
               onComplete={(selectedTask, insights) => {
                 console.log('AI Consultant completed:', selectedTask, insights);
-                setCurrentStep(6);
+                setCurrentStep(8);
               }}
-              onPrevious={() => setCurrentStep(4)}
+              onPrevious={() => setCurrentStep(6)}
             />
           )}
 
-          {/* Step 6: 워크플로우 설계 */}
-          {currentStep === 6 && (
+          {/* Step 8: 워크플로우 설계 */}
+          {currentStep === 8 && (
             <Step6WorkflowDesign
               taskTitle={workshop.tasks.find(t => workshop.selectedTaskIds.includes(t.id))?.title || '선택된 업무'}
               conversationInsights={{}}
               onComplete={(workflow) => {
                 console.log('Workflow completed:', workflow);
-                setCurrentStep(7);
+                setCurrentStep(9);
               }}
-              onPrevious={() => setCurrentStep(5)}
+              onPrevious={() => setCurrentStep(7)}
             />
           )}
 
-          {/* Step 7: 자동화 솔루션 생성 */}
-          {currentStep === 7 && (
+          {/* Step 9: 자동화 솔루션 생성 */}
+          {currentStep === 9 && (
             <div className="relative min-h-screen -m-6 p-6 animate-fadeIn">
               {/* Animated gradient background */}
               <div className="absolute inset-0 bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 overflow-hidden">
@@ -1739,13 +2341,12 @@ export default function WorkshopPage() {
                               <div className="flex-1">
                                 <h3 className="text-xl font-bold text-slate-900 mb-2">{solution.taskTitle}</h3>
                                 <div className="flex items-center space-x-4 text-sm">
-                                  <span className={`px-3 py-1 rounded-full text-xs font-medium ${
-                                    solution.priority === 'high' ? 'bg-red-100 text-red-800' :
+                                  <span className={`px-3 py-1 rounded-full text-xs font-medium ${solution.priority === 'high' ? 'bg-red-100 text-red-800' :
                                     solution.priority === 'medium' ? 'bg-yellow-100 text-yellow-800' :
-                                    'bg-green-100 text-green-800'
-                                  }`}>
+                                      'bg-green-100 text-green-800'
+                                    }`}>
                                     {solution.priority === 'high' ? '최우선' :
-                                     solution.priority === 'medium' ? '중요' : '일반'}
+                                      solution.priority === 'medium' ? '중요' : '일반'}
                                   </span>
                                   <span className="text-indigo-600">⏱️ {solution.timeSavingHours}h/주 절약</span>
                                   <span className="text-purple-600">📊 {solution.difficulty || 'medium'} 난이도</span>
@@ -1879,7 +2480,7 @@ export default function WorkshopPage() {
                   {/* 내비게이션 버튼 */}
                   <div className="flex justify-between pt-6">
                     <button
-                      onClick={() => setCurrentStep(6)}
+                      onClick={() => setCurrentStep(8)}
                       className="px-6 py-3 bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold rounded-xl transition-all flex items-center gap-2"
                     >
                       <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -1888,7 +2489,7 @@ export default function WorkshopPage() {
                       이전 단계
                     </button>
                     <button
-                      onClick={() => setCurrentStep(8)}
+                      onClick={() => setCurrentStep(10)}
                       disabled={automationSolutions.length === 0}
                       className="px-8 py-4 bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-semibold rounded-2xl hover:shadow-2xl hover:scale-105 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
                     >
@@ -1903,7 +2504,7 @@ export default function WorkshopPage() {
             </div>
           )}
           {/* 최종 단계: 임원급 자동화 전략 보고서 */}
-          {currentStep === 8 && (
+          {currentStep === 10 && (
             <div className="relative min-h-screen -m-6 p-6 animate-fadeIn">
               {/* Animated gradient background */}
               <div className="absolute inset-0 bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 overflow-hidden">

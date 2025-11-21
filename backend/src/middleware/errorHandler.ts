@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import { logger, securityLogger } from '../config/logger';
+import logger from '../utils/logger';
 import { isProduction } from '../config';
 
 export interface AppError extends Error {
@@ -107,7 +107,7 @@ export const errorHandler = (
     statusCode = 429;
 
     // Log potential abuse
-    securityLogger.warn('Rate limit exceeded', {
+    logger.warn('Rate limit exceeded', {
       ip: req.ip,
       userAgent: req.get('User-Agent'),
       url: req.url,
@@ -141,7 +141,7 @@ export const errorHandler = (
 
   // Security-related errors
   if (statusCode === 401 || statusCode === 403) {
-    securityLogger.warn('Authentication/Authorization failure', {
+    logger.warn('Authentication/Authorization failure', {
       ip: req.ip,
       userAgent: req.get('User-Agent'),
       url: req.url,
@@ -192,3 +192,6 @@ export const validationErrorHandler = (errors: any[]): HttpError => {
   const message = errors.map(error => error.message).join('. ');
   return new HttpError(`Validation Error: ${message}`, 400);
 };
+
+// Default export
+export default errorHandler;
