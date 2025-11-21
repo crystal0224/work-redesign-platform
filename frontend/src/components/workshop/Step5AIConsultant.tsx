@@ -195,15 +195,22 @@ export default function Step5AIConsultant({ tasks, workshopId, onComplete, onPre
       </div>
 
       {/* 메인 컨텐츠 */}
-      <div className="relative z-10 max-w-7xl mx-auto py-12">
+      <div className="relative z-10 max-w-5xl mx-auto py-20">
         {/* 헤더 */}
-        <div className="backdrop-blur-xl bg-white/40 border border-white/60 rounded-3xl p-8 mb-8 shadow-2xl shadow-indigo-200/50">
+        <div className="backdrop-blur-xl bg-white/40 border border-white/60 rounded-3xl p-8 mb-16 shadow-2xl shadow-indigo-200/50 hover:shadow-indigo-300/60 transition-all duration-500">
           <div className="text-center">
-            <h2 className="text-3xl font-semibold text-slate-900 mb-3 tracking-tight">
-              <span className="font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">AI 자동화</span> 솔루션 설계
+            <div className="inline-flex items-center gap-3 mb-4 px-6 py-3 backdrop-blur-md bg-gradient-to-r from-indigo-500/20 to-purple-500/20 border border-indigo-300/40 rounded-full">
+              <div className="w-2 h-2 bg-indigo-500 rounded-full animate-pulse"></div>
+              <span className="text-indigo-700 font-semibold text-sm tracking-wide">STEP 5</span>
+            </div>
+            <h2 className="text-3xl font-bold text-slate-900 mb-3 tracking-tight">
+              업무 상세화
             </h2>
-            <p className="text-lg text-slate-600 leading-relaxed">
-              자동화 가능성이 높은 업무를 선택하고, AI 컨설턴트와 대화하며 최적의 자동화 방안을 찾아보세요
+            <p className="text-lg text-slate-700 leading-relaxed max-w-3xl mx-auto mb-2">
+              자동화 가능성이 높은 업무를 선택하고 AI 컨설턴트와 대화하세요
+            </p>
+            <p className="text-base text-slate-600 leading-relaxed max-w-3xl mx-auto">
+              최적의 자동화 방안을 함께 설계할 수 있습니다
             </p>
           </div>
         </div>
@@ -296,17 +303,23 @@ export default function Step5AIConsultant({ tasks, workshopId, onComplete, onPre
               </div>
             </div>
 
-            {/* Navigation button */}
-            <div className="mt-8 flex justify-start">
+            {/* 네비게이션 버튼 */}
+            <div className="flex items-center justify-between gap-4 relative mt-16">
+              <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                <div className="w-64 h-64 bg-gradient-to-r from-indigo-500/30 via-purple-500/30 to-pink-500/30 rounded-full blur-3xl animate-pulse"></div>
+              </div>
+
               <button
                 onClick={onPrevious}
-                className="px-6 py-3 bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold rounded-xl transition-all flex items-center gap-2"
+                className="relative group inline-flex items-center px-8 py-4 backdrop-blur-md bg-white/60 border-2 border-slate-300 text-slate-700 text-lg font-bold rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 hover:-translate-y-0.5"
               >
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                <svg className="mr-3 w-5 h-5 group-hover:-translate-x-1 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M11 17l-5-5m0 0l5-5m-5 5h12" />
                 </svg>
-                이전 단계
+                <span className="relative">이전</span>
               </button>
+
+              <div></div>
             </div>
           </>
         ) : (
@@ -394,21 +407,33 @@ export default function Step5AIConsultant({ tasks, workshopId, onComplete, onPre
               </div>
 
               {messages.length >= 2 && (
-                <div className="mt-4 flex justify-between gap-4">
+                <div className="mt-4 flex items-center justify-between gap-4 relative">
+                  <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                    <div className="w-64 h-64 bg-gradient-to-r from-indigo-500/30 via-purple-500/30 to-pink-500/30 rounded-full blur-3xl animate-pulse"></div>
+                  </div>
+
                   <button
                     onClick={onPrevious}
-                    className="px-6 py-3 bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold rounded-xl transition-all flex items-center gap-2"
+                    className="relative group inline-flex items-center px-8 py-4 backdrop-blur-md bg-white/60 border-2 border-slate-300 text-slate-700 text-lg font-bold rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 hover:-translate-y-0.5"
                   >
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                    <svg className="mr-3 w-5 h-5 group-hover:-translate-x-1 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M11 17l-5-5m0 0l5-5m-5 5h12" />
                     </svg>
-                    이전 단계
+                    <span className="relative">이전</span>
                   </button>
+
                   <button
                     onClick={() => onComplete(selectedTask!, { messages })}
-                    className="flex-1 py-3 bg-gradient-to-r from-emerald-600 to-green-600 text-white rounded-xl font-semibold hover:shadow-xl hover:scale-[1.02] transition-all"
+                    className="relative group inline-flex items-center px-12 py-4 backdrop-blur-md bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 text-white text-lg font-bold rounded-2xl overflow-hidden shadow-2xl shadow-indigo-400/50 hover:shadow-purple-500/60 transition-all duration-500 hover:scale-105 hover:-translate-y-0.5 border-2 border-white/20"
                   >
-                    대화 완료 - 워크플로우 설계로 이동
+                    <div className="absolute inset-0 bg-gradient-to-r from-pink-600 via-purple-600 to-indigo-600 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                    <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                      <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 animate-shimmer"></div>
+                    </div>
+                    <span className="relative">다음</span>
+                    <svg className="relative ml-3 w-5 h-5 group-hover:translate-x-1 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                    </svg>
                   </button>
                 </div>
               )}
