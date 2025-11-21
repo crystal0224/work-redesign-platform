@@ -125,163 +125,181 @@ export default function Step7Summary({ workshop, onNext, onBack }: Step7SummaryP
             </p>
           </div>
 
-          {/* 작성 내용 요약 */}
-          <div className="space-y-6 mb-12">
-
-            {/* Mission/가치 */}
-            <div className="bg-white rounded-3xl p-8 shadow-lg border border-slate-200">
-              <div className="flex items-start gap-4 mb-4">
-                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-purple-600 to-indigo-600 flex items-center justify-center text-white text-xl shadow-md flex-shrink-0">
-                  🎯
-                </div>
-                <div className="flex-1">
-                  <h3 className="text-2xl font-bold text-slate-900 mb-2">미션 / 가치</h3>
-                  <p className="text-slate-700 text-lg leading-relaxed">
-                    {workshop.mission || '입력되지 않음'}
-                  </p>
-                </div>
-              </div>
+          {/* 작성 내용 요약 - 구조화된 레이아웃 */}
+          <div className="mb-12">
+            {/* 섹션 타이틀 */}
+            <div className="mb-6">
+              <h3 className="text-2xl font-bold text-slate-900 mb-2">📋 워크샵 요약</h3>
+              <p className="text-slate-600">지금까지 작성하신 내용을 확인해보세요</p>
             </div>
 
-            {/* 팀 상황 */}
-            <div className="bg-white rounded-3xl p-8 shadow-lg border border-slate-200">
-              <div className="flex items-start gap-4 mb-4">
-                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-600 to-cyan-600 flex items-center justify-center text-white text-xl shadow-md flex-shrink-0">
-                  👥
-                </div>
-                <div className="flex-1">
-                  <h3 className="text-2xl font-bold text-slate-900 mb-4">팀 상황</h3>
-                  <div className="space-y-3">
-                    <div className="flex items-center gap-3">
-                      <span className="text-sm font-medium text-slate-600 w-24">팀 규모:</span>
-                      <span className="text-base text-slate-900">{workshop.teamSize || 0}명</span>
-                    </div>
-                    {workshop.teamComposition && (
-                      <div className="flex items-start gap-3">
-                        <span className="text-sm font-medium text-slate-600 w-24 flex-shrink-0">팀 구성:</span>
-                        <span className="text-base text-slate-900">{workshop.teamComposition}</span>
-                      </div>
-                    )}
+            {/* Mission과 팀 상황을 2열로 */}
+            <div className="grid md:grid-cols-2 gap-6 mb-6">
+              {/* Mission/가치 */}
+              <div className="bg-white rounded-2xl p-6 shadow-md border border-slate-200 hover:shadow-lg transition-shadow">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-purple-600 to-indigo-600 flex items-center justify-center text-white text-lg shadow-sm flex-shrink-0">
+                    🎯
                   </div>
+                  <h4 className="text-lg font-bold text-slate-900">미션 / 가치</h4>
+                </div>
+                <p className="text-slate-700 leading-relaxed pl-13">
+                  {workshop.mission || <span className="text-slate-400 italic">입력되지 않음</span>}
+                </p>
+              </div>
+
+              {/* 팀 상황 */}
+              <div className="bg-white rounded-2xl p-6 shadow-md border border-slate-200 hover:shadow-lg transition-shadow">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-blue-600 to-cyan-600 flex items-center justify-center text-white text-lg shadow-sm flex-shrink-0">
+                    👥
+                  </div>
+                  <h4 className="text-lg font-bold text-slate-900">팀 상황</h4>
+                </div>
+                <div className="space-y-2 pl-13">
+                  <div className="flex items-center gap-2">
+                    <span className="text-sm font-medium text-slate-500">규모:</span>
+                    <span className="text-slate-900 font-semibold">{workshop.teamSize || 0}명</span>
+                  </div>
+                  {workshop.teamComposition && (
+                    <div>
+                      <span className="text-sm font-medium text-slate-500 block mb-1">구성:</span>
+                      <p className="text-sm text-slate-700">{workshop.teamComposition}</p>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
 
-            {/* 제약조건 */}
-            <div className="bg-white rounded-3xl p-8 shadow-lg border border-slate-200">
-              <div className="flex items-start gap-4 mb-4">
-                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-orange-600 to-red-600 flex items-center justify-center text-white text-xl shadow-md flex-shrink-0">
-                  ⚠️
+            {/* 제약조건 - 전체 너비 */}
+            {(workshop.constraints && workshop.constraints.length > 0) || workshop.controllableIssues ? (
+              <div className="bg-gradient-to-br from-orange-50 to-red-50 rounded-2xl p-6 shadow-md border-2 border-orange-200 mb-6">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-orange-600 to-red-600 flex items-center justify-center text-white text-lg shadow-sm flex-shrink-0">
+                    ⚠️
+                  </div>
+                  <h4 className="text-lg font-bold text-slate-900">제약조건 및 해결방안</h4>
                 </div>
-                <div className="flex-1">
-                  <h3 className="text-2xl font-bold text-slate-900 mb-4">제약조건</h3>
-                  {workshop.constraints && workshop.constraints.length > 0 ? (
-                    <ul className="space-y-2">
-                      {workshop.constraints.map((constraint, index) => (
-                        <li key={index} className="flex items-start gap-3">
-                          <span className="text-orange-600 mt-1">•</span>
-                          <span className="text-base text-slate-700">{constraint}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  ) : (
-                    <p className="text-slate-500">입력되지 않음</p>
+                <div className="pl-13">
+                  {workshop.constraints && workshop.constraints.length > 0 && (
+                    <div className="mb-4">
+                      <div className="grid md:grid-cols-2 gap-2">
+                        {workshop.constraints.map((constraint, index) => (
+                          <div key={index} className="flex items-start gap-2 bg-white/60 rounded-lg px-3 py-2">
+                            <span className="text-orange-600 mt-0.5">•</span>
+                            <span className="text-sm text-slate-700">{constraint}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
                   )}
                   {workshop.controllableIssues && (
-                    <div className="mt-4 p-4 bg-blue-50 rounded-xl border border-blue-200">
-                      <p className="text-sm font-medium text-blue-900 mb-2">컨트롤 가능한 이슈:</p>
+                    <div className="p-4 bg-white rounded-lg border-2 border-blue-300">
+                      <p className="text-sm font-semibold text-blue-900 mb-1">💡 컨트롤 가능한 이슈</p>
                       <p className="text-sm text-blue-800">{workshop.controllableIssues}</p>
                     </div>
                   )}
                 </div>
               </div>
-            </div>
+            ) : null}
 
-            {/* 업무 영역 */}
-            <div className="bg-white rounded-3xl p-8 shadow-lg border border-slate-200">
-              <div className="flex items-start gap-4 mb-4">
-                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-emerald-600 to-teal-600 flex items-center justify-center text-white text-xl shadow-md flex-shrink-0">
+            {/* 업무 영역과 업무 내용 */}
+            <div className="bg-white rounded-2xl p-6 shadow-md border border-slate-200">
+              <div className="flex items-center gap-3 mb-5">
+                <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-emerald-600 to-teal-600 flex items-center justify-center text-white text-lg shadow-sm flex-shrink-0">
                   📁
                 </div>
-                <div className="flex-1">
-                  <h3 className="text-2xl font-bold text-slate-900 mb-4">업무 영역</h3>
-                  <div className="flex flex-wrap gap-3">
-                    {workshop.domains.filter(d => d.trim()).map((domain, index) => (
-                      <div key={index} className="px-4 py-2 bg-gradient-to-r from-emerald-100 to-teal-100 border-2 border-emerald-300 rounded-xl">
-                        <span className="text-base font-medium text-emerald-900">{domain}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
+                <h4 className="text-lg font-bold text-slate-900">업무 영역 및 내용</h4>
               </div>
-            </div>
 
-            {/* 업무 내용 */}
-            <div className="bg-white rounded-3xl p-8 shadow-lg border border-slate-200">
-              <div className="flex items-start gap-4 mb-4">
-                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-violet-600 to-purple-600 flex items-center justify-center text-white text-xl shadow-md flex-shrink-0">
-                  📝
-                </div>
-                <div className="flex-1">
-                  <h3 className="text-2xl font-bold text-slate-900 mb-4">업무 내용</h3>
-                  {workshop.tasks && workshop.tasks.length > 0 ? (
-                    <div className="space-y-3">
-                      {workshop.tasks.slice(0, 5).map((task, index) => (
-                        <div key={index} className="p-4 bg-slate-50 rounded-xl border border-slate-200">
-                          <p className="text-base font-semibold text-slate-900 mb-1">{task.title}</p>
-                          <p className="text-sm text-slate-600">{task.description}</p>
-                        </div>
-                      ))}
-                      {workshop.tasks.length > 5 && (
-                        <p className="text-sm text-slate-500 text-center">외 {workshop.tasks.length - 5}개 업무</p>
-                      )}
-                    </div>
+              {/* 업무 영역 태그 */}
+              <div className="mb-5 pl-13">
+                <p className="text-sm font-medium text-slate-600 mb-2">업무 영역</p>
+                <div className="flex flex-wrap gap-2">
+                  {workshop.domains.filter(d => d.trim()).length > 0 ? (
+                    workshop.domains.filter(d => d.trim()).map((domain, index) => (
+                      <div key={index} className="px-3 py-1.5 bg-gradient-to-r from-emerald-100 to-teal-100 border border-emerald-300 rounded-lg">
+                        <span className="text-sm font-medium text-emerald-900">{domain}</span>
+                      </div>
+                    ))
                   ) : (
-                    <p className="text-slate-500">입력되지 않음</p>
+                    <span className="text-slate-400 italic text-sm">입력되지 않음</span>
                   )}
                 </div>
+              </div>
+
+              {/* 업무 내용 미리보기 */}
+              <div className="pl-13">
+                <p className="text-sm font-medium text-slate-600 mb-3">주요 업무</p>
+                {workshop.tasks && workshop.tasks.length > 0 ? (
+                  <div className="space-y-2">
+                    {workshop.tasks.slice(0, 4).map((task, index) => (
+                      <div key={index} className="p-3 bg-slate-50 rounded-lg border border-slate-200 hover:border-emerald-300 transition-colors">
+                        <div className="flex items-start justify-between gap-3">
+                          <div className="flex-1 min-w-0">
+                            <p className="text-sm font-semibold text-slate-900 mb-0.5 truncate">{task.title}</p>
+                            <p className="text-xs text-slate-600 line-clamp-1">{task.description}</p>
+                          </div>
+                          <span className="text-xs px-2 py-1 bg-slate-200 text-slate-700 rounded flex-shrink-0">
+                            {task.category || '기타'}
+                          </span>
+                        </div>
+                      </div>
+                    ))}
+                    {workshop.tasks.length > 4 && (
+                      <div className="text-center pt-2">
+                        <span className="text-xs text-slate-500 bg-slate-100 px-3 py-1 rounded-full">
+                          +{workshop.tasks.length - 4}개 업무 더 보기
+                        </span>
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  <p className="text-slate-400 italic text-sm">입력되지 않음</p>
+                )}
               </div>
             </div>
           </div>
 
           {/* AI 추천 섹션 */}
-          <div className="bg-gradient-to-br from-indigo-50 to-purple-50 rounded-3xl p-8 shadow-xl border-2 border-indigo-200 mb-8">
+          <div className="mb-8">
+            {/* 섹션 타이틀 */}
             <div className="flex items-center gap-4 mb-6">
-              <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-indigo-600 to-purple-600 flex items-center justify-center text-white text-2xl shadow-lg">
+              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-indigo-600 to-purple-600 flex items-center justify-center text-white text-xl shadow-md">
                 🤖
               </div>
               <div>
-                <h3 className="text-3xl font-bold text-slate-900 mb-1">AI 업무 추천</h3>
+                <h3 className="text-2xl font-bold text-slate-900 mb-1">AI 업무 추천</h3>
                 <p className="text-slate-600">미션과 현재 상황을 기반으로 추천하는 업무입니다</p>
               </div>
             </div>
 
             {loading ? (
-              <div className="text-center py-12">
+              <div className="bg-white rounded-2xl p-12 text-center shadow-md border border-slate-200">
                 <div className="animate-spin w-12 h-12 border-4 border-indigo-200 border-t-indigo-600 rounded-full mx-auto mb-4"></div>
                 <p className="text-slate-600">AI가 추천 업무를 생성하고 있습니다...</p>
               </div>
             ) : (
-              <div className="space-y-6">
+              <div className="grid md:grid-cols-2 gap-6">
                 {/* 해야 할 일 */}
                 <div>
-                  <h4 className="text-xl font-bold text-slate-900 mb-4 flex items-center gap-2">
-                    <span className="w-8 h-8 bg-red-500 text-white rounded-lg flex items-center justify-center text-sm font-bold">!</span>
-                    미션 달성을 위해 반드시 해야 할 일
-                  </h4>
+                  <div className="flex items-center gap-2 mb-4">
+                    <div className="w-8 h-8 bg-red-500 text-white rounded-lg flex items-center justify-center text-sm font-bold shadow-sm">!</div>
+                    <h4 className="text-lg font-bold text-slate-900">반드시 해야 할 일</h4>
+                  </div>
                   <div className="space-y-3">
                     {recommendations.filter(r => r.category === 'should').map((rec, index) => (
-                      <div key={index} className="bg-white rounded-2xl p-6 border-2 border-red-200 shadow-md hover:shadow-lg transition-shadow">
-                        <div className="flex items-start justify-between mb-3">
-                          <h5 className="text-lg font-bold text-slate-900 flex-1">{rec.title}</h5>
-                          <span className={`px-3 py-1 rounded-full text-xs font-medium border ${getPriorityColor(rec.priority)}`}>
-                            우선순위: {getPriorityLabel(rec.priority)}
+                      <div key={index} className="bg-white rounded-xl p-5 border-2 border-red-200 shadow-sm hover:shadow-md transition-all hover:border-red-300">
+                        <div className="flex items-start justify-between mb-2">
+                          <h5 className="text-base font-bold text-slate-900 flex-1 pr-2">{rec.title}</h5>
+                          <span className={`px-2 py-0.5 rounded-md text-xs font-medium ${getPriorityColor(rec.priority)} flex-shrink-0`}>
+                            {getPriorityLabel(rec.priority)}
                           </span>
                         </div>
-                        <p className="text-slate-700 mb-3">{rec.description}</p>
-                        <div className="bg-blue-50 border-l-4 border-blue-500 p-3 rounded">
-                          <p className="text-sm text-blue-900">
-                            <span className="font-semibold">추천 이유:</span> {rec.reason}
+                        <p className="text-sm text-slate-700 mb-3 leading-relaxed">{rec.description}</p>
+                        <div className="bg-blue-50 border-l-3 border-blue-400 p-2.5 rounded-r">
+                          <p className="text-xs text-blue-900">
+                            <span className="font-semibold">이유:</span> {rec.reason}
                           </p>
                         </div>
                       </div>
@@ -291,23 +309,23 @@ export default function Step7Summary({ workshop, onNext, onBack }: Step7SummaryP
 
                 {/* 하면 좋을 일 */}
                 <div>
-                  <h4 className="text-xl font-bold text-slate-900 mb-4 flex items-center gap-2">
-                    <span className="w-8 h-8 bg-blue-500 text-white rounded-lg flex items-center justify-center text-sm font-bold">+</span>
-                    하면 더 좋을 것 같은 일
-                  </h4>
+                  <div className="flex items-center gap-2 mb-4">
+                    <div className="w-8 h-8 bg-blue-500 text-white rounded-lg flex items-center justify-center text-sm font-bold shadow-sm">+</div>
+                    <h4 className="text-lg font-bold text-slate-900">하면 더 좋을 것 같은 일</h4>
+                  </div>
                   <div className="space-y-3">
                     {recommendations.filter(r => r.category === 'could').map((rec, index) => (
-                      <div key={index} className="bg-white rounded-2xl p-6 border-2 border-blue-200 shadow-md hover:shadow-lg transition-shadow">
-                        <div className="flex items-start justify-between mb-3">
-                          <h5 className="text-lg font-bold text-slate-900 flex-1">{rec.title}</h5>
-                          <span className={`px-3 py-1 rounded-full text-xs font-medium border ${getPriorityColor(rec.priority)}`}>
-                            우선순위: {getPriorityLabel(rec.priority)}
+                      <div key={index} className="bg-white rounded-xl p-5 border-2 border-blue-200 shadow-sm hover:shadow-md transition-all hover:border-blue-300">
+                        <div className="flex items-start justify-between mb-2">
+                          <h5 className="text-base font-bold text-slate-900 flex-1 pr-2">{rec.title}</h5>
+                          <span className={`px-2 py-0.5 rounded-md text-xs font-medium ${getPriorityColor(rec.priority)} flex-shrink-0`}>
+                            {getPriorityLabel(rec.priority)}
                           </span>
                         </div>
-                        <p className="text-slate-700 mb-3">{rec.description}</p>
-                        <div className="bg-purple-50 border-l-4 border-purple-500 p-3 rounded">
-                          <p className="text-sm text-purple-900">
-                            <span className="font-semibold">추천 이유:</span> {rec.reason}
+                        <p className="text-sm text-slate-700 mb-3 leading-relaxed">{rec.description}</p>
+                        <div className="bg-purple-50 border-l-3 border-purple-400 p-2.5 rounded-r">
+                          <p className="text-xs text-purple-900">
+                            <span className="font-semibold">이유:</span> {rec.reason}
                           </p>
                         </div>
                       </div>
