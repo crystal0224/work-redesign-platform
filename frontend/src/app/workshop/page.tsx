@@ -70,6 +70,13 @@ interface UploadedFile {
   id: string;
 }
 
+interface TeamMember {
+  id: string;
+  name: string;
+  role: string;
+  characteristics: string;
+}
+
 // 워크샵 단계 그룹 정의 (10단계를 5그룹으로 시각화)
 const WORKSHOP_GROUPS = [
   {
@@ -495,6 +502,11 @@ export default function WorkshopPage() {
   const [taskDetailsModal, setTaskDetailsModal] = useState(false);
   const [detailsCompletedTasks, setDetailsCompletedTasks] = useState<Set<string>>(new Set());
 
+  // 팀 구성 관련 상태
+  const [teamMembers, setTeamMembers] = useState<TeamMember[]>([
+    { id: '1', name: '', role: '', characteristics: '' },
+  ]);
+
   // ALL useRef HOOKS
   const fileInputRef = useRef<HTMLInputElement>(null);
   const workflowAnalysisRef = useRef<HTMLDivElement>(null);
@@ -605,6 +617,38 @@ export default function WorkshopPage() {
         done: newStatus === 'done' ? [...prev.done.filter(t => t.id !== taskId), taskToMove] : prev.done.filter(t => t.id !== taskId)
       };
     });
+  };
+
+  // Team member handling functions
+  const addTeamMember = () => {
+    const newId = (teamMembers.length + 1).toString();
+    setTeamMembers([...teamMembers, { id: newId, name: '', role: '', characteristics: '' }]);
+  };
+
+  const removeTeamMember = (id: string) => {
+    if (teamMembers.length > 1) {
+      setTeamMembers(teamMembers.filter(member => member.id !== id));
+    }
+  };
+
+  const updateTeamMember = (id: string, field: keyof TeamMember, value: string) => {
+    setTeamMembers(teamMembers.map(member =>
+      member.id === id ? { ...member, [field]: value } : member
+    ));
+  };
+
+  const getGradientColor = (index: number) => {
+    const colors = [
+      'from-blue-100 to-blue-200 text-blue-700',
+      'from-indigo-100 to-indigo-200 text-indigo-700',
+      'from-purple-100 to-purple-200 text-purple-700',
+      'from-pink-100 to-pink-200 text-pink-700',
+      'from-rose-100 to-rose-200 text-rose-700',
+      'from-cyan-100 to-cyan-200 text-cyan-700',
+      'from-teal-100 to-teal-200 text-teal-700',
+      'from-green-100 to-green-200 text-green-700',
+    ];
+    return colors[index % colors.length];
   };
 
   // File handling functions
@@ -1606,190 +1650,343 @@ export default function WorkshopPage() {
                     {/* Team Member Input Area */}
                     <div className="space-y-4">
                       {/* Quick Stats */}
-                      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
                         <div className="bg-gradient-to-br from-blue-50 to-blue-100/50 rounded-xl p-4 border border-blue-200">
-                          <div className="text-xs text-blue-700 font-semibold mb-1 uppercase">팀 인원</div>
+                          <div className="text-xs text-blue-700 font-semibold mb-1 uppercase">팀원 수</div>
                           <input
-                            type="number"
-                            placeholder="5"
+                            type="text"
+                            placeholder="5명"
                             className="w-full bg-transparent text-2xl font-bold text-blue-900 border-none outline-none placeholder:text-blue-400/50"
                           />
                         </div>
                         <div className="bg-gradient-to-br from-indigo-50 to-indigo-100/50 rounded-xl p-4 border border-indigo-200">
-                          <div className="text-xs text-indigo-700 font-semibold mb-1 uppercase">평균 연차</div>
+                          <div className="text-xs text-indigo-700 font-semibold mb-1 uppercase">팀 결성 시기</div>
                           <input
                             type="text"
-                            placeholder="3년"
+                            placeholder="2년 전"
                             className="w-full bg-transparent text-2xl font-bold text-indigo-900 border-none outline-none placeholder:text-indigo-400/50"
-                          />
-                        </div>
-                        <div className="bg-gradient-to-br from-purple-50 to-purple-100/50 rounded-xl p-4 border border-purple-200">
-                          <div className="text-xs text-purple-700 font-semibold mb-1 uppercase">신입/경력</div>
-                          <input
-                            type="text"
-                            placeholder="2/3"
-                            className="w-full bg-transparent text-2xl font-bold text-purple-900 border-none outline-none placeholder:text-purple-400/50"
-                          />
-                        </div>
-                        <div className="bg-gradient-to-br from-pink-50 to-pink-100/50 rounded-xl p-4 border border-pink-200">
-                          <div className="text-xs text-pink-700 font-semibold mb-1 uppercase">팀 나이</div>
-                          <input
-                            type="text"
-                            placeholder="2년차"
-                            className="w-full bg-transparent text-2xl font-bold text-pink-900 border-none outline-none placeholder:text-pink-400/50"
                           />
                         </div>
                       </div>
 
-                      {/* Team Members Detail */}
-                      <div className="bg-slate-50 rounded-2xl p-6 border border-slate-200">
-                        <h4 className="font-bold text-slate-900 mb-4 flex items-center gap-2">
-                          <span className="text-lg">✍️</span>
-                          팀원 한 명씩 떠올려보세요
-                        </h4>
+                      {/* Team Characteristics Selection */}
+                      <div className="mb-6">
+                        <h4 className="text-sm font-semibold text-slate-700 mb-4">우리 팀의 특징을 선택해주세요 (중복 선택 가능)</h4>
+
+                        <div className="space-y-4">
+                          {/* 역량 & 전문성 */}
+                          <div>
+                            <h5 className="text-xs font-semibold text-slate-500 uppercase mb-2">💪 역량 & 전문성</h5>
+                            <div className="flex flex-wrap gap-2">
+                              <label className="inline-flex items-center px-3 py-2 bg-white border-2 border-slate-200 rounded-lg cursor-pointer hover:border-green-300 transition-all">
+                                <input type="checkbox" className="w-4 h-4 text-green-600 rounded focus:ring-green-500 focus:ring-2" />
+                                <span className="ml-2 text-sm text-slate-700">전문성이 높음</span>
+                              </label>
+                              <label className="inline-flex items-center px-3 py-2 bg-white border-2 border-slate-200 rounded-lg cursor-pointer hover:border-green-300 transition-all">
+                                <input type="checkbox" className="w-4 h-4 text-green-600 rounded focus:ring-green-500 focus:ring-2" />
+                                <span className="ml-2 text-sm text-slate-700">멀티 플레이어 많음</span>
+                              </label>
+                              <label className="inline-flex items-center px-3 py-2 bg-white border-2 border-slate-200 rounded-lg cursor-pointer hover:border-green-300 transition-all">
+                                <input type="checkbox" className="w-4 h-4 text-green-600 rounded focus:ring-green-500 focus:ring-2" />
+                                <span className="ml-2 text-sm text-slate-700">학습 의지 높음</span>
+                              </label>
+                              <label className="inline-flex items-center px-3 py-2 bg-white border-2 border-slate-200 rounded-lg cursor-pointer hover:border-red-300 transition-all">
+                                <input type="checkbox" className="w-4 h-4 text-red-600 rounded focus:ring-red-500 focus:ring-2" />
+                                <span className="ml-2 text-sm text-slate-700">전문성 부족</span>
+                              </label>
+                              <label className="inline-flex items-center px-3 py-2 bg-white border-2 border-slate-200 rounded-lg cursor-pointer hover:border-red-300 transition-all">
+                                <input type="checkbox" className="w-4 h-4 text-red-600 rounded focus:ring-red-500 focus:ring-2" />
+                                <span className="ml-2 text-sm text-slate-700">역량 편차 큼</span>
+                              </label>
+                            </div>
+                          </div>
+
+                          {/* 경력 구성 */}
+                          <div>
+                            <h5 className="text-xs font-semibold text-slate-500 uppercase mb-2">👥 경력 구성</h5>
+                            <div className="flex flex-wrap gap-2">
+                              <label className="inline-flex items-center px-3 py-2 bg-white border-2 border-slate-200 rounded-lg cursor-pointer hover:border-blue-300 transition-all">
+                                <input type="checkbox" className="w-4 h-4 text-blue-600 rounded focus:ring-blue-500 focus:ring-2" />
+                                <span className="ml-2 text-sm text-slate-700">시니어 중심</span>
+                              </label>
+                              <label className="inline-flex items-center px-3 py-2 bg-white border-2 border-slate-200 rounded-lg cursor-pointer hover:border-blue-300 transition-all">
+                                <input type="checkbox" className="w-4 h-4 text-blue-600 rounded focus:ring-blue-500 focus:ring-2" />
+                                <span className="ml-2 text-sm text-slate-700">주니어 중심</span>
+                              </label>
+                              <label className="inline-flex items-center px-3 py-2 bg-white border-2 border-slate-200 rounded-lg cursor-pointer hover:border-blue-300 transition-all">
+                                <input type="checkbox" className="w-4 h-4 text-blue-600 rounded focus:ring-blue-500 focus:ring-2" />
+                                <span className="ml-2 text-sm text-slate-700">경력 골고루 분포</span>
+                              </label>
+                              <label className="inline-flex items-center px-3 py-2 bg-white border-2 border-slate-200 rounded-lg cursor-pointer hover:border-blue-300 transition-all">
+                                <input type="checkbox" className="w-4 h-4 text-blue-600 rounded focus:ring-blue-500 focus:ring-2" />
+                                <span className="ml-2 text-sm text-slate-700">다양성이 있음</span>
+                              </label>
+                            </div>
+                          </div>
+
+                          {/* 협업 & 소통 */}
+                          <div>
+                            <h5 className="text-xs font-semibold text-slate-500 uppercase mb-2">🤝 협업 & 소통</h5>
+                            <div className="flex flex-wrap gap-2">
+                              <label className="inline-flex items-center px-3 py-2 bg-white border-2 border-slate-200 rounded-lg cursor-pointer hover:border-green-300 transition-all">
+                                <input type="checkbox" className="w-4 h-4 text-green-600 rounded focus:ring-green-500 focus:ring-2" />
+                                <span className="ml-2 text-sm text-slate-700">협업 경험 많음</span>
+                              </label>
+                              <label className="inline-flex items-center px-3 py-2 bg-white border-2 border-slate-200 rounded-lg cursor-pointer hover:border-green-300 transition-all">
+                                <input type="checkbox" className="w-4 h-4 text-green-600 rounded focus:ring-green-500 focus:ring-2" />
+                                <span className="ml-2 text-sm text-slate-700">소통이 활발함</span>
+                              </label>
+                              <label className="inline-flex items-center px-3 py-2 bg-white border-2 border-slate-200 rounded-lg cursor-pointer hover:border-green-300 transition-all">
+                                <input type="checkbox" className="w-4 h-4 text-green-600 rounded focus:ring-green-500 focus:ring-2" />
+                                <span className="ml-2 text-sm text-slate-700">수평적 문화</span>
+                              </label>
+                              <label className="inline-flex items-center px-3 py-2 bg-white border-2 border-slate-200 rounded-lg cursor-pointer hover:border-red-300 transition-all">
+                                <input type="checkbox" className="w-4 h-4 text-red-600 rounded focus:ring-red-500 focus:ring-2" />
+                                <span className="ml-2 text-sm text-slate-700">소통이 원활하지 않음</span>
+                              </label>
+                              <label className="inline-flex items-center px-3 py-2 bg-white border-2 border-slate-200 rounded-lg cursor-pointer hover:border-red-300 transition-all">
+                                <input type="checkbox" className="w-4 h-4 text-red-600 rounded focus:ring-red-500 focus:ring-2" />
+                                <span className="ml-2 text-sm text-slate-700">협업 경험 부족</span>
+                              </label>
+                              <label className="inline-flex items-center px-3 py-2 bg-white border-2 border-slate-200 rounded-lg cursor-pointer hover:border-red-300 transition-all">
+                                <input type="checkbox" className="w-4 h-4 text-red-600 rounded focus:ring-red-500 focus:ring-2" />
+                                <span className="ml-2 text-sm text-slate-700">사일로 현상 (각자 일함)</span>
+                              </label>
+                            </div>
+                          </div>
+
+                          {/* 업무 스타일 */}
+                          <div>
+                            <h5 className="text-xs font-semibold text-slate-500 uppercase mb-2">⚡ 업무 스타일</h5>
+                            <div className="flex flex-wrap gap-2">
+                              <label className="inline-flex items-center px-3 py-2 bg-white border-2 border-slate-200 rounded-lg cursor-pointer hover:border-green-300 transition-all">
+                                <input type="checkbox" className="w-4 h-4 text-green-600 rounded focus:ring-green-500 focus:ring-2" />
+                                <span className="ml-2 text-sm text-slate-700">빠른 실행력</span>
+                              </label>
+                              <label className="inline-flex items-center px-3 py-2 bg-white border-2 border-slate-200 rounded-lg cursor-pointer hover:border-green-300 transition-all">
+                                <input type="checkbox" className="w-4 h-4 text-green-600 rounded focus:ring-green-500 focus:ring-2" />
+                                <span className="ml-2 text-sm text-slate-700">꼼꼼하고 신중함</span>
+                              </label>
+                              <label className="inline-flex items-center px-3 py-2 bg-white border-2 border-slate-200 rounded-lg cursor-pointer hover:border-green-300 transition-all">
+                                <input type="checkbox" className="w-4 h-4 text-green-600 rounded focus:ring-green-500 focus:ring-2" />
+                                <span className="ml-2 text-sm text-slate-700">도전적이고 혁신적</span>
+                              </label>
+                              <label className="inline-flex items-center px-3 py-2 bg-white border-2 border-slate-200 rounded-lg cursor-pointer hover:border-green-300 transition-all">
+                                <input type="checkbox" className="w-4 h-4 text-green-600 rounded focus:ring-green-500 focus:ring-2" />
+                                <span className="ml-2 text-sm text-slate-700">안정적이고 체계적</span>
+                              </label>
+                              <label className="inline-flex items-center px-3 py-2 bg-white border-2 border-slate-200 rounded-lg cursor-pointer hover:border-green-300 transition-all">
+                                <input type="checkbox" className="w-4 h-4 text-green-600 rounded focus:ring-green-500 focus:ring-2" />
+                                <span className="ml-2 text-sm text-slate-700">자율성 높음</span>
+                              </label>
+                              <label className="inline-flex items-center px-3 py-2 bg-white border-2 border-slate-200 rounded-lg cursor-pointer hover:border-red-300 transition-all">
+                                <input type="checkbox" className="w-4 h-4 text-red-600 rounded focus:ring-red-500 focus:ring-2" />
+                                <span className="ml-2 text-sm text-slate-700">실행력 부족</span>
+                              </label>
+                              <label className="inline-flex items-center px-3 py-2 bg-white border-2 border-slate-200 rounded-lg cursor-pointer hover:border-red-300 transition-all">
+                                <input type="checkbox" className="w-4 h-4 text-red-600 rounded focus:ring-red-500 focus:ring-2" />
+                                <span className="ml-2 text-sm text-slate-700">변화 저항 큼</span>
+                              </label>
+                            </div>
+                          </div>
+
+                          {/* 팀 상태 & 분위기 */}
+                          <div>
+                            <h5 className="text-xs font-semibold text-slate-500 uppercase mb-2">🌟 팀 상태 & 분위기</h5>
+                            <div className="flex flex-wrap gap-2">
+                              <label className="inline-flex items-center px-3 py-2 bg-white border-2 border-slate-200 rounded-lg cursor-pointer hover:border-blue-300 transition-all">
+                                <input type="checkbox" className="w-4 h-4 text-blue-600 rounded focus:ring-blue-500 focus:ring-2" />
+                                <span className="ml-2 text-sm text-slate-700">신규 팀 (결성 1년 이내)</span>
+                              </label>
+                              <label className="inline-flex items-center px-3 py-2 bg-white border-2 border-slate-200 rounded-lg cursor-pointer hover:border-blue-300 transition-all">
+                                <input type="checkbox" className="w-4 h-4 text-blue-600 rounded focus:ring-blue-500 focus:ring-2" />
+                                <span className="ml-2 text-sm text-slate-700">안정기 팀</span>
+                              </label>
+                              <label className="inline-flex items-center px-3 py-2 bg-white border-2 border-slate-200 rounded-lg cursor-pointer hover:border-blue-300 transition-all">
+                                <input type="checkbox" className="w-4 h-4 text-blue-600 rounded focus:ring-blue-500 focus:ring-2" />
+                                <span className="ml-2 text-sm text-slate-700">변화기 (구조조정/재편)</span>
+                              </label>
+                              <label className="inline-flex items-center px-3 py-2 bg-white border-2 border-slate-200 rounded-lg cursor-pointer hover:border-green-300 transition-all">
+                                <input type="checkbox" className="w-4 h-4 text-green-600 rounded focus:ring-green-500 focus:ring-2" />
+                                <span className="ml-2 text-sm text-slate-700">동기부여 높음</span>
+                              </label>
+                              <label className="inline-flex items-center px-3 py-2 bg-white border-2 border-slate-200 rounded-lg cursor-pointer hover:border-green-300 transition-all">
+                                <input type="checkbox" className="w-4 h-4 text-green-600 rounded focus:ring-green-500 focus:ring-2" />
+                                <span className="ml-2 text-sm text-slate-700">팀워크 좋음</span>
+                              </label>
+                              <label className="inline-flex items-center px-3 py-2 bg-white border-2 border-slate-200 rounded-lg cursor-pointer hover:border-red-300 transition-all">
+                                <input type="checkbox" className="w-4 h-4 text-red-600 rounded focus:ring-red-500 focus:ring-2" />
+                                <span className="ml-2 text-sm text-slate-700">동기부여 낮음</span>
+                              </label>
+                              <label className="inline-flex items-center px-3 py-2 bg-white border-2 border-slate-200 rounded-lg cursor-pointer hover:border-red-300 transition-all">
+                                <input type="checkbox" className="w-4 h-4 text-red-600 rounded focus:ring-red-500 focus:ring-2" />
+                                <span className="ml-2 text-sm text-slate-700">번아웃/피로도 높음</span>
+                              </label>
+                              <label className="inline-flex items-center px-3 py-2 bg-white border-2 border-slate-200 rounded-lg cursor-pointer hover:border-red-300 transition-all">
+                                <input type="checkbox" className="w-4 h-4 text-red-600 rounded focus:ring-red-500 focus:ring-2" />
+                                <span className="ml-2 text-sm text-slate-700">이직률 높음</span>
+                              </label>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Team Composition Overview */}
+                      <div className="space-y-4">
+                        <div className="mb-2">
+                          <h4 className="font-bold text-slate-900 flex items-center gap-2 mb-2">
+                            <span className="text-lg">✍️</span>
+                            추가로 설명하고 싶은 팀 특징이 있나요?
+                          </h4>
+                          <p className="text-xs text-slate-500">
+                            💡 선택사항입니다. 위에서 선택한 것 외에 더 설명하고 싶은 내용만 간단히 적어주세요.
+                          </p>
+                        </div>
+
                         <textarea
-                          rows={6}
-                          placeholder="예시:&#10;• 김민수 (5년차) - 데이터 분석 전문,꼼꼼하고 분석적&#10;• 이지은 (2년차) - 고객 응대, 친절하고 소통 능력 좋음&#10;• 박준호 (신입) - 시스템 관리, 배우려는 의지가 강함&#10;• 최서연 (3년차) - 프로젝트 관리, 리더십 있고 추진력 강함"
-                          className="w-full px-5 py-4 bg-white border-2 border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-400/50 focus:border-purple-400 text-base transition-all resize-none"
+                          placeholder="예시: 데이터 전문가 5명, 기획자 3명으로 분석 역량이 강함. 최근 신규 입사자 3명 합류로 팀 분위기 변화 중."
+                          className="w-full h-24 px-4 py-3 bg-white border-2 border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-purple-400/50 focus:border-purple-400 resize-none"
+                          style={{ lineHeight: '1.6' }}
                         />
                       </div>
                     </div>
                   </div>
 
-                  {/* Guide Section */}
-                  <div className="bg-gradient-to-br from-slate-50 to-purple-50/50 rounded-3xl p-8 mb-8 border border-slate-200">
-                    <div className="flex items-start gap-4 mb-6">
-                      <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center text-2xl shadow-sm">
-                        💡
+                  {/* Constraints Section */}
+                  <div className="bg-white rounded-3xl p-8 shadow-xl border border-slate-200/60 mb-8">
+                    <div className="flex items-start gap-4 mb-8">
+                      <div className="flex-shrink-0 w-12 h-12 rounded-xl bg-gradient-to-br from-orange-500 to-orange-700 flex items-center justify-center text-white font-bold text-lg shadow-lg">
+                        ⚠️
                       </div>
-                      <div>
-                        <h4 className="text-xl font-bold text-slate-900 mb-2">팀원 파악 가이드</h4>
-                        <p className="text-slate-600 text-sm">팀원들의 특징을 잘 포착하는 방법</p>
-                      </div>
-                    </div>
-
-                    <div className="grid md:grid-cols-3 gap-4">
-                      {/* 기본 정보 */}
-                      <div className="bg-white rounded-2xl p-6 border border-slate-200/60 shadow-sm">
-                        <div className="flex items-start gap-3 mb-3">
-                          <span className="text-2xl">📋</span>
-                          <h5 className="font-bold text-slate-900 text-base">기본 정보</h5>
-                        </div>
-                        <ul className="text-sm text-slate-600 space-y-2">
-                          <li className="flex items-start gap-2">
-                            <span className="text-purple-500 mt-1">•</span>
-                            <span>이름과 연차</span>
-                          </li>
-                          <li className="flex items-start gap-2">
-                            <span className="text-purple-500 mt-1">•</span>
-                            <span>주요 담당 업무</span>
-                          </li>
-                          <li className="flex items-start gap-2">
-                            <span className="text-purple-500 mt-1">•</span>
-                            <span>전문 분야/스킬</span>
-                          </li>
-                        </ul>
-                      </div>
-
-                      {/* 업무 특징 */}
-                      <div className="bg-white rounded-2xl p-6 border border-slate-200/60 shadow-sm">
-                        <div className="flex items-start gap-3 mb-3">
-                          <span className="text-2xl">⚡</span>
-                          <h5 className="font-bold text-slate-900 text-base">업무 특징</h5>
-                        </div>
-                        <ul className="text-sm text-slate-600 space-y-2">
-                          <li className="flex items-start gap-2">
-                            <span className="text-purple-500 mt-1">•</span>
-                            <span>잘하는 것</span>
-                          </li>
-                          <li className="flex items-start gap-2">
-                            <span className="text-purple-500 mt-1">•</span>
-                            <span>개선이 필요한 점</span>
-                          </li>
-                          <li className="flex items-start gap-2">
-                            <span className="text-purple-500 mt-1">•</span>
-                            <span>업무 스타일</span>
-                          </li>
-                        </ul>
-                      </div>
-
-                      {/* 성향/특성 */}
-                      <div className="bg-white rounded-2xl p-6 border border-slate-200/60 shadow-sm">
-                        <div className="flex items-start gap-3 mb-3">
-                          <span className="text-2xl">🎭</span>
-                          <h5 className="font-bold text-slate-900 text-base">성향/특성</h5>
-                        </div>
-                        <ul className="text-sm text-slate-600 space-y-2">
-                          <li className="flex items-start gap-2">
-                            <span className="text-purple-500 mt-1">•</span>
-                            <span>성격 (꼼꼼함, 적극성 등)</span>
-                          </li>
-                          <li className="flex items-start gap-2">
-                            <span className="text-purple-500 mt-1">•</span>
-                            <span>협업 스타일</span>
-                          </li>
-                          <li className="flex items-start gap-2">
-                            <span className="text-purple-500 mt-1">•</span>
-                            <span>성장 가능성</span>
-                          </li>
-                        </ul>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Insight Box */}
-                  <div className="bg-gradient-to-r from-purple-500 to-indigo-600 rounded-3xl p-8 mb-8 text-white shadow-2xl">
-                    <div className="flex items-start gap-4">
-                      <div className="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center text-2xl">
-                        💭
-                      </div>
-                      <div>
-                        <h4 className="text-xl font-bold mb-3">왜 팀원들을 먼저 떠올리나요?</h4>
-                        <p className="text-white/90 leading-relaxed">
-                          팀원 한 명 한 명을 생각하다 보면, 누가 어떤 업무를 하고 있는지 자연스럽게 떠오릅니다.
-                          <strong className="text-white"> "김민수는 데이터 분석을 하니까 분석 업무가 있고, 이지은이는 고객 응대를 하니까..."</strong>
-                          이렇게 실제 사람을 기준으로 생각하면 업무 영역을 더 정확하고 구체적으로 정의할 수 있습니다.
+                      <div className="flex-1">
+                        <h3 className="text-2xl font-bold text-slate-900 mb-3 leading-tight">
+                          우리 팀이 업무를 하고 성과를 내는데 제약조건이 되는 사항은 무엇인가요?
+                        </h3>
+                        <p className="text-slate-600 text-sm">
+                          해당되는 항목을 모두 선택해주세요 (중복 선택 가능)
                         </p>
                       </div>
                     </div>
-                  </div>
 
-                  {/* Example Section */}
-                  <div className="bg-white rounded-3xl p-8 mb-8 border border-slate-200 shadow-lg">
-                    <div className="flex items-start gap-4 mb-6">
-                      <div className="w-12 h-12 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-xl flex items-center justify-center text-white text-2xl shadow-lg">
-                        ✨
-                      </div>
-                      <div>
-                        <h4 className="text-xl font-bold text-slate-900 mb-2">작성 예시</h4>
-                        <p className="text-slate-600 text-sm">이렇게 작성하면 좋습니다</p>
-                      </div>
+                    {/* Constraint Checkboxes - 2 Columns */}
+                    <div className="grid md:grid-cols-2 gap-3 mb-8">
+                      <label className="flex items-start gap-3 p-4 bg-slate-50 hover:bg-orange-50 border-2 border-slate-200 hover:border-orange-300 rounded-xl cursor-pointer transition-all group">
+                        <input type="checkbox" className="mt-1 w-5 h-5 text-orange-600 rounded focus:ring-orange-500 focus:ring-2" />
+                        <div className="flex-1">
+                          <span className="text-base font-medium text-slate-900 group-hover:text-orange-700">복잡하고 어려운 일이 많음</span>
+                          <p className="text-xs text-slate-500 mt-1">고도의 전문성 필요, 복잡한 문제 해결</p>
+                        </div>
+                      </label>
+
+                      <label className="flex items-start gap-3 p-4 bg-slate-50 hover:bg-orange-50 border-2 border-slate-200 hover:border-orange-300 rounded-xl cursor-pointer transition-all group">
+                        <input type="checkbox" className="mt-1 w-5 h-5 text-orange-600 rounded focus:ring-orange-500 focus:ring-2" />
+                        <div className="flex-1">
+                          <span className="text-base font-medium text-slate-900 group-hover:text-orange-700">단순 반복 업무가 많음</span>
+                          <p className="text-xs text-slate-500 mt-1">동일 패턴 리포트, 데이터 입력 등</p>
+                        </div>
+                      </label>
+
+                      <label className="flex items-start gap-3 p-4 bg-slate-50 hover:bg-orange-50 border-2 border-slate-200 hover:border-orange-300 rounded-xl cursor-pointer transition-all group">
+                        <input type="checkbox" className="mt-1 w-5 h-5 text-orange-600 rounded focus:ring-orange-500 focus:ring-2" />
+                        <div className="flex-1">
+                          <span className="text-base font-medium text-slate-900 group-hover:text-orange-700">조율 업무가 많음</span>
+                          <p className="text-xs text-slate-500 mt-1">여러 부서 협의, 복잡한 승인 과정</p>
+                        </div>
+                      </label>
+
+                      <label className="flex items-start gap-3 p-4 bg-slate-50 hover:bg-orange-50 border-2 border-slate-200 hover:border-orange-300 rounded-xl cursor-pointer transition-all group">
+                        <input type="checkbox" className="mt-1 w-5 h-5 text-orange-600 rounded focus:ring-orange-500 focus:ring-2" />
+                        <div className="flex-1">
+                          <span className="text-base font-medium text-slate-900 group-hover:text-orange-700">외부 환경에 따라 계획 변경</span>
+                          <p className="text-xs text-slate-500 mt-1">시장 변화, 고객 요청에 우선순위 수시 변경</p>
+                        </div>
+                      </label>
+
+                      <label className="flex items-start gap-3 p-4 bg-slate-50 hover:bg-orange-50 border-2 border-slate-200 hover:border-orange-300 rounded-xl cursor-pointer transition-all group">
+                        <input type="checkbox" className="mt-1 w-5 h-5 text-orange-600 rounded focus:ring-orange-500 focus:ring-2" />
+                        <div className="flex-1">
+                          <span className="text-base font-medium text-slate-900 group-hover:text-orange-700">업무 과부하 (인력 부족)</span>
+                          <p className="text-xs text-slate-500 mt-1">해야 할 일 대비 팀원 수 부족</p>
+                        </div>
+                      </label>
+
+                      <label className="flex items-start gap-3 p-4 bg-slate-50 hover:bg-orange-50 border-2 border-slate-200 hover:border-orange-300 rounded-xl cursor-pointer transition-all group">
+                        <input type="checkbox" className="mt-1 w-5 h-5 text-orange-600 rounded focus:ring-orange-500 focus:ring-2" />
+                        <div className="flex-1">
+                          <span className="text-base font-medium text-slate-900 group-hover:text-orange-700">업무 표준화 부족</span>
+                          <p className="text-xs text-slate-500 mt-1">매번 다르게 처리, 일관성 없음</p>
+                        </div>
+                      </label>
+
+                      <label className="flex items-start gap-3 p-4 bg-slate-50 hover:bg-orange-50 border-2 border-slate-200 hover:border-orange-300 rounded-xl cursor-pointer transition-all group">
+                        <input type="checkbox" className="mt-1 w-5 h-5 text-orange-600 rounded focus:ring-orange-500 focus:ring-2" />
+                        <div className="flex-1">
+                          <span className="text-base font-medium text-slate-900 group-hover:text-orange-700">정보/도구 부족</span>
+                          <p className="text-xs text-slate-500 mt-1">필요한 시스템, 데이터 접근 어려움</p>
+                        </div>
+                      </label>
+
+                      <label className="flex items-start gap-3 p-4 bg-slate-50 hover:bg-orange-50 border-2 border-slate-200 hover:border-orange-300 rounded-xl cursor-pointer transition-all group">
+                        <input type="checkbox" className="mt-1 w-5 h-5 text-orange-600 rounded focus:ring-orange-500 focus:ring-2" />
+                        <div className="flex-1">
+                          <span className="text-base font-medium text-slate-900 group-hover:text-orange-700">긴급 요청이 많음</span>
+                          <p className="text-xs text-slate-500 mt-1">갑작스런 요청으로 계획된 업무 중단</p>
+                        </div>
+                      </label>
+
+                      <label className="flex items-start gap-3 p-4 bg-slate-50 hover:bg-orange-50 border-2 border-slate-200 hover:border-orange-300 rounded-xl cursor-pointer transition-all group">
+                        <input type="checkbox" className="mt-1 w-5 h-5 text-orange-600 rounded focus:ring-orange-500 focus:ring-2" />
+                        <div className="flex-1">
+                          <span className="text-base font-medium text-slate-900 group-hover:text-orange-700">의사결정 지연</span>
+                          <p className="text-xs text-slate-500 mt-1">승인/결정이 늦어져 업무 진행 막힘</p>
+                        </div>
+                      </label>
+
+                      <label className="flex items-start gap-3 p-4 bg-slate-50 hover:bg-orange-50 border-2 border-slate-200 hover:border-orange-300 rounded-xl cursor-pointer transition-all group">
+                        <input type="checkbox" className="mt-1 w-5 h-5 text-orange-600 rounded focus:ring-orange-500 focus:ring-2" />
+                        <div className="flex-1">
+                          <span className="text-base font-medium text-slate-900 group-hover:text-orange-700">레거시 시스템/프로세스</span>
+                          <p className="text-xs text-slate-500 mt-1">오래되고 비효율적인 방식 사용</p>
+                        </div>
+                      </label>
+
+                      <label className="flex items-start gap-3 p-4 bg-slate-50 hover:bg-orange-50 border-2 border-slate-200 hover:border-orange-300 rounded-xl cursor-pointer transition-all group">
+                        <input type="checkbox" className="mt-1 w-5 h-5 text-orange-600 rounded focus:ring-orange-500 focus:ring-2" />
+                        <div className="flex-1">
+                          <span className="text-base font-medium text-slate-900 group-hover:text-orange-700">지식/노하우 공유 부족</span>
+                          <p className="text-xs text-slate-500 mt-1">특정 사람만 알고 있어 병목 발생</p>
+                        </div>
+                      </label>
+
+                      <label className="flex items-start gap-3 p-4 bg-slate-50 hover:bg-orange-50 border-2 border-slate-200 hover:border-orange-300 rounded-xl cursor-pointer transition-all group">
+                        <input type="checkbox" className="mt-1 w-5 h-5 text-orange-600 rounded focus:ring-orange-500 focus:ring-2" />
+                        <div className="flex-1">
+                          <span className="text-base font-medium text-slate-900 group-hover:text-orange-700">품질 검증 시간 부족</span>
+                          <p className="text-xs text-slate-500 mt-1">빠듯한 일정으로 검토 시간 없음</p>
+                        </div>
+                      </label>
                     </div>
 
-                    <div className="bg-emerald-50 rounded-2xl p-6 border border-emerald-200">
-                      <div className="font-semibold text-slate-900 mb-4">📊 데이터분석팀 (5명, 평균 3년차)</div>
-                      <div className="space-y-3 text-sm text-slate-700">
-                        <div className="flex gap-3">
-                          <span className="font-semibold text-emerald-700 w-20 flex-shrink-0">팀장</span>
-                          <span>박준영 (7년) - 전략 수립, 통찰력 있고 의사결정 빠름</span>
+                    {/* Controllable Issues Section */}
+                    <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl p-6 border-2 border-blue-200">
+                      <div className="flex items-start gap-3 mb-4">
+                        <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white text-xl">
+                          🎯
                         </div>
-                        <div className="flex gap-3">
-                          <span className="font-semibold text-blue-600 w-20 flex-shrink-0">시니어</span>
-                          <span>김민지 (5년) - 데이터 분석, SQL 전문가, 꼼꼼하고 분석적</span>
-                        </div>
-                        <div className="flex gap-3">
-                          <span className="font-semibold text-indigo-600 w-20 flex-shrink-0">주니어</span>
-                          <span>이서준 (2년) - 대시보드 제작, 시각화 능력 좋고 배우려는 의지 강함</span>
-                        </div>
-                        <div className="flex gap-3">
-                          <span className="font-semibold text-purple-600 w-20 flex-shrink-0">주니어</span>
-                          <span>최예린 (2년) - 리포트 작성, 커뮤니케이션 능력 뛰어남</span>
-                        </div>
-                        <div className="flex gap-3">
-                          <span className="font-semibold text-pink-600 w-20 flex-shrink-0">신입</span>
-                          <span>정하늘 (신입) - 데이터 수집, 성실하고 빠르게 성장 중</span>
+                        <div className="flex-1">
+                          <h4 className="text-lg font-bold text-slate-900 mb-2">
+                            이 중에서 팀장님께서 컨트롤할 수 있는 것은 어떤 문제인가요?
+                          </h4>
+                          <p className="text-sm text-slate-600 mb-3">
+                            위에서 선택한 제약조건 중, 팀 내부에서 해결 가능한 것이 있다면 간단히 적어주세요.
+                          </p>
                         </div>
                       </div>
+                      <textarea
+                        placeholder="예시: 단순 반복 업무는 자동화로 해결 가능할 것 같음. 업무 과부하는 우선순위 조정과 업무 분배 개선으로 일부 해결 가능."
+                        className="w-full h-24 px-4 py-3 bg-white border-2 border-blue-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-400/50 focus:border-blue-400 resize-none"
+                        style={{ lineHeight: '1.6' }}
+                      />
                     </div>
                   </div>
 
@@ -1846,78 +2043,6 @@ export default function WorkshopPage() {
                     </p>
                   </div>
 
-                  {/* Reminder Box */}
-                  <div className="bg-gradient-to-r from-purple-100 to-indigo-100 border border-purple-200 rounded-2xl p-6 mb-8">
-                    <div className="flex items-start gap-3">
-                      <span className="text-2xl">💭</span>
-                      <div>
-                        <p className="text-slate-700 leading-relaxed">
-                          <strong className="text-slate-900">팀원들을 떠올려보세요!</strong><br />
-                          김민수는 데이터 분석, 이지은이는 고객 응대... 각 팀원이 하는 일을 생각하면 업무 영역이 자연스럽게 나옵니다.
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Guide Section */}
-                  <div className="bg-gradient-to-br from-slate-50 to-emerald-50/50 rounded-3xl p-8 mb-8 border border-slate-200">
-                    <div className="flex items-start gap-4 mb-6">
-                      <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center text-2xl shadow-sm">
-                        💡
-                      </div>
-                      <div>
-                        <h4 className="text-xl font-bold text-slate-900 mb-2">업무 영역 작성 가이드</h4>
-                        <p className="text-slate-600 text-sm">효과적으로 작성하는 방법</p>
-                      </div>
-                    </div>
-
-                    <div className="grid md:grid-cols-2 gap-4">
-                      <div className="bg-white rounded-2xl p-6 border border-slate-200/60 shadow-sm">
-                        <div className="flex items-start gap-3 mb-3">
-                          <span className="text-emerald-600 text-xl font-bold">✓</span>
-                          <h5 className="font-bold text-slate-900 text-base">구체적으로 작성</h5>
-                        </div>
-                        <p className="text-sm text-slate-600 leading-relaxed">
-                          "기타업무" ❌<br />
-                          "고객 문의 응답 및 클레임 처리" ✅
-                        </p>
-                      </div>
-
-                      <div className="bg-white rounded-2xl p-6 border border-slate-200/60 shadow-sm">
-                        <div className="flex items-start gap-3 mb-3">
-                          <span className="text-emerald-600 text-xl font-bold">✓</span>
-                          <h5 className="font-bold text-slate-900 text-base">기능별로 분류</h5>
-                        </div>
-                        <p className="text-sm text-slate-600 leading-relaxed">
-                          "영업", "관리", "분석" 등<br />
-                          명확한 카테고리로 구분
-                        </p>
-                      </div>
-
-                      <div className="bg-white rounded-2xl p-6 border border-slate-200/60 shadow-sm">
-                        <div className="flex items-start gap-3 mb-3">
-                          <span className="text-emerald-600 text-xl font-bold">✓</span>
-                          <h5 className="font-bold text-slate-900 text-base">시간 비중 고려</h5>
-                        </div>
-                        <p className="text-sm text-slate-600 leading-relaxed">
-                          많은 시간을 할애하는<br />
-                          업무를 우선 입력
-                        </p>
-                      </div>
-
-                      <div className="bg-white rounded-2xl p-6 border border-slate-200/60 shadow-sm">
-                        <div className="flex items-start gap-3 mb-3">
-                          <span className="text-emerald-600 text-xl font-bold">✓</span>
-                          <h5 className="font-bold text-slate-900 text-base">팀원 기준으로</h5>
-                        </div>
-                        <p className="text-sm text-slate-600 leading-relaxed">
-                          각 팀원이 담당하는<br />
-                          업무를 떠올려보세요
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-
                   {error && (
                     <div className="bg-red-50 border border-red-200 rounded-2xl px-5 py-4 mb-6">
                       <p className="text-red-700 font-medium">⚠️ {error}</p>
@@ -1958,6 +2083,113 @@ export default function WorkshopPage() {
                     ))}
                   </div>
                 </div>
+
+                  {/* Guide Section */}
+                  <div className="bg-gradient-to-br from-slate-50 to-emerald-50/50 rounded-3xl p-8 mb-8 border border-slate-200">
+                    <div className="flex items-start gap-4 mb-6">
+                      <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center text-2xl shadow-sm">
+                        💡
+                      </div>
+                      <div>
+                        <h4 className="text-xl font-bold text-slate-900 mb-2">업무 영역 작성 가이드</h4>
+                        <p className="text-slate-600 text-sm">우리 팀에 맞는 방식으로 자유롭게 작성하세요</p>
+                      </div>
+                    </div>
+
+                    <div className="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-xl">
+                      <p className="text-sm text-slate-700 leading-relaxed">
+                        <strong className="text-blue-900">💡 다양한 방식으로 작성할 수 있습니다!</strong><br />
+                        팀 특성에 맞게 편한 방식을 선택하세요. 여러 방식을 섞어서 써도 좋습니다.
+                      </p>
+                    </div>
+
+                    <div className="grid md:grid-cols-2 gap-4">
+                      <div className="bg-white rounded-2xl p-6 border border-emerald-200/60 shadow-sm">
+                        <div className="flex items-start gap-3 mb-3">
+                          <span className="text-2xl">👥</span>
+                          <h5 className="font-bold text-slate-900 text-base">구성원별</h5>
+                        </div>
+                        <p className="text-sm text-slate-600 leading-relaxed mb-2">
+                          각 팀원이 담당하는 업무 중심으로 작성
+                        </p>
+                        <p className="text-xs text-emerald-700 bg-emerald-50 p-2 rounded">
+                          예: 김팀장-전략수립, 이대리-데이터분석, 박사원-리포트작성
+                        </p>
+                      </div>
+
+                      <div className="bg-white rounded-2xl p-6 border border-emerald-200/60 shadow-sm">
+                        <div className="flex items-start gap-3 mb-3">
+                          <span className="text-2xl">⚙️</span>
+                          <h5 className="font-bold text-slate-900 text-base">기능별</h5>
+                        </div>
+                        <p className="text-sm text-slate-600 leading-relaxed mb-2">
+                          업무의 기능/역할로 분류
+                        </p>
+                        <p className="text-xs text-emerald-700 bg-emerald-50 p-2 rounded">
+                          예: 영업, 마케팅, 고객관리, 분석, 기획, 운영
+                        </p>
+                      </div>
+
+                      <div className="bg-white rounded-2xl p-6 border border-emerald-200/60 shadow-sm">
+                        <div className="flex items-start gap-3 mb-3">
+                          <span className="text-2xl">📊</span>
+                          <h5 className="font-bold text-slate-900 text-base">보고라인별</h5>
+                        </div>
+                        <p className="text-sm text-slate-600 leading-relaxed mb-2">
+                          조직 구조에 따라 작성
+                        </p>
+                        <p className="text-xs text-emerald-700 bg-emerald-50 p-2 rounded">
+                          예: 본부장 보고업무, 팀 내부업무, 타팀 협업업무
+                        </p>
+                      </div>
+
+                      <div className="bg-white rounded-2xl p-6 border border-emerald-200/60 shadow-sm">
+                        <div className="flex items-start gap-3 mb-3">
+                          <span className="text-2xl">⏰</span>
+                          <h5 className="font-bold text-slate-900 text-base">시계열별</h5>
+                        </div>
+                        <p className="text-sm text-slate-600 leading-relaxed mb-2">
+                          주기와 타이밍으로 구분
+                        </p>
+                        <p className="text-xs text-emerald-700 bg-emerald-50 p-2 rounded">
+                          예: 일일업무, 주간업무, 월간업무, 분기업무, 수시업무
+                        </p>
+                      </div>
+
+                      <div className="bg-white rounded-2xl p-6 border border-emerald-200/60 shadow-sm">
+                        <div className="flex items-start gap-3 mb-3">
+                          <span className="text-2xl">🎯</span>
+                          <h5 className="font-bold text-slate-900 text-base">프로세스별</h5>
+                        </div>
+                        <p className="text-sm text-slate-600 leading-relaxed mb-2">
+                          업무 흐름 단계로 작성
+                        </p>
+                        <p className="text-xs text-emerald-700 bg-emerald-50 p-2 rounded">
+                          예: 기획→실행→분석→보고, 접수→처리→완료
+                        </p>
+                      </div>
+
+                      <div className="bg-white rounded-2xl p-6 border border-emerald-200/60 shadow-sm">
+                        <div className="flex items-start gap-3 mb-3">
+                          <span className="text-2xl">🔍</span>
+                          <h5 className="font-bold text-slate-900 text-base">중요도/시간별</h5>
+                        </div>
+                        <p className="text-sm text-slate-600 leading-relaxed mb-2">
+                          비중이 큰 업무부터 작성
+                        </p>
+                        <p className="text-xs text-emerald-700 bg-emerald-50 p-2 rounded">
+                          예: 핵심업무(70%), 지원업무(20%), 기타(10%)
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="mt-6 p-4 bg-amber-50 border border-amber-200 rounded-xl">
+                      <p className="text-sm text-slate-700">
+                        <strong className="text-amber-900">✓ 구체적으로 작성하세요</strong><br />
+                        "기타업무" ❌  →  "고객 문의 응답 및 클레임 처리" ✅
+                      </p>
+                    </div>
+                  </div>
 
                   {/* Bottom buttons */}
                   <div className="flex items-center justify-between">
@@ -2183,43 +2415,6 @@ export default function WorkshopPage() {
                         <p className="text-sm text-slate-600 leading-relaxed">
                           비효율적이거나 자동화하고 싶은<br />
                           업무를 포함하세요
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Example Section */}
-                  <div className="bg-white rounded-3xl p-8 mb-8 border border-slate-200 shadow-lg">
-                    <div className="flex items-start gap-4 mb-6">
-                      <div className="w-12 h-12 bg-gradient-to-br from-pink-500 to-rose-600 rounded-xl flex items-center justify-center text-white text-2xl shadow-lg">
-                        ✨
-                      </div>
-                      <div>
-                        <h4 className="text-xl font-bold text-slate-900 mb-2">작성 예시</h4>
-                        <p className="text-slate-600 text-sm">실제 사례를 참고하세요</p>
-                      </div>
-                    </div>
-
-                    <div className="space-y-4">
-                      <div className="p-5 bg-blue-50 rounded-xl border border-blue-200">
-                        <div className="font-semibold text-slate-900 mb-2">💼 업무 영역: 고객 문의 처리</div>
-                        <p className="text-sm text-slate-700 leading-relaxed whitespace-pre-line">
-{`1. 매일 오전 9시, 이메일 확인 (약 30분)
-2. 고객 문의 내용 분류 (긴급/일반/기술)
-3. 각 유형별로 답변 템플릿 작성
-4. 기술 문의는 개발팀에 전달 후 회신 대기
-5. 답변 발송 후 고객 만족도 체크`}
-                        </p>
-                      </div>
-
-                      <div className="p-5 bg-indigo-50 rounded-xl border border-indigo-200">
-                        <div className="font-semibold text-slate-900 mb-2">📊 업무 영역: 주간 데이터 리포트 작성</div>
-                        <p className="text-sm text-slate-700 leading-relaxed whitespace-pre-line">
-{`1. 매주 금요일 오후, 데이터베이스에서 주간 데이터 추출
-2. Excel로 데이터 정제 및 집계
-3. 차트 5개 생성 (매출, 신규고객, 이탈률 등)
-4. PPT에 차트 붙여넣기 및 코멘트 작성
-5. 경영진에게 이메일 발송`}
                         </p>
                       </div>
                     </div>
