@@ -1286,30 +1286,34 @@ export default function WorkshopPage() {
       <div className="relative backdrop-blur-2xl bg-gradient-to-r from-slate-900/95 via-indigo-900/95 to-slate-900/95 border-b border-white/10 shadow-2xl">
         <div className="max-w-7xl mx-auto px-6 py-6">
           <div className="max-w-6xl mx-auto">
-            <div className="grid grid-cols-4 gap-4">
+            <div className="grid grid-cols-2 gap-6">
               {[
-                { title: '워크샵 시작', range: [1, 2], icon: '🚀' },
-                { title: '업무 분석', range: [3, 4], icon: '📊' },
-                { title: '솔루션 설계', range: [5, 6], icon: '✨' },
-                { title: '결과 확인', range: [7, 7], icon: '🎯' }
+                { title: '우리 팀 일 분석하기', range: [1, 7], icon: '📊', activeColor: 'from-emerald-600 to-green-600', completedColor: 'from-emerald-700 to-green-700' },
+                { title: 'AI로 일 자동화하기', range: [8, 11], icon: '🤖', activeColor: 'from-purple-600 to-indigo-600', completedColor: 'from-purple-700 to-indigo-700' }
               ].map((section, index) => {
                 const isActive = currentStep >= section.range[0] && currentStep <= section.range[1];
                 const isCompleted = currentStep > section.range[1];
 
                 return (
-                  <div key={index} className={`backdrop-blur-md p-4 rounded-2xl transition-all shadow-lg ${isActive ? 'bg-gradient-to-br from-indigo-600 to-purple-600 text-white shadow-indigo-500/50' :
-                    isCompleted ? 'bg-gradient-to-br from-green-600 to-emerald-600 text-white shadow-green-500/30' :
-                      'bg-white/10 text-gray-300 hover:bg-white/15'
-                    }`}>
+                  <div key={index} className={`backdrop-blur-md p-5 rounded-2xl transition-all shadow-lg ${
+                    isActive ? `bg-gradient-to-br ${section.activeColor} text-white shadow-xl` :
+                    isCompleted ? `bg-gradient-to-br ${section.completedColor} text-white shadow-lg` :
+                    'bg-white/10 text-gray-300 hover:bg-white/15'
+                  }`}>
                     <div className="flex items-center justify-between mb-2">
-                      <span className="text-2xl">{section.icon}</span>
+                      <span className="text-3xl">{section.icon}</span>
                       <span className="text-xs font-medium opacity-70">
-                        Step {section.range[0]}{section.range[0] !== section.range[1] && `-${section.range[1]}`}
+                        Step {section.range[0]}-{section.range[1]}
                       </span>
                     </div>
-                    <h3 className="font-semibold text-base">{section.title}</h3>
+                    <h3 className="font-bold text-lg mb-1">{section.title}</h3>
+                    <div className="text-xs opacity-80 mb-3">
+                      {isActive && `현재 Step ${currentStep}`}
+                      {isCompleted && '완료'}
+                      {!isActive && !isCompleted && '대기 중'}
+                    </div>
                     {isActive && (
-                      <div className="mt-3 w-full h-1.5 bg-white/30 rounded-full overflow-hidden">
+                      <div className="mt-3 w-full h-2 bg-white/30 rounded-full overflow-hidden">
                         <div
                           className="h-full bg-white rounded-full transition-all duration-500 shadow-lg"
                           style={{
@@ -1346,6 +1350,13 @@ export default function WorkshopPage() {
 
                   {/* Hero Section */}
                   <div className="text-center mb-16">
+                    {/* Section Label */}
+                    <div className="mb-4">
+                      <span className="text-sm font-semibold text-emerald-600 bg-emerald-50 px-4 py-2 rounded-full">
+                        📊 우리 팀 일 분석하기
+                      </span>
+                    </div>
+
                     {/* Badge with Animation */}
                     <div className="inline-flex items-center gap-2.5 px-4 py-2 bg-white/80 backdrop-blur-sm border border-blue-200/50 rounded-full mb-8 shadow-lg shadow-blue-500/10">
                       <div className="relative">
@@ -1761,6 +1772,11 @@ export default function WorkshopPage() {
 
                   {/* Header */}
                   <div className="text-center mb-12">
+                    <div className="mb-4">
+                      <span className="text-sm font-semibold text-emerald-600 bg-emerald-50 px-4 py-2 rounded-full">
+                        📊 우리 팀 일 분석하기
+                      </span>
+                    </div>
                     <div className="inline-flex items-center gap-2 px-3 py-1 bg-white/80 backdrop-blur-sm border border-purple-200/50 rounded-full mb-6">
                       <span className="text-xs font-medium text-purple-700 uppercase tracking-wide">Step 3</span>
                     </div>
@@ -2182,6 +2198,11 @@ export default function WorkshopPage() {
 
                   {/* Header */}
                   <div className="text-center mb-12">
+                    <div className="mb-4">
+                      <span className="text-sm font-semibold text-emerald-600 bg-emerald-50 px-4 py-2 rounded-full">
+                        📊 우리 팀 일 분석하기
+                      </span>
+                    </div>
                     <div className="inline-flex items-center gap-2 px-3 py-1 bg-white/80 backdrop-blur-sm border border-emerald-200/50 rounded-full mb-6">
                       <span className="text-xs font-medium text-emerald-700 uppercase tracking-wide">Step 4</span>
                     </div>
@@ -2393,6 +2414,11 @@ export default function WorkshopPage() {
 
                   {/* Header */}
                   <div className="text-center mb-12">
+                    <div className="mb-4">
+                      <span className="text-sm font-semibold text-emerald-600 bg-emerald-50 px-4 py-2 rounded-full">
+                        📊 우리 팀 일 분석하기
+                      </span>
+                    </div>
                     <div className="inline-flex items-center gap-2 px-3 py-1 bg-white/80 backdrop-blur-sm border border-pink-200/50 rounded-full mb-6">
                       <span className="text-xs font-medium text-pink-700 uppercase tracking-wide">Step 5</span>
                     </div>
@@ -2682,6 +2708,11 @@ export default function WorkshopPage() {
               <div className="relative">
                 <div className="backdrop-blur-xl bg-white/40 border border-white/60 rounded-3xl p-8 shadow-2xl shadow-indigo-200/50">
                   <div className="text-center mb-8">
+                    <div className="mb-4">
+                      <span className="text-sm font-semibold text-purple-600 bg-purple-50 px-4 py-2 rounded-full">
+                        🤖 AI로 일 자동화하기
+                      </span>
+                    </div>
                     <div className="w-20 h-20 bg-gradient-to-br from-indigo-600 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-6">
                       <span className="text-3xl">{WORKSHOP_STEPS[currentStep - 1]?.icon}</span>
                     </div>
