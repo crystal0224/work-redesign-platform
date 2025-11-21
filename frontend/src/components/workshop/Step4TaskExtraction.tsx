@@ -708,27 +708,30 @@ export default function Step4TaskExtraction({ workshopId, domains, onNext, manua
   const activeDragTask = activeDragId ? extractedTasks.find(t => t.id === activeDragId) : null;
 
   return (
-    <div className="relative min-h-screen -m-6 p-6 animate-fadeIn">
-      {/* Animated gradient background matching Step 1 */}
-      <div className="absolute inset-0 bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 overflow-hidden">
-        <div className="absolute top-0 -left-4 w-96 h-96 bg-purple-300 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob"></div>
-        <div className="absolute top-0 -right-4 w-96 h-96 bg-blue-300 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob animation-delay-2000"></div>
-        <div className="absolute -bottom-8 left-20 w-96 h-96 bg-indigo-300 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob animation-delay-4000"></div>
+    <div className="relative min-h-screen -m-6 flex flex-col animate-fadeIn overflow-hidden">
+      {/* Background - 동일한 배경 */}
+      <div className="absolute inset-0 fixed bg-gradient-to-br from-blue-50 via-indigo-50/30 to-purple-50/20">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_30%,rgba(59,130,246,0.1),transparent_50%)]"></div>
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_70%,rgba(147,51,234,0.08),transparent_50%)]"></div>
       </div>
 
-      {/* Content */}
-      <div className="relative">
-        {/* Header */}
-        <div className="backdrop-blur-xl bg-white/40 border border-white/60 rounded-3xl p-8 mb-8 shadow-2xl">
-          <h2 className="text-3xl font-semibold text-gray-900 mb-3 tracking-tight">
+      {/* Main Content */}
+      <div className="relative z-10 flex-1 overflow-auto px-6 py-12">
+        <div className="w-full max-w-5xl mx-auto">
+        {/* Header - 동일한 디자인 */}
+        <div className="text-center mb-12">
+          <div className="inline-flex items-center gap-2 px-3 py-1 bg-white/80 backdrop-blur-sm border border-purple-200/50 rounded-full mb-6">
+            <span className="text-xs font-medium text-purple-700 uppercase tracking-wide">Step 6</span>
+          </div>
+          <h2 className="text-4xl md:text-5xl font-black text-slate-900 mb-4 tracking-tight">
             업무 추출 결과
           </h2>
-          <p className="text-lg text-gray-600 mb-6">
+          <p className="text-lg text-slate-600 max-w-2xl mx-auto mb-8">
             AI가 분석한 업무들을 영역별로 확인하고 편집하세요. 드래그하여 영역을 변경하거나 클릭하여 수정할 수 있습니다.
           </p>
 
           {/* Stats */}
-          <div className="grid grid-cols-4 gap-4">
+          <div className="grid grid-cols-4 gap-4 max-w-4xl mx-auto">
             <div className="backdrop-blur-md bg-white/60 border border-white/60 rounded-xl p-4 text-center">
               <div className="text-2xl font-bold text-indigo-600">{extractedTasks.length}</div>
               <div className="text-sm text-gray-600">총 업무</div>
@@ -865,6 +868,7 @@ export default function Step4TaskExtraction({ workshopId, domains, onNext, manua
             </button>
           </div>
         )}
+        </div>
       </div>
 
       {/* Modals */}
