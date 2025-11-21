@@ -4,9 +4,10 @@ import React, { useState, useEffect, useRef } from 'react';
 import { io, Socket } from 'socket.io-client';
 import { useDropzone } from 'react-dropzone';
 import Step4TaskExtraction from '@/components/workshop/Step4TaskExtraction';
-import Step5AIConsultant from '@/components/workshop/Step5AIConsultant';
 import Step6WorkflowDesign from '@/components/workshop/Step6WorkflowDesign';
 import Step7Summary from '@/components/workshop/Step7Summary';
+import Step8WorkflowEducation from '@/components/workshop/Step8WorkflowEducation';
+import Step9AIConsultant from '@/components/workshop/Step9AIConsultant';
 
 // 이미지 생성을 위한 동적 import
 const captureElement = async (element: HTMLElement) => {
@@ -122,13 +123,17 @@ const WORKSHOP_GROUPS = [
 
 // 실제 워크샵 단계 정의 (내부 로직용)
 const WORKSHOP_STEPS = [
-  { id: 1, title: '워크샵 시작', description: '워크샵 개요 확인', icon: '🚀' },
-  { id: 2, title: '업무영역 정의', description: '담당 업무 영역 설정', icon: '📋' },
-  { id: 3, title: '업무 정보 입력', description: '문서 업로드 또는 직접 입력', icon: '📁' },
-  { id: 4, title: '업무 현황 검토', description: '추출된 업무 확인', icon: '📝' },
-  { id: 5, title: 'AI 자동화 컨설팅', description: 'AI와 대화하며 솔루션 설계', icon: '💬' },
-  { id: 6, title: '워크플로우 설계', description: '자동화 워크플로우 상세 설계', icon: '🔧' },
-  { id: 7, title: '결과 확인', description: '최종 결과 검토 및 다운로드', icon: '🎉' }
+  { id: 1, title: '워크샵 시작', description: '워크샵 개요 확인', icon: '🚀', section: '우리 팀 일 분석하기' },
+  { id: 2, title: '미션 작성', description: '팀의 미션과 가치 정의', icon: '🎯', section: '우리 팀 일 분석하기' },
+  { id: 3, title: '팀 상황 확인', description: '팀 구성 및 제약사항 파악', icon: '👥', section: '우리 팀 일 분석하기' },
+  { id: 4, title: '업무영역 정의', description: '담당 업무 영역 설정', icon: '📋', section: '우리 팀 일 분석하기' },
+  { id: 5, title: '업무 정보 입력', description: '문서 업로드 또는 직접 입력', icon: '📁', section: '우리 팀 일 분석하기' },
+  { id: 6, title: '업무 추출 결과', description: '추출된 업무 확인 및 편집', icon: '📝', section: '우리 팀 일 분석하기' },
+  { id: 7, title: '워크샵 요약', description: '입력한 정보 종합 확인', icon: '📊', section: '우리 팀 일 분석하기' },
+  { id: 8, title: 'AI 자동화 교육', description: 'LLM 이해 및 역할 전략', icon: '🎓', section: 'AI로 일 자동화하기' },
+  { id: 9, title: 'AI 컨설팅', description: 'AI와 대화하며 솔루션 설계', icon: '💬', section: 'AI로 일 자동화하기' },
+  { id: 10, title: '워크플로우 설계', description: '자동화 워크플로우 상세 설계', icon: '🔧', section: 'AI로 일 자동화하기' },
+  { id: 11, title: '결과 확인', description: '최종 결과 검토 및 다운로드', icon: '🎉', section: 'AI로 일 자동화하기' }
 ];
 
 // 현재 단계가 속한 그룹 찾기
@@ -485,6 +490,13 @@ export default function WorkshopPage() {
   const [manualInput, setManualInput] = useState<string>('');
   const [manualTaskInput, setManualTaskInput] = useState<Record<string, string>>({});
   const [extractedWorkItems, setExtractedWorkItems] = useState<ExtractedWorkItem[]>([]);
+
+  // Step 2 & 3 form data
+  const [missionInput, setMissionInput] = useState<string>('');
+  const [teamSizeInput, setTeamSizeInput] = useState<number>(0);
+  const [teamCompositionInput, setTeamCompositionInput] = useState<string>('');
+  const [constraintsInput, setConstraintsInput] = useState<string[]>(['']);
+  const [controllableIssuesInput, setControllableIssuesInput] = useState<string>('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [analysisProgress, setAnalysisProgress] = useState(0);
@@ -1523,6 +1535,11 @@ export default function WorkshopPage() {
 
                   {/* Header */}
                   <div className="text-center mb-12">
+                    <div className="mb-4">
+                      <span className="text-sm font-semibold text-emerald-600 bg-emerald-50 px-4 py-2 rounded-full">
+                        📊 우리 팀 일 분석하기
+                      </span>
+                    </div>
                     <div className="inline-flex items-center gap-2 px-3 py-1 bg-white/80 backdrop-blur-sm border border-indigo-200/50 rounded-full mb-6">
                       <span className="text-xs font-medium text-indigo-700 uppercase tracking-wide">Step 2</span>
                     </div>
@@ -1554,6 +1571,8 @@ export default function WorkshopPage() {
                       </div>
                       <textarea
                         rows={4}
+                        value={missionInput}
+                        onChange={(e) => setMissionInput(e.target.value)}
                         placeholder="예시: 고객 만족도 90% 달성, 신규 고객 100개사 확보, 프로세스 자동화로 업무 시간 30% 단축"
                         className="w-full px-5 py-4 bg-slate-50 border-2 border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400/50 focus:border-blue-400 text-base transition-all resize-none"
                       />
@@ -1709,7 +1728,10 @@ export default function WorkshopPage() {
                       이전
                     </button>
                     <button
-                      onClick={() => setCurrentStep(3)}
+                      onClick={() => {
+                        setWorkshop(prev => ({ ...prev, mission: missionInput }));
+                        setCurrentStep(3);
+                      }}
                       className="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 text-white text-lg font-bold rounded-xl shadow-xl shadow-blue-500/30 hover:shadow-2xl hover:shadow-indigo-500/40 hover:scale-[1.02] transition-all"
                     >
                       다음 단계로
@@ -1773,7 +1795,9 @@ export default function WorkshopPage() {
                         <div className="bg-gradient-to-br from-blue-50 to-blue-100/50 rounded-xl p-4 border border-blue-200">
                           <div className="text-xs text-blue-700 font-semibold mb-1 uppercase">팀원 수</div>
                           <input
-                            type="text"
+                            type="number"
+                            value={teamSizeInput || ''}
+                            onChange={(e) => setTeamSizeInput(Number(e.target.value))}
                             placeholder="5명"
                             className="w-full bg-transparent text-2xl font-bold text-blue-900 border-none outline-none placeholder:text-blue-400/50"
                           />
@@ -2121,7 +2145,14 @@ export default function WorkshopPage() {
                       이전
                     </button>
                     <button
-                      onClick={() => setCurrentStep(4)}
+                      onClick={() => {
+                        setWorkshop(prev => ({
+                          ...prev,
+                          teamSize: teamSizeInput,
+                          teamComposition: teamCompositionInput
+                        }));
+                        setCurrentStep(4);
+                      }}
                       className="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-purple-600 to-indigo-600 text-white text-lg font-bold rounded-xl shadow-xl shadow-purple-500/30 hover:shadow-2xl hover:shadow-indigo-500/40 hover:scale-[1.02] transition-all"
                     >
                       다음 단계로
@@ -2588,7 +2619,7 @@ export default function WorkshopPage() {
               workshopId={workshop.id || 'temp-workshop-id'}
               domains={workshop.domains}
               onNext={(tasks) => {
-                setWorkshop(prev => ({ ...prev, tasks }));
+                setWorkshop(prev => ({ ...prev, tasks, manualInput }));
                 setCurrentStep(7);
               }}
               manualInput={manualInput}
@@ -2604,34 +2635,42 @@ export default function WorkshopPage() {
             />
           )}
 
-          {/* Step 8: 업무 상세화 */}
+          {/* Step 8: 워크플로우 교육 */}
           {currentStep === 8 && (
-            <Step5AIConsultant
+            <Step8WorkflowEducation
+              onNext={() => setCurrentStep(9)}
+              onBack={() => setCurrentStep(7)}
+            />
+          )}
+
+          {/* Step 9: AI 컨설팅 */}
+          {currentStep === 9 && (
+            <Step9AIConsultant
               tasks={workshop.tasks}
               workshopId={workshop.id}
               onComplete={(selectedTask, insights) => {
                 console.log('AI Consultant completed:', selectedTask, insights);
-                setCurrentStep(8);
-              }}
-              onPrevious={() => setCurrentStep(6)}
-            />
-          )}
-
-          {/* Step 9: 워크플로우 설계 */}
-          {currentStep === 9 && (
-            <Step6WorkflowDesign
-              taskTitle={workshop.tasks.find(t => workshop.selectedTaskIds.includes(t.id))?.title || '선택된 업무'}
-              conversationInsights={{}}
-              onComplete={(workflow) => {
-                console.log('Workflow completed:', workflow);
                 setCurrentStep(10);
               }}
               onPrevious={() => setCurrentStep(8)}
             />
           )}
 
-          {/* Step 10: 자동화 솔루션 생성 */}
+          {/* Step 10: 워크플로우 설계 */}
           {currentStep === 10 && (
+            <Step6WorkflowDesign
+              taskTitle={workshop.tasks.find(t => workshop.selectedTaskIds.includes(t.id))?.title || '선택된 업무'}
+              conversationInsights={{}}
+              onComplete={(workflow) => {
+                console.log('Workflow completed:', workflow);
+                setCurrentStep(11);
+              }}
+              onPrevious={() => setCurrentStep(9)}
+            />
+          )}
+
+          {/* Step 11: 자동화 솔루션 생성 */}
+          {currentStep === 11 && (
             <div className="relative min-h-screen -m-6 p-6 animate-fadeIn">
               {/* Animated gradient background */}
               <div className="absolute inset-0 bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 overflow-hidden">

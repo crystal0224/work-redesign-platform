@@ -1,0 +1,493 @@
+'use client';
+
+import { useState } from 'react';
+
+interface Step8WorkflowEducationProps {
+  onNext: () => void;
+  onBack: () => void;
+}
+
+interface WorkflowStep {
+  id: number;
+  name: string;
+  role: 'human' | 'copilot' | 'llm';
+}
+
+const stepScenarios: Record<number, Record<string, { situation: string; risk: string }>> = {
+  1: {
+    human: {
+      situation: "이메일로 실적 요청을 보내고, 답변이 오면 이메일 본문을 드래그해서 복사합니다. 엑셀 시트를 열고 해당 셀에 붙여넣은 뒤, 숫자만 남기고 불필요한 인사말은 지웁니다. 5명분을 반복합니다.",
+      risk: "⏳ 이메일 확인 → 복사 → 붙여넣기 → 정리 작업의 반복으로 인한 피로도 증가"
+    },
+    copilot: {
+      situation: "이메일로 받은 데이터를 복사해서 AI에게 '이 내용을 표로 정리해줘'라고 시킵니다. AI가 만든 표를 엑셀에 붙여넣기만 하면 됩니다.",
+      risk: "💡 원본 데이터 복사 과정에서의 누락 주의 필요"
+    },
+    llm: {
+      situation: "공유 폴더에 팀원들이 업로드한 파일을 자동으로 읽어와 엑셀 시트에 채워 넣습니다. 클릭 한 번도 필요 없습니다.",
+      risk: "⚠️ 파일 형식 불일치 시 전체 프로세스 중단 가능성"
+    }
+  },
+  2: {
+    human: {
+      situation: "엑셀에서 날짜 컬럼을 선택하고 정렬 버튼을 누릅니다. 피벗 테이블 메뉴를 열어 부서별로 그룹화하고, 합계 함수를 설정합니다. 차트 삽입 메뉴에서 막대 그래프를 선택하고 데이터 범위를 지정합니다.",
+      risk: "⏳ 엑셀 기능 숙지 필요, 실수 시 처음부터 다시"
+    },
+    copilot: {
+      situation: "엑셀 데이터를 AI에게 보여주고 '이 데이터를 날짜별로 정렬하고, 부서별 합계를 피벗 테이블로 만들어줘. 그리고 막대 그래프도 그려줘'라고 요청합니다. AI가 제안한 수식과 차트를 검토 후 적용합니다.",
+      risk: "💡 AI가 제안한 수식이 의도와 다를 수 있으니 검토 필요"
+    },
+    llm: {
+      situation: "스크립트가 자동으로 데이터를 정렬하고, 피벗 테이블을 생성하며, 차트를 그립니다. 결과물이 이메일로 전송됩니다.",
+      risk: "⚠️ 예외 상황(결측치, 이상치) 처리 로직 사전 구현 필요"
+    }
+  },
+  3: {
+    human: {
+      situation: "그래프를 보며 이번 주 특이사항을 고민합니다. 작년 동기 대비 증감률, 부서별 편차, 특정 이벤트 영향 등을 분석하고, 3줄 요약 멘트를 직접 작성합니다.",
+      risk: "💭 깊은 사고와 맥락 이해 필요, 시간 소요"
+    },
+    copilot: {
+      situation: "AI에게 '이 그래프를 보고 3가지 인사이트를 뽑아줘'라고 요청합니다. AI가 제안한 인사이트를 검토하고, 회사 상황에 맞게 수정하거나 추가 멘트를 작성합니다.",
+      risk: "💡 AI 인사이트가 피상적일 수 있으니 깊이 있는 검토 필요"
+    },
+    llm: {
+      situation: "AI가 자동으로 그래프를 분석하고 3줄 요약을 생성합니다. 하지만 회사 내부 맥락이나 정치적 뉘앙스는 반영되지 않습니다.",
+      risk: "⚠️ 맥락 없는 인사이트로 인한 오해 가능성, 최종 검토 필수"
+    }
+  },
+  4: {
+    human: {
+      situation: "회사 PPT 템플릿을 열고, 텍스트와 차트를 복사해서 붙여넣습니다. 폰트 크기, 줄간격, 색상을 회사 가이드에 맞춰 조정합니다. 인쇄 설정을 확인하고 출력합니다.",
+      risk: "⏳ 포맷팅 작업 시간 소요, 실수로 인한 재작업 가능성"
+    },
+    copilot: {
+      situation: "AI에게 '이 내용을 회사 PPT 템플릿에 맞춰 정리해줘'라고 요청합니다. AI가 생성한 슬라이드를 검토하고, 필요한 부분만 수정합니다.",
+      risk: "💡 템플릿 준수 여부 확인 필요"
+    },
+    llm: {
+      situation: "스크립트가 자동으로 PPT를 생성하고, 회사 템플릿에 맞춰 포맷팅합니다. 완성된 파일이 자동으로 공유 폴더에 저장됩니다.",
+      risk: "⚠️ 템플릿 변경 시 스크립트 수정 필요, 유지보수 부담"
+    }
+  }
+};
+
+export default function Step8WorkflowEducation({ onNext, onBack }: Step8WorkflowEducationProps) {
+  const [task1, setTask1] = useState('');
+  const [task2, setTask2] = useState('');
+  const [task3, setTask3] = useState('');
+  const [steps, setSteps] = useState<WorkflowStep[]>([
+    { id: 1, name: '팀원 5명에게 이메일로 실적 요청하고, 답변 오면 이메일 본문을 복사해서 엑셀에 하나씩 붙여넣기', role: 'human' },
+    { id: 2, name: '취합된 엑셀 데이터를 날짜별로 정렬하고, 피벗 테이블 돌려 부서별 합계 낸 뒤 그래프 그리기', role: 'human' },
+    { id: 3, name: '그래프를 보며 이번 주 특이사항 고민하고, 보고서에 들어갈 3줄 요약 멘트 직접 타이핑하기', role: 'human' },
+    { id: 4, name: '작성된 내용을 회사 PPT 템플릿에 옮겨 담고, 폰트/줄간격 맞춘 뒤 인쇄해서 팀장님 책상에 제출', role: 'human' }
+  ]);
+
+  const getRoleIcon = (role: string) => {
+    const icons = { human: '👤', copilot: '✨', llm: '🤖' };
+    return icons[role as keyof typeof icons];
+  };
+
+  const updateRole = (stepId: number, newRole: 'human' | 'copilot' | 'llm') => {
+    setSteps(steps.map(s => s.id === stepId ? { ...s, role: newRole } : s));
+  };
+
+  const resetWorkflow = () => {
+    setSteps([
+      { id: 1, name: '팀원 5명에게 이메일로 실적 요청하고, 답변 오면 이메일 본문을 복사해서 엑셀에 하나씩 붙여넣기', role: 'human' },
+      { id: 2, name: '취합된 엑셀 데이터를 날짜별로 정렬하고, 피벗 테이블 돌려 부서별 합계 낸 뒤 그래프 그리기', role: 'human' },
+      { id: 3, name: '그래프를 보며 이번 주 특이사항 고민하고, 보고서에 들어갈 3줄 요약 멘트 직접 타이핑하기', role: 'human' },
+      { id: 4, name: '작성된 내용을 회사 PPT 템플릿에 옮겨 담고, 폰트/줄간격 맞춘 뒤 인쇄해서 팀장님 책상에 제출', role: 'human' }
+    ]);
+  };
+
+  const counts = {
+    llm: steps.filter(s => s.role === 'llm').length,
+    copilot: steps.filter(s => s.role === 'copilot').length,
+    human: steps.filter(s => s.role === 'human').length
+  };
+
+  return (
+    <div className="relative min-h-screen w-full">
+      {/* Background matching Step7 */}
+      <div className="absolute inset-0 fixed bg-gradient-to-br from-slate-50 via-purple-50/30 to-blue-50/20">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_30%,rgba(147,51,234,0.06)_0%,transparent_50%)] bg-[radial-gradient(circle_at_80%_70%,rgba(59,130,246,0.06)_0%,transparent_50%)]"></div>
+      </div>
+
+      {/* Content */}
+      <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        {/* Header */}
+        <div className="text-center mb-12">
+          <div className="mb-4">
+            <span className="text-sm font-semibold text-purple-600 bg-purple-50 px-4 py-2 rounded-full">
+              🤖 AI로 일 자동화하기
+            </span>
+          </div>
+          <div className="inline-flex items-center gap-2 px-3 py-1 bg-white/80 backdrop-blur-sm border border-purple-200/50 rounded-full mb-6">
+            <span className="text-xs font-medium text-purple-700 uppercase tracking-wide">Step 8</span>
+          </div>
+          <h2 className="text-4xl md:text-5xl font-black text-slate-900 mb-4 tracking-tight">
+            AI 자동화 교육
+          </h2>
+          <p className="text-lg text-slate-600 max-w-3xl mx-auto">
+            기술은 인간을 대체하는 것이 아니라, 인간의 잠재력을 증폭(Augment)시키는 도구입니다.
+          </p>
+        </div>
+
+        {/* 2030 Vision Section */}
+        <div className="mb-16">
+          <div className="bg-white/70 backdrop-blur-xl border border-white/60 rounded-3xl p-8 shadow-sm hover:shadow-lg transition-all duration-300">
+            <h3 className="text-2xl font-bold text-slate-900 mb-6 text-center">The Shift: 2030년 업무의 뉴노멀</h3>
+            <div className="flex gap-2 h-16 rounded-full overflow-hidden mb-6">
+              <div className="flex-1 flex items-center justify-center bg-gradient-to-r from-slate-600 to-slate-500 text-white font-semibold text-sm">
+                👤 Human 33%
+              </div>
+              <div className="flex-1 flex items-center justify-center bg-gradient-to-r from-purple-600 to-purple-500 text-white font-semibold text-sm">
+                🤖 Auto 34%
+              </div>
+              <div className="flex-1 flex items-center justify-center bg-gradient-to-r from-blue-600 to-sky-500 text-white font-semibold text-sm">
+                🤝 Hybrid 33%
+              </div>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div className="text-center p-4">
+                <strong className="block text-lg text-slate-900 mb-2">👤 Human</strong>
+                <p className="text-slate-600 text-sm">단순 업무 감소, 고부가가치 업무 집중</p>
+              </div>
+              <div className="text-center p-4">
+                <strong className="block text-lg text-slate-900 mb-2">🤖 Machine</strong>
+                <p className="text-slate-600 text-sm">데이터 처리 및 반복 업무 자동화</p>
+              </div>
+              <div className="text-center p-4">
+                <strong className="block text-lg text-slate-900 mb-2">🤝 Hybrid</strong>
+                <p className="text-slate-600 text-sm">AI가 초안을 잡고, 사람이 완성</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* LLM Understanding Section */}
+        <div className="mb-16">
+          <h2 className="text-3xl font-bold text-slate-900 mb-3 text-center">Understanding LLMs: The 'Language Engine'</h2>
+          <p className="text-center text-slate-600 mb-8 max-w-3xl mx-auto">
+            LLM(거대언어모델)은 만능이 아닙니다. "언어적 패턴" 처리는 탁월하지만, "사실적 판단"은 인간의 몫입니다.
+          </p>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* Good At */}
+            <div className="bg-white/70 backdrop-blur-xl border-t-4 border-t-sky-500 border border-white/60 rounded-3xl p-8 shadow-sm hover:shadow-lg transition-all duration-300">
+              <h3 className="text-2xl font-bold text-slate-900 mb-6">🟢 Good At</h3>
+              <div className="space-y-4">
+                {[
+                  { num: '01', title: 'Summarization', desc: '방대한 문서를 핵심만 요약' },
+                  { num: '02', title: 'Transformation', desc: '번역, 톤앤매너 변경, 포맷 변환' },
+                  { num: '03', title: 'Ideation', desc: '브레인스토밍, 초기 아이디어 확장' },
+                  { num: '04', title: 'Multimodal', desc: '이미지, 오디오, 비디오 복합 이해' }
+                ].map((item) => (
+                  <div key={item.num} className="flex gap-4 p-3 rounded-xl hover:bg-white/50 transition-all">
+                    <span className="text-2xl font-bold text-blue-600 min-w-[40px]">{item.num}</span>
+                    <div>
+                      <strong className="block text-slate-900 mb-1">{item.title}</strong>
+                      <p className="text-slate-600 text-sm">{item.desc}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Bad At */}
+            <div className="bg-white/70 backdrop-blur-xl border-t-4 border-t-red-500 border border-white/60 rounded-3xl p-8 shadow-sm hover:shadow-lg transition-all duration-300">
+              <h3 className="text-2xl font-bold text-slate-900 mb-6">🔴 Bad At</h3>
+              <div className="space-y-4">
+                {[
+                  { num: '01', title: 'Fact Checking', desc: '최신 정보나 사실 관계 확인 취약' },
+                  { num: '02', title: 'Deep Context', desc: '회사 내부의 암묵적인 맥락 이해 불가' },
+                  { num: '03', title: 'Ethical Judgment', desc: '가치 판단이나 책임지는 결정 불가' }
+                ].map((item) => (
+                  <div key={item.num} className="flex gap-4 p-3 rounded-xl hover:bg-white/50 transition-all">
+                    <span className="text-2xl font-bold text-blue-600 min-w-[40px]">{item.num}</span>
+                    <div>
+                      <strong className="block text-slate-900 mb-1">{item.title}</strong>
+                      <p className="text-slate-600 text-sm">{item.desc}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Role Strategy Guide */}
+        <div className="mb-16">
+          <h2 className="text-3xl font-bold text-slate-900 mb-8 text-center">Role Strategy Guide</h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {/* Auto Card */}
+            <div className="bg-white/70 backdrop-blur-xl border-t-4 border-t-purple-500 border border-white/60 rounded-3xl p-6 shadow-sm hover:shadow-lg transition-all duration-300">
+              <div className="flex items-center gap-3 mb-4">
+                <span className="text-4xl">🤖</span>
+                <h3 className="text-xl font-bold text-slate-900">Auto (LLM)</h3>
+              </div>
+              <p className="text-blue-600 font-semibold mb-4">규칙이 있고 반복적인가?</p>
+              <ul className="space-y-2 mb-4 text-sm text-slate-700">
+                <li className="pl-5 relative before:content-['•'] before:absolute before:left-0 before:text-blue-600 before:font-bold">
+                  정답이 정해진 단순 변환
+                </li>
+                <li className="pl-5 relative before:content-['•'] before:absolute before:left-0 before:text-blue-600 before:font-bold">
+                  방대한 데이터 요약
+                </li>
+                <li className="pl-5 relative before:content-['•'] before:absolute before:left-0 before:text-blue-600 before:font-bold">
+                  초안 작성 (0 to 1)
+                </li>
+              </ul>
+              <div className="mt-6 p-3 bg-gradient-to-r from-blue-100/50 to-purple-100/50 rounded-xl text-center">
+                <span className="font-semibold text-blue-700">과감하게 위임 (Delegation)</span>
+              </div>
+            </div>
+
+            {/* Augment Card */}
+            <div className="bg-white/70 backdrop-blur-xl border-t-4 border-t-blue-500 border border-white/60 rounded-3xl p-6 shadow-sm hover:shadow-lg transition-all duration-300">
+              <div className="flex items-center gap-3 mb-4">
+                <span className="text-4xl">✨</span>
+                <h3 className="text-xl font-bold text-slate-900">Augment (Co-pilot)</h3>
+              </div>
+              <p className="text-blue-600 font-semibold mb-4">초안은 AI가, 판단은 사람이?</p>
+              <ul className="space-y-2 mb-4 text-sm text-slate-700">
+                <li className="pl-5 relative before:content-['•'] before:absolute before:left-0 before:text-blue-600 before:font-bold">
+                  아이디어 확장/브레인스토밍
+                </li>
+                <li className="pl-5 relative before:content-['•'] before:absolute before:left-0 before:text-blue-600 before:font-bold">
+                  비판적 피드백 요청
+                </li>
+                <li className="pl-5 relative before:content-['•'] before:absolute before:left-0 before:text-blue-600 before:font-bold">
+                  복잡한 데이터 분석
+                </li>
+              </ul>
+              <div className="mt-6 p-3 bg-gradient-to-r from-blue-100/50 to-purple-100/50 rounded-xl text-center">
+                <span className="font-semibold text-blue-700">생산성 2배 증폭 (Augmentation)</span>
+              </div>
+            </div>
+
+            {/* Human Only Card */}
+            <div className="bg-white/70 backdrop-blur-xl border-t-4 border-t-slate-500 border border-white/60 rounded-3xl p-6 shadow-sm hover:shadow-lg transition-all duration-300">
+              <div className="flex items-center gap-3 mb-4">
+                <span className="text-4xl">👤</span>
+                <h3 className="text-xl font-bold text-slate-900">Human Only</h3>
+              </div>
+              <p className="text-blue-600 font-semibold mb-4">공감, 윤리, 맥락이 필요한가?</p>
+              <ul className="space-y-2 mb-4 text-sm text-slate-700">
+                <li className="pl-5 relative before:content-['•'] before:absolute before:left-0 before:text-blue-600 before:font-bold">
+                  최종 의사결정 및 책임
+                </li>
+                <li className="pl-5 relative before:content-['•'] before:absolute before:left-0 before:text-blue-600 before:font-bold">
+                  정치적/윤리적 판단
+                </li>
+                <li className="pl-5 relative before:content-['•'] before:absolute before:left-0 before:text-blue-600 before:font-bold">
+                  관계 형성 및 소통
+                </li>
+              </ul>
+              <div className="mt-6 p-3 bg-gradient-to-r from-blue-100/50 to-purple-100/50 rounded-xl text-center">
+                <span className="font-semibold text-blue-700">깊이 더하기 (Human Touch)</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Leader's Reflection */}
+        <div className="mb-16">
+          <h2 className="text-3xl font-bold text-slate-900 mb-3 text-center">Leader's Reflection</h2>
+          <p className="text-center text-slate-600 mb-8">팀 리더로서 가장 많은 시간을 쓰는 3가지 핵심 업무를 적어보세요</p>
+          <div className="bg-white/70 backdrop-blur-xl border border-white/60 rounded-3xl p-8 shadow-sm max-w-3xl mx-auto">
+            <div className="space-y-6">
+              <div>
+                <label className="block font-semibold text-slate-900 mb-2">Task 1:</label>
+                <textarea
+                  rows={3}
+                  value={task1}
+                  onChange={(e) => setTask1(e.target.value)}
+                  placeholder="예: 주간 성과 보고서 작성 및 경영진 보고"
+                  className="w-full px-4 py-3 bg-white/50 border border-slate-200 rounded-xl resize-vertical focus:outline-none focus:bg-white focus:ring-2 focus:ring-blue-500 transition-all"
+                />
+              </div>
+              <div>
+                <label className="block font-semibold text-slate-900 mb-2">Task 2:</label>
+                <textarea
+                  rows={3}
+                  value={task2}
+                  onChange={(e) => setTask2(e.target.value)}
+                  placeholder="예: 팀원 1:1 미팅 및 성과 관리"
+                  className="w-full px-4 py-3 bg-white/50 border border-slate-200 rounded-xl resize-vertical focus:outline-none focus:bg-white focus:ring-2 focus:ring-blue-500 transition-all"
+                />
+              </div>
+              <div>
+                <label className="block font-semibold text-slate-900 mb-2">Task 3:</label>
+                <textarea
+                  rows={3}
+                  value={task3}
+                  onChange={(e) => setTask3(e.target.value)}
+                  placeholder="예: 신규 프로젝트 기획 및 예산 수립"
+                  className="w-full px-4 py-3 bg-white/50 border border-slate-200 rounded-xl resize-vertical focus:outline-none focus:bg-white focus:ring-2 focus:ring-blue-500 transition-all"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Workflow Unbundling Practice */}
+        <div className="mb-16">
+          <h2 className="text-3xl font-bold text-slate-900 mb-3 text-center">Workflow Unbundling Practice</h2>
+          <p className="text-center text-slate-600 mb-8">"자동화는 업무를 쪼개는 것에서 시작합니다"</p>
+
+          <div className="bg-white/70 backdrop-blur-xl border border-white/60 rounded-3xl p-8 shadow-sm">
+            {/* Scenario Header */}
+            <div className="flex justify-between items-start mb-8 flex-wrap gap-4">
+              <div>
+                <div className="inline-flex items-center gap-2 px-3 py-1 bg-gradient-to-r from-blue-100/50 to-purple-100/50 border border-blue-200/50 rounded-full mb-3">
+                  <span className="text-xs font-semibold text-blue-700 uppercase tracking-wide">EXAMPLE SCENARIO</span>
+                </div>
+                <h3 className="text-2xl font-bold text-slate-900">주간 팀 성과 보고 (Weekly Report)</h3>
+              </div>
+              <button
+                onClick={resetWorkflow}
+                className="px-4 py-2 bg-blue-100/50 border border-blue-200/50 rounded-xl font-semibold text-blue-700 hover:bg-blue-200/50 transition-all"
+              >
+                🔄 Reset
+              </button>
+            </div>
+
+            {/* Workflow Steps */}
+            <div className="relative pl-16 mb-8">
+              <div className="absolute left-6 top-0 bottom-0 w-0.5 bg-gradient-to-b from-transparent via-blue-200 to-transparent"></div>
+
+              {steps.map((step) => (
+                <div key={step.id} className="flex gap-6 mb-8 relative">
+                  <div className={`w-14 h-14 rounded-full flex items-center justify-center text-2xl border-4 bg-white flex-shrink-0 relative z-10 ${
+                    step.role === 'human' ? 'border-slate-500' :
+                    step.role === 'copilot' ? 'border-blue-500' :
+                    'border-purple-500'
+                  }`}>
+                    {getRoleIcon(step.role)}
+                  </div>
+                  <div className="flex-1 bg-white/50 rounded-2xl p-6 hover:translate-y-[-2px] transition-transform">
+                    <div className="flex justify-between items-center mb-3 flex-wrap gap-2">
+                      <span className="font-bold text-blue-600">Step {step.id}</span>
+                      <select
+                        value={step.role}
+                        onChange={(e) => updateRole(step.id, e.target.value as 'human' | 'copilot' | 'llm')}
+                        className={`px-4 py-2 rounded-lg font-semibold cursor-pointer border-none text-white ${
+                          step.role === 'human' ? 'bg-slate-500' :
+                          step.role === 'copilot' ? 'bg-blue-500' :
+                          'bg-purple-500'
+                        }`}
+                      >
+                        <option value="human">👤 Human</option>
+                        <option value="copilot">✨ Co-pilot</option>
+                        <option value="llm">🤖 Auto (LLM)</option>
+                      </select>
+                    </div>
+                    <textarea
+                      value={step.name}
+                      readOnly
+                      rows={3}
+                      className="w-full px-3 py-2 border border-blue-100 bg-white/30 rounded-lg text-sm resize-vertical"
+                    />
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* Summary Cards */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+              <div className="flex items-center gap-4 p-6 rounded-2xl bg-white/50">
+                <span className="text-4xl">🤖</span>
+                <div>
+                  <div className="text-sm text-slate-600">Auto Steps</div>
+                  <div className="text-3xl font-bold text-blue-600">{counts.llm}</div>
+                </div>
+              </div>
+              <div className="flex items-center gap-4 p-6 rounded-2xl bg-white/50">
+                <span className="text-4xl">✨</span>
+                <div>
+                  <div className="text-sm text-slate-600">Augmented Steps</div>
+                  <div className="text-3xl font-bold text-blue-600">{counts.copilot}</div>
+                </div>
+              </div>
+              <div className="flex items-center gap-4 p-6 rounded-2xl bg-white/50">
+                <span className="text-4xl">👤</span>
+                <div>
+                  <div className="text-sm text-slate-600">Human Steps</div>
+                  <div className="text-3xl font-bold text-blue-600">{counts.human}</div>
+                </div>
+              </div>
+            </div>
+
+            {/* Simulation Analysis */}
+            <div className="p-8 bg-gradient-to-r from-blue-50/50 to-purple-50/50 rounded-2xl">
+              <h3 className="text-xl font-bold text-slate-900 mb-2">📊 Simulation Analysis</h3>
+              <p className="text-slate-600 mb-6">
+                정답은 없습니다. 위 단계의 역할을 이리저리 바꿔보며 어떤 리스크와 관리 포인트가 발생하는지 시뮬레이션 해보세요.
+              </p>
+
+              <div className="space-y-4">
+                {steps.map((step) => {
+                  const scenario = stepScenarios[step.id][step.role];
+                  return (
+                    <div
+                      key={step.id}
+                      className={`p-6 rounded-2xl bg-white/50 border-l-4 ${
+                        step.role === 'human' ? 'border-l-slate-500' :
+                        step.role === 'copilot' ? 'border-l-blue-500' :
+                        'border-l-purple-500'
+                      }`}
+                    >
+                      <div className="flex justify-between items-center mb-3 flex-wrap gap-2">
+                        <span className="font-bold text-blue-600">Step {step.id}</span>
+                        <span className="text-sm font-semibold px-3 py-1 bg-blue-100/50 rounded-md">
+                          {getRoleIcon(step.role)} {step.role.toUpperCase()}
+                        </span>
+                      </div>
+                      <div className="font-semibold text-slate-900 mb-3">
+                        {step.name.substring(0, 60)}...
+                      </div>
+                      <div className="space-y-3">
+                        <div>
+                          <strong className="block text-slate-800 mb-1">상황:</strong>
+                          <p className="text-slate-600 text-sm leading-relaxed">{scenario.situation}</p>
+                        </div>
+                        <div>
+                          <strong className="block text-slate-800 mb-1">리스크:</strong>
+                          <p className="text-slate-600 text-sm leading-relaxed">{scenario.risk}</p>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Navigation Buttons */}
+        <div className="flex justify-between items-center max-w-4xl mx-auto pt-8">
+          <button
+            onClick={onBack}
+            className="inline-flex items-center gap-2 px-8 py-4 bg-white/80 backdrop-blur-sm border-2 border-slate-200 text-slate-700 font-semibold rounded-2xl hover:bg-white hover:border-slate-300 hover:shadow-md transition-all duration-200"
+          >
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+            </svg>
+            이전
+          </button>
+          <button
+            onClick={onNext}
+            className="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold rounded-2xl hover:from-blue-700 hover:to-purple-700 hover:shadow-lg transition-all duration-200"
+          >
+            다음
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
