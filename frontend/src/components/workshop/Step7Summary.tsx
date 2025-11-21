@@ -114,6 +114,11 @@ export default function Step7Summary({ workshop, onNext, onBack }: Step7SummaryP
 
           {/* Header */}
           <div className="text-center mb-12">
+            <div className="mb-4">
+              <span className="text-sm font-semibold text-emerald-600 bg-emerald-50 px-4 py-2 rounded-full">
+                📊 우리 팀 일 분석하기
+              </span>
+            </div>
             <div className="inline-flex items-center gap-2 px-3 py-1 bg-white/80 backdrop-blur-sm border border-indigo-200/50 rounded-full mb-6">
               <span className="text-xs font-medium text-indigo-700 uppercase tracking-wide">Step 7</span>
             </div>
