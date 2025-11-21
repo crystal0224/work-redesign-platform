@@ -159,27 +159,39 @@ export default function Step6WorkflowDesign({
   };
 
   return (
-    <div className="relative min-h-screen -m-6 p-6 animate-fadeIn">
-      {/* 애니메이션 배경 그라디언트 */}
-      <div className="absolute inset-0 bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 overflow-hidden">
-        <div className="absolute top-0 -left-4 w-96 h-96 bg-purple-300 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob"></div>
-        <div className="absolute top-0 -right-4 w-96 h-96 bg-blue-300 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob animation-delay-2000"></div>
-        <div className="absolute -bottom-8 left-20 w-96 h-96 bg-indigo-300 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob animation-delay-4000"></div>
+    <div className="relative min-h-screen -m-6 flex flex-col items-center animate-fadeIn overflow-x-hidden">
+      {/* Modern Gradient Mesh Background - Matching Step 1 */}
+      <div className="absolute inset-0 bg-gradient-to-br from-slate-50 via-blue-50/50 to-indigo-50/30 fixed">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(59,130,246,0.08)_0%,transparent_50%)]"></div>
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_60%,rgba(99,102,241,0.08)_0%,transparent_50%)]"></div>
       </div>
 
-      {/* 메인 컨텐츠 */}
-      <div className="relative z-10 max-w-7xl mx-auto py-12">
-        {/* 헤더 */}
-        <div className="backdrop-blur-xl bg-white/40 border border-white/60 rounded-3xl p-8 mb-8 shadow-2xl shadow-indigo-200/50">
-          <div className="text-center">
-            <h2 className="text-3xl font-semibold text-slate-900 mb-3 tracking-tight">
-              <span className="font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">Workflow</span> Redesign
-            </h2>
-            <p className="text-lg text-slate-600 leading-relaxed mb-2">
-              "{taskTitle}" 업무의 새로운 워크플로우를 설계합니다
+      <div className="relative z-10 w-full max-w-7xl mx-auto px-6 py-20">
+        {/* Hero Section - Matching Step 1 Style */}
+        <div className="text-center mb-16">
+          {/* Badge */}
+          <div className="inline-flex items-center gap-2.5 px-6 py-2.5 bg-white/80 backdrop-blur-xl border border-blue-100 rounded-full shadow-lg shadow-blue-100/50 mb-10">
+            <div className="relative">
+              <div className="absolute inset-0 bg-blue-500 rounded-full blur opacity-60 animate-pulse"></div>
+              <div className="relative w-2 h-2 bg-blue-600 rounded-full"></div>
+            </div>
+            <span className="text-sm font-bold tracking-wider text-slate-700 uppercase">Step 6: Workflow Design</span>
+          </div>
+
+          {/* Main Title */}
+          <h1 className="text-5xl md:text-7xl font-black text-slate-900 mb-8 tracking-tighter leading-tight">
+            <span className="inline-block bg-gradient-to-br from-slate-900 via-blue-800 to-indigo-900 bg-clip-text text-transparent">
+              최종 워크플로우 설계
+            </span>
+          </h1>
+
+          {/* Subtitle */}
+          <div className="space-y-4">
+            <p className="text-2xl font-light text-slate-800 tracking-tight">
+              AI와 함께 <span className="font-semibold text-blue-700">새로운 업무 프로세스</span>를 완성하세요
             </p>
-            <p className="text-sm text-slate-500">
-              노드를 드래그하여 순서를 변경하고, 클릭하여 상세 내용을 수정할 수 있습니다
+            <p className="text-lg text-slate-600 max-w-2xl mx-auto leading-relaxed">
+              드래그 앤 드롭으로 업무 흐름을 재구성하고 역할을 할당합니다
             </p>
           </div>
         </div>
@@ -306,31 +318,32 @@ export default function Step6WorkflowDesign({
           </DndContext>
         </div>
 
-        {/* 완료 버튼 */}
-        <div className="backdrop-blur-xl bg-white/40 border border-white/60 rounded-2xl p-6 shadow-xl">
-          <div className="flex items-center justify-between">
-            <div>
-              <h3 className="text-lg font-semibold text-slate-900 mb-1">워크플로우 설계 완료</h3>
-              <p className="text-sm text-slate-600">설계된 워크플로우를 저장하고 다음 단계로 진행합니다</p>
-            </div>
-            <div className="flex gap-4">
-              <button
-                onClick={onPrevious}
-                className="px-6 py-3 bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold rounded-xl transition-all flex items-center gap-2"
-              >
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+        {/* Navigation Buttons */}
+        <div className="flex justify-center gap-6 mt-16">
+          {onPrevious && (
+            <button
+              onClick={onPrevious}
+              className="group relative px-8 py-4 bg-white border-2 border-slate-200 text-slate-700 font-bold rounded-2xl hover:border-blue-300 hover:text-blue-600 hover:shadow-xl transition-all duration-300"
+            >
+              <span className="flex items-center gap-2">
+                <svg className="w-5 h-5 group-hover:-translate-x-1 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M11 17l-5-5m0 0l5-5m-5 5h12" />
                 </svg>
                 이전 단계
-              </button>
-              <button
-                onClick={() => onComplete(nodes)}
-                className="px-8 py-3 bg-gradient-to-r from-emerald-600 to-green-600 text-white rounded-xl font-semibold hover:shadow-xl hover:scale-105 transition-all"
-              >
-                완료하고 계속하기
-              </button>
-            </div>
-          </div>
+              </span>
+            </button>
+          )}
+
+          <button
+            onClick={() => onComplete(nodes)}
+            className="group relative z-50 cursor-pointer inline-flex items-center justify-center gap-4 px-12 py-4 bg-slate-900 text-white text-xl font-bold rounded-2xl overflow-hidden shadow-2xl shadow-slate-900/30 hover:shadow-2xl hover:shadow-blue-900/30 transition-all duration-500 hover:scale-[1.02] hover:-translate-y-1"
+          >
+            <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-indigo-600 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+            <span className="relative">워크숍 완료</span>
+            <svg className="relative w-5 h-5 group-hover:translate-x-1 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+            </svg>
+          </button>
         </div>
       </div>
 
@@ -352,11 +365,10 @@ export default function Step6WorkflowDesign({
                         <button
                           key={type}
                           onClick={() => setSelectedNode({ ...selectedNode, type })}
-                          className={`p-4 border-2 rounded-xl transition-all ${
-                            selectedNode.type === type
+                          className={`p-4 border-2 rounded-xl transition-all ${selectedNode.type === type
                               ? `${style.border} bg-gradient-to-br ${style.bg.replace('from-', 'from-').replace('to-', 'to-')}/10 shadow-lg`
                               : 'border-slate-200 bg-white hover:border-slate-300'
-                          }`}
+                            }`}
                         >
                           <div className="text-3xl mb-2">{style.icon}</div>
                           <div className="text-sm font-medium text-slate-900">{style.label}</div>
