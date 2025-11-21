@@ -1,6 +1,6 @@
 import { App } from './app';
 import config, { validateConfig } from './config';
-import { logger } from './config/logger';
+import logger from './utils/logger';
 
 async function startServer(): Promise<void> {
   try {

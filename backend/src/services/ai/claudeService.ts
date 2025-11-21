@@ -1,6 +1,6 @@
 import Anthropic from '@anthropic-ai/sdk';
 import config from '../../config';
-import { logger, aiLogger } from '../../config/logger';
+import { logger, aiLogger } from '../utils/logger';
 import { cache } from '../../config/database';
 
 export interface AnalysisInput {

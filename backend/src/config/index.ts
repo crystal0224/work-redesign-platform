@@ -10,6 +10,10 @@ export const config = {
     version: process.env.APP_VERSION || '1.0.0',
     env: process.env.NODE_ENV || 'development',
     port: parseInt(process.env.API_PORT || '4000'),
+    logLevel: process.env.LOG_LEVEL || 'info',
+    isDevelopment: (process.env.NODE_ENV || 'development') === 'development',
+    isProduction: (process.env.NODE_ENV || 'development') === 'production',
+    isTest: (process.env.NODE_ENV || 'development') === 'test',
   },
 
   // Database
@@ -54,6 +58,7 @@ export const config = {
       maxTokens: parseInt(process.env.ANTHROPIC_MAX_TOKENS || '4000'),
       timeout: parseInt(process.env.AI_REQUEST_TIMEOUT_MS || '30000'),
     },
+    anthropicApiKey: process.env.ANTHROPIC_API_KEY, // Alias for backward compatibility
 
     openai: {
       apiKey: process.env.OPENAI_API_KEY,
@@ -75,6 +80,25 @@ export const config = {
       maxFileSize: parseInt(process.env.MAX_FILE_SIZE_MB || '50') * 1024 * 1024, // Convert to bytes
       maxFilesPerSession: parseInt(process.env.MAX_FILES_PER_SESSION || '10'),
     },
+  },
+
+  // Upload configuration
+  upload: {
+    directory: process.env.UPLOAD_DIR || './uploads',
+    maxFileSize: parseInt(process.env.MAX_FILE_SIZE_MB || '50') * 1024 * 1024,
+    allowedTypes: ['image/jpeg', 'image/png', 'image/gif', 'application/pdf', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'],
+  },
+
+  // CORS configuration
+  cors: {
+    origin: process.env.CORS_ORIGIN?.split(',') || ['http://localhost:3000', 'http://localhost:3001'],
+    credentials: true,
+  },
+
+  // Rate limit configuration
+  rateLimit: {
+    windowMs: parseInt(process.env.RATE_LIMIT_WINDOW_MS || '60000'), // 1 minute
+    max: parseInt(process.env.RATE_LIMIT_MAX_REQUESTS || '100'),
   },
 
   // Email

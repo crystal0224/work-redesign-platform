@@ -1,6 +1,6 @@
 import { Server as SocketIOServer, Socket } from 'socket.io';
 import jwt from 'jsonwebtoken';
-import { logger } from '../../config/logger';
+import logger from '../../utils/logger';
 import config from '../../config';
 import { claudeService } from '../ai/claudeService';
 import { session } from '../../config/database';
