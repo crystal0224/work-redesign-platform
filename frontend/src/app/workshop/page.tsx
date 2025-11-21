@@ -488,7 +488,7 @@ export default function WorkshopPage() {
   const [automationSolutions, setAutomationSolutions] = useState<any[]>([]);
 
   // 개발 모드: 모든 단계 자동 채우기
-  const fillDevData = () => {
+  const fillDevData = async () => {
     if (currentStep === 1) {
       setCurrentStep(2);
     } else if (currentStep === 2) {
@@ -515,50 +515,72 @@ export default function WorkshopPage() {
         '회의 및 보고': '일일 스탠드업 미팅 (30분)\n주간 팀 회의 (1시간)\n월간 보고서 작성 (4시간)'
       });
 
-      // 워크샵 생성 및 다음 단계로
-      setWorkshop(prev => ({
-        ...prev,
-        id: `dev_workshop_${Date.now()}`,
-        tasks: [
-          {
-            id: 'task1',
-            title: '고객 이메일 확인 및 분류',
-            description: '매일 오전 9시 고객 이메일을 확인하고 긴급/일반/기술 문의로 분류',
-            timeSpent: 30,
-            frequency: '매일',
-            automation: 'high' as const,
-            automationMethod: 'AI 이메일 분류 시스템',
-            category: '고객 문의 처리',
-            sourceFileId: 'manual',
-            sourceFilename: '직접 입력'
-          },
-          {
-            id: 'task2',
-            title: '주간 데이터 수집 및 정제',
-            description: '매주 금요일 데이터베이스에서 주간 데이터를 추출하고 Excel로 정제',
-            timeSpent: 180,
-            frequency: '주간',
-            automation: 'medium' as const,
-            automationMethod: 'Python 스크립트 자동화',
-            category: '데이터 분석 및 리포트',
-            sourceFileId: 'manual',
-            sourceFilename: '직접 입력'
-          },
-          {
-            id: 'task3',
-            title: '월간 보고서 작성',
-            description: '매월 말 월간 성과 보고서를 작성하고 경영진에게 보고',
-            timeSpent: 240,
-            frequency: '월간',
-            automation: 'low' as const,
-            automationMethod: '템플릿 활용',
-            category: '회의 및 보고',
-            sourceFileId: 'manual',
-            sourceFilename: '직접 입력'
+      // 워크샵을 백엔드에 실제로 생성
+      if (!workshop.id) {
+        try {
+          const response = await fetch('/api/workshops', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              title: '개발 테스트 워크샵',
+              description: '빠른 테스트를 위한 워크샵',
+              mission: '테스트',
+              domains: ['고객 문의 처리', '데이터 분석 및 리포트', '회의 및 보고']
+            }),
+          });
+          const data = await response.json();
+          if (data.success) {
+            setWorkshop(prev => ({
+              ...prev,
+              id: data.id,
+              tasks: [
+                {
+                  id: 'task1',
+                  title: '고객 이메일 확인 및 분류',
+                  description: '매일 오전 9시 고객 이메일을 확인하고 긴급/일반/기술 문의로 분류',
+                  timeSpent: 30,
+                  frequency: '매일',
+                  automation: 'high' as const,
+                  automationMethod: 'AI 이메일 분류 시스템',
+                  category: '고객 문의 처리',
+                  sourceFileId: 'manual',
+                  sourceFilename: '직접 입력'
+                },
+                {
+                  id: 'task2',
+                  title: '주간 데이터 수집 및 정제',
+                  description: '매주 금요일 데이터베이스에서 주간 데이터를 추출하고 Excel로 정제',
+                  timeSpent: 180,
+                  frequency: '주간',
+                  automation: 'medium' as const,
+                  automationMethod: 'Python 스크립트 자동화',
+                  category: '데이터 분석 및 리포트',
+                  sourceFileId: 'manual',
+                  sourceFilename: '직접 입력'
+                },
+                {
+                  id: 'task3',
+                  title: '월간 보고서 작성',
+                  description: '매월 말 월간 성과 보고서를 작성하고 경영진에게 보고',
+                  timeSpent: 240,
+                  frequency: '월간',
+                  automation: 'low' as const,
+                  automationMethod: '템플릿 활용',
+                  category: '회의 및 보고',
+                  sourceFileId: 'manual',
+                  sourceFilename: '직접 입력'
+                }
+              ]
+            }));
+            setTimeout(() => setCurrentStep(6), 500);
           }
-        ]
-      }));
-      setTimeout(() => setCurrentStep(6), 500);
+        } catch (error) {
+          console.error('Dev mode: Failed to create workshop', error);
+        }
+      } else {
+        // 이미 워크샵이 있으면 바로 다음 단계로
+        setTimeout(() => setCurrentStep(6), 500);
+      }
     } else if (currentStep === 6) {
       // 다음 단계로
       setTimeout(() => setCurrentStep(7), 500);
