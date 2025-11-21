@@ -175,17 +175,15 @@ function DomainColumn({
   return (
     <div
       ref={setNodeRef}
-      className={`backdrop-blur-xl border rounded-2xl p-6 min-h-[400px] flex flex-col transition-all duration-300 ${
-        isOver
-          ? 'bg-indigo-100/60 border-indigo-400 border-2 scale-[1.02] shadow-2xl'
-          : 'bg-white/40 border-white/60'
-      }`}
+      className={`backdrop-blur-xl border rounded-2xl p-6 min-h-[400px] flex flex-col transition-all duration-300 ${isOver
+        ? 'bg-indigo-100/60 border-indigo-400 border-2 scale-[1.02] shadow-2xl'
+        : 'bg-white/40 border-white/60'
+        }`}
     >
       <div className="flex items-center justify-between mb-5">
         <h3 className="text-xl font-semibold text-gray-900">{domain}</h3>
-        <span className={`px-3 py-1 backdrop-blur-md rounded-full text-sm font-medium transition-colors ${
-          isOver ? 'bg-indigo-200 text-indigo-900' : 'bg-indigo-100/80 text-indigo-700'
-        }`}>
+        <span className={`px-3 py-1 backdrop-blur-md rounded-full text-sm font-medium transition-colors ${isOver ? 'bg-indigo-200 text-indigo-900' : 'bg-indigo-100/80 text-indigo-700'
+          }`}>
           {tasks.length}개
         </span>
       </div>
@@ -193,9 +191,8 @@ function DomainColumn({
       <SortableContext items={tasks.map(t => t.id)} strategy={verticalListSortingStrategy}>
         <div className="space-y-3 flex-1">
           {tasks.length === 0 ? (
-            <div className={`text-center py-12 transition-colors ${
-              isOver ? 'text-indigo-600' : 'text-gray-400'
-            }`}>
+            <div className={`text-center py-12 transition-colors ${isOver ? 'text-indigo-600' : 'text-gray-400'
+              }`}>
               <div className="text-4xl mb-2">{isOver ? '⬇️' : '📋'}</div>
               <p className="text-sm font-medium">{isOver ? '여기에 놓으세요!' : '업무를 드래그하여 이동하세요'}</p>
             </div>
@@ -352,13 +349,12 @@ function TaskEditModal({
                 <button
                   key={level}
                   onClick={() => setEditedTask({ ...editedTask, automationPotential: level })}
-                  className={`flex-1 py-3 rounded-xl font-medium transition-all ${
-                    editedTask.automationPotential === level
-                      ? level === 'High' ? 'bg-green-500 text-white shadow-lg'
+                  className={`flex-1 py-3 rounded-xl font-medium transition-all ${editedTask.automationPotential === level
+                    ? level === 'High' ? 'bg-green-500 text-white shadow-lg'
                       : level === 'Medium' ? 'bg-yellow-500 text-white shadow-lg'
-                      : 'bg-red-500 text-white shadow-lg'
-                      : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-                  }`}
+                        : 'bg-red-500 text-white shadow-lg'
+                    : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                    }`}
                 >
                   {level}
                 </button>
@@ -371,7 +367,7 @@ function TaskEditModal({
         <div className="flex gap-3 mt-8">
           <button
             onClick={handleSave}
-            className="flex-1 px-6 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-xl font-medium hover:shadow-lg hover:scale-105 transition-all duration-300"
+            className="flex-1 px-6 py-3 bg-slate-900 text-white rounded-xl font-medium hover:shadow-lg hover:scale-105 transition-all duration-300"
           >
             저장
           </button>
@@ -500,13 +496,12 @@ function AddTaskModal({
                 <button
                   key={level}
                   onClick={() => setNewTask({ ...newTask, automationPotential: level })}
-                  className={`flex-1 py-3 rounded-xl font-medium transition-all ${
-                    newTask.automationPotential === level
-                      ? level === 'High' ? 'bg-green-500 text-white shadow-lg'
+                  className={`flex-1 py-3 rounded-xl font-medium transition-all ${newTask.automationPotential === level
+                    ? level === 'High' ? 'bg-green-500 text-white shadow-lg'
                       : level === 'Medium' ? 'bg-yellow-500 text-white shadow-lg'
-                      : 'bg-red-500 text-white shadow-lg'
-                      : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-                  }`}
+                        : 'bg-red-500 text-white shadow-lg'
+                    : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                    }`}
                 >
                   {level}
                 </button>
@@ -519,7 +514,7 @@ function AddTaskModal({
         <div className="flex gap-3 mt-8">
           <button
             onClick={handleSubmit}
-            className="flex-1 px-6 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-xl font-medium hover:shadow-lg hover:scale-105 transition-all duration-300"
+            className="flex-1 px-6 py-3 bg-slate-900 text-white rounded-xl font-medium hover:shadow-lg hover:scale-105 transition-all duration-300"
           >
             추가
           </button>
@@ -707,91 +702,91 @@ export default function Step4TaskExtraction({ workshopId, domains, onNext, manua
   const activeDragTask = activeDragId ? extractedTasks.find(t => t.id === activeDragId) : null;
 
   return (
-    <div className="relative min-h-screen -m-6 p-6 animate-fadeIn">
-      {/* Animated gradient background matching Step 1 */}
-      <div className="absolute inset-0 bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 overflow-hidden">
-        <div className="absolute top-0 -left-4 w-96 h-96 bg-purple-300 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob"></div>
-        <div className="absolute top-0 -right-4 w-96 h-96 bg-blue-300 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob animation-delay-2000"></div>
-        <div className="absolute -bottom-8 left-20 w-96 h-96 bg-indigo-300 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob animation-delay-4000"></div>
+    <div className="relative min-h-screen -m-6 flex flex-col items-center animate-fadeIn overflow-x-hidden">
+      {/* Modern Gradient Mesh Background - Matching Step 1 */}
+      <div className="absolute inset-0 bg-gradient-to-br from-slate-50 via-blue-50/50 to-indigo-50/30 fixed">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(59,130,246,0.08)_0%,transparent_50%)]"></div>
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_60%,rgba(99,102,241,0.08)_0%,transparent_50%)]"></div>
       </div>
 
-      {/* Content */}
-      <div className="relative">
-        {/* Header */}
-        <div className="backdrop-blur-xl bg-white/40 border border-white/60 rounded-3xl p-8 mb-8 shadow-2xl">
-          <h2 className="text-3xl font-semibold text-gray-900 mb-3 tracking-tight">
-            업무 추출 결과
-          </h2>
-          <p className="text-lg text-gray-600 mb-6">
-            AI가 분석한 업무들을 영역별로 확인하고 편집하세요. 드래그하여 영역을 변경하거나 클릭하여 수정할 수 있습니다.
-          </p>
+      {/* Main Content */}
+      <div className="relative z-10 w-full max-w-7xl mx-auto px-6 py-20">
 
-          {/* Stats */}
-          <div className="grid grid-cols-4 gap-4">
-            <div className="backdrop-blur-md bg-white/60 border border-white/60 rounded-xl p-4 text-center">
-              <div className="text-2xl font-bold text-indigo-600">{extractedTasks.length}</div>
-              <div className="text-sm text-gray-600">총 업무</div>
+        {/* Hero Section - Matching Step 1 Style */}
+        <div className="text-center mb-16">
+          {/* Badge */}
+          <div className="inline-flex items-center gap-2.5 px-6 py-2.5 bg-white/80 backdrop-blur-xl border border-blue-100 rounded-full shadow-lg shadow-blue-100/50 mb-10">
+            <div className="relative">
+              <div className="absolute inset-0 bg-blue-500 rounded-full blur opacity-60 animate-pulse"></div>
+              <div className="relative w-2 h-2 bg-blue-600 rounded-full"></div>
             </div>
-            <div className="backdrop-blur-md bg-white/60 border border-white/60 rounded-xl p-4 text-center">
-              <div className="text-2xl font-bold text-green-600">
-                {extractedTasks.filter(t => t.automationPotential === 'High').length}
-              </div>
-              <div className="text-sm text-gray-600">자동화 가능</div>
-            </div>
-            <div className="backdrop-blur-md bg-white/60 border border-white/60 rounded-xl p-4 text-center">
-              <div className="text-2xl font-bold text-blue-600">
-                {extractedTasks.filter(t => t.source === 'uploaded').length}
-              </div>
-              <div className="text-sm text-gray-600">문서 추출</div>
-            </div>
-            <div className="backdrop-blur-md bg-white/60 border border-white/60 rounded-xl p-4 text-center">
-              <div className="text-2xl font-bold text-purple-600">
-                {extractedTasks.filter(t => t.source === 'manual').length}
-              </div>
-              <div className="text-sm text-gray-600">직접 입력</div>
-            </div>
+            <span className="text-sm font-bold tracking-wider text-slate-700 uppercase">Step 4: AI Task Extraction</span>
+          </div>
+
+          {/* Main Title */}
+          <h1 className="text-5xl md:text-7xl font-black text-slate-900 mb-8 tracking-tighter leading-tight">
+            <span className="inline-block bg-gradient-to-br from-slate-900 via-blue-800 to-indigo-900 bg-clip-text text-transparent">
+              AI 업무 추출 결과
+            </span>
+          </h1>
+
+          {/* Subtitle */}
+          <div className="space-y-4">
+            <p className="text-2xl font-light text-slate-800 tracking-tight">
+              AI가 분석한 <span className="font-semibold text-blue-700">업무 리스트</span>를 확인하세요
+            </p>
+            <p className="text-lg text-slate-600 max-w-2xl mx-auto leading-relaxed">
+              드래그하여 영역을 변경하거나 클릭하여 수정할 수 있습니다
+            </p>
           </div>
         </div>
 
-        {/* Loading State */}
-        {loading && (
-          <div className="backdrop-blur-xl bg-white/40 border border-white/60 rounded-3xl p-12 text-center shadow-2xl">
-            <div className="animate-spin w-16 h-16 border-4 border-indigo-200 border-t-indigo-600 rounded-full mx-auto mb-4"></div>
-            <p className="text-lg text-gray-700">AI가 업무를 분석하고 있습니다...</p>
+        {/* Stats Cards - Refined Glassmorphism */}
+        <div className="grid grid-cols-4 gap-6 mb-12">
+          <div className="bg-white/80 backdrop-blur-xl border border-slate-200/60 rounded-2xl p-6 shadow-lg shadow-slate-200/50 text-center group hover:scale-[1.02] transition-all duration-300">
+            <div className="text-4xl font-black text-slate-900 mb-2 group-hover:text-blue-600 transition-colors">{extractedTasks.length}</div>
+            <div className="text-sm font-bold text-slate-500 uppercase tracking-wide">Total Tasks</div>
           </div>
-        )}
-
-        {/* Error State */}
-        {error && (
-          <div className="backdrop-blur-xl bg-red-50/90 border border-red-200 rounded-3xl p-6 mb-6 shadow-xl">
-            <div className="flex items-start justify-between">
-              <div className="flex-1">
-                <p className="text-red-700 font-medium mb-2">⚠️ 업무 추출에 실패했습니다</p>
-                <p className="text-red-600 text-sm">{error}</p>
-              </div>
-              <button
-                onClick={extractTasks}
-                className="ml-4 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-all font-medium text-sm flex items-center gap-2 shrink-0"
-              >
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                </svg>
-                다시 시도
-              </button>
-            </div>
+          <div className="bg-white/80 backdrop-blur-xl border border-slate-200/60 rounded-2xl p-6 shadow-lg shadow-slate-200/50 text-center group hover:scale-[1.02] transition-all duration-300">
+            <div className="text-4xl font-black text-green-600 mb-2">{extractedTasks.filter(t => t.automationPotential === 'High').length}</div>
+            <div className="text-sm font-bold text-slate-500 uppercase tracking-wide">Automation High</div>
           </div>
-        )}
+          <div className="bg-white/80 backdrop-blur-xl border border-slate-200/60 rounded-2xl p-6 shadow-lg shadow-slate-200/50 text-center group hover:scale-[1.02] transition-all duration-300">
+            <div className="text-4xl font-black text-blue-600 mb-2">{extractedTasks.filter(t => t.source === 'uploaded').length}</div>
+            <div className="text-sm font-bold text-slate-500 uppercase tracking-wide">From Docs</div>
+          </div>
+          <div className="bg-white/80 backdrop-blur-xl border border-slate-200/60 rounded-2xl p-6 shadow-lg shadow-slate-200/50 text-center group hover:scale-[1.02] transition-all duration-300">
+            <div className="text-4xl font-black text-purple-600 mb-2">{extractedTasks.filter(t => t.source === 'manual').length}</div>
+            <div className="text-sm font-bold text-slate-500 uppercase tracking-wide">Manual Input</div>
+          </div>
+        </div>
 
-        {/* Task Grid */}
-        {!loading && extractedTasks.length > 0 && (
-          <>
+        {/* Main Content Area */}
+        {loading ? (
+          <div className="bg-white/80 backdrop-blur-xl border border-slate-200/60 rounded-[32px] p-20 text-center shadow-2xl shadow-slate-200/50">
+            <div className="animate-spin w-16 h-16 border-4 border-blue-100 border-t-blue-600 rounded-full mx-auto mb-6"></div>
+            <p className="text-xl text-slate-700 font-medium">AI가 업무를 정밀 분석하고 있습니다...</p>
+          </div>
+        ) : error ? (
+          <div className="bg-red-50/90 backdrop-blur-xl border border-red-200 rounded-[32px] p-10 text-center shadow-xl">
+            <p className="text-red-700 font-bold text-xl mb-4">⚠️ 업무 추출에 실패했습니다</p>
+            <p className="text-red-600 mb-6">{error}</p>
+            <button
+              onClick={extractTasks}
+              className="px-6 py-3 bg-red-600 text-white rounded-xl hover:bg-red-700 transition-all font-bold shadow-lg hover:shadow-red-200"
+            >
+              다시 시도
+            </button>
+          </div>
+        ) : (
+          <div className="space-y-8">
             <DndContext
               sensors={sensors}
               collisionDetection={closestCenter}
               onDragStart={handleDragStart}
               onDragEnd={handleDragEnd}
             >
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                 {allDomains.map((domain) => (
                   <DomainColumn
                     key={domain}
@@ -805,63 +800,39 @@ export default function Step4TaskExtraction({ workshopId, domains, onNext, manua
 
               <DragOverlay>
                 {activeDragTask ? (
-                  <div className="backdrop-blur-lg bg-white/90 border border-white/60 rounded-xl p-5 shadow-2xl rotate-3">
-                    <h4 className="font-semibold text-gray-900">{activeDragTask.title}</h4>
+                  <div className="opacity-90 rotate-3 scale-105 cursor-grabbing">
+                    <SortableTaskCard
+                      task={activeDragTask}
+                      onEdit={() => { }}
+                      onDelete={() => { }}
+                    />
                   </div>
                 ) : null}
               </DragOverlay>
             </DndContext>
 
-            {/* Add Task Button */}
-            <div className="flex justify-center mb-6">
+            {/* Action Buttons */}
+            <div className="flex justify-center gap-6 mt-16">
               <button
                 onClick={() => setShowAddModal(true)}
-                className="backdrop-blur-xl bg-white/50 border-2 border-indigo-300 border-dashed text-indigo-700 font-semibold px-8 py-4 rounded-2xl hover:bg-white/70 hover:border-indigo-400 hover:shadow-lg transition-all duration-300 flex items-center gap-2"
+                className="group relative px-8 py-4 bg-white border-2 border-slate-200 text-slate-700 font-bold rounded-2xl hover:border-blue-300 hover:text-blue-600 hover:shadow-xl transition-all duration-300"
               >
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-                </svg>
-                새 업무 추가
-              </button>
-            </div>
-
-            {/* Next Button */}
-            <div className="flex justify-between">
-              <button
-                onClick={() => window.history.back()}
-                className="px-6 py-3 bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold rounded-xl transition-all flex items-center gap-2"
-              >
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                </svg>
-                이전 단계
+                <span className="flex items-center gap-2">
+                  <span className="text-xl">+</span> 직접 업무 추가
+                </span>
               </button>
 
               <button
                 onClick={handleNext}
-                className="px-8 py-4 bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-semibold rounded-2xl hover:shadow-2xl hover:scale-105 transition-all duration-300 flex items-center gap-2"
+                className="group relative z-50 cursor-pointer inline-flex items-center justify-center gap-4 px-12 py-4 bg-slate-900 text-white text-xl font-bold rounded-2xl overflow-hidden shadow-2xl shadow-slate-900/30 hover:shadow-2xl hover:shadow-blue-900/30 transition-all duration-500 hover:scale-[1.02] hover:-translate-y-1"
               >
-                다음 단계로
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-indigo-600 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                <span className="relative">다음 단계로</span>
+                <svg className="relative w-5 h-5 group-hover:translate-x-1 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
                 </svg>
               </button>
             </div>
-          </>
-        )}
-
-        {/* Empty State */}
-        {!loading && extractedTasks.length === 0 && !error && (
-          <div className="backdrop-blur-xl bg-white/40 border border-white/60 rounded-3xl p-12 text-center shadow-2xl">
-            <div className="text-6xl mb-4">📋</div>
-            <h3 className="text-2xl font-bold text-gray-900 mb-2">추출된 업무가 없습니다</h3>
-            <p className="text-gray-600 mb-6">문서를 업로드하거나 내용을 입력한 후 다시 시도해주세요</p>
-            <button
-              onClick={() => setShowAddModal(true)}
-              className="px-6 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-xl font-medium hover:shadow-lg transition-all"
-            >
-              직접 업무 추가하기
-            </button>
           </div>
         )}
       </div>
