@@ -169,6 +169,13 @@ export default function Step6WorkflowDesign({
       <div className="relative z-10 w-full max-w-7xl mx-auto px-6 py-20">
         {/* Hero Section - Matching Step 1 Style */}
         <div className="text-center mb-16">
+          {/* Section Label */}
+          <div className="mb-4">
+            <span className="text-sm font-semibold text-purple-600 bg-purple-50 px-4 py-2 rounded-full">
+              🤖 AI로 일 자동화하기
+            </span>
+          </div>
+
           {/* Badge */}
           <div className="inline-flex items-center gap-2.5 px-6 py-2.5 bg-white/80 backdrop-blur-xl border border-blue-100 rounded-full shadow-lg shadow-blue-100/50 mb-10">
             <div className="relative">

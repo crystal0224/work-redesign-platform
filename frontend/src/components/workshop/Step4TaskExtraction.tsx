@@ -720,6 +720,11 @@ export default function Step4TaskExtraction({ workshopId, domains, onNext, manua
         <div className="w-full max-w-5xl mx-auto">
         {/* Header - 동일한 디자인 */}
         <div className="text-center mb-12">
+          <div className="mb-4">
+            <span className="text-sm font-semibold text-emerald-600 bg-emerald-50 px-4 py-2 rounded-full">
+              📊 우리 팀 일 분석하기
+            </span>
+          </div>
           <div className="inline-flex items-center gap-2 px-3 py-1 bg-white/80 backdrop-blur-sm border border-purple-200/50 rounded-full mb-6">
             <span className="text-xs font-medium text-purple-700 uppercase tracking-wide">Step 6</span>
           </div>
