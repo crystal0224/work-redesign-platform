@@ -6,6 +6,7 @@ import { useDropzone } from 'react-dropzone';
 import Step4TaskExtraction from '@/components/workshop/Step4TaskExtraction';
 import Step5AIConsultant from '@/components/workshop/Step5AIConsultant';
 import Step6WorkflowDesign from '@/components/workshop/Step6WorkflowDesign';
+import Step7Summary from '@/components/workshop/Step7Summary';
 
 // 이미지 생성을 위한 동적 import
 const captureElement = async (element: HTMLElement) => {
@@ -25,6 +26,12 @@ interface Workshop {
   fileIds: string[];
   tasks: Task[];
   selectedTaskIds: string[];
+  mission?: string;
+  teamSize?: number;
+  teamComposition?: string;
+  constraints?: string[];
+  controllableIssues?: string;
+  manualInput?: string;
 }
 
 interface Task {
@@ -582,8 +589,11 @@ export default function WorkshopPage() {
         setTimeout(() => setCurrentStep(6), 500);
       }
     } else if (currentStep === 6) {
-      // 다음 단계로
+      // Step7(요약)로 이동
       setTimeout(() => setCurrentStep(7), 500);
+    } else if (currentStep === 7) {
+      // Step8로 이동
+      setTimeout(() => setCurrentStep(8), 500);
     }
   };
 
@@ -2585,8 +2595,17 @@ export default function WorkshopPage() {
             />
           )}
 
-          {/* Step 7: 업무 상세화 */}
+          {/* Step 7: 요약 및 AI 추천 */}
           {currentStep === 7 && (
+            <Step7Summary
+              workshop={workshop}
+              onNext={() => setCurrentStep(8)}
+              onBack={() => setCurrentStep(6)}
+            />
+          )}
+
+          {/* Step 8: 업무 상세화 */}
+          {currentStep === 8 && (
             <Step5AIConsultant
               tasks={workshop.tasks}
               workshopId={workshop.id}
@@ -2598,21 +2617,21 @@ export default function WorkshopPage() {
             />
           )}
 
-          {/* Step 8: 워크플로우 설계 */}
-          {currentStep === 8 && (
+          {/* Step 9: 워크플로우 설계 */}
+          {currentStep === 9 && (
             <Step6WorkflowDesign
               taskTitle={workshop.tasks.find(t => workshop.selectedTaskIds.includes(t.id))?.title || '선택된 업무'}
               conversationInsights={{}}
               onComplete={(workflow) => {
                 console.log('Workflow completed:', workflow);
-                setCurrentStep(9);
+                setCurrentStep(10);
               }}
-              onPrevious={() => setCurrentStep(7)}
+              onPrevious={() => setCurrentStep(8)}
             />
           )}
 
-          {/* Step 9: 자동화 솔루션 생성 */}
-          {currentStep === 9 && (
+          {/* Step 10: 자동화 솔루션 생성 */}
+          {currentStep === 10 && (
             <div className="relative min-h-screen -m-6 p-6 animate-fadeIn">
               {/* Animated gradient background */}
               <div className="absolute inset-0 bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 overflow-hidden">
