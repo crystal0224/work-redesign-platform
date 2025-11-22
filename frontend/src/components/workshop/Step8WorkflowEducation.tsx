@@ -142,81 +142,68 @@ export default function Step8WorkflowEducation({ onNext, onBack }: Step8Workflow
         <div className="mb-16">
           <div className="bg-gradient-to-br from-white/80 via-purple-50/50 to-blue-50/50 backdrop-blur-xl border border-purple-200/30 rounded-3xl p-10 shadow-xl hover:shadow-2xl transition-all duration-300">
             {/* Title */}
-            <div className="text-center mb-8">
-              <h3 className="text-3xl md:text-4xl font-black text-slate-900 mb-4">
+            <div className="text-center mb-10">
+              <h3 className="text-3xl md:text-4xl font-black text-slate-900 mb-3">
                 2030년, 당신의 업무는 어떻게 변할까요?
               </h3>
-              <p className="text-slate-600 text-sm">
+              <p className="text-slate-600 text-sm mb-1">
                 World Economic Forum 예측 <span className="font-semibold">(1,000개 기업 조사 기반)</span>
+              </p>
+              <p className="text-slate-500 text-xs">
+                업무의 3분할: 사람만 / AI 완전자동 / 협업
               </p>
             </div>
 
-            {/* Progress Bar Visualization */}
-            <div className="flex gap-1 h-20 rounded-2xl overflow-hidden mb-10 shadow-lg">
-              <div className="flex-1 flex flex-col items-center justify-center bg-gradient-to-br from-slate-700 to-slate-600 text-white p-4 hover:scale-[1.02] transition-transform">
-                <div className="text-2xl mb-1">👤</div>
-                <div className="font-black text-xl">33%</div>
-                <div className="text-xs opacity-90">Human Only</div>
-              </div>
-              <div className="flex-1 flex flex-col items-center justify-center bg-gradient-to-br from-purple-600 to-purple-500 text-white p-4 hover:scale-[1.02] transition-transform">
-                <div className="text-2xl mb-1">🤖</div>
-                <div className="font-black text-xl">34%</div>
-                <div className="text-xs opacity-90">Full Automation</div>
-              </div>
-              <div className="flex-1 flex flex-col items-center justify-center bg-gradient-to-br from-blue-600 to-sky-500 text-white p-4 hover:scale-[1.02] transition-transform">
-                <div className="text-2xl mb-1">🤝</div>
-                <div className="font-black text-xl">33%</div>
-                <div className="text-xs opacity-90">Human-AI Collaboration</div>
-              </div>
-            </div>
-
-            {/* Simplified Comparison Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+            {/* Reimagined Cards - Clear & Bold */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-10">
               {/* Human Only Card */}
-              <div className="bg-white/90 backdrop-blur-sm border-t-4 border-t-slate-600 rounded-2xl p-6 shadow-md hover:shadow-lg transition-all">
-                <div className="text-center mb-4">
-                  <div className="text-4xl mb-3">👤</div>
-                  <h4 className="text-lg font-bold text-slate-900 mb-1">Human Only</h4>
-                  <div className="text-2xl font-black text-slate-700 mb-2">33%</div>
-                  <p className="text-slate-600 text-xs">오직 인간만이 할 수 있는<br />고부가가치 업무</p>
+              <div className="group bg-gradient-to-br from-slate-50 to-slate-100/50 border-2 border-slate-300 rounded-2xl p-8 shadow-lg hover:shadow-xl hover:border-slate-400 transition-all">
+                <div className="text-center mb-6">
+                  <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-slate-700 to-slate-600 rounded-2xl mb-4 shadow-md group-hover:scale-110 transition-transform">
+                    <span className="text-4xl">👤</span>
+                  </div>
+                  <div className="text-5xl font-black text-slate-800 mb-2">33%</div>
+                  <h4 className="text-xl font-bold text-slate-900 mb-2">Human Only</h4>
+                  <p className="text-sm text-slate-600 font-medium">오직 인간만이 할 수 있는 영역</p>
                 </div>
-                <div className="space-y-2 mb-4">
-                  <div className="text-xs text-slate-700 bg-slate-50 rounded-lg px-3 py-2">전략적 의사결정</div>
-                  <div className="text-xs text-slate-700 bg-slate-50 rounded-lg px-3 py-2">창의적 문제 해결</div>
-                  <div className="text-xs text-slate-700 bg-slate-50 rounded-lg px-3 py-2">관계 구축과 소통</div>
-                  <div className="text-xs text-slate-700 bg-slate-50 rounded-lg px-3 py-2">윤리적 판단</div>
+                <div className="space-y-3">
+                  <div className="text-sm font-semibold text-slate-800 bg-white/80 rounded-lg px-4 py-3 shadow-sm border border-slate-200">전략적 의사결정</div>
+                  <div className="text-sm font-semibold text-slate-800 bg-white/80 rounded-lg px-4 py-3 shadow-sm border border-slate-200">창의적 문제 해결</div>
+                  <div className="text-sm font-semibold text-slate-800 bg-white/80 rounded-lg px-4 py-3 shadow-sm border border-slate-200">윤리적 판단</div>
                 </div>
               </div>
 
               {/* Full Automation Card */}
-              <div className="bg-white/90 backdrop-blur-sm border-t-4 border-t-purple-600 rounded-2xl p-6 shadow-md hover:shadow-lg transition-all">
-                <div className="text-center mb-4">
-                  <div className="text-4xl mb-3">🤖</div>
-                  <h4 className="text-lg font-bold text-slate-900 mb-1">Full Automation</h4>
-                  <div className="text-2xl font-black text-purple-700 mb-2">34%</div>
-                  <p className="text-slate-600 text-xs">기계가 완전히 대체하는<br />반복적·정형화된 업무</p>
+              <div className="group bg-gradient-to-br from-purple-50 to-purple-100/50 border-2 border-purple-300 rounded-2xl p-8 shadow-lg hover:shadow-xl hover:border-purple-400 transition-all">
+                <div className="text-center mb-6">
+                  <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-purple-600 to-purple-500 rounded-2xl mb-4 shadow-md group-hover:scale-110 transition-transform">
+                    <span className="text-4xl">🤖</span>
+                  </div>
+                  <div className="text-5xl font-black text-purple-800 mb-2">34%</div>
+                  <h4 className="text-xl font-bold text-slate-900 mb-2">Full Automation</h4>
+                  <p className="text-sm text-slate-600 font-medium">AI가 완전히 대체하는 영역</p>
                 </div>
-                <div className="space-y-2 mb-4">
-                  <div className="text-xs text-slate-700 bg-purple-50 rounded-lg px-3 py-2">데이터 수집 및 정리</div>
-                  <div className="text-xs text-slate-700 bg-purple-50 rounded-lg px-3 py-2">정형화된 문서 작성</div>
-                  <div className="text-xs text-slate-700 bg-purple-50 rounded-lg px-3 py-2">일정 관리 및 알림</div>
-                  <div className="text-xs text-slate-700 bg-purple-50 rounded-lg px-3 py-2">반복적 분석 작업</div>
+                <div className="space-y-3">
+                  <div className="text-sm font-semibold text-slate-800 bg-white/80 rounded-lg px-4 py-3 shadow-sm border border-purple-200">데이터 수집·정리</div>
+                  <div className="text-sm font-semibold text-slate-800 bg-white/80 rounded-lg px-4 py-3 shadow-sm border border-purple-200">정형 문서 작성</div>
+                  <div className="text-sm font-semibold text-slate-800 bg-white/80 rounded-lg px-4 py-3 shadow-sm border border-purple-200">반복 분석 작업</div>
                 </div>
               </div>
 
               {/* Human-AI Collaboration Card */}
-              <div className="bg-white/90 backdrop-blur-sm border-t-4 border-t-blue-600 rounded-2xl p-6 shadow-md hover:shadow-lg transition-all">
-                <div className="text-center mb-4">
-                  <div className="text-4xl mb-3">🤝</div>
-                  <h4 className="text-lg font-bold text-slate-900 mb-1">Collaboration</h4>
-                  <div className="text-2xl font-black text-blue-700 mb-2">33%</div>
-                  <p className="text-slate-600 text-xs">AI와 인간이 협업하여<br />시너지를 내는 업무</p>
+              <div className="group bg-gradient-to-br from-blue-50 to-blue-100/50 border-2 border-blue-300 rounded-2xl p-8 shadow-lg hover:shadow-xl hover:border-blue-400 transition-all">
+                <div className="text-center mb-6">
+                  <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-blue-600 to-sky-500 rounded-2xl mb-4 shadow-md group-hover:scale-110 transition-transform">
+                    <span className="text-4xl">🤝</span>
+                  </div>
+                  <div className="text-5xl font-black text-blue-800 mb-2">33%</div>
+                  <h4 className="text-xl font-bold text-slate-900 mb-2">Collaboration</h4>
+                  <p className="text-sm text-slate-600 font-medium">AI와 사람이 협업하는 영역</p>
                 </div>
-                <div className="space-y-2 mb-4">
-                  <div className="text-xs text-slate-700 bg-blue-50 rounded-lg px-3 py-2">AI 초안 → 사람 다듬기</div>
-                  <div className="text-xs text-slate-700 bg-blue-50 rounded-lg px-3 py-2">AI 분석 → 사람 해석</div>
-                  <div className="text-xs text-slate-700 bg-blue-50 rounded-lg px-3 py-2">AI 아이디어 → 사람 선택</div>
-                  <div className="text-xs text-slate-700 bg-blue-50 rounded-lg px-3 py-2">AI 검증 → 사람 결정</div>
+                <div className="space-y-3">
+                  <div className="text-sm font-semibold text-slate-800 bg-white/80 rounded-lg px-4 py-3 shadow-sm border border-blue-200">AI 초안 → 사람 검토</div>
+                  <div className="text-sm font-semibold text-slate-800 bg-white/80 rounded-lg px-4 py-3 shadow-sm border border-blue-200">AI 분석 → 사람 해석</div>
+                  <div className="text-sm font-semibold text-slate-800 bg-white/80 rounded-lg px-4 py-3 shadow-sm border border-blue-200">AI 제안 → 사람 결정</div>
                 </div>
               </div>
             </div>
