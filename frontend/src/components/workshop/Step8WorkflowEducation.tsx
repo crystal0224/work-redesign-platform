@@ -216,37 +216,6 @@ export default function Step8WorkflowEducation({ onNext, onBack }: Step8Workflow
                 </div>
               </div>
             </div>
-
-            {/* Key Statistics */}
-            <div className="bg-gradient-to-r from-slate-900 to-slate-800 rounded-2xl p-6 mb-6">
-              <h5 className="text-white font-bold text-lg mb-4 flex items-center gap-2">
-                <span>📊</span>
-                <span>주요 수치</span>
-              </h5>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-white">
-                <div className="bg-white/10 rounded-lg p-4">
-                  <div className="text-2xl font-black text-blue-300 mb-1">170M vs 92M</div>
-                  <div className="text-xs opacity-90">새 일자리 창출 vs 일자리 전환</div>
-                </div>
-                <div className="bg-white/10 rounded-lg p-4">
-                  <div className="text-2xl font-black text-purple-300 mb-1">39%</div>
-                  <div className="text-xs opacity-90">핵심 스킬 변화 예상 (2025-2030)</div>
-                </div>
-                <div className="bg-white/10 rounded-lg p-4">
-                  <div className="text-2xl font-black text-green-300 mb-1">86%</div>
-                  <div className="text-xs opacity-90">AI가 사업을 변화시킬 것으로 예측한 기업</div>
-                </div>
-              </div>
-            </div>
-
-            {/* CTA */}
-            <div className="text-center">
-              <div className="inline-block">
-                <div className="bg-gradient-to-r from-purple-600 to-blue-600 text-white px-6 py-3 rounded-xl font-semibold text-sm shadow-lg hover:shadow-xl hover:scale-105 transition-all cursor-default">
-                  ↓ 우리 팀은 어떻게 준비할까요?
-                </div>
-              </div>
-            </div>
           </div>
         </div>
 
@@ -257,10 +226,10 @@ export default function Step8WorkflowEducation({ onNext, onBack }: Step8Workflow
               <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-indigo-600 to-purple-600 rounded-2xl mb-4 shadow-lg">
                 <span className="text-4xl">🔄</span>
               </div>
-              <h3 className="text-3xl md:text-4xl font-black text-slate-900 mb-4">
+              <h3 className="text-3xl font-black text-slate-900 mb-4">
                 Human-in-the-Loop이란?
               </h3>
-              <p className="text-lg text-slate-600 max-w-2xl mx-auto">
+              <p className="text-base text-slate-600 max-w-2xl mx-auto">
                 자동화의 핵심은 <span className="font-bold text-indigo-700">"사람을 배제"</span>하는 것이 아니라,<br />
                 <span className="font-bold text-indigo-700">"사람을 전략적 위치에 배치"</span>하는 것입니다.
               </p>
@@ -273,8 +242,8 @@ export default function Step8WorkflowEducation({ onNext, onBack }: Step8Workflow
                   <div className="inline-flex items-center justify-center w-12 h-12 bg-slate-100 rounded-full mb-3">
                     <span className="text-2xl">👤</span>
                   </div>
-                  <h4 className="font-bold text-slate-900 mb-1">Before</h4>
-                  <p className="text-xs text-slate-500 uppercase tracking-wide">전부 수작업</p>
+                  <h4 className="text-base font-bold text-slate-900 mb-1">Before</h4>
+                  <p className="text-sm text-slate-500">전부 수작업</p>
                 </div>
                 <div className="space-y-2">
                   <div className="flex items-center gap-2 text-sm text-slate-700 bg-slate-50 rounded-lg p-2">
@@ -294,7 +263,7 @@ export default function Step8WorkflowEducation({ onNext, onBack }: Step8Workflow
                     <span>보고서 작성</span>
                   </div>
                 </div>
-                <div className="mt-4 text-center text-xs text-red-600 font-semibold">
+                <div className="mt-4 text-center text-sm text-red-600 font-semibold">
                   ⚠️ 시간 소모 많음
                 </div>
               </div>
@@ -308,8 +277,8 @@ export default function Step8WorkflowEducation({ onNext, onBack }: Step8Workflow
                   <div className="inline-flex items-center justify-center w-12 h-12 bg-red-100 rounded-full mb-3">
                     <span className="text-2xl">🤖</span>
                   </div>
-                  <h4 className="font-bold text-slate-900 mb-1">Wrong</h4>
-                  <p className="text-xs text-slate-500 uppercase tracking-wide">완전 자동화</p>
+                  <h4 className="text-base font-bold text-slate-900 mb-1">Wrong</h4>
+                  <p className="text-sm text-slate-500">완전 자동화</p>
                 </div>
                 <div className="space-y-2">
                   <div className="flex items-center gap-2 text-sm text-slate-700 bg-purple-50 rounded-lg p-2">
@@ -329,7 +298,7 @@ export default function Step8WorkflowEducation({ onNext, onBack }: Step8Workflow
                     <span>보고서 작성</span>
                   </div>
                 </div>
-                <div className="mt-4 text-center text-xs text-red-600 font-semibold">
+                <div className="mt-4 text-center text-sm text-red-600 font-semibold">
                   ⚠️ 맥락 부족, 신뢰 문제
                 </div>
               </div>
@@ -343,8 +312,8 @@ export default function Step8WorkflowEducation({ onNext, onBack }: Step8Workflow
                   <div className="inline-flex items-center justify-center w-12 h-12 bg-gradient-to-br from-indigo-600 to-purple-600 rounded-full mb-3 shadow-md">
                     <span className="text-2xl">🔄</span>
                   </div>
-                  <h4 className="font-bold text-slate-900 mb-1">Right</h4>
-                  <p className="text-xs text-indigo-700 uppercase tracking-wide font-semibold">Human-in-the-Loop</p>
+                  <h4 className="text-base font-bold text-slate-900 mb-1">Right</h4>
+                  <p className="text-sm text-indigo-700 font-semibold">Human-in-the-Loop</p>
                 </div>
                 <div className="space-y-2">
                   <div className="flex items-center gap-2 text-sm text-slate-700 bg-white rounded-lg p-2 shadow-sm">
@@ -396,7 +365,7 @@ export default function Step8WorkflowEducation({ onNext, onBack }: Step8Workflow
         {/* LLM Understanding Section */}
         <div className="mb-16">
           <h2 className="text-3xl font-bold text-slate-900 mb-3 text-center">AI의 능력과 한계 이해하기</h2>
-          <p className="text-center text-slate-600 mb-8 max-w-3xl mx-auto">
+          <p className="text-center text-base text-slate-600 mb-8 max-w-3xl mx-auto">
             전략적 판단을 위해서는 AI가 <span className="font-semibold text-slate-900">무엇을 잘하고 무엇을 못하는지</span> 정확히 알아야 합니다.
           </p>
 
@@ -414,7 +383,7 @@ export default function Step8WorkflowEducation({ onNext, onBack }: Step8Workflow
                   <div key={item.num} className="flex gap-4 p-3 rounded-xl hover:bg-white/50 transition-all">
                     <span className="text-2xl font-bold text-blue-600 min-w-[40px]">{item.num}</span>
                     <div>
-                      <strong className="block text-slate-900 mb-1">{item.title}</strong>
+                      <strong className="block text-base text-slate-900 mb-1">{item.title}</strong>
                       <p className="text-slate-600 text-sm">{item.desc}</p>
                     </div>
                   </div>
@@ -434,7 +403,7 @@ export default function Step8WorkflowEducation({ onNext, onBack }: Step8Workflow
                   <div key={item.num} className="flex gap-4 p-3 rounded-xl hover:bg-white/50 transition-all">
                     <span className="text-2xl font-bold text-blue-600 min-w-[40px]">{item.num}</span>
                     <div>
-                      <strong className="block text-slate-900 mb-1">{item.title}</strong>
+                      <strong className="block text-base text-slate-900 mb-1">{item.title}</strong>
                       <p className="text-slate-600 text-sm">{item.desc}</p>
                     </div>
                   </div>
