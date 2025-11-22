@@ -10,6 +10,7 @@ interface Step8WorkflowEducationProps {
 interface WorkflowStep {
   id: number;
   name: string;
+  title: string;
   role: 'human' | 'ai' | 'together';
 }
 
@@ -74,10 +75,10 @@ const stepScenarios: Record<number, Record<string, { situation: string; risk: st
 
 export default function Step8WorkflowEducation({ onNext, onBack }: Step8WorkflowEducationProps) {
   const [steps, setSteps] = useState<WorkflowStep[]>([
-    { id: 1, name: '팀원 5명에게 이메일로 실적 요청하고, 답변 오면 이메일 본문을 복사해서 엑셀에 하나씩 붙여넣기', role: 'human' },
-    { id: 2, name: '취합된 엑셀 데이터를 날짜별로 정렬하고, 피벗 테이블 돌려 부서별 합계 낸 뒤 그래프 그리기', role: 'human' },
-    { id: 3, name: '그래프를 보며 이번 주 특이사항 고민하고, 보고서에 들어갈 3줄 요약 멘트 직접 타이핑하기', role: 'human' },
-    { id: 4, name: '작성된 내용을 회사 PPT 템플릿에 옮겨 담고, 폰트/줄간격 맞춘 뒤 인쇄해서 팀장님 책상에 제출', role: 'human' }
+    { id: 1, title: '실적 수합', name: '팀원 5명에게 이메일로 실적 요청하고, 답변 오면 이메일 본문을 복사해서 엑셀에 하나씩 붙여넣기', role: 'human' },
+    { id: 2, title: '데이터 가공', name: '취합된 엑셀 데이터를 날짜별로 정렬하고, 피벗 테이블 돌려 부서별 합계 낸 뒤 그래프 그리기', role: 'human' },
+    { id: 3, title: '인사이트 도출', name: '그래프를 보며 이번 주 특이사항 고민하고, 보고서에 들어갈 3줄 요약 멘트 직접 타이핑하기', role: 'human' },
+    { id: 4, title: '보고서 작성', name: '작성된 내용을 회사 PPT 템플릿에 옮겨 담고, 폰트/줄간격 맞춘 뒤 인쇄해서 팀장님 책상에 제출', role: 'human' }
   ]);
 
   const getRoleIcon = (role: string) => {
@@ -91,10 +92,10 @@ export default function Step8WorkflowEducation({ onNext, onBack }: Step8Workflow
 
   const resetWorkflow = () => {
     setSteps([
-      { id: 1, name: '팀원 5명에게 이메일로 실적 요청하고, 답변 오면 이메일 본문을 복사해서 엑셀에 하나씩 붙여넣기', role: 'human' },
-      { id: 2, name: '취합된 엑셀 데이터를 날짜별로 정렬하고, 피벗 테이블 돌려 부서별 합계 낸 뒤 그래프 그리기', role: 'human' },
-      { id: 3, name: '그래프를 보며 이번 주 특이사항 고민하고, 보고서에 들어갈 3줄 요약 멘트 직접 타이핑하기', role: 'human' },
-      { id: 4, name: '작성된 내용을 회사 PPT 템플릿에 옮겨 담고, 폰트/줄간격 맞춘 뒤 인쇄해서 팀장님 책상에 제출', role: 'human' }
+      { id: 1, title: '실적 수합', name: '팀원 5명에게 이메일로 실적 요청하고, 답변 오면 이메일 본문을 복사해서 엑셀에 하나씩 붙여넣기', role: 'human' },
+      { id: 2, title: '데이터 가공', name: '취합된 엑셀 데이터를 날짜별로 정렬하고, 피벗 테이블 돌려 부서별 합계 낸 뒤 그래프 그리기', role: 'human' },
+      { id: 3, title: '인사이트 도출', name: '그래프를 보며 이번 주 특이사항 고민하고, 보고서에 들어갈 3줄 요약 멘트 직접 타이핑하기', role: 'human' },
+      { id: 4, title: '보고서 작성', name: '작성된 내용을 회사 PPT 템플릿에 옮겨 담고, 폰트/줄간격 맞춘 뒤 인쇄해서 팀장님 책상에 제출', role: 'human' }
     ]);
   };
 
@@ -564,7 +565,11 @@ export default function Step8WorkflowEducation({ onNext, onBack }: Step8Workflow
                   <div className="flex-1 bg-white/50 rounded-xl p-4 hover:translate-y-[-1px] transition-transform">
                     <div className="flex items-stretch gap-3">
                       <div className="flex flex-col gap-1 flex-shrink-0">
-                        <span className="font-bold text-blue-600 text-sm">Step {step.id}</span>
+                        <div className="flex items-center gap-1.5 mb-0.5">
+                          <span className="font-bold text-blue-600 text-sm">Step {step.id}</span>
+                          <span className="text-slate-400 text-xs">•</span>
+                          <span className="font-semibold text-slate-700 text-xs">{step.title}</span>
+                        </div>
                         <div className="relative flex-1">
                           <select
                             value={step.role}
@@ -584,12 +589,9 @@ export default function Step8WorkflowEducation({ onNext, onBack }: Step8Workflow
                           </div>
                         </div>
                       </div>
-                      <textarea
-                        value={stepScenarios[step.id]?.[step.role]?.situation || step.name}
-                        readOnly
-                        rows={2}
-                        className="flex-1 px-3 py-2 border border-blue-100 bg-white/30 rounded-lg text-xs resize-none"
-                      />
+                      <div className="flex-1 px-3 py-2 bg-slate-50/50 rounded-lg text-xs text-slate-700 leading-relaxed">
+                        {stepScenarios[step.id]?.[step.role]?.situation || step.name}
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -597,7 +599,7 @@ export default function Step8WorkflowEducation({ onNext, onBack }: Step8Workflow
             </div>
 
             {/* Summary Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
               <div className="flex items-center gap-4 p-6 rounded-2xl bg-white/50">
                 <span className="text-4xl">👤</span>
                 <div>
@@ -621,48 +623,76 @@ export default function Step8WorkflowEducation({ onNext, onBack }: Step8Workflow
               </div>
             </div>
 
-            {/* Simulation Analysis */}
+            {/* Strategy Explanation for Workshop Discussion */}
             <div className="p-8 bg-gradient-to-r from-blue-50/50 to-purple-50/50 rounded-2xl">
-              <h3 className="text-xl font-bold text-slate-900 mb-2">📊 전략적 판단 시뮬레이션</h3>
-              <p className="text-slate-600 mb-6">
-                <span className="font-semibold text-slate-900">정답은 없습니다.</span> 각 단계의 역할을 바꿔보며 <span className="font-semibold">리스크, 효율성, 신뢰성</span>을 비교하고,
-                우리 팀에 최적화된 자동화 전략을 찾아보세요.
+              <h3 className="text-xl font-bold text-slate-900 mb-2">💭 자동화 전략 설명</h3>
+              <p className="text-slate-600 mb-4">
+                위에서 선택한 조합을 <span className="font-semibold text-slate-900">왜 그렇게 구성했는지</span> 설명해주세요.<br />
+                워크샵에서 팀원들과 토론하고 발표할 내용을 작성하세요.
               </p>
 
               <div className="space-y-4">
-                {steps.map((step) => {
-                  const scenario = stepScenarios[step.id][step.role];
-                  return (
-                    <div
-                      key={step.id}
-                      className={`p-6 rounded-2xl bg-white/50 border-l-4 ${
-                        step.role === 'human' ? 'border-l-slate-500' :
-                        step.role === 'copilot' ? 'border-l-blue-500' :
-                        'border-l-purple-500'
-                      }`}
-                    >
-                      <div className="flex justify-between items-center mb-3 flex-wrap gap-2">
-                        <span className="font-bold text-blue-600">Step {step.id}</span>
-                        <span className="text-sm font-semibold px-3 py-1 bg-blue-100/50 rounded-md">
-                          {getRoleIcon(step.role)} {step.role.toUpperCase()}
-                        </span>
-                      </div>
-                      <div className="font-semibold text-slate-900 mb-3">
-                        {step.name.substring(0, 60)}...
-                      </div>
-                      <div className="space-y-3">
-                        <div>
-                          <strong className="block text-slate-800 mb-1">상황:</strong>
-                          <p className="text-slate-600 text-sm leading-relaxed">{scenario.situation}</p>
-                        </div>
-                        <div>
-                          <strong className="block text-slate-800 mb-1">리스크:</strong>
-                          <p className="text-slate-600 text-sm leading-relaxed">{scenario.risk}</p>
-                        </div>
-                      </div>
-                    </div>
-                  );
-                })}
+                {/* Question 1 */}
+                <div className="bg-white/70 rounded-xl p-5">
+                  <label className="block font-semibold text-slate-900 mb-2 text-sm">
+                    1. 어떤 단계를 Human/AI/Together로 배분했나요?
+                  </label>
+                  <textarea
+                    rows={2}
+                    className="w-full px-4 py-3 border-2 border-blue-200 rounded-lg text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all resize-none"
+                    placeholder="예: Step 1, 2는 Together로 설정하여 AI가 초안을 만들고 사람이 검토하도록 했습니다."
+                  />
+                </div>
+
+                {/* Question 2 */}
+                <div className="bg-white/70 rounded-xl p-5">
+                  <label className="block font-semibold text-slate-900 mb-2 text-sm">
+                    2. 그렇게 선택한 이유는 무엇인가요? (효율성, 리스크, 팀 역량 등)
+                  </label>
+                  <textarea
+                    rows={3}
+                    className="w-full px-4 py-3 border-2 border-blue-200 rounded-lg text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all resize-none"
+                    placeholder="예: 실적 수합은 반복 작업이지만 팀원마다 형식이 달라서 Together가 적합합니다. AI가 1차 정리를 하면 제가 빠르게 검토할 수 있습니다."
+                  />
+                </div>
+
+                {/* Question 3 */}
+                <div className="bg-white/70 rounded-xl p-5">
+                  <label className="block font-semibold text-slate-900 mb-2 text-sm">
+                    3. 이 전략을 실행할 때 예상되는 어려움이나 주의할 점은?
+                  </label>
+                  <textarea
+                    rows={3}
+                    className="w-full px-4 py-3 border-2 border-blue-200 rounded-lg text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all resize-none"
+                    placeholder="예: Step 3을 AI로 맡기면 회사 내부 맥락을 모르는 피상적 분석이 나올 수 있습니다. 반드시 사람이 최종 검토해야 합니다."
+                  />
+                </div>
+
+                {/* Question 4 */}
+                <div className="bg-white/70 rounded-xl p-5">
+                  <label className="block font-semibold text-slate-900 mb-2 text-sm">
+                    4. 팀원들에게 전달하고 싶은 핵심 메시지 (1-2문장)
+                  </label>
+                  <textarea
+                    rows={2}
+                    className="w-full px-4 py-3 border-2 border-blue-200 rounded-lg text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all resize-none"
+                    placeholder="예: AI는 도구일 뿐입니다. 최종 판단과 책임은 항상 사람에게 있으며, 우리는 AI를 활용해 더 가치 있는 일에 집중할 수 있습니다."
+                  />
+                </div>
+              </div>
+
+              <div className="mt-6 p-4 bg-blue-50 rounded-xl border border-blue-200">
+                <div className="flex items-start gap-3">
+                  <span className="text-2xl">💡</span>
+                  <div className="text-sm text-blue-900">
+                    <p className="font-semibold mb-1">워크샵 발표 팁</p>
+                    <ul className="text-blue-800 space-y-1 text-xs">
+                      <li>• 정답은 없습니다. 우리 팀 상황에 맞는 최적의 조합을 찾는 것이 목표입니다.</li>
+                      <li>• 다른 팀의 전략과 비교하며 새로운 아이디어를 얻어보세요.</li>
+                      <li>• 처음부터 완벽할 필요 없습니다. 점진적으로 개선해 나가면 됩니다.</li>
+                    </ul>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
