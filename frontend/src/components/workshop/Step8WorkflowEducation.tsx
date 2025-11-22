@@ -622,9 +622,9 @@ export default function Step8WorkflowEducation({ onNext, onBack }: Step8Workflow
                     <div className="flex items-stretch gap-4">
                       <div className="flex flex-col gap-2 flex-shrink-0 min-w-[160px]">
                         <div className="flex items-center gap-1.5 mb-1">
-                          <span className="font-bold text-blue-600 text-sm">Step {step.id}</span>
+                          <span className="font-medium text-slate-400 text-xs">Step {step.id}</span>
                           <span className="text-slate-300 text-xs">•</span>
-                          <span className="font-semibold text-slate-700 text-sm">{step.title}</span>
+                          <span className="font-semibold text-slate-800 text-sm">{step.title}</span>
                         </div>
                         <div className="relative flex-1">
                           <select
@@ -692,11 +692,17 @@ export default function Step8WorkflowEducation({ onNext, onBack }: Step8Workflow
 
             {/* Strategy Explanation for Workshop Discussion */}
             <div className="p-8 bg-gradient-to-r from-blue-50/50 to-purple-50/50 rounded-2xl">
-              <h3 className="text-xl font-bold text-slate-900 mb-2">💭 자동화 전략 설명</h3>
-              <p className="text-slate-600 mb-6">
-                위에서 선택한 조합을 <span className="font-semibold text-slate-900">왜 그렇게 구성했는지</span> 설명해주세요.<br />
-                워크샵에서 팀원들과 토론하고 발표할 내용을 작성하세요.
-              </p>
+              <div className="mb-6">
+                <h3 className="text-3xl font-black text-slate-900 mb-3 flex items-center gap-3">
+                  <span className="text-4xl">💭</span>
+                  <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">자동화 전략 설명</span>
+                </h3>
+                <div className="h-1 w-24 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full mb-4"></div>
+                <p className="text-base text-slate-700 leading-relaxed">
+                  위에서 선택한 조합을 <span className="font-bold text-slate-900 bg-yellow-100/70 px-1 rounded">왜 그렇게 구성했는지</span> 설명해주세요.<br />
+                  워크샵에서 팀원들과 토론하고 발표할 내용을 작성하세요.
+                </p>
+              </div>
 
               <div className="space-y-5">
                 {/* Question 1 */}
