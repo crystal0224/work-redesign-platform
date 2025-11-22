@@ -14,6 +14,8 @@ import {
   useDroppable,
 } from '@dnd-kit/core';
 import { API_CONFIG } from '@/config/api';
+import LoadingOverlay from '@/components/ui/LoadingOverlay';
+import { showToast } from '@/utils/toast';
 import {
   arrayMove,
   SortableContext,
@@ -570,6 +572,8 @@ export default function Step4TaskExtraction({ workshopId, domains, onNext, manua
     setLoading(true);
     setError('');
 
+    const toastId = showToast.aiAnalysisStarted();
+
     try {
       const response = await fetch(`${API_CONFIG.baseURL}/api/workshops/${workshopId}/extract-tasks`, {
         method: 'POST',
@@ -579,6 +583,14 @@ export default function Step4TaskExtraction({ workshopId, domains, onNext, manua
 
       if (!response.ok) {
         const errorData = await response.json();
+
+        // Check for rate limit
+        if (response.status === 429) {
+          showToast.dismiss(toastId);
+          showToast.rateLimitExceeded(errorData.retryAfter);
+          throw new Error(errorData.error || 'Rate limit exceeded');
+        }
+
         throw new Error(errorData.error || `HTTP ${response.status} 오류`);
       }
 
@@ -587,10 +599,18 @@ export default function Step4TaskExtraction({ workshopId, domains, onNext, manua
       if (data.success) {
         const tasks = data.data?.tasks || data.tasks || [];
         setExtractedTasks(tasks);
+
+        showToast.dismiss(toastId);
+
         if (tasks.length === 0) {
+          showToast.validationError('추출된 업무가 없습니다. 문서나 입력 내용을 확인해주세요.');
           setError('추출된 업무가 없습니다. 문서나 입력 내용을 확인해주세요.');
+        } else {
+          showToast.aiAnalysisComplete(tasks.length);
         }
       } else {
+        showToast.dismiss(toastId);
+        showToast.aiAnalysisFailed(data.error);
         setError(data.error || '업무 추출에 실패했습니다');
       }
     } catch (error) {
@@ -598,8 +618,14 @@ export default function Step4TaskExtraction({ workshopId, domains, onNext, manua
 
       if (error instanceof TypeError && error.message.includes('fetch')) {
         errorMessage = '서버에 연결할 수 없습니다. 서버가 실행 중인지 확인해주세요.';
+        showToast.dismiss(toastId);
+        showToast.networkError();
       } else if (error instanceof Error) {
         errorMessage = error.message;
+        if (!error.message.includes('Rate limit')) {
+          showToast.dismiss(toastId);
+          showToast.aiAnalysisFailed(errorMessage);
+        }
       }
 
       setError(errorMessage);
@@ -764,12 +790,21 @@ export default function Step4TaskExtraction({ workshopId, domains, onNext, manua
         </div>
 
         {/* Main Content Area */}
-        {loading ? (
-          <div className="bg-white/80 backdrop-blur-xl border border-slate-200/60 rounded-[32px] p-20 text-center shadow-2xl shadow-slate-200/50">
-            <div className="animate-spin w-16 h-16 border-4 border-blue-100 border-t-blue-600 rounded-full mx-auto mb-6"></div>
-            <p className="text-xl text-slate-700 font-medium">AI가 업무를 정밀 분석하고 있습니다...</p>
-          </div>
-        ) : error ? (
+        {loading && (
+          <LoadingOverlay
+            message="AI가 업무를 정밀 분석하고 있습니다"
+            submessage="문서에서 반복 업무를 추출하고 자동화 가능성을 평가합니다"
+            estimatedTime={30}
+            tips={[
+              'AI가 문서를 분석하여 반복 업무를 찾고 있습니다',
+              '업무 빈도와 소요 시간을 계산하고 있습니다',
+              '자동화 가능성을 평가하고 있습니다',
+              '각 업무를 적절한 도메인으로 분류하고 있습니다',
+              '최적의 자동화 방안을 제안하고 있습니다',
+            ]}
+          />
+        )}
+        {!loading && error ? (
           <div className="bg-red-50/90 backdrop-blur-xl border border-red-200 rounded-[32px] p-10 text-center shadow-xl">
             <p className="text-red-700 font-bold text-xl mb-4">⚠️ 업무 추출에 실패했습니다</p>
             <p className="text-red-600 mb-6">{error}</p>

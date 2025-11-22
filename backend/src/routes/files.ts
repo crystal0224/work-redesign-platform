@@ -3,6 +3,7 @@ import { getPrismaClient } from '@/config/database';
 import ResponseUtil from '@/utils/response';
 import { asyncHandler } from '@/middleware/errorHandler';
 import { authenticate, requireSessionAccess } from '@/middleware';
+import { fileUploadRateLimiter } from '@/middleware/aiRateLimit';
 import logger from '@/utils/logger';
 
 const router = Router();
@@ -83,6 +84,7 @@ router.get('/',
  *         description: File uploaded successfully
  */
 router.post('/upload',
+  fileUploadRateLimiter,
   authenticate,
   asyncHandler(async (req, res) => {
     // File upload handling would be done via multer middleware

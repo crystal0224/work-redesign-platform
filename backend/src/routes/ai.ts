@@ -3,10 +3,16 @@ import { getPrismaClient } from '@/config/database';
 import ResponseUtil from '@/utils/response';
 import { asyncHandler } from '@/middleware/errorHandler';
 import { authenticate, requireSessionAccess } from '@/middleware';
+import { aiRateLimiter, createUserAIRateLimiter, aiCostTracker } from '@/middleware/aiRateLimit';
 import logger from '@/utils/logger';
 
 const router = Router();
 const prisma = getPrismaClient();
+
+// Apply AI-specific rate limiting and cost tracking to all AI routes
+router.use(aiRateLimiter);
+router.use(createUserAIRateLimiter());
+router.use(aiCostTracker);
 
 /**
  * @swagger
