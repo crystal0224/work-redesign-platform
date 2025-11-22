@@ -672,70 +672,52 @@ export default function Step8WorkflowEducation({ onNext, onBack }: Step8Workflow
             {/* Strategy Explanation for Workshop Discussion */}
             <div className="p-8 bg-gradient-to-r from-blue-50/50 to-purple-50/50 rounded-2xl">
               <h3 className="text-xl font-bold text-slate-900 mb-2">💭 자동화 전략 설명</h3>
-              <p className="text-slate-600 mb-4">
+              <p className="text-slate-600 mb-6">
                 위에서 선택한 조합을 <span className="font-semibold text-slate-900">왜 그렇게 구성했는지</span> 설명해주세요.<br />
                 워크샵에서 팀원들과 토론하고 발표할 내용을 작성하세요.
               </p>
 
-              <div className="space-y-4">
+              <div className="space-y-5">
                 {/* Question 1 */}
-                <div className="bg-white/70 rounded-xl p-5">
-                  <label className="block font-semibold text-slate-900 mb-2 text-sm">
-                    1. 어떤 단계를 Human/AI/Together로 배분했나요?
+                <div className="bg-white/70 rounded-xl p-6">
+                  <label className="block font-bold text-slate-900 mb-3 text-base">
+                    1. 스텝을 어떻게 나눴고, 그렇게 한 이유는 무엇인가요?
                   </label>
+                  <p className="text-sm text-slate-600 mb-3">
+                    각 단계에 Human/AI/Together 중 무엇을 배치했는지, 그렇게 선택한 이유(효율성, 리스크, 팀 역량 등)를 설명하세요.
+                  </p>
                   <textarea
-                    rows={2}
+                    rows={4}
                     className="w-full px-4 py-3 border-2 border-blue-200 rounded-lg text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all resize-none"
-                    placeholder="예: Step 1, 2는 Together로 설정하여 AI가 초안을 만들고 사람이 검토하도록 했습니다."
+                    placeholder="예시: Step 1(실적 수합)과 Step 2(데이터 가공)는 Together로 설정했습니다. 반복 작업이지만 팀원마다 데이터 형식이 달라서 AI가 1차 정리를 하고, 제가 검토하는 방식이 효율적입니다. Step 3(인사이트 도출)은 Human으로 설정했습니다. 회사 내부 맥락과 정치적 판단이 필요하기 때문입니다."
                   />
                 </div>
 
                 {/* Question 2 */}
-                <div className="bg-white/70 rounded-xl p-5">
-                  <label className="block font-semibold text-slate-900 mb-2 text-sm">
-                    2. 그렇게 선택한 이유는 무엇인가요? (효율성, 리스크, 팀 역량 등)
+                <div className="bg-white/70 rounded-xl p-6">
+                  <label className="block font-bold text-slate-900 mb-3 text-base">
+                    2. 이 전략을 실행할 때 예상되는 한계점은 무엇인가요?
                   </label>
+                  <p className="text-sm text-slate-600 mb-3">
+                    선택한 전략의 리스크, 어려움, 주의할 점 등을 솔직하게 작성하세요.
+                  </p>
                   <textarea
-                    rows={3}
+                    rows={4}
                     className="w-full px-4 py-3 border-2 border-blue-200 rounded-lg text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all resize-none"
-                    placeholder="예: 실적 수합은 반복 작업이지만 팀원마다 형식이 달라서 Together가 적합합니다. AI가 1차 정리를 하면 제가 빠르게 검토할 수 있습니다."
-                  />
-                </div>
-
-                {/* Question 3 */}
-                <div className="bg-white/70 rounded-xl p-5">
-                  <label className="block font-semibold text-slate-900 mb-2 text-sm">
-                    3. 이 전략을 실행할 때 예상되는 어려움이나 주의할 점은?
-                  </label>
-                  <textarea
-                    rows={3}
-                    className="w-full px-4 py-3 border-2 border-blue-200 rounded-lg text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all resize-none"
-                    placeholder="예: Step 3을 AI로 맡기면 회사 내부 맥락을 모르는 피상적 분석이 나올 수 있습니다. 반드시 사람이 최종 검토해야 합니다."
-                  />
-                </div>
-
-                {/* Question 4 */}
-                <div className="bg-white/70 rounded-xl p-5">
-                  <label className="block font-semibold text-slate-900 mb-2 text-sm">
-                    4. 팀원들에게 전달하고 싶은 핵심 메시지 (1-2문장)
-                  </label>
-                  <textarea
-                    rows={2}
-                    className="w-full px-4 py-3 border-2 border-blue-200 rounded-lg text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all resize-none"
-                    placeholder="예: AI는 도구일 뿐입니다. 최종 판단과 책임은 항상 사람에게 있으며, 우리는 AI를 활용해 더 가치 있는 일에 집중할 수 있습니다."
+                    placeholder="예시: Step 2를 AI로 완전 자동화하면 팀원이 예상치 못한 형식으로 데이터를 제출했을 때 전체 프로세스가 중단될 수 있습니다. 또한 Step 3을 AI에게 맡기면 피상적인 분석만 나올 가능성이 높습니다. 팀원들이 AI 프롬프트 작성법을 학습하는 데 시간이 필요할 수 있습니다."
                   />
                 </div>
               </div>
 
-              <div className="mt-6 p-4 bg-blue-50 rounded-xl border border-blue-200">
+              <div className="mt-6 p-5 bg-blue-50 rounded-xl border border-blue-200">
                 <div className="flex items-start gap-3">
                   <span className="text-2xl">💡</span>
                   <div className="text-sm text-blue-900">
-                    <p className="font-semibold mb-1">워크샵 발표 팁</p>
-                    <ul className="text-blue-800 space-y-1 text-xs">
-                      <li>• 정답은 없습니다. 우리 팀 상황에 맞는 최적의 조합을 찾는 것이 목표입니다.</li>
-                      <li>• 다른 팀의 전략과 비교하며 새로운 아이디어를 얻어보세요.</li>
-                      <li>• 처음부터 완벽할 필요 없습니다. 점진적으로 개선해 나가면 됩니다.</li>
+                    <p className="font-semibold mb-2">워크샵 발표 팁</p>
+                    <ul className="text-blue-800 space-y-1.5 text-xs leading-relaxed">
+                      <li>• <span className="font-semibold">정답은 없습니다.</span> 우리 팀 상황에 맞는 최적의 조합을 찾는 것이 목표입니다.</li>
+                      <li>• <span className="font-semibold">한계점도 솔직하게 공유하세요.</span> 완벽한 전략은 없으며, 리스크를 인지하고 있다는 것이 중요합니다.</li>
+                      <li>• <span className="font-semibold">다른 팀과 비교하며 배우세요.</span> 같은 업무라도 다른 접근 방식이 있을 수 있습니다.</li>
                     </ul>
                   </div>
                 </div>
