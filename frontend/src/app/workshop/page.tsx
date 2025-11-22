@@ -1521,69 +1521,100 @@ if __name__ == "__main__":
         <div className="absolute -bottom-8 left-20 w-96 h-96 bg-indigo-300 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-4000"></div>
       </div>
 
-      {/* Progress header - Clean & Sensory Design */}
-      <div className="relative backdrop-blur-xl bg-white/80 border-b border-slate-200/50 shadow-sm z-40">
-        <div className="max-w-7xl mx-auto px-6 py-3">
+      {/* Progress header - Clean & Sensory Design (Refined) */}
+      <div className="relative backdrop-blur-xl bg-white/90 border-b border-slate-200 shadow-sm z-40">
+        <div className="max-w-7xl mx-auto px-6 py-4">
           <div className="max-w-6xl mx-auto">
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-2 gap-6">
               {[
                 {
                   title: '우리 팀 일 분석하기',
                   range: [1, 7],
                   icon: '📊',
-                  activeGradient: 'from-emerald-50 to-teal-50',
-                  activeBorder: 'border-emerald-200',
+                  activeGradient: 'from-emerald-50 to-teal-100',
+                  activeBorder: 'border-emerald-400',
                   activeText: 'text-emerald-900',
-                  barColor: 'bg-emerald-500'
+                  barColor: 'bg-gradient-to-r from-emerald-500 to-teal-500',
+                  shadowColor: 'shadow-emerald-200/50'
                 },
                 {
                   title: 'AI로 일 자동화하기',
                   range: [8, 11],
                   icon: '🤖',
-                  activeGradient: 'from-indigo-50 to-purple-50',
-                  activeBorder: 'border-indigo-200',
+                  activeGradient: 'from-indigo-50 to-purple-100',
+                  activeBorder: 'border-indigo-400',
                   activeText: 'text-indigo-900',
-                  barColor: 'bg-indigo-500'
+                  barColor: 'bg-gradient-to-r from-indigo-500 to-purple-500',
+                  shadowColor: 'shadow-indigo-200/50'
                 }
               ].map((section, index) => {
                 const isActive = currentStep >= section.range[0] && currentStep <= section.range[1];
                 const isCompleted = currentStep > section.range[1];
                 const currentStepInfo = isActive ? WORKSHOP_STEPS[currentStep - 1] : null;
-                const progress = isActive ? Math.round(((currentStep - section.range[0] + 1) / (section.range[1] - section.range[0] + 1)) * 100) : (isCompleted ? 100 : 0);
+
+                // Progress calculation: Based on COMPLETED steps in the section
+                // Step 1 (Start): 0/7 = 0%
+                // Step 7 (End): 6/7 = 85%
+                // Section Complete: 100%
+                const totalStepsInSection = section.range[1] - section.range[0] + 1;
+                const currentStepInSection = currentStep - section.range[0] + 1;
+                const progress = isActive
+                  ? Math.round(((currentStep - section.range[0]) / totalStepsInSection) * 100)
+                  : (isCompleted ? 100 : 0);
 
                 return (
-                  <div key={index} className={`backdrop-blur-md p-3 rounded-xl transition-all border ${isActive
-                      ? `bg-gradient-to-br ${section.activeGradient} ${section.activeBorder} ${section.activeText} shadow-sm`
-                      : isCompleted
-                        ? 'bg-emerald-50/50 border-emerald-100 text-emerald-600/80'
-                        : 'bg-transparent border-transparent text-slate-400 hover:bg-slate-50'
+                  <div key={index} className={`relative overflow-hidden backdrop-blur-md p-4 rounded-2xl transition-all duration-300 border-2 ${isActive
+                    ? `bg-gradient-to-br ${section.activeGradient} ${section.activeBorder} ${section.activeText} shadow-lg ${section.shadowColor} scale-[1.02]`
+                    : isCompleted
+                      ? 'bg-slate-50 border-slate-200 text-slate-500 grayscale-[0.5]'
+                      : 'bg-white/50 border-transparent text-slate-400 hover:bg-slate-50'
                     }`}>
-                    <div className="flex items-center justify-between gap-4">
+
+                    {/* Active Indicator Glow */}
+                    {isActive && (
+                      <div className="absolute top-0 right-0 -mt-4 -mr-4 w-24 h-24 bg-white opacity-40 blur-2xl rounded-full pointer-events-none"></div>
+                    )}
+
+                    <div className="relative flex items-center justify-between gap-5">
                       {/* 왼쪽: 섹션명 */}
-                      <div className="flex items-center gap-2 flex-shrink-0">
-                        <span className="text-xl filter drop-shadow-sm">{section.icon}</span>
-                        <h3 className="font-bold text-sm whitespace-nowrap">{section.title}</h3>
+                      <div className="flex items-center gap-3 flex-shrink-0">
+                        <div className={`w-10 h-10 rounded-xl flex items-center justify-center text-xl shadow-sm ${isActive ? 'bg-white' : 'bg-slate-100'}`}>
+                          <span className="filter drop-shadow-sm">{section.icon}</span>
+                        </div>
+                        <div className="flex flex-col">
+                          <span className={`text-xs font-bold uppercase tracking-wider ${isActive ? 'opacity-70' : 'opacity-50'}`}>Phase {index + 1}</span>
+                          <h3 className={`font-bold text-base whitespace-nowrap ${isActive ? 'text-lg' : ''}`}>{section.title}</h3>
+                        </div>
                       </div>
 
                       {/* 중앙: 현재 step 정보 (활성화된 섹션만) */}
                       {isActive && currentStepInfo && (
-                        <div className="flex items-center gap-2 flex-1 min-w-0 px-3 border-l border-slate-200/60">
-                          <span className="text-sm">{currentStepInfo.icon}</span>
-                          <span className="text-xs font-medium truncate opacity-90">{currentStepInfo.title}</span>
+                        <div className="hidden md:flex items-center gap-3 flex-1 min-w-0 px-4 border-l border-slate-900/10 mx-2">
+                          <div className="flex flex-col min-w-0">
+                            <span className="text-xs font-semibold opacity-60">
+                              Step {currentStepInSection} / {totalStepsInSection}
+                            </span>
+                            <div className="flex items-center gap-2">
+                              <span className="text-base">{currentStepInfo.icon}</span>
+                              <span className="text-sm font-bold truncate">{currentStepInfo.title}</span>
+                            </div>
+                          </div>
                         </div>
                       )}
 
                       {/* 우측: 진행률 바 + 퍼센트 */}
-                      <div className="flex items-center gap-3 flex-shrink-0">
-                        <div className="w-24 h-1.5 bg-slate-200 rounded-full overflow-hidden">
+                      <div className="flex flex-col items-end gap-1.5 flex-shrink-0 min-w-[100px]">
+                        <div className="flex items-end gap-1">
+                          <span className={`text-2xl font-black ${isActive ? 'scale-110 origin-right' : 'opacity-60'}`}>
+                            {progress}%
+                          </span>
+                        </div>
+                        <div className="w-full h-2 bg-slate-200/80 rounded-full overflow-hidden">
                           <div
-                            className={`h-full transition-all duration-500 ease-out rounded-full ${isActive ? section.barColor : isCompleted ? 'bg-emerald-400/60' : 'bg-slate-300'}`}
+                            className={`h-full transition-all duration-700 ease-out rounded-full shadow-sm ${isActive ? section.barColor : isCompleted ? 'bg-emerald-500/60' : 'bg-slate-300'}`}
                             style={{ width: `${progress}%` }}
                           />
                         </div>
-                        <span className={`text-xs font-bold w-8 text-right ${isActive ? 'opacity-100' : 'opacity-60'}`}>
-                          {progress}%
-                        </span>
                       </div>
                     </div>
                   </div>
