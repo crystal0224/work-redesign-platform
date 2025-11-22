@@ -142,14 +142,8 @@ export default function Step8WorkflowEducation({ onNext, onBack }: Step8Workflow
                 </p>
                 <div className="flex items-start gap-2 text-base text-slate-700 bg-white/60 rounded-lg p-4">
                   <span className="text-lg mt-0.5">💡</span>
-                  <span>모든 업무를 자동화할 필요도, 자동화할 수 있는 것도 아닙니다. 반복 작업은 AI에게, 판단이 필요한 부분은 사람에게, 협업이 필요한 곳은 Together로 배치하는 것이 핵심입니다.</span>
+                  <span>모든 업무를 자동화할 필요도, 자동화할 수 있는 것도 아닙니다.<br />반복 작업은 AI에게, 판단이 필요한 부분은 사람에게, 협업이 필요한 곳은 Together로 배치하는 것이 핵심입니다.</span>
                 </div>
-              </div>
-
-              <div className="pt-5 border-t border-indigo-200/40">
-                <p className="text-base text-indigo-700 font-medium">
-                  <span className="font-bold">진행 순서:</span> 2030년 업무 변화 트렌드 확인 → 실전 시나리오로 판단 연습 → 우리 팀 전략 수립
-                </p>
               </div>
             </div>
           </div>
