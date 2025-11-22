@@ -47,7 +47,11 @@
       "Bash(./demo-stop.sh)",
       "Bash(git reset:*)",
       "Bash(git restore:*)",
-      "Bash(git merge experiment/5-phase-strategic-flow -m \"$(cat <<''EOF''\nMerge experiment/5-phase-strategic-flow into main\n\nMerging completed 5-phase strategic workshop implementation with all UX improvements.\n\n🤖 Generated with [Claude Code](https://claude.com/claude-code)\n\nCo-Authored-By: Claude <noreply@anthropic.com>\nEOF\n)\")"
+      "Bash(git checkout:*)",
+      "Bash(python3:*)",
+      "Bash(git log:*)",
+      "Bash(find:*)",
+      "Bash(rm:*)"
     ],
     "deny": [],
     "ask": []

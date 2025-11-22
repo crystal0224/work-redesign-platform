@@ -173,7 +173,7 @@ export default function Step5AIConsultant({ tasks, workshopId, onComplete, onPre
     ];
 
     return responses[Math.min(messageCount, responses.length - 1)] ||
-      `잘 이해했습니다. 추가로 궁금한 점이 있으시면 언제든 말씀해주세요!`;
+           `잘 이해했습니다. 추가로 궁금한 점이 있으시면 언제든 말씀해주세요!`;
   };
 
   const getAutomationPotentialBadge = (potential: string) => {
@@ -186,39 +186,31 @@ export default function Step5AIConsultant({ tasks, workshopId, onComplete, onPre
   };
 
   return (
-    <div className="relative min-h-screen -m-6 flex flex-col items-center animate-fadeIn overflow-x-hidden">
-      {/* Modern Gradient Mesh Background - Matching Step 1 */}
-      <div className="absolute inset-0 bg-gradient-to-br from-slate-50 via-blue-50/50 to-indigo-50/30 fixed">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(59,130,246,0.08)_0%,transparent_50%)]"></div>
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_60%,rgba(99,102,241,0.08)_0%,transparent_50%)]"></div>
+    <div className="relative min-h-screen -m-6 p-6 animate-fadeIn">
+      {/* 애니메이션 배경 그라디언트 */}
+      <div className="absolute inset-0 bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 overflow-hidden">
+        <div className="absolute top-0 -left-4 w-96 h-96 bg-purple-300 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob"></div>
+        <div className="absolute top-0 -right-4 w-96 h-96 bg-blue-300 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob animation-delay-2000"></div>
+        <div className="absolute -bottom-8 left-20 w-96 h-96 bg-indigo-300 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob animation-delay-4000"></div>
       </div>
 
-      <div className="relative z-10 w-full max-w-7xl mx-auto px-6 py-20">
-        {/* Hero Section - Matching Step 1 Style */}
-        <div className="text-center mb-16">
-          {/* Badge */}
-          <div className="inline-flex items-center gap-2.5 px-6 py-2.5 bg-white/80 backdrop-blur-xl border border-blue-100 rounded-full shadow-lg shadow-blue-100/50 mb-10">
-            <div className="relative">
-              <div className="absolute inset-0 bg-blue-500 rounded-full blur opacity-60 animate-pulse"></div>
-              <div className="relative w-2 h-2 bg-blue-600 rounded-full"></div>
+      {/* 메인 컨텐츠 */}
+      <div className="relative z-10 max-w-5xl mx-auto py-20">
+        {/* 헤더 */}
+        <div className="backdrop-blur-xl bg-white/40 border border-white/60 rounded-3xl p-8 mb-16 shadow-2xl shadow-indigo-200/50 hover:shadow-indigo-300/60 transition-all duration-500">
+          <div className="text-center">
+            <div className="inline-flex items-center gap-3 mb-4 px-6 py-3 backdrop-blur-md bg-gradient-to-r from-indigo-500/20 to-purple-500/20 border border-indigo-300/40 rounded-full">
+              <div className="w-2 h-2 bg-indigo-500 rounded-full animate-pulse"></div>
+              <span className="text-indigo-700 font-semibold text-sm tracking-wide">STEP 5</span>
             </div>
-            <span className="text-sm font-bold tracking-wider text-slate-700 uppercase">Step 5: AI Consultant</span>
-          </div>
-
-          {/* Main Title */}
-          <h1 className="text-5xl md:text-7xl font-black text-slate-900 mb-8 tracking-tighter leading-tight">
-            <span className="inline-block bg-gradient-to-br from-slate-900 via-blue-800 to-indigo-900 bg-clip-text text-transparent">
-              AI 업무 재설계 컨설팅
-            </span>
-          </h1>
-
-          {/* Subtitle */}
-          <div className="space-y-4">
-            <p className="text-2xl font-light text-slate-800 tracking-tight">
-              AI가 제안하는 <span className="font-semibold text-blue-700">최적의 업무 방식</span>을 확인하세요
+            <h2 className="text-3xl font-bold text-slate-900 mb-3 tracking-tight">
+              업무 상세화
+            </h2>
+            <p className="text-lg text-slate-700 leading-relaxed max-w-3xl mx-auto mb-2">
+              자동화 가능성이 높은 업무를 선택하고 AI 컨설턴트와 대화하세요
             </p>
-            <p className="text-lg text-slate-600 max-w-2xl mx-auto leading-relaxed">
-              업무별 자동화 가능성과 구체적인 실행 방안을 제시합니다
+            <p className="text-base text-slate-600 leading-relaxed max-w-3xl mx-auto">
+              최적의 자동화 방안을 함께 설계할 수 있습니다
             </p>
           </div>
         </div>
@@ -310,6 +302,25 @@ export default function Step5AIConsultant({ tasks, workshopId, onComplete, onPre
                 ))}
               </div>
             </div>
+
+            {/* 네비게이션 버튼 */}
+            <div className="flex items-center justify-between gap-4 relative mt-16">
+              <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                <div className="w-64 h-64 bg-gradient-to-r from-indigo-500/30 via-purple-500/30 to-pink-500/30 rounded-full blur-3xl animate-pulse"></div>
+              </div>
+
+              <button
+                onClick={onPrevious}
+                className="relative group inline-flex items-center px-8 py-4 backdrop-blur-md bg-white/60 border-2 border-slate-300 text-slate-700 text-lg font-bold rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 hover:-translate-y-0.5"
+              >
+                <svg className="mr-3 w-5 h-5 group-hover:-translate-x-1 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M11 17l-5-5m0 0l5-5m-5 5h12" />
+                </svg>
+                <span className="relative">이전</span>
+              </button>
+
+              <div></div>
+            </div>
           </>
         ) : (
           // AI 컨설턴트 대화 화면
@@ -339,10 +350,11 @@ export default function Step5AIConsultant({ tasks, workshopId, onComplete, onPre
                   key={message.id}
                   className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
                 >
-                  <div className={`max-w-[70%] ${message.role === 'user'
+                  <div className={`max-w-[70%] ${
+                    message.role === 'user'
                       ? 'backdrop-blur-xl bg-gradient-to-r from-indigo-600 to-purple-600 text-white'
                       : 'backdrop-blur-xl bg-white/80 text-slate-800 border border-white/60'
-                    } rounded-2xl px-5 py-3 shadow-lg`}>
+                  } rounded-2xl px-5 py-3 shadow-lg`}>
                     {message.role === 'consultant' && (
                       <div className="flex items-center gap-2 mb-2 pb-2 border-b border-slate-200">
                         <div className="w-8 h-8 bg-gradient-to-br from-indigo-500 to-purple-500 rounded-full flex items-center justify-center text-white text-sm font-bold">
@@ -395,21 +407,33 @@ export default function Step5AIConsultant({ tasks, workshopId, onComplete, onPre
               </div>
 
               {messages.length >= 2 && (
-                <div className="mt-4 flex justify-between gap-4">
+                <div className="mt-4 flex items-center justify-between gap-4 relative">
+                  <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                    <div className="w-64 h-64 bg-gradient-to-r from-indigo-500/30 via-purple-500/30 to-pink-500/30 rounded-full blur-3xl animate-pulse"></div>
+                  </div>
+
                   <button
                     onClick={onPrevious}
-                    className="px-6 py-3 bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold rounded-xl transition-all flex items-center gap-2"
+                    className="relative group inline-flex items-center px-8 py-4 backdrop-blur-md bg-white/60 border-2 border-slate-300 text-slate-700 text-lg font-bold rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 hover:-translate-y-0.5"
                   >
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                    <svg className="mr-3 w-5 h-5 group-hover:-translate-x-1 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M11 17l-5-5m0 0l5-5m-5 5h12" />
                     </svg>
-                    이전 단계
+                    <span className="relative">이전</span>
                   </button>
+
                   <button
                     onClick={() => onComplete(selectedTask!, { messages })}
-                    className="flex-1 py-3 bg-gradient-to-r from-emerald-600 to-green-600 text-white rounded-xl font-semibold hover:shadow-xl hover:scale-[1.02] transition-all"
+                    className="relative group inline-flex items-center px-12 py-4 backdrop-blur-md bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 text-white text-lg font-bold rounded-2xl overflow-hidden shadow-2xl shadow-indigo-400/50 hover:shadow-purple-500/60 transition-all duration-500 hover:scale-105 hover:-translate-y-0.5 border-2 border-white/20"
                   >
-                    대화 완료 - 워크플로우 설계로 이동
+                    <div className="absolute inset-0 bg-gradient-to-r from-pink-600 via-purple-600 to-indigo-600 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                    <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                      <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 animate-shimmer"></div>
+                    </div>
+                    <span className="relative">다음</span>
+                    <svg className="relative ml-3 w-5 h-5 group-hover:translate-x-1 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                    </svg>
                   </button>
                 </div>
               )}
