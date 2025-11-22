@@ -570,7 +570,7 @@ export default function Step4TaskExtraction({ workshopId, domains, onNext, manua
     setError('');
 
     try {
-      const response = await fetch(`http://localhost:3001/api/workshops/${workshopId}/extract-tasks`, {
+      const response = await fetch(`http://localhost:4000/api/workshops/${workshopId}/extract-tasks`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ manualInput }),
@@ -584,8 +584,9 @@ export default function Step4TaskExtraction({ workshopId, domains, onNext, manua
       const data = await response.json();
 
       if (data.success) {
-        setExtractedTasks(data.tasks);
-        if (data.tasks.length === 0) {
+        const tasks = data.data?.tasks || data.tasks || [];
+        setExtractedTasks(tasks);
+        if (tasks.length === 0) {
           setError('추출된 업무가 없습니다. 문서나 입력 내용을 확인해주세요.');
         }
       } else {
@@ -744,19 +745,19 @@ export default function Step4TaskExtraction({ workshopId, domains, onNext, manua
         {/* Stats Cards - Refined Glassmorphism */}
         <div className="grid grid-cols-4 gap-6 mb-12">
           <div className="bg-white/80 backdrop-blur-xl border border-slate-200/60 rounded-2xl p-6 shadow-lg shadow-slate-200/50 text-center group hover:scale-[1.02] transition-all duration-300">
-            <div className="text-4xl font-black text-slate-900 mb-2 group-hover:text-blue-600 transition-colors">{extractedTasks.length}</div>
+            <div className="text-4xl font-black text-slate-900 mb-2 group-hover:text-blue-600 transition-colors">{extractedTasks?.length || 0}</div>
             <div className="text-sm font-bold text-slate-500 uppercase tracking-wide">Total Tasks</div>
           </div>
           <div className="bg-white/80 backdrop-blur-xl border border-slate-200/60 rounded-2xl p-6 shadow-lg shadow-slate-200/50 text-center group hover:scale-[1.02] transition-all duration-300">
-            <div className="text-4xl font-black text-green-600 mb-2">{extractedTasks.filter(t => t.automationPotential === 'High').length}</div>
+            <div className="text-4xl font-black text-green-600 mb-2">{extractedTasks?.filter(t => t.automationPotential === 'High').length || 0}</div>
             <div className="text-sm font-bold text-slate-500 uppercase tracking-wide">Automation High</div>
           </div>
           <div className="bg-white/80 backdrop-blur-xl border border-slate-200/60 rounded-2xl p-6 shadow-lg shadow-slate-200/50 text-center group hover:scale-[1.02] transition-all duration-300">
-            <div className="text-4xl font-black text-blue-600 mb-2">{extractedTasks.filter(t => t.source === 'uploaded').length}</div>
+            <div className="text-4xl font-black text-blue-600 mb-2">{extractedTasks?.filter(t => t.source === 'uploaded').length || 0}</div>
             <div className="text-sm font-bold text-slate-500 uppercase tracking-wide">From Docs</div>
           </div>
           <div className="bg-white/80 backdrop-blur-xl border border-slate-200/60 rounded-2xl p-6 shadow-lg shadow-slate-200/50 text-center group hover:scale-[1.02] transition-all duration-300">
-            <div className="text-4xl font-black text-purple-600 mb-2">{extractedTasks.filter(t => t.source === 'manual').length}</div>
+            <div className="text-4xl font-black text-purple-600 mb-2">{extractedTasks?.filter(t => t.source === 'manual').length || 0}</div>
             <div className="text-sm font-bold text-slate-500 uppercase tracking-wide">Manual Input</div>
           </div>
         </div>

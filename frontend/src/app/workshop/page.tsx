@@ -618,6 +618,229 @@ export default function WorkshopPage() {
       setTimeout(() => setCurrentStep(10), 500);
     } else if (currentStep === 10) {
       // Step 10: 워크플로우 설계 - Step11(자동화 솔루션)로 이동
+      // 자동화 솔루션 데이터 자동 생성
+      setAutomationSolutions([
+        {
+          taskTitle: '고객 이메일 확인 및 분류',
+          priority: 'high',
+          timeSavingHours: 12,
+          difficulty: 'medium',
+          aiPrompt: `당신은 고객 이메일을 분석하는 AI 어시스턴트입니다.
+
+입력: 고객 이메일 내용
+출력: 분류 결과 (긴급/일반/기술)
+
+분류 기준:
+- 긴급: "긴급", "urgent", "ASAP" 등의 키워드 포함 또는 계약 관련 문의
+- 기술: 기술적 문제, 버그, 오류 관련 문의
+- 일반: 그 외 일반적인 문의
+
+각 이메일을 분석하여 적절한 카테고리로 분류하고, 우선순위를 1-5점으로 평가하세요.`,
+          n8nWorkflow: {
+            nodes: [
+              { id: '1', type: 'Email Trigger', name: '이메일 수신' },
+              { id: '2', type: 'OpenAI', name: 'AI 분류' },
+              { id: '3', type: 'Switch', name: '카테고리 분기' },
+              { id: '4', type: 'Slack', name: '긴급 알림' },
+              { id: '5', type: 'Database', name: 'DB 저장' }
+            ],
+            connections: {
+              '1': { '2': 'main' },
+              '2': { '3': 'main' },
+              '3': { '4': 'urgent', '5': 'normal' }
+            }
+          },
+          pythonScript: `# 고객 이메일 자동 분류 스크립트
+import openai
+import pandas as pd
+from datetime import datetime
+
+def classify_email(email_content):
+    """
+    OpenAI API를 사용하여 이메일 분류
+    """
+    prompt = """당신은 고객 이메일을 분석하는 AI 어시스턴트입니다.
+    
+입력: 고객 이메일 내용
+출력: JSON 형식 { "category": "긴급/일반/기술", "priority": 1-5 }
+    
+이메일 내용:
+{email_content}
+"""
+    
+    response = openai.ChatCompletion.create(
+        model="gpt-4",
+        messages=[{"role": "user", "content": prompt.format(email_content=email_content)}]
+    )
+    
+    return response.choices[0].message.content
+
+# 사용 예시
+if __name__ == "__main__":
+    email = "긴급: 시스템 오류로 로그인이 안됩니다"
+    result = classify_email(email)
+    print(f"분류 결과: {result}")
+`
+        },
+        {
+          taskTitle: '주간 데이터 수집 및 정제',
+          priority: 'medium',
+          timeSavingHours: 8,
+          difficulty: 'low',
+          aiPrompt: `당신은 데이터 분석 전문가입니다.
+
+입력: 원본 데이터 (CSV, Excel)
+작업: 데이터 정제 및 변환
+출력: 정제된 데이터 + 요약 리포트
+
+수행 단계:
+1. 결측치 처리 (평균값 또는 중앙값으로 대체)
+2. 이상치 탐지 및 제거 (IQR 방식)
+3. 데이터 타입 변환
+4. 중복 제거
+5. 요약 통계 생성`,
+          n8nWorkflow: {
+            nodes: [
+              { id: '1', type: 'Schedule', name: '주간 스케줄러' },
+              { id: '2', type: 'Database', name: 'DB 조회' },
+              { id: '3', type: 'Python', name: '데이터 정제' },
+              { id: '4', type: 'Excel', name: 'Excel 저장' },
+              { id: '5', type: 'Email', name: '완료 알림' }
+            ],
+            connections: {
+              '1': { '2': 'main' },
+              '2': { '3': 'main' },
+              '3': { '4': 'main' },
+              '4': { '5': 'main' }
+            }
+          },
+          pythonScript: `# 주간 데이터 자동 수집 및 정제
+import pandas as pd
+import numpy as np
+from sqlalchemy import create_engine
+
+def clean_weekly_data():
+    """
+    주간 데이터 자동 수집 및 정제
+    """
+    # 1. 데이터베이스 연결
+    engine = create_engine('postgresql://user:pass@localhost/db')
+    
+    # 2. 데이터 조회
+    query = """
+    SELECT * FROM sales_data 
+    WHERE date >= CURRENT_DATE - INTERVAL '7 days'
+    """
+    df = pd.read_sql(query, engine)
+    
+    # 3. 결측치 처리
+    df.fillna(df.mean(), inplace=True)
+    
+    # 4. 이상치 제거 (IQR 방식)
+    Q1 = df.quantile(0.25)
+    Q3 = df.quantile(0.75)
+    IQR = Q3 - Q1
+    df = df[~((df < (Q1 - 1.5 * IQR)) | (df > (Q3 + 1.5 * IQR))).any(axis=1)]
+    
+    # 5. Excel 저장
+    df.to_excel('weekly_report.xlsx', index=False)
+    
+    return df
+
+if __name__ == "__main__":
+    cleaned_data = clean_weekly_data()
+    print(f"정제 완료: {len(cleaned_data)} 행")
+`
+        },
+        {
+          taskTitle: '월간 보고서 작성',
+          priority: 'low',
+          timeSavingHours: 4,
+          difficulty: 'high',
+          aiPrompt: `당신은 비즈니스 분석가입니다.
+
+입력: 월간 성과 데이터
+작업: 인사이트 도출 및 보고서 작성
+출력: 경영진용 요약 보고서
+
+보고서 구성:
+1. 핵심 지표 요약 (KPI)
+2. 전월 대비 증감 분석
+3. 주요 성과 및 이슈
+4. 다음 달 전망 및 제언
+
+톤: 전문적이고 간결하게`,
+          n8nWorkflow: {
+            nodes: [
+              { id: '1', type: 'Schedule', name: '월말 트리거' },
+              { id: '2', type: 'Database', name: '월간 데이터' },
+              { id: '3', type: 'OpenAI', name: 'AI 분석' },
+              { id: '4', type: 'Google Docs', name: '보고서 생성' },
+              { id: '5', type: 'Email', name: '경영진 발송' }
+            ],
+            connections: {
+              '1': { '2': 'main' },
+              '2': { '3': 'main' },
+              '3': { '4': 'main' },
+              '4': { '5': 'main' }
+            }
+          },
+          pythonScript: `# 월간 보고서 자동 생성
+import openai
+import pandas as pd
+from docx import Document
+from datetime import datetime
+
+def generate_monthly_report(data):
+    """
+    AI를 활용한 월간 보고서 자동 생성
+    """
+    # 1. 데이터 요약
+    summary = {
+        'total_revenue': data['revenue'].sum(),
+        'avg_satisfaction': data['satisfaction'].mean(),
+        'growth_rate': ((data['revenue'].iloc[-1] - data['revenue'].iloc[0]) / data['revenue'].iloc[0]) * 100
+    }
+    
+    # 2. AI 인사이트 생성
+    prompt = f"""다음 월간 성과 데이터를 분석하여 경영진용 보고서를 작성하세요:
+
+총 매출: {summary['total_revenue']:,.0f}원
+평균 만족도: {summary['avg_satisfaction']:.1f}/5.0
+성장률: {summary['growth_rate']:.1f}%
+
+보고서 형식:
+1. 핵심 요약
+2. 주요 성과
+3. 개선 필요 사항
+4. 다음 달 전망
+"""
+    
+    response = openai.ChatCompletion.create(
+        model="gpt-4",
+        messages=[{"role": "user", "content": prompt}]
+    )
+    
+    # 3. Word 문서 생성
+    doc = Document()
+    doc.add_heading(f'{datetime.now().strftime("%Y년 %m월")} 월간 보고서', 0)
+    doc.add_paragraph(response.choices[0].message.content)
+    doc.save('monthly_report.docx')
+    
+    return response.choices[0].message.content
+
+# 사용 예시
+if __name__ == "__main__":
+    # 샘플 데이터
+    data = pd.DataFrame({
+        'revenue': [1000000, 1200000, 1100000, 1300000],
+        'satisfaction': [4.2, 4.5, 4.3, 4.6]
+    })
+    report = generate_monthly_report(data)
+    print("보고서 생성 완료!")
+`
+        }
+      ]);
       setTimeout(() => setCurrentStep(11), 500);
     } else if (currentStep === 11) {
       // Step 11: 자동화 솔루션 - 마지막 단계이므로 완료 메시지
@@ -680,7 +903,7 @@ export default function WorkshopPage() {
 
   // Socket.IO 연결 설정
   useEffect(() => {
-    const socketConnection = io('http://localhost:3001');
+    const socketConnection = io('http://localhost:4000');
     setSocket(socketConnection);
 
     // Socket 이벤트 핸들러들
@@ -867,7 +1090,7 @@ export default function WorkshopPage() {
     formData.append('workshopId', workshop.id);
 
     try {
-      const response = await fetch('http://localhost:3001/api/upload', {
+      const response = await fetch('http://localhost:4000/api/upload', {
         method: 'POST',
         body: formData,
       });
@@ -921,7 +1144,7 @@ export default function WorkshopPage() {
         setAnalysisStatus('텍스트 분석 중...');
         setAnalysisProgress(50);
 
-        const response = await fetch('http://localhost:3001/api/analyze-text', {
+        const response = await fetch('http://localhost:4000/api/analyze-text', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -1130,7 +1353,7 @@ export default function WorkshopPage() {
     formData.append('workshopId', workshopId);
 
     try {
-      const response = await fetch('http://localhost:3001/api/upload', {
+      const response = await fetch('http://localhost:4000/api/upload', {
         method: 'POST',
         body: formData,
       });
@@ -1162,7 +1385,7 @@ export default function WorkshopPage() {
     setError('');
 
     try {
-      const response = await fetch('http://localhost:3001/api/workshops', {
+      const response = await fetch('http://localhost:4000/api/workshops', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -1298,14 +1521,30 @@ export default function WorkshopPage() {
         <div className="absolute -bottom-8 left-20 w-96 h-96 bg-indigo-300 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-4000"></div>
       </div>
 
-      {/* Progress header - Simple & Modern Design */}
-      <div className="relative backdrop-blur-2xl bg-gradient-to-r from-slate-900/95 via-indigo-900/95 to-slate-900/95 border-b border-white/10 shadow-xl">
+      {/* Progress header - Clean & Sensory Design */}
+      <div className="relative backdrop-blur-xl bg-white/80 border-b border-slate-200/50 shadow-sm z-40">
         <div className="max-w-7xl mx-auto px-6 py-3">
           <div className="max-w-6xl mx-auto">
             <div className="grid grid-cols-2 gap-4">
               {[
-                { title: '우리 팀 일 분석하기', range: [1, 7], icon: '📊', activeColor: 'from-emerald-600 to-green-600', completedColor: 'from-emerald-700 to-green-700' },
-                { title: 'AI로 일 자동화하기', range: [8, 11], icon: '🤖', activeColor: 'from-purple-600 to-indigo-600', completedColor: 'from-purple-700 to-indigo-700' }
+                {
+                  title: '우리 팀 일 분석하기',
+                  range: [1, 7],
+                  icon: '📊',
+                  activeGradient: 'from-emerald-50 to-teal-50',
+                  activeBorder: 'border-emerald-200',
+                  activeText: 'text-emerald-900',
+                  barColor: 'bg-emerald-500'
+                },
+                {
+                  title: 'AI로 일 자동화하기',
+                  range: [8, 11],
+                  icon: '🤖',
+                  activeGradient: 'from-indigo-50 to-purple-50',
+                  activeBorder: 'border-indigo-200',
+                  activeText: 'text-indigo-900',
+                  barColor: 'bg-indigo-500'
+                }
               ].map((section, index) => {
                 const isActive = currentStep >= section.range[0] && currentStep <= section.range[1];
                 const isCompleted = currentStep > section.range[1];
@@ -1313,38 +1552,37 @@ export default function WorkshopPage() {
                 const progress = isActive ? Math.round(((currentStep - section.range[0] + 1) / (section.range[1] - section.range[0] + 1)) * 100) : (isCompleted ? 100 : 0);
 
                 return (
-                  <div key={index} className={`backdrop-blur-md p-3 rounded-xl transition-all ${
-                    isActive ? `bg-gradient-to-br ${section.activeColor} text-white shadow-lg shadow-${index === 0 ? 'emerald' : 'purple'}-500/30` :
-                    isCompleted ? `bg-gradient-to-br ${section.completedColor} text-white shadow-md` :
-                    'bg-white/10 text-gray-300 hover:bg-white/15'
-                  }`}>
+                  <div key={index} className={`backdrop-blur-md p-3 rounded-xl transition-all border ${isActive
+                      ? `bg-gradient-to-br ${section.activeGradient} ${section.activeBorder} ${section.activeText} shadow-sm`
+                      : isCompleted
+                        ? 'bg-emerald-50/50 border-emerald-100 text-emerald-600/80'
+                        : 'bg-transparent border-transparent text-slate-400 hover:bg-slate-50'
+                    }`}>
                     <div className="flex items-center justify-between gap-4">
                       {/* 왼쪽: 섹션명 */}
                       <div className="flex items-center gap-2 flex-shrink-0">
-                        <span className="text-xl">{section.icon}</span>
+                        <span className="text-xl filter drop-shadow-sm">{section.icon}</span>
                         <h3 className="font-bold text-sm whitespace-nowrap">{section.title}</h3>
                       </div>
 
                       {/* 중앙: 현재 step 정보 (활성화된 섹션만) */}
                       {isActive && currentStepInfo && (
-                        <div className="flex items-center gap-2 flex-1 min-w-0 px-3 border-l border-white/20">
+                        <div className="flex items-center gap-2 flex-1 min-w-0 px-3 border-l border-slate-200/60">
                           <span className="text-sm">{currentStepInfo.icon}</span>
-                          <span className="text-xs font-medium truncate">{currentStepInfo.title}</span>
+                          <span className="text-xs font-medium truncate opacity-90">{currentStepInfo.title}</span>
                         </div>
                       )}
 
                       {/* 우측: 진행률 바 + 퍼센트 */}
                       <div className="flex items-center gap-3 flex-shrink-0">
-                        <div className="w-24 h-1.5 bg-white/30 rounded-full overflow-hidden">
+                        <div className="w-24 h-1.5 bg-slate-200 rounded-full overflow-hidden">
                           <div
-                            className="h-full bg-white rounded-full transition-all duration-500 shadow-sm"
+                            className={`h-full transition-all duration-500 ease-out rounded-full ${isActive ? section.barColor : isCompleted ? 'bg-emerald-400/60' : 'bg-slate-300'}`}
                             style={{ width: `${progress}%` }}
                           />
                         </div>
-                        <span className="text-xs font-semibold w-10 text-right">
-                          {currentStep >= section.range[0] && currentStep <= section.range[1]
-                            ? `${currentStep}/${section.range[1]}`
-                            : isCompleted ? '✓' : '–'}
+                        <span className={`text-xs font-bold w-8 text-right ${isActive ? 'opacity-100' : 'opacity-60'}`}>
+                          {progress}%
                         </span>
                       </div>
                     </div>
@@ -2249,37 +2487,37 @@ export default function WorkshopPage() {
                   {/* Input area */}
                   <div className="bg-white rounded-3xl p-8 mb-6 shadow-lg border border-slate-200">
                     <h3 className="text-xl font-bold text-slate-900 mb-6 tracking-tight">업무 영역 입력</h3>
-                  <div className="space-y-4">
-                    {workshop.domains.map((domain, index) => (
-                      <div key={index} className="flex items-center gap-4">
-                        <div className="w-10 h-10 bg-gradient-to-br from-indigo-600 to-purple-600 rounded-xl flex items-center justify-center text-white font-bold shadow-md flex-shrink-0">
-                          {index + 1}
+                    <div className="space-y-4">
+                      {workshop.domains.map((domain, index) => (
+                        <div key={index} className="flex items-center gap-4">
+                          <div className="w-10 h-10 bg-gradient-to-br from-indigo-600 to-purple-600 rounded-xl flex items-center justify-center text-white font-bold shadow-md flex-shrink-0">
+                            {index + 1}
+                          </div>
+                          <div className="flex-1">
+                            <input
+                              type="text"
+                              value={domain}
+                              onChange={(e) => {
+                                const newDomains = [...workshop.domains];
+                                newDomains[index] = e.target.value;
+                                setWorkshop(prev => ({ ...prev, domains: newDomains }));
+                              }}
+                              placeholder="예: 고객 문의 처리, 매출 데이터 분석, 월간 보고서 작성"
+                              className="w-full px-5 py-4 backdrop-blur-sm bg-white/90 border-2 border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-400/50 focus:border-indigo-400 text-base transition-all"
+                            />
+                          </div>
+                          {workshop.domains.length > 1 && (
+                            <button
+                              onClick={() => removeDomain(index)}
+                              className="w-10 h-10 text-red-500 hover:bg-red-50 backdrop-blur-sm rounded-xl flex items-center justify-center font-bold text-xl transition-colors"
+                            >
+                              ×
+                            </button>
+                          )}
                         </div>
-                        <div className="flex-1">
-                          <input
-                            type="text"
-                            value={domain}
-                            onChange={(e) => {
-                              const newDomains = [...workshop.domains];
-                              newDomains[index] = e.target.value;
-                              setWorkshop(prev => ({ ...prev, domains: newDomains }));
-                            }}
-                            placeholder="예: 고객 문의 처리, 매출 데이터 분석, 월간 보고서 작성"
-                            className="w-full px-5 py-4 backdrop-blur-sm bg-white/90 border-2 border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-400/50 focus:border-indigo-400 text-base transition-all"
-                          />
-                        </div>
-                        {workshop.domains.length > 1 && (
-                          <button
-                            onClick={() => removeDomain(index)}
-                            className="w-10 h-10 text-red-500 hover:bg-red-50 backdrop-blur-sm rounded-xl flex items-center justify-center font-bold text-xl transition-colors"
-                          >
-                            ×
-                          </button>
-                        )}
-                      </div>
-                    ))}
+                      ))}
+                    </div>
                   </div>
-                </div>
 
                   {/* Guide Section */}
                   <div className="bg-gradient-to-br from-slate-50 to-emerald-50/50 rounded-3xl p-8 mb-8 border border-slate-200">
