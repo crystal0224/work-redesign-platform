@@ -6,7 +6,7 @@ import { arrayMove } from '@dnd-kit/sortable';
 
 interface WorkflowNode {
   id: string;
-  type: 'human' | 'ai' | 'together';
+  type: 'human' | 'ai' | 'hybrid';
   title: string;
   description: string;
   details: string[];
@@ -45,7 +45,7 @@ export default function Step6WorkflowDesign({
     },
     {
       id: '3',
-      type: 'together',
+      type: 'hybrid',
       title: '초안 작성 및 검토',
       description: 'AI가 초안을 작성하고 사람이 검토',
       details: ['AI: 분석 결과 기반 문서 초안 생성', '사람: 내용 검토 및 수정', '사람: 최종 승인'],
@@ -98,27 +98,27 @@ export default function Step6WorkflowDesign({
     switch (type) {
       case 'human':
         return {
-          bg: 'bg-gradient-to-br from-slate-500 to-slate-600',
-          border: 'border-slate-400',
+          bg: 'bg-gradient-to-br from-blue-500 to-indigo-600',
+          border: 'border-blue-400',
           icon: '👤',
-          label: 'Human',
-          iconBg: 'bg-slate-500',
+          label: '사람',
+          iconBg: 'bg-blue-400',
         };
       case 'ai':
         return {
-          bg: 'bg-gradient-to-br from-purple-500 to-purple-600',
+          bg: 'bg-gradient-to-br from-purple-500 to-pink-600',
           border: 'border-purple-400',
           icon: '🤖',
           label: 'AI',
-          iconBg: 'bg-purple-500',
+          iconBg: 'bg-purple-400',
         };
-      case 'together':
+      case 'hybrid':
         return {
-          bg: 'bg-gradient-to-br from-blue-500 to-blue-600',
-          border: 'border-blue-400',
+          bg: 'bg-gradient-to-br from-emerald-500 to-teal-600',
+          border: 'border-emerald-400',
           icon: '🤝',
-          label: 'Together',
-          iconBg: 'bg-blue-500',
+          label: '협업',
+          iconBg: 'bg-emerald-400',
         };
       default:
         return {
@@ -159,90 +159,50 @@ export default function Step6WorkflowDesign({
   };
 
   return (
-    <div className="relative min-h-screen w-full">
-      {/* Background matching Step8 */}
-      <div className="absolute inset-0 fixed bg-gradient-to-br from-slate-50 via-purple-50/30 to-blue-50/20">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_30%,rgba(147,51,234,0.06)_0%,transparent_50%)] bg-[radial-gradient(circle_at_80%_70%,rgba(59,130,246,0.06)_0%,transparent_50%)]"></div>
+    <div className="relative min-h-screen -m-6 p-6 animate-fadeIn">
+      {/* 애니메이션 배경 그라디언트 */}
+      <div className="absolute inset-0 bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 overflow-hidden">
+        <div className="absolute top-0 -left-4 w-96 h-96 bg-purple-300 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob"></div>
+        <div className="absolute top-0 -right-4 w-96 h-96 bg-blue-300 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob animation-delay-2000"></div>
+        <div className="absolute -bottom-8 left-20 w-96 h-96 bg-indigo-300 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob animation-delay-4000"></div>
       </div>
 
-      <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        {/* Header */}
-        <div className="text-center mb-12">
-          <div className="mb-4">
-            <span className="text-sm font-semibold text-purple-600 bg-purple-50 px-4 py-2 rounded-full">
-              🤖 AI로 일 자동화하기
-            </span>
-          </div>
-          <div className="inline-flex items-center gap-2 px-3 py-1 bg-white/80 backdrop-blur-sm border border-purple-200/50 rounded-full mb-6">
-            <span className="text-xs font-medium text-purple-700 uppercase tracking-wide">Step 10</span>
-          </div>
-          <h2 className="text-4xl md:text-5xl font-black text-slate-900 mb-4 tracking-tight">
-            최종 워크플로우 설계
-          </h2>
-          <p className="text-lg text-slate-600 max-w-3xl mx-auto leading-relaxed">
-            지금까지 학습한 내용을 바탕으로 실제 업무의 자동화 워크플로우를 설계합니다.
-          </p>
-        </div>
-
-        {/* 가이드 섹션 */}
-        <div className="max-w-5xl mx-auto mb-12 bg-gradient-to-r from-indigo-50/80 to-purple-50/80 rounded-2xl p-8 border-2 border-indigo-200/50 shadow-lg">
-          <div className="mb-6">
-            <h3 className="text-2xl font-black text-indigo-900 mb-4 flex items-center gap-2">
-              <span className="text-3xl">📋</span>
-              워크플로우 설계 가이드
-            </h3>
-            <p className="text-base text-slate-700 leading-relaxed mb-4">
-              지금까지 학습한 내용을 바탕으로 실제 업무의 자동화 워크플로우를 설계합니다.<br />
-              각 단계를 <span className="font-bold text-indigo-900">Human / AI / Together</span>로 배치하여 최적의 업무 흐름을 만드세요.
+      {/* 메인 컨텐츠 */}
+      <div className="relative z-10 max-w-6xl mx-auto py-20">
+        {/* 헤더 */}
+        <div className="backdrop-blur-xl bg-white/40 border border-white/60 rounded-3xl p-8 mb-16 shadow-2xl shadow-indigo-200/50 hover:shadow-indigo-300/60 transition-all duration-500">
+          <div className="text-center">
+            <div className="inline-flex items-center gap-3 mb-4 px-6 py-3 backdrop-blur-md bg-gradient-to-r from-indigo-500/20 to-purple-500/20 border border-indigo-300/40 rounded-full">
+              <div className="w-2 h-2 bg-indigo-500 rounded-full animate-pulse"></div>
+              <span className="text-indigo-700 font-semibold text-sm tracking-wide">STEP 6</span>
+            </div>
+            <h2 className="text-3xl font-bold text-slate-900 mb-3 tracking-tight">
+              워크플로우 설계
+            </h2>
+            <p className="text-lg text-slate-700 leading-relaxed max-w-3xl mx-auto mb-2">
+              업무의 새로운 워크플로우를 설계합니다
+            </p>
+            <p className="text-base text-slate-600 leading-relaxed max-w-3xl mx-auto">
+              노드를 드래그하여 순서를 변경하고, 클릭하여 상세 내용을 수정할 수 있습니다
             </p>
           </div>
+        </div>
 
-          <div className="space-y-4 mb-6">
-            <div className="bg-white/60 rounded-xl p-4">
-              <h4 className="font-bold text-slate-900 mb-2 flex items-center gap-2">
-                <span className="text-lg">🔧</span>
-                사용 방법
-              </h4>
-              <ul className="space-y-2 text-sm text-slate-700">
-                <li className="flex items-start gap-2">
-                  <span className="text-indigo-600 font-bold">1.</span>
-                  <span><span className="font-semibold">단계 추가/삭제:</span> "단계 추가" 버튼으로 새 단계를 만들고, 각 카드의 삭제 버튼으로 불필요한 단계를 제거하세요</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-indigo-600 font-bold">2.</span>
-                  <span><span className="font-semibold">단계 수정:</span> 각 카드의 수정 버튼을 클릭하여 제목, 설명, 담당자(Human/AI/Together)를 변경하세요</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-indigo-600 font-bold">3.</span>
-                  <span><span className="font-semibold">순서 조정:</span> 카드를 드래그 앤 드롭하여 업무 순서를 변경하세요</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-indigo-600 font-bold">4.</span>
-                  <span><span className="font-semibold">세부 활동 작성:</span> 각 단계의 구체적인 활동을 작성하여 실행 가능한 워크플로우를 완성하세요</span>
-                </li>
-              </ul>
-            </div>
-          </div>
-
-          {/* 범례 */}
-          <div className="bg-white/60 rounded-xl p-4">
-            <h4 className="font-bold text-slate-900 mb-3 flex items-center gap-2">
-              <span className="text-lg">🏷️</span>
-              작업 유형
-            </h4>
-            <div className="flex flex-wrap gap-4">
-              {['human', 'ai', 'together'].map(type => {
-                const style = getNodeStyle(type);
-                return (
-                  <div key={type} className="flex items-center gap-2">
-                    <div className={`w-8 h-8 ${style.iconBg} rounded-lg flex items-center justify-center text-white shadow-md`}>
-                      {style.icon}
-                    </div>
-                    <span className="text-sm font-semibold text-slate-700">{style.label}</span>
+        {/* 범례 */}
+        <div className="backdrop-blur-xl bg-white/40 border border-white/60 rounded-2xl p-6 mb-8 shadow-xl">
+          <h3 className="text-sm font-semibold text-slate-700 mb-4">작업 유형</h3>
+          <div className="flex flex-wrap gap-4">
+            {['human', 'ai', 'hybrid'].map(type => {
+              const style = getNodeStyle(type);
+              return (
+                <div key={type} className="flex items-center gap-2">
+                  <div className={`w-8 h-8 ${style.iconBg} rounded-lg flex items-center justify-center text-white shadow-md`}>
+                    {style.icon}
                   </div>
-                );
-              })}
-            </div>
+                  <span className="text-sm font-medium text-slate-700">{style.label}</span>
+                </div>
+              );
+            })}
           </div>
         </div>
 
@@ -350,30 +310,33 @@ export default function Step6WorkflowDesign({
           </DndContext>
         </div>
 
-        {/* Navigation Buttons */}
-        <div className="flex justify-center gap-6 mt-16">
-          {onPrevious && (
-            <button
-              onClick={onPrevious}
-              className="group relative px-8 py-4 bg-white border-2 border-slate-200 text-slate-700 font-bold rounded-2xl hover:border-blue-300 hover:text-blue-600 hover:shadow-xl transition-all duration-300"
-            >
-              <span className="flex items-center gap-2">
-                <svg className="w-5 h-5 group-hover:-translate-x-1 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M11 17l-5-5m0 0l5-5m-5 5h12" />
-                </svg>
-                이전 단계
-              </span>
-            </button>
-          )}
+        {/* 네비게이션 버튼 */}
+        <div className="flex items-center justify-between gap-4 relative mt-16">
+          <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+            <div className="w-64 h-64 bg-gradient-to-r from-indigo-500/30 via-purple-500/30 to-pink-500/30 rounded-full blur-3xl animate-pulse"></div>
+          </div>
+
+          <button
+            onClick={onPrevious}
+            className="relative group inline-flex items-center px-8 py-4 backdrop-blur-md bg-white/60 border-2 border-slate-300 text-slate-700 text-lg font-bold rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 hover:-translate-y-0.5"
+          >
+            <svg className="mr-3 w-5 h-5 group-hover:-translate-x-1 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M11 17l-5-5m0 0l5-5m-5 5h12" />
+            </svg>
+            <span className="relative">이전</span>
+          </button>
 
           <button
             onClick={() => onComplete(nodes)}
-            className="group relative z-50 cursor-pointer inline-flex items-center justify-center gap-4 px-12 py-4 bg-slate-900 text-white text-xl font-bold rounded-2xl overflow-hidden shadow-2xl shadow-slate-900/30 hover:shadow-2xl hover:shadow-blue-900/30 transition-all duration-500 hover:scale-[1.02] hover:-translate-y-1"
+            className="relative group inline-flex items-center px-12 py-4 backdrop-blur-md bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 text-white text-lg font-bold rounded-2xl overflow-hidden shadow-2xl shadow-indigo-400/50 hover:shadow-purple-500/60 transition-all duration-500 hover:scale-105 hover:-translate-y-0.5 border-2 border-white/20"
           >
-            <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-indigo-600 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-            <span className="relative">워크숍 완료</span>
-            <svg className="relative w-5 h-5 group-hover:translate-x-1 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+            <div className="absolute inset-0 bg-gradient-to-r from-pink-600 via-purple-600 to-indigo-600 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+            <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+              <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 animate-shimmer"></div>
+            </div>
+            <span className="relative">다음</span>
+            <svg className="relative ml-3 w-5 h-5 group-hover:translate-x-1 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M13 7l5 5m0 0l-5 5m5-5H6" />
             </svg>
           </button>
         </div>
@@ -391,16 +354,17 @@ export default function Step6WorkflowDesign({
                 <div>
                   <label className="block text-sm font-medium text-slate-700 mb-2">작업 유형</label>
                   <div className="grid grid-cols-3 gap-3">
-                    {(['human', 'ai', 'together'] as const).map(type => {
+                    {(['human', 'ai', 'hybrid'] as const).map(type => {
                       const style = getNodeStyle(type);
                       return (
                         <button
                           key={type}
                           onClick={() => setSelectedNode({ ...selectedNode, type })}
-                          className={`p-4 border-2 rounded-xl transition-all ${selectedNode.type === type
+                          className={`p-4 border-2 rounded-xl transition-all ${
+                            selectedNode.type === type
                               ? `${style.border} bg-gradient-to-br ${style.bg.replace('from-', 'from-').replace('to-', 'to-')}/10 shadow-lg`
                               : 'border-slate-200 bg-white hover:border-slate-300'
-                            }`}
+                          }`}
                         >
                           <div className="text-3xl mb-2">{style.icon}</div>
                           <div className="text-sm font-medium text-slate-900">{style.label}</div>
