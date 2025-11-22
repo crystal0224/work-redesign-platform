@@ -543,41 +543,43 @@ export default function Step8WorkflowEducation({ onNext, onBack }: Step8Workflow
             </div>
 
             {/* Workflow Steps */}
-            <div className="relative pl-16 mb-8">
-              <div className="absolute left-6 top-0 bottom-0 w-0.5 bg-gradient-to-b from-transparent via-blue-200 to-transparent"></div>
+            <div className="relative pl-12 mb-6">
+              <div className="absolute left-5 top-0 bottom-0 w-0.5 bg-gradient-to-b from-transparent via-blue-200 to-transparent"></div>
 
               {steps.map((step) => (
-                <div key={step.id} className="flex gap-6 mb-8 relative">
-                  <div className={`w-14 h-14 rounded-full flex items-center justify-center text-2xl border-4 bg-white flex-shrink-0 relative z-10 ${
+                <div key={step.id} className="flex gap-4 mb-5 relative">
+                  <div className={`w-10 h-10 rounded-full flex items-center justify-center text-xl border-3 bg-white flex-shrink-0 relative z-10 ${
                     step.role === 'human' ? 'border-slate-500' :
                     step.role === 'together' ? 'border-blue-500' :
                     'border-purple-500'
                   }`}>
                     {getRoleIcon(step.role)}
                   </div>
-                  <div className="flex-1 bg-white/50 rounded-2xl p-6 hover:translate-y-[-2px] transition-transform">
-                    <div className="flex justify-between items-center mb-3 flex-wrap gap-2">
-                      <span className="font-bold text-blue-600">Step {step.id}</span>
-                      <select
-                        value={step.role}
-                        onChange={(e) => updateRole(step.id, e.target.value as 'human' | 'together' | 'ai')}
-                        className={`px-4 py-2 rounded-lg font-semibold cursor-pointer border-none text-white ${
-                          step.role === 'human' ? 'bg-slate-500' :
-                          step.role === 'together' ? 'bg-blue-500' :
-                          'bg-purple-500'
-                        }`}
-                      >
-                        <option value="human">👤 Human</option>
-                        <option value="together">🤝 Together</option>
-                        <option value="ai">🤖 AI</option>
-                      </select>
+                  <div className="flex-1 bg-white/50 rounded-xl p-4 hover:translate-y-[-1px] transition-transform">
+                    <div className="flex items-start gap-3 mb-2">
+                      <div className="flex items-center gap-2 flex-shrink-0">
+                        <span className="font-bold text-blue-600 text-sm">Step {step.id}</span>
+                        <select
+                          value={step.role}
+                          onChange={(e) => updateRole(step.id, e.target.value as 'human' | 'together' | 'ai')}
+                          className={`px-3 py-1 rounded-lg text-xs font-semibold cursor-pointer border-none text-white ${
+                            step.role === 'human' ? 'bg-slate-500' :
+                            step.role === 'together' ? 'bg-blue-500' :
+                            'bg-purple-500'
+                          }`}
+                        >
+                          <option value="human">👤 Human</option>
+                          <option value="together">🤝 Together</option>
+                          <option value="ai">🤖 AI</option>
+                        </select>
+                      </div>
+                      <textarea
+                        value={stepScenarios[step.id]?.[step.role]?.situation || step.name}
+                        readOnly
+                        rows={2}
+                        className="flex-1 px-3 py-2 border border-blue-100 bg-white/30 rounded-lg text-xs resize-none"
+                      />
                     </div>
-                    <textarea
-                      value={stepScenarios[step.id]?.[step.role]?.situation || step.name}
-                      readOnly
-                      rows={3}
-                      className="w-full px-3 py-2 border border-blue-100 bg-white/30 rounded-lg text-sm resize-vertical"
-                    />
                   </div>
                 </div>
               ))}
