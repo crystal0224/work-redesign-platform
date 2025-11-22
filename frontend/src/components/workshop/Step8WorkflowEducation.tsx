@@ -611,26 +611,26 @@ export default function Step8WorkflowEducation({ onNext, onBack }: Step8Workflow
 
               {steps.map((step) => (
                 <div key={step.id} className="flex gap-5 mb-6 relative">
-                  <div className={`w-14 h-14 rounded-full flex items-center justify-center text-2xl border-4 bg-white flex-shrink-0 relative z-10 shadow-lg transition-all duration-200 hover:scale-110 ${
+                  <div className={`w-16 h-16 rounded-full flex items-center justify-center text-3xl border-4 bg-white flex-shrink-0 relative z-10 shadow-lg transition-all duration-200 hover:scale-110 ${
                     step.role === 'human' ? 'border-slate-500 shadow-slate-300' :
                     step.role === 'together' ? 'border-blue-500 shadow-blue-300' :
                     'border-purple-500 shadow-purple-300'
                   }`}>
                     {getRoleIcon(step.role)}
                   </div>
-                  <div className="flex-1 bg-gradient-to-br from-white/80 to-blue-50/30 rounded-2xl p-5 hover:translate-y-[-2px] hover:shadow-xl transition-all duration-200 border border-blue-100/50">
-                    <div className="flex items-stretch gap-4">
-                      <div className="flex flex-col gap-2 flex-shrink-0 min-w-[180px]">
-                        <div className="flex items-center gap-2 mb-1">
-                          <span className="font-black text-blue-600 text-base">Step {step.id}</span>
-                          <span className="text-slate-400 text-sm">•</span>
-                          <span className="font-bold text-slate-800 text-sm">{step.title}</span>
+                  <div className="flex-1 bg-gradient-to-br from-white/80 to-blue-50/30 rounded-2xl p-6 hover:translate-y-[-2px] hover:shadow-xl transition-all duration-200 border border-blue-100/50">
+                    <div className="flex items-stretch gap-5">
+                      <div className="flex flex-col gap-2 flex-shrink-0 min-w-[200px]">
+                        <div className="flex items-center gap-2 mb-2">
+                          <span className="font-black text-blue-600 text-lg">Step {step.id}</span>
+                          <span className="text-slate-400 text-base">•</span>
+                          <span className="font-bold text-slate-800 text-base">{step.title}</span>
                         </div>
                         <div className="relative flex-1">
                           <select
                             value={step.role}
                             onChange={(e) => updateRole(step.id, e.target.value as 'human' | 'together' | 'ai')}
-                            className={`h-full w-full px-4 py-2.5 pr-8 rounded-xl text-sm font-bold cursor-pointer border-2 text-white appearance-none shadow-md hover:shadow-lg transition-all ${
+                            className={`h-full w-full px-4 py-3 pr-8 rounded-xl text-base font-bold cursor-pointer border-2 text-white appearance-none shadow-md hover:shadow-lg transition-all ${
                               step.role === 'human' ? 'bg-gradient-to-r from-slate-500 to-slate-600 border-slate-400 hover:from-slate-600 hover:to-slate-700' :
                               step.role === 'together' ? 'bg-gradient-to-r from-blue-500 to-blue-600 border-blue-400 hover:from-blue-600 hover:to-blue-700' :
                               'bg-gradient-to-r from-purple-500 to-purple-600 border-purple-400 hover:from-purple-600 hover:to-purple-700'
@@ -640,13 +640,15 @@ export default function Step8WorkflowEducation({ onNext, onBack }: Step8Workflow
                             <option value="together">🤝 Together</option>
                             <option value="ai">🤖 AI</option>
                           </select>
-                          <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-white text-sm font-bold">
+                          <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-white text-base font-bold">
                             ▼
                           </div>
                         </div>
                       </div>
-                      <div className="flex-1 px-4 py-3 bg-white/60 rounded-xl text-sm text-slate-800 leading-relaxed font-medium border border-blue-100">
-                        {stepScenarios[step.id]?.[step.role]?.situation || step.name}
+                      <div className="flex-1 px-5 py-4 bg-gradient-to-br from-slate-50/90 to-blue-50/60 rounded-xl text-base text-slate-800 leading-relaxed font-normal shadow-inner">
+                        <p className="text-slate-700 leading-loose">
+                          {stepScenarios[step.id]?.[step.role]?.situation || step.name}
+                        </p>
                       </div>
                     </div>
                   </div>
