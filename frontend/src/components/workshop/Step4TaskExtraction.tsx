@@ -702,40 +702,40 @@ export default function Step4TaskExtraction({ workshopId, domains, onNext, manua
   const activeDragTask = activeDragId ? extractedTasks.find(t => t.id === activeDragId) : null;
 
   return (
-    <div className="relative min-h-screen -m-6 flex flex-col items-center animate-fadeIn overflow-x-hidden">
-      {/* Modern Gradient Mesh Background - Matching Step 1 */}
-      <div className="absolute inset-0 bg-gradient-to-br from-slate-50 via-blue-50/50 to-indigo-50/30 fixed">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(59,130,246,0.08)_0%,transparent_50%)]"></div>
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_60%,rgba(99,102,241,0.08)_0%,transparent_50%)]"></div>
+    <div className="relative min-h-screen w-full">
+      {/* Background matching other steps */}
+      <div className="absolute inset-0 fixed bg-gradient-to-br from-slate-50 via-purple-50/30 to-blue-50/20">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_30%,rgba(147,51,234,0.06)_0%,transparent_50%)] bg-[radial-gradient(circle_at_80%_70%,rgba(59,130,246,0.06)_0%,transparent_50%)]"></div>
       </div>
 
       {/* Main Content */}
-      <div className="relative z-10 w-full max-w-7xl mx-auto px-6 py-20">
+      <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
 
         {/* Hero Section - Matching Step 1 Style */}
         <div className="text-center mb-16">
           {/* Badge */}
-          <div className="inline-flex items-center gap-2.5 px-6 py-2.5 bg-white/80 backdrop-blur-xl border border-blue-100 rounded-full shadow-lg shadow-blue-100/50 mb-10">
-            <div className="relative">
-              <div className="absolute inset-0 bg-blue-500 rounded-full blur opacity-60 animate-pulse"></div>
-              <div className="relative w-2 h-2 bg-blue-600 rounded-full"></div>
-            </div>
-            <span className="text-sm font-bold tracking-wider text-slate-700 uppercase">Step 4: AI Task Extraction</span>
+          <div className="mb-4">
+            <span className="text-sm font-semibold text-purple-600 bg-purple-50 px-4 py-2 rounded-full">
+              📊 우리 팀 일 분석하기
+            </span>
+          </div>
+
+          {/* Icon Circle */}
+          <div className="w-20 h-20 bg-gradient-to-br from-indigo-600 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-6">
+            <span className="text-3xl">📋</span>
           </div>
 
           {/* Main Title */}
-          <h1 className="text-5xl md:text-7xl font-black text-slate-900 mb-8 tracking-tighter leading-tight">
-            <span className="inline-block bg-gradient-to-br from-slate-900 via-blue-800 to-indigo-900 bg-clip-text text-transparent">
-              AI 업무 추출 결과
-            </span>
+          <h1 className="text-3xl font-semibold text-slate-900 mb-4 tracking-tight">
+            업무 추출 및 분류
           </h1>
 
           {/* Subtitle */}
-          <div className="space-y-4">
-            <p className="text-2xl font-light text-slate-800 tracking-tight">
-              AI가 분석한 <span className="font-semibold text-blue-700">업무 리스트</span>를 확인하세요
+          <div className="space-y-2">
+            <p className="text-lg text-slate-600 max-w-2xl mx-auto">
+              AI가 분석한 <span className="font-semibold text-indigo-700">업무 리스트</span>를 확인하고 수정하세요
             </p>
-            <p className="text-lg text-slate-600 max-w-2xl mx-auto leading-relaxed">
+            <p className="text-base text-slate-500 max-w-2xl mx-auto leading-relaxed">
               드래그하여 영역을 변경하거나 클릭하여 수정할 수 있습니다
             </p>
           </div>

@@ -601,11 +601,27 @@ export default function WorkshopPage() {
         setTimeout(() => setCurrentStep(6), 500);
       }
     } else if (currentStep === 6) {
-      // Step7(요약)로 이동
+      // Step 6: 업무 추출 - tasks가 이미 step 5에서 설정됨, Step7(요약)로 이동
       setTimeout(() => setCurrentStep(7), 500);
     } else if (currentStep === 7) {
-      // Step8로 이동
+      // Step 7: 요약 - Step8(워크플로우 교육)로 이동
       setTimeout(() => setCurrentStep(8), 500);
+    } else if (currentStep === 8) {
+      // Step 8: 워크플로우 교육 - Step9(AI 컨설팅)로 이동
+      setTimeout(() => setCurrentStep(9), 500);
+    } else if (currentStep === 9) {
+      // Step 9: AI 컨설팅 - 선택된 task 설정 후 Step10(워크플로우 설계)으로 이동
+      setWorkshop(prev => ({
+        ...prev,
+        selectedTaskIds: ['task1'] // 첫 번째 task 자동 선택
+      }));
+      setTimeout(() => setCurrentStep(10), 500);
+    } else if (currentStep === 10) {
+      // Step 10: 워크플로우 설계 - Step11(자동화 솔루션)로 이동
+      setTimeout(() => setCurrentStep(11), 500);
+    } else if (currentStep === 11) {
+      // Step 11: 자동화 솔루션 - 마지막 단계이므로 완료 메시지
+      console.log('워크샵 완료 - 모든 단계 테스트 완료');
     }
   };
 
