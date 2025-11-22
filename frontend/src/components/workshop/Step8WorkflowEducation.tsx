@@ -523,8 +523,35 @@ export default function Step8WorkflowEducation({ onNext, onBack }: Step8Workflow
         {/* Workflow Unbundling Practice */}
         <div className="mb-16">
           <h2 className="text-3xl font-bold text-slate-900 mb-3 text-center">실전 판단 연습</h2>
-          <p className="text-center text-slate-700 mb-2 font-semibold text-lg">업무를 단계별로 쪼개고, 각 단계의 담당자를 전략적으로 배치하세요</p>
-          <p className="text-center text-slate-600 mb-8">"자동화 설계는 업무를 쪼개고(Unbundle), 역할을 배분하는(Assign) 것에서 시작합니다"</p>
+          <div className="max-w-4xl mx-auto mb-8">
+            <p className="text-center text-slate-700 mb-4 font-semibold text-lg">
+              업무를 단계별로 쪼개고, 각 단계의 담당자를 전략적으로 배치하세요
+            </p>
+            <div className="bg-gradient-to-r from-indigo-50/80 to-purple-50/80 rounded-2xl p-6 border border-indigo-200/50">
+              <div className="space-y-3 text-sm text-slate-700">
+                <p className="font-semibold text-indigo-900 text-base mb-2">💡 왜 이 연습이 중요한가요?</p>
+                <div className="space-y-2">
+                  <div className="flex items-start gap-2">
+                    <span className="text-indigo-600 font-bold mt-0.5">1.</span>
+                    <p><span className="font-semibold text-slate-900">전체를 통째로 자동화하려고 하면 실패합니다.</span> 업무를 단계별로 쪼개야(Unbundle) 어디에 AI를 쓸지, 어디에 사람이 필요한지 보입니다.</p>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <span className="text-indigo-600 font-bold mt-0.5">2.</span>
+                    <p><span className="font-semibold text-slate-900">각 단계의 특성을 파악해야 합니다.</span> 반복적인가? 판단이 필요한가? 맥락 이해가 중요한가? 이 질문들이 Human/AI/Together 선택의 기준입니다.</p>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <span className="text-indigo-600 font-bold mt-0.5">3.</span>
+                    <p><span className="font-semibold text-slate-900">직접 조합을 바꿔보며 trade-off를 체감합니다.</span> "Step 1을 AI로 바꾸면?" 버튼 클릭 한 번으로 효율과 리스크의 변화를 확인하세요.</p>
+                  </div>
+                </div>
+                <div className="mt-4 pt-4 border-t border-indigo-200">
+                  <p className="text-indigo-800 font-semibold text-center">
+                    ⚡ 이 연습을 통해 "자동화 설계 = 업무 쪼개기(Unbundle) + 역할 배분(Assign)"의 핵심 프로세스를 체득하게 됩니다
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
 
           <div className="bg-white/70 backdrop-blur-xl border border-white/60 rounded-3xl p-8 shadow-sm">
             {/* Scenario Header */}
