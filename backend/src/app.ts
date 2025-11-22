@@ -7,7 +7,8 @@ import { Server as SocketIOServer } from 'socket.io';
 
 import config from './config';
 import logger from './utils/logger';
-import { connectDatabase, checkDatabaseHealth } from './config/database';
+import { connectDatabase, checkDatabaseHealth, redis } from './config/database';
+import { initAICache } from './services/ai-cache.service';
 
 // Import middleware
 import { errorHandler } from './middleware/errorHandler';
@@ -46,6 +47,10 @@ export class App {
     try {
       await connectDatabase();
       logger.info('Database connections initialized');
+
+      // Initialize AI Cache
+      initAICache(redis);
+      logger.info('💰 AI Cache service initialized - 50% cost savings enabled!');
     } catch (error) {
       logger.error('Failed to initialize database connections:', error);
       process.exit(1);

@@ -1,6 +1,7 @@
 import Anthropic from '@anthropic-ai/sdk';
 import { Task } from '../types/workshop';
 import { logger } from '../utils/logger';
+import { getAICache } from './ai-cache.service';
 
 export class ClaudeService {
   private anthropic: Anthropic;
@@ -39,6 +40,17 @@ JSON 배열 형식으로만 응답하세요.`;
 ${documentText.substring(0, 8000)}`;
 
     try {
+      // 💰 Check cache first
+      const aiCache = getAICache();
+      const cacheKey = `${systemPrompt}\n${userMessage}`;
+      const cachedResult = await aiCache.getCachedResponse(cacheKey, { domains });
+
+      if (cachedResult) {
+        const tasks = JSON.parse(cachedResult);
+        logger.info(`💰 Cache HIT! ${tasks.length} tasks retrieved from cache - API call saved!`);
+        return tasks;
+      }
+
       const response = await this.anthropic.messages.create({
         model: 'claude-3-5-sonnet-20241022',
         max_tokens: 4000,
@@ -64,6 +76,10 @@ ${documentText.substring(0, 8000)}`;
 
       const tasks = JSON.parse(jsonMatch[0]);
       logger.info(`✅ ${tasks.length} tasks extracted by Claude`);
+
+      // 💰 Store in cache for future requests
+      await aiCache.setCachedResponse(cacheKey, { domains }, JSON.stringify(tasks));
+      logger.info('💰 Response cached for future use');
 
       return tasks;
 
@@ -94,6 +110,16 @@ ${documentText.substring(0, 8000)}`;
 5. 예시 (필요시)`;
 
     try {
+      // 💰 Check cache first
+      const aiCache = getAICache();
+      const cacheKey = `${systemPrompt}\n${userMessage}`;
+      const cachedResult = await aiCache.getCachedResponse(cacheKey, { taskId: task.id });
+
+      if (cachedResult) {
+        logger.info(`💰 Cache HIT! AI prompt retrieved from cache - API call saved!`);
+        return cachedResult;
+      }
+
       const response = await this.anthropic.messages.create({
         model: 'claude-3-5-sonnet-20241022',
         max_tokens: 2000,
@@ -109,6 +135,10 @@ ${documentText.substring(0, 8000)}`;
       if (textContent.type !== 'text') {
         throw new Error('Unexpected response type from Claude');
       }
+
+      // 💰 Store in cache for future requests
+      await aiCache.setCachedResponse(cacheKey, { taskId: task.id }, textContent.text);
+      logger.info('💰 AI prompt cached for future use');
 
       return textContent.text;
 
@@ -139,6 +169,16 @@ ${documentText.substring(0, 8000)}`;
 - main 함수 구조 사용`;
 
     try {
+      // 💰 Check cache first
+      const aiCache = getAICache();
+      const cacheKey = `${systemPrompt}\n${userMessage}`;
+      const cachedResult = await aiCache.getCachedResponse(cacheKey, { taskId: task.id });
+
+      if (cachedResult) {
+        logger.info(`💰 Cache HIT! Python script retrieved from cache - API call saved!`);
+        return cachedResult;
+      }
+
       const response = await this.anthropic.messages.create({
         model: 'claude-3-5-sonnet-20241022',
         max_tokens: 3000,
@@ -154,6 +194,10 @@ ${documentText.substring(0, 8000)}`;
       if (textContent.type !== 'text') {
         throw new Error('Unexpected response type from Claude');
       }
+
+      // 💰 Store in cache for future requests
+      await aiCache.setCachedResponse(cacheKey, { taskId: task.id }, textContent.text);
+      logger.info('💰 Python script cached for future use');
 
       return textContent.text;
 
@@ -183,6 +227,16 @@ ${documentText.substring(0, 8000)}`;
 - 주석 노드로 설명 추가`;
 
     try {
+      // 💰 Check cache first
+      const aiCache = getAICache();
+      const cacheKey = `${systemPrompt}\n${userMessage}`;
+      const cachedResult = await aiCache.getCachedResponse(cacheKey, { taskId: task.id });
+
+      if (cachedResult) {
+        logger.info(`💰 Cache HIT! n8n workflow retrieved from cache - API call saved!`);
+        return cachedResult;
+      }
+
       const response = await this.anthropic.messages.create({
         model: 'claude-3-5-sonnet-20241022',
         max_tokens: 3000,
@@ -203,11 +257,13 @@ ${documentText.substring(0, 8000)}`;
       const jsonMatch = textContent.text.match(/```json\n([\s\S]*?)\n```/) ||
                        textContent.text.match(/\{[\s\S]*\}/);
 
-      if (jsonMatch) {
-        return jsonMatch[1] || jsonMatch[0];
-      }
+      const result = jsonMatch ? (jsonMatch[1] || jsonMatch[0]) : textContent.text;
 
-      return textContent.text;
+      // 💰 Store in cache for future requests
+      await aiCache.setCachedResponse(cacheKey, { taskId: task.id }, result);
+      logger.info('💰 n8n workflow cached for future use');
+
+      return result;
 
     } catch (error) {
       logger.error('Claude n8n workflow generation error:', error);
