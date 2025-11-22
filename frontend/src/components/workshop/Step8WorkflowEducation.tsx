@@ -556,22 +556,28 @@ export default function Step8WorkflowEducation({ onNext, onBack }: Step8Workflow
                     {getRoleIcon(step.role)}
                   </div>
                   <div className="flex-1 bg-white/50 rounded-xl p-4 hover:translate-y-[-1px] transition-transform">
-                    <div className="flex items-start gap-3 mb-2">
-                      <div className="flex items-center gap-2 flex-shrink-0">
+                    <div className="flex items-stretch gap-3">
+                      <div className="flex flex-col gap-1 flex-shrink-0">
                         <span className="font-bold text-blue-600 text-sm">Step {step.id}</span>
-                        <select
-                          value={step.role}
-                          onChange={(e) => updateRole(step.id, e.target.value as 'human' | 'together' | 'ai')}
-                          className={`px-3 py-1 rounded-lg text-xs font-semibold cursor-pointer border-none text-white ${
-                            step.role === 'human' ? 'bg-slate-500' :
-                            step.role === 'together' ? 'bg-blue-500' :
-                            'bg-purple-500'
-                          }`}
-                        >
-                          <option value="human">👤 Human</option>
-                          <option value="together">🤝 Together</option>
-                          <option value="ai">🤖 AI</option>
-                        </select>
+                        <div className="relative flex-1">
+                          <select
+                            value={step.role}
+                            onChange={(e) => updateRole(step.id, e.target.value as 'human' | 'together' | 'ai')}
+                            className={`h-full w-full px-3 py-2 pr-7 rounded-lg text-xs font-semibold cursor-pointer border-none text-white appearance-none ${
+                              step.role === 'human' ? 'bg-slate-500 hover:bg-slate-600' :
+                              step.role === 'together' ? 'bg-blue-500 hover:bg-blue-600' :
+                              'bg-purple-500 hover:bg-purple-600'
+                            } transition-colors`}
+                          >
+                            <option value="human">👤 Human</option>
+                            <option value="together">🤝 Together</option>
+                            <option value="ai">🤖 AI</option>
+                          </select>
+                          <div className="absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none text-white text-xs">
+                            ▼
+                          </div>
+                        </div>
+                        <span className="text-[10px] text-slate-500 text-center">역할 선택</span>
                       </div>
                       <textarea
                         value={stepScenarios[step.id]?.[step.role]?.situation || step.name}
