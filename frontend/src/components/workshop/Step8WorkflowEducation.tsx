@@ -134,33 +134,174 @@ export default function Step8WorkflowEducation({ onNext, onBack }: Step8Workflow
           </p>
         </div>
 
-        {/* 2030 Vision Section */}
+        {/* 2030 Vision Section - Enhanced */}
         <div className="mb-16">
-          <div className="bg-white/70 backdrop-blur-xl border border-white/60 rounded-3xl p-8 shadow-sm hover:shadow-lg transition-all duration-300">
-            <h3 className="text-2xl font-bold text-slate-900 mb-6 text-center">The Shift: 2030년 업무의 뉴노멀</h3>
-            <div className="flex gap-2 h-16 rounded-full overflow-hidden mb-6">
-              <div className="flex-1 flex items-center justify-center bg-gradient-to-r from-slate-600 to-slate-500 text-white font-semibold text-sm">
-                👤 Human 33%
+          <div className="bg-gradient-to-br from-white/80 via-purple-50/50 to-blue-50/50 backdrop-blur-xl border border-purple-200/30 rounded-3xl p-10 shadow-xl hover:shadow-2xl transition-all duration-300">
+            {/* Title */}
+            <div className="text-center mb-8">
+              <h3 className="text-3xl md:text-4xl font-black text-slate-900 mb-4">
+                2030년, 당신의 업무는 어떻게 변할까요?
+              </h3>
+              <p className="text-slate-600 text-sm">
+                World Economic Forum 예측 <span className="font-semibold">(1,000개 기업 조사 기반)</span>
+              </p>
+            </div>
+
+            {/* Progress Bar Visualization */}
+            <div className="flex gap-1 h-20 rounded-2xl overflow-hidden mb-10 shadow-lg">
+              <div className="flex-1 flex flex-col items-center justify-center bg-gradient-to-br from-slate-700 to-slate-600 text-white p-4 hover:scale-[1.02] transition-transform">
+                <div className="text-2xl mb-1">👤</div>
+                <div className="font-black text-xl">33%</div>
+                <div className="text-xs opacity-90">Human Only</div>
               </div>
-              <div className="flex-1 flex items-center justify-center bg-gradient-to-r from-purple-600 to-purple-500 text-white font-semibold text-sm">
-                🤖 Auto 34%
+              <div className="flex-1 flex flex-col items-center justify-center bg-gradient-to-br from-purple-600 to-purple-500 text-white p-4 hover:scale-[1.02] transition-transform">
+                <div className="text-2xl mb-1">🤖</div>
+                <div className="font-black text-xl">34%</div>
+                <div className="text-xs opacity-90">Full Automation</div>
               </div>
-              <div className="flex-1 flex items-center justify-center bg-gradient-to-r from-blue-600 to-sky-500 text-white font-semibold text-sm">
-                🤝 Hybrid 33%
+              <div className="flex-1 flex flex-col items-center justify-center bg-gradient-to-br from-blue-600 to-sky-500 text-white p-4 hover:scale-[1.02] transition-transform">
+                <div className="text-2xl mb-1">🤝</div>
+                <div className="font-black text-xl">33%</div>
+                <div className="text-xs opacity-90">Human-AI Collaboration</div>
               </div>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div className="text-center p-4">
-                <strong className="block text-lg text-slate-900 mb-2">👤 Human</strong>
-                <p className="text-slate-600 text-sm">단순 업무 감소, 고부가가치 업무 집중</p>
+
+            {/* Detailed Cards */}
+            <div className="space-y-6 mb-10">
+              {/* Human Only Card */}
+              <div className="bg-white/90 backdrop-blur-sm border-l-4 border-l-slate-600 rounded-2xl p-6 shadow-md hover:shadow-lg transition-all">
+                <div className="flex items-start gap-4 mb-4">
+                  <div className="text-3xl">👤</div>
+                  <div className="flex-1">
+                    <h4 className="text-xl font-bold text-slate-900 mb-2">Human Only (33%)</h4>
+                    <p className="text-slate-600 text-sm mb-3">오직 인간만이 할 수 있는 고부가가치 업무</p>
+                  </div>
+                </div>
+                <div className="grid grid-cols-2 gap-3 mb-4">
+                  <div className="flex items-start gap-2">
+                    <span className="text-green-600 mt-0.5">✓</span>
+                    <span className="text-sm text-slate-700">전략적 의사결정</span>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <span className="text-green-600 mt-0.5">✓</span>
+                    <span className="text-sm text-slate-700">창의적 문제 해결</span>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <span className="text-green-600 mt-0.5">✓</span>
+                    <span className="text-sm text-slate-700">관계 구축과 소통</span>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <span className="text-green-600 mt-0.5">✓</span>
+                    <span className="text-sm text-slate-700">윤리적 판단</span>
+                  </div>
+                </div>
+                <div className="bg-slate-50 rounded-lg p-3">
+                  <p className="text-xs text-slate-600">
+                    <span className="font-semibold text-slate-700">예:</span> 팀 전략 수립, 고객 협상, 위기 대응, 조직 문화 형성
+                  </p>
+                </div>
               </div>
-              <div className="text-center p-4">
-                <strong className="block text-lg text-slate-900 mb-2">🤖 Machine</strong>
-                <p className="text-slate-600 text-sm">데이터 처리 및 반복 업무 자동화</p>
+
+              {/* Full Automation Card */}
+              <div className="bg-white/90 backdrop-blur-sm border-l-4 border-l-purple-600 rounded-2xl p-6 shadow-md hover:shadow-lg transition-all">
+                <div className="flex items-start gap-4 mb-4">
+                  <div className="text-3xl">🤖</div>
+                  <div className="flex-1">
+                    <h4 className="text-xl font-bold text-slate-900 mb-2">Full Automation (34%)</h4>
+                    <p className="text-slate-600 text-sm mb-3">기계가 완전히 대체하는 반복적·정형화된 업무</p>
+                  </div>
+                </div>
+                <div className="grid grid-cols-2 gap-3 mb-4">
+                  <div className="flex items-start gap-2">
+                    <span className="text-green-600 mt-0.5">✓</span>
+                    <span className="text-sm text-slate-700">데이터 수집 및 정리</span>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <span className="text-green-600 mt-0.5">✓</span>
+                    <span className="text-sm text-slate-700">정형화된 문서 작성</span>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <span className="text-green-600 mt-0.5">✓</span>
+                    <span className="text-sm text-slate-700">일정 관리 및 알림</span>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <span className="text-green-600 mt-0.5">✓</span>
+                    <span className="text-sm text-slate-700">반복적 분석</span>
+                  </div>
+                </div>
+                <div className="bg-purple-50 rounded-lg p-3">
+                  <p className="text-xs text-slate-600">
+                    <span className="font-semibold text-slate-700">예:</span> 주간 대시보드 생성, 정기 보고서 작성, 데이터 입력 자동화
+                  </p>
+                </div>
               </div>
-              <div className="text-center p-4">
-                <strong className="block text-lg text-slate-900 mb-2">🤝 Hybrid</strong>
-                <p className="text-slate-600 text-sm">AI가 초안을 잡고, 사람이 완성</p>
+
+              {/* Human-AI Collaboration Card */}
+              <div className="bg-white/90 backdrop-blur-sm border-l-4 border-l-blue-600 rounded-2xl p-6 shadow-md hover:shadow-lg transition-all">
+                <div className="flex items-start gap-4 mb-4">
+                  <div className="text-3xl">🤝</div>
+                  <div className="flex-1">
+                    <h4 className="text-xl font-bold text-slate-900 mb-2">Human-AI Collaboration (33%)</h4>
+                    <p className="text-slate-600 text-sm mb-3">AI와 인간이 협업하여 시너지를 내는 업무</p>
+                  </div>
+                </div>
+                <div className="grid grid-cols-2 gap-3 mb-4">
+                  <div className="flex items-start gap-2">
+                    <span className="text-green-600 mt-0.5">✓</span>
+                    <span className="text-sm text-slate-700">AI 초안 → 사람 다듬기</span>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <span className="text-green-600 mt-0.5">✓</span>
+                    <span className="text-sm text-slate-700">AI 분석 → 사람 해석</span>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <span className="text-green-600 mt-0.5">✓</span>
+                    <span className="text-sm text-slate-700">AI 아이디어 → 사람 선택</span>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <span className="text-green-600 mt-0.5">✓</span>
+                    <span className="text-sm text-slate-700">AI 검증 → 사람 결정</span>
+                  </div>
+                </div>
+                <div className="bg-blue-50 rounded-lg p-3">
+                  <p className="text-xs text-slate-600">
+                    <span className="font-semibold text-slate-700">예:</span> 제안서 작성, 데이터 인사이트 도출, 콘텐츠 제작, 코드 리뷰
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Key Statistics */}
+            <div className="bg-gradient-to-r from-slate-900 to-slate-800 rounded-2xl p-6 mb-6">
+              <h5 className="text-white font-bold text-lg mb-4 flex items-center gap-2">
+                <span>📊</span>
+                <span>주요 수치</span>
+              </h5>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-white">
+                <div className="bg-white/10 rounded-lg p-4">
+                  <div className="text-2xl font-black text-blue-300 mb-1">170M vs 92M</div>
+                  <div className="text-xs opacity-90">새 일자리 창출 vs 일자리 전환</div>
+                </div>
+                <div className="bg-white/10 rounded-lg p-4">
+                  <div className="text-2xl font-black text-purple-300 mb-1">39%</div>
+                  <div className="text-xs opacity-90">핵심 스킬 변화 예상 (2025-2030)</div>
+                </div>
+                <div className="bg-white/10 rounded-lg p-4">
+                  <div className="text-2xl font-black text-green-300 mb-1">86%</div>
+                  <div className="text-xs opacity-90">AI가 사업을 변화시킬 것으로 예측한 기업</div>
+                </div>
+              </div>
+            </div>
+
+            {/* Source & CTA */}
+            <div className="text-center">
+              <p className="text-xs text-slate-500 mb-4">
+                출처: World Economic Forum, Future of Jobs Report 2025
+              </p>
+              <div className="inline-block">
+                <div className="bg-gradient-to-r from-purple-600 to-blue-600 text-white px-6 py-3 rounded-xl font-semibold text-sm shadow-lg hover:shadow-xl hover:scale-105 transition-all cursor-default">
+                  ↓ 우리 팀은 어떻게 준비할까요?
+                </div>
               </div>
             </div>
           </div>
