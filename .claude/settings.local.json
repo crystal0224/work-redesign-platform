@@ -51,7 +51,9 @@
       "Bash(python3:*)",
       "Bash(git log:*)",
       "Bash(find:*)",
-      "Bash(rm:*)"
+      "Bash(rm:*)",
+      "Bash(npx playwright:*)",
+      "Bash(sips:*)"
     ],
     "deny": [],
     "ask": []
