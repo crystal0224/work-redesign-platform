@@ -1,9 +1,13 @@
 import { App } from './app';
 import config, { validateConfig } from './config';
+import { validateEnv } from './config/env-validation';
 import logger from './utils/logger';
 
 async function startServer(): Promise<void> {
   try {
+    // Validate environment variables first
+    validateEnv();
+
     // Validate configuration
     validateConfig();
     logger.info('Configuration validated successfully');
