@@ -364,9 +364,10 @@ export default function Step8WorkflowEducation({ onNext, onBack }: Step8Workflow
 
         {/* LLM Understanding Section */}
         <div className="mb-16">
-          <h2 className="text-3xl font-bold text-slate-900 mb-3 text-center">AI의 능력과 한계 이해하기</h2>
+          <h2 className="text-3xl font-bold text-slate-900 mb-3 text-center">LLM(거대언어모델)의 능력과 한계</h2>
           <p className="text-center text-base text-slate-600 mb-8 max-w-3xl mx-auto">
-            전략적 판단을 위해서는 AI가 <span className="font-semibold text-slate-900">무엇을 잘하고 무엇을 못하는지</span> 정확히 알아야 합니다.
+            전략적 판단을 위해서는 LLM이 <span className="font-semibold text-slate-900">무엇을 잘하고 무엇을 못하는지</span> 정확히 알아야 합니다.<br />
+            <span className="text-sm text-slate-500">ChatGPT, Claude 등 대화형 AI의 핵심 기술</span>
           </p>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -394,17 +395,47 @@ export default function Step8WorkflowEducation({ onNext, onBack }: Step8Workflow
             {/* Bad At */}
             <div className="bg-white/70 backdrop-blur-xl border-t-4 border-t-red-500 border border-white/60 rounded-3xl p-8 shadow-sm hover:shadow-lg transition-all duration-300">
               <h3 className="text-2xl font-bold text-slate-900 mb-6">🔴 Bad At</h3>
-              <div className="space-y-4">
+              <div className="space-y-6">
                 {[
-                  { num: '01', title: 'Fact Checking', desc: '최신 정보나 사실 관계 확인 취약' },
-                  { num: '02', title: 'Deep Context', desc: '회사 내부의 암묵적인 맥락 이해 불가' },
-                  { num: '03', title: 'Ethical Judgment', desc: '가치 판단이나 책임지는 결정 불가' }
+                  {
+                    num: '01',
+                    title: 'Fact Checking',
+                    desc: '최신 정보나 사실 관계 확인 취약',
+                    risk: '잘못된 정보로 인한 의사결정 오류',
+                    solution: '검색 도구 연동 또는 사람이 최종 사실 검증'
+                  },
+                  {
+                    num: '02',
+                    title: 'Deep Context',
+                    desc: '회사 내부의 암묵적인 맥락 이해 불가',
+                    risk: '조직 문화나 히스토리를 고려하지 못한 제안',
+                    solution: '팀 리더가 맥락을 추가 설명하거나 최종 검토'
+                  },
+                  {
+                    num: '03',
+                    title: 'Ethical Judgment',
+                    desc: '가치 판단이나 책임지는 결정 불가',
+                    risk: '윤리적으로 민감한 결정을 AI에 위임',
+                    solution: '중요한 의사결정은 반드시 사람이 승인'
+                  }
                 ].map((item) => (
-                  <div key={item.num} className="flex gap-4 p-3 rounded-xl hover:bg-white/50 transition-all">
-                    <span className="text-2xl font-bold text-blue-600 min-w-[40px]">{item.num}</span>
-                    <div>
-                      <strong className="block text-base text-slate-900 mb-1">{item.title}</strong>
-                      <p className="text-slate-600 text-sm">{item.desc}</p>
+                  <div key={item.num} className="p-4 rounded-xl bg-gradient-to-br from-red-50/50 to-orange-50/50 border border-red-100/50">
+                    <div className="flex gap-4 mb-3">
+                      <span className="text-2xl font-bold text-red-600 min-w-[40px]">{item.num}</span>
+                      <div className="flex-1">
+                        <strong className="block text-base text-slate-900 mb-1">{item.title}</strong>
+                        <p className="text-slate-600 text-sm mb-2">{item.desc}</p>
+                      </div>
+                    </div>
+                    <div className="ml-14 space-y-2">
+                      <div className="flex items-start gap-2 text-xs">
+                        <span className="text-red-500 font-bold mt-0.5">⚠️</span>
+                        <span className="text-red-700 font-semibold">리스크: {item.risk}</span>
+                      </div>
+                      <div className="flex items-start gap-2 text-xs">
+                        <span className="text-green-600 font-bold mt-0.5">✓</span>
+                        <span className="text-green-700 font-semibold">방지법: {item.solution}</span>
+                      </div>
                     </div>
                   </div>
                 ))}
