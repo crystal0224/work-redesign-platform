@@ -159,20 +159,20 @@ export default function Step8WorkflowEducation({ onNext, onBack }: Step8Workflow
                 1,000개 글로벌 기업 조사 기반 예측
               </p>
               <p className="text-slate-500 text-sm">
-                업무의 3분할: 사람만 / AI 완전자동 / 협업
+                업무의 3분할: Human / AI / Together
               </p>
             </div>
 
             {/* Reimagined Cards - Clear & Bold */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-10">
-              {/* Human Only Card */}
+              {/* Human Card */}
               <div className="group bg-gradient-to-br from-slate-50 to-slate-100/50 border-2 border-slate-300 rounded-2xl p-8 shadow-lg hover:shadow-xl hover:border-slate-400 transition-all">
                 <div className="text-center mb-6">
                   <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-slate-700 to-slate-600 rounded-2xl mb-4 shadow-md group-hover:scale-110 transition-transform">
                     <span className="text-4xl">👤</span>
                   </div>
                   <div className="text-5xl font-black text-slate-800 mb-2">33%</div>
-                  <h4 className="text-xl font-bold text-slate-900 mb-2">Human Only</h4>
+                  <h4 className="text-xl font-bold text-slate-900 mb-2">Human</h4>
                   <p className="text-sm text-slate-600 font-medium">오직 인간만이 할 수 있는 영역</p>
                 </div>
                 <div className="space-y-3">
@@ -182,14 +182,14 @@ export default function Step8WorkflowEducation({ onNext, onBack }: Step8Workflow
                 </div>
               </div>
 
-              {/* Full Automation Card */}
+              {/* AI Card */}
               <div className="group bg-gradient-to-br from-purple-50 to-purple-100/50 border-2 border-purple-300 rounded-2xl p-8 shadow-lg hover:shadow-xl hover:border-purple-400 transition-all">
                 <div className="text-center mb-6">
                   <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-purple-600 to-purple-500 rounded-2xl mb-4 shadow-md group-hover:scale-110 transition-transform">
                     <span className="text-4xl">🤖</span>
                   </div>
                   <div className="text-5xl font-black text-purple-800 mb-2">34%</div>
-                  <h4 className="text-xl font-bold text-slate-900 mb-2">Full Automation</h4>
+                  <h4 className="text-xl font-bold text-slate-900 mb-2">AI</h4>
                   <p className="text-sm text-slate-600 font-medium">AI가 완전히 대체하는 영역</p>
                 </div>
                 <div className="space-y-3">
@@ -199,14 +199,14 @@ export default function Step8WorkflowEducation({ onNext, onBack }: Step8Workflow
                 </div>
               </div>
 
-              {/* Human-AI Collaboration Card */}
+              {/* Together Card */}
               <div className="group bg-gradient-to-br from-blue-50 to-blue-100/50 border-2 border-blue-300 rounded-2xl p-8 shadow-lg hover:shadow-xl hover:border-blue-400 transition-all">
                 <div className="text-center mb-6">
                   <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-blue-600 to-sky-500 rounded-2xl mb-4 shadow-md group-hover:scale-110 transition-transform">
                     <span className="text-4xl">🤝</span>
                   </div>
                   <div className="text-5xl font-black text-blue-800 mb-2">33%</div>
-                  <h4 className="text-xl font-bold text-slate-900 mb-2">Collaboration</h4>
+                  <h4 className="text-xl font-bold text-slate-900 mb-2">Together</h4>
                   <p className="text-sm text-slate-600 font-medium">AI와 사람이 협업하는 영역</p>
                 </div>
                 <div className="space-y-3">
@@ -497,11 +497,11 @@ export default function Step8WorkflowEducation({ onNext, onBack }: Step8Workflow
               </div>
             </div>
 
-            {/* Human Only Card */}
+            {/* Human Card */}
             <div className="bg-white/70 backdrop-blur-xl border-t-4 border-t-slate-500 border border-white/60 rounded-3xl p-6 shadow-sm hover:shadow-lg transition-all duration-300">
               <div className="flex items-center gap-3 mb-4">
                 <span className="text-4xl">👤</span>
-                <h3 className="text-xl font-bold text-slate-900">Human Only</h3>
+                <h3 className="text-xl font-bold text-slate-900">Human</h3>
               </div>
               <p className="text-blue-600 font-semibold mb-4">공감, 윤리, 맥락이 필요한가?</p>
               <ul className="space-y-2 mb-4 text-sm text-slate-700">
