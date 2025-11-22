@@ -8,6 +8,7 @@ import Step6WorkflowDesign from '@/components/workshop/Step6WorkflowDesign';
 import Step7Summary from '@/components/workshop/Step7Summary';
 import Step8WorkflowEducation from '@/components/workshop/Step8WorkflowEducation';
 import Step9AIConsultant from '@/components/workshop/Step9AIConsultant';
+import { API_CONFIG } from '@/config/api';
 
 // 이미지 생성을 위한 동적 import
 const captureElement = async (element: HTMLElement) => {
@@ -903,7 +904,7 @@ if __name__ == "__main__":
 
   // Socket.IO 연결 설정
   useEffect(() => {
-    const socketConnection = io('http://localhost:4000');
+    const socketConnection = io(API_CONFIG.wsURL);
     setSocket(socketConnection);
 
     // Socket 이벤트 핸들러들
@@ -1090,7 +1091,7 @@ if __name__ == "__main__":
     formData.append('workshopId', workshop.id);
 
     try {
-      const response = await fetch('http://localhost:4000/api/upload', {
+      const response = await fetch(`${API_CONFIG.baseURL}/api/upload`, {
         method: 'POST',
         body: formData,
       });
@@ -1144,7 +1145,7 @@ if __name__ == "__main__":
         setAnalysisStatus('텍스트 분석 중...');
         setAnalysisProgress(50);
 
-        const response = await fetch('http://localhost:4000/api/analyze-text', {
+        const response = await fetch(`${API_CONFIG.baseURL}/api/analyze-text`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -1353,7 +1354,7 @@ if __name__ == "__main__":
     formData.append('workshopId', workshopId);
 
     try {
-      const response = await fetch('http://localhost:4000/api/upload', {
+      const response = await fetch(`${API_CONFIG.baseURL}/api/upload`, {
         method: 'POST',
         body: formData,
       });
@@ -1385,7 +1386,7 @@ if __name__ == "__main__":
     setError('');
 
     try {
-      const response = await fetch('http://localhost:4000/api/workshops', {
+      const response = await fetch(`${API_CONFIG.baseURL}/api/workshops`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -1553,11 +1554,13 @@ if __name__ == "__main__":
                 const currentStepInfo = isActive ? WORKSHOP_STEPS[currentStep - 1] : null;
 
                 // Progress calculation: Based on COMPLETED steps in the section
-                // Step 1 (Start): 0/7 = 0%
-                // Step 7 (End): 6/7 = 85%
-                // Section Complete: 100%
                 const totalStepsInSection = section.range[1] - section.range[0] + 1;
-                const currentStepInSection = currentStep - section.range[0] + 1;
+
+                // Calculate display step number
+                let displayStep = currentStep - section.range[0] + 1;
+                if (currentStep < section.range[0]) displayStep = 0; // Future section
+                if (currentStep > section.range[1]) displayStep = totalStepsInSection; // Completed section
+
                 const progress = isActive
                   ? Math.round(((currentStep - section.range[0]) / totalStepsInSection) * 100)
                   : (isCompleted ? 100 : 0);
@@ -1578,7 +1581,7 @@ if __name__ == "__main__":
                     <div className="relative flex items-center justify-between gap-5">
                       {/* 왼쪽: 섹션명 */}
                       <div className="flex items-center gap-3 flex-shrink-0">
-                        <div className={`w-10 h-10 rounded-xl flex items-center justify-center text-xl shadow-sm ${isActive ? 'bg-white' : 'bg-slate-100'}`}>
+                        <div className="w-10 h-10 rounded-xl flex items-center justify-center text-xl shadow-sm bg-white">
                           <span className="filter drop-shadow-sm">{section.icon}</span>
                         </div>
                         <div className="flex flex-col">
@@ -1591,9 +1594,7 @@ if __name__ == "__main__":
                       {isActive && currentStepInfo && (
                         <div className="hidden md:flex items-center gap-3 flex-1 min-w-0 px-4 border-l border-slate-900/10 mx-2">
                           <div className="flex flex-col min-w-0">
-                            <span className="text-xs font-semibold opacity-60">
-                              Step {currentStepInSection} / {totalStepsInSection}
-                            </span>
+                            <span className="text-xs font-semibold opacity-60">Current Step</span>
                             <div className="flex items-center gap-2">
                               <span className="text-base">{currentStepInfo.icon}</span>
                               <span className="text-sm font-bold truncate">{currentStepInfo.title}</span>
@@ -1602,12 +1603,15 @@ if __name__ == "__main__":
                         </div>
                       )}
 
-                      {/* 우측: 진행률 바 + 퍼센트 */}
+                      {/* 우측: 진행률 바 + Step Counter */}
                       <div className="flex flex-col items-end gap-1.5 flex-shrink-0 min-w-[100px]">
-                        <div className="flex items-end gap-1">
-                          <span className={`text-2xl font-black ${isActive ? 'scale-110 origin-right' : 'opacity-60'}`}>
-                            {progress}%
-                          </span>
+                        <div className="flex items-end gap-1.5">
+                          <span className={`text-xs font-bold uppercase tracking-wider mb-1 ${isActive ? 'opacity-60' : 'opacity-40'}`}>Step</span>
+                          <div className={`flex items-baseline gap-1 ${isActive ? 'scale-105 origin-right' : 'opacity-60'}`}>
+                            <span className="text-2xl font-black">{displayStep}</span>
+                            <span className="text-lg font-medium opacity-40">/</span>
+                            <span className="text-lg font-medium opacity-40">{totalStepsInSection}</span>
+                          </div>
                         </div>
                         <div className="w-full h-2 bg-slate-200/80 rounded-full overflow-hidden">
                           <div

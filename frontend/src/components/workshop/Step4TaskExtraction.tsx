@@ -13,6 +13,7 @@ import {
   DragStartEvent,
   useDroppable,
 } from '@dnd-kit/core';
+import { API_CONFIG } from '@/config/api';
 import {
   arrayMove,
   SortableContext,
@@ -570,7 +571,7 @@ export default function Step4TaskExtraction({ workshopId, domains, onNext, manua
     setError('');
 
     try {
-      const response = await fetch(`http://localhost:4000/api/workshops/${workshopId}/extract-tasks`, {
+      const response = await fetch(`${API_CONFIG.baseURL}/api/workshops/${workshopId}/extract-tasks`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ manualInput }),
