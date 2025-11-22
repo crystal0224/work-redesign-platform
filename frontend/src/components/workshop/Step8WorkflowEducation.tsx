@@ -127,10 +127,14 @@ export default function Step8WorkflowEducation({ onNext, onBack }: Step8Workflow
             <span className="text-xs font-medium text-purple-700 uppercase tracking-wide">Step 8</span>
           </div>
           <h2 className="text-4xl md:text-5xl font-black text-slate-900 mb-4 tracking-tight">
-            AI 자동화 교육
+            자동화 전략 수립
           </h2>
-          <p className="text-lg text-slate-600 max-w-3xl mx-auto">
-            기술은 인간을 대체하는 것이 아니라, 인간의 잠재력을 증폭(Augment)시키는 도구입니다.
+          <p className="text-xl text-slate-700 max-w-3xl mx-auto mb-3 font-semibold">
+            무엇을 자동화할지, 무엇을 사람이 해야할지 판단하는 시간
+          </p>
+          <p className="text-base text-slate-600 max-w-3xl mx-auto">
+            모든 업무를 자동화할 수 있는 것도, 해야 하는 것도 아닙니다.<br />
+            팀 리더로서 <span className="font-semibold text-slate-900">어디에 AI를 쓰고, 어디에 사람의 판단을 남겨둘지</span> 전략적으로 결정해야 합니다.
           </p>
         </div>
 
@@ -307,11 +311,154 @@ export default function Step8WorkflowEducation({ onNext, onBack }: Step8Workflow
           </div>
         </div>
 
+        {/* Human-in-the-Loop Concept */}
+        <div className="mb-16">
+          <div className="bg-gradient-to-br from-indigo-50/50 via-white/80 to-purple-50/50 backdrop-blur-xl border border-indigo-200/30 rounded-3xl p-10 shadow-xl">
+            <div className="text-center mb-8">
+              <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-indigo-600 to-purple-600 rounded-2xl mb-4 shadow-lg">
+                <span className="text-4xl">🔄</span>
+              </div>
+              <h3 className="text-3xl md:text-4xl font-black text-slate-900 mb-4">
+                Human-in-the-Loop이란?
+              </h3>
+              <p className="text-lg text-slate-600 max-w-2xl mx-auto">
+                자동화의 핵심은 <span className="font-bold text-indigo-700">"사람을 배제"</span>하는 것이 아니라,<br />
+                <span className="font-bold text-indigo-700">"사람을 전략적 위치에 배치"</span>하는 것입니다.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+              {/* Before: Full Manual */}
+              <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 border border-slate-200/50">
+                <div className="text-center mb-4">
+                  <div className="inline-flex items-center justify-center w-12 h-12 bg-slate-100 rounded-full mb-3">
+                    <span className="text-2xl">👤</span>
+                  </div>
+                  <h4 className="font-bold text-slate-900 mb-1">Before</h4>
+                  <p className="text-xs text-slate-500 uppercase tracking-wide">전부 수작업</p>
+                </div>
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2 text-sm text-slate-700 bg-slate-50 rounded-lg p-2">
+                    <span className="text-slate-400">👤</span>
+                    <span>데이터 수집</span>
+                  </div>
+                  <div className="flex items-center gap-2 text-sm text-slate-700 bg-slate-50 rounded-lg p-2">
+                    <span className="text-slate-400">👤</span>
+                    <span>데이터 정리</span>
+                  </div>
+                  <div className="flex items-center gap-2 text-sm text-slate-700 bg-slate-50 rounded-lg p-2">
+                    <span className="text-slate-400">👤</span>
+                    <span>분석 및 해석</span>
+                  </div>
+                  <div className="flex items-center gap-2 text-sm text-slate-700 bg-slate-50 rounded-lg p-2">
+                    <span className="text-slate-400">👤</span>
+                    <span>보고서 작성</span>
+                  </div>
+                </div>
+                <div className="mt-4 text-center text-xs text-red-600 font-semibold">
+                  ⚠️ 시간 소모 많음
+                </div>
+              </div>
+
+              {/* Wrong: Full Automation */}
+              <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 border border-red-200/50 relative overflow-hidden">
+                <div className="absolute top-0 right-0 bg-red-500 text-white text-xs font-bold px-3 py-1 rounded-bl-lg">
+                  위험
+                </div>
+                <div className="text-center mb-4">
+                  <div className="inline-flex items-center justify-center w-12 h-12 bg-red-100 rounded-full mb-3">
+                    <span className="text-2xl">🤖</span>
+                  </div>
+                  <h4 className="font-bold text-slate-900 mb-1">Wrong</h4>
+                  <p className="text-xs text-slate-500 uppercase tracking-wide">완전 자동화</p>
+                </div>
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2 text-sm text-slate-700 bg-purple-50 rounded-lg p-2">
+                    <span className="text-purple-500">🤖</span>
+                    <span>데이터 수집</span>
+                  </div>
+                  <div className="flex items-center gap-2 text-sm text-slate-700 bg-purple-50 rounded-lg p-2">
+                    <span className="text-purple-500">🤖</span>
+                    <span>데이터 정리</span>
+                  </div>
+                  <div className="flex items-center gap-2 text-sm text-slate-700 bg-purple-50 rounded-lg p-2">
+                    <span className="text-purple-500">🤖</span>
+                    <span>분석 및 해석</span>
+                  </div>
+                  <div className="flex items-center gap-2 text-sm text-slate-700 bg-purple-50 rounded-lg p-2">
+                    <span className="text-purple-500">🤖</span>
+                    <span>보고서 작성</span>
+                  </div>
+                </div>
+                <div className="mt-4 text-center text-xs text-red-600 font-semibold">
+                  ⚠️ 맥락 부족, 신뢰 문제
+                </div>
+              </div>
+
+              {/* Right: Human-in-the-Loop */}
+              <div className="bg-gradient-to-br from-indigo-50 to-purple-50 backdrop-blur-sm rounded-2xl p-6 border-2 border-indigo-500/50 relative overflow-hidden shadow-lg">
+                <div className="absolute top-0 right-0 bg-gradient-to-r from-indigo-600 to-purple-600 text-white text-xs font-bold px-3 py-1 rounded-bl-lg">
+                  추천
+                </div>
+                <div className="text-center mb-4">
+                  <div className="inline-flex items-center justify-center w-12 h-12 bg-gradient-to-br from-indigo-600 to-purple-600 rounded-full mb-3 shadow-md">
+                    <span className="text-2xl">🔄</span>
+                  </div>
+                  <h4 className="font-bold text-slate-900 mb-1">Right</h4>
+                  <p className="text-xs text-indigo-700 uppercase tracking-wide font-semibold">Human-in-the-Loop</p>
+                </div>
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2 text-sm text-slate-700 bg-white rounded-lg p-2 shadow-sm">
+                    <span className="text-purple-500">🤖</span>
+                    <span>데이터 수집</span>
+                  </div>
+                  <div className="flex items-center gap-2 text-sm text-slate-700 bg-white rounded-lg p-2 shadow-sm">
+                    <span className="text-purple-500">🤖</span>
+                    <span>데이터 정리</span>
+                  </div>
+                  <div className="flex items-center gap-2 text-sm text-slate-700 bg-indigo-100 rounded-lg p-2 shadow-sm border border-indigo-300">
+                    <span className="text-indigo-600">👤</span>
+                    <span className="font-semibold">분석 및 해석</span>
+                  </div>
+                  <div className="flex items-center gap-2 text-sm text-slate-700 bg-white rounded-lg p-2 shadow-sm">
+                    <span className="text-blue-500">✨</span>
+                    <span>보고서 작성</span>
+                  </div>
+                </div>
+                <div className="mt-4 text-center text-xs text-indigo-700 font-semibold">
+                  ✓ 효율성 + 신뢰성
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-gradient-to-r from-slate-900 to-indigo-900 rounded-2xl p-6 text-white">
+              <h5 className="font-bold text-lg mb-4 flex items-center gap-2">
+                <span>💡</span>
+                <span>핵심 원칙</span>
+              </h5>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="bg-white/10 rounded-lg p-4">
+                  <div className="font-bold mb-2">1. 반복은 AI에게</div>
+                  <div className="text-sm opacity-90">정형화되고 반복적인 작업은 AI가 처리</div>
+                </div>
+                <div className="bg-white/10 rounded-lg p-4">
+                  <div className="font-bold mb-2">2. 판단은 사람에게</div>
+                  <div className="text-sm opacity-90">맥락 이해와 의사결정은 사람의 영역</div>
+                </div>
+                <div className="bg-white/10 rounded-lg p-4">
+                  <div className="font-bold mb-2">3. 검증 포인트 설계</div>
+                  <div className="text-sm opacity-90">어디서 사람이 확인할지 전략적 배치</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
         {/* LLM Understanding Section */}
         <div className="mb-16">
-          <h2 className="text-3xl font-bold text-slate-900 mb-3 text-center">Understanding LLMs: The 'Language Engine'</h2>
+          <h2 className="text-3xl font-bold text-slate-900 mb-3 text-center">AI의 능력과 한계 이해하기</h2>
           <p className="text-center text-slate-600 mb-8 max-w-3xl mx-auto">
-            LLM(거대언어모델)은 만능이 아닙니다. "언어적 패턴" 처리는 탁월하지만, "사실적 판단"은 인간의 몫입니다.
+            전략적 판단을 위해서는 AI가 <span className="font-semibold text-slate-900">무엇을 잘하고 무엇을 못하는지</span> 정확히 알아야 합니다.
           </p>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -360,7 +507,10 @@ export default function Step8WorkflowEducation({ onNext, onBack }: Step8Workflow
 
         {/* Role Strategy Guide */}
         <div className="mb-16">
-          <h2 className="text-3xl font-bold text-slate-900 mb-8 text-center">Role Strategy Guide</h2>
+          <h2 className="text-3xl font-bold text-slate-900 mb-3 text-center">자동화 판단 프레임워크</h2>
+          <p className="text-center text-slate-600 mb-8 max-w-3xl mx-auto">
+            각 업무 단계마다 <span className="font-semibold text-slate-900">"이 작업은 누가 하는 것이 최적인가?"</span>를 질문하세요.
+          </p>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {/* Auto Card */}
             <div className="bg-white/70 backdrop-blur-xl border-t-4 border-t-purple-500 border border-white/60 rounded-3xl p-6 shadow-sm hover:shadow-lg transition-all duration-300">
@@ -435,8 +585,9 @@ export default function Step8WorkflowEducation({ onNext, onBack }: Step8Workflow
 
         {/* Leader's Reflection */}
         <div className="mb-16">
-          <h2 className="text-3xl font-bold text-slate-900 mb-3 text-center">Leader's Reflection</h2>
-          <p className="text-center text-slate-600 mb-8">팀 리더로서 가장 많은 시간을 쓰는 3가지 핵심 업무를 적어보세요</p>
+          <h2 className="text-3xl font-bold text-slate-900 mb-3 text-center">리더의 전략적 고민</h2>
+          <p className="text-center text-slate-600 mb-2 font-semibold">팀 리더로서 가장 많은 시간을 쓰는 3가지 핵심 업무를 적어보세요</p>
+          <p className="text-center text-slate-500 text-sm mb-8">각 업무를 어떻게 자동화할지, 어디에 Human-in-the-Loop을 둘지 고민해보세요</p>
           <div className="bg-white/70 backdrop-blur-xl border border-white/60 rounded-3xl p-8 shadow-sm max-w-3xl mx-auto">
             <div className="space-y-6">
               <div>
@@ -475,8 +626,9 @@ export default function Step8WorkflowEducation({ onNext, onBack }: Step8Workflow
 
         {/* Workflow Unbundling Practice */}
         <div className="mb-16">
-          <h2 className="text-3xl font-bold text-slate-900 mb-3 text-center">Workflow Unbundling Practice</h2>
-          <p className="text-center text-slate-600 mb-8">"자동화는 업무를 쪼개는 것에서 시작합니다"</p>
+          <h2 className="text-3xl font-bold text-slate-900 mb-3 text-center">실전 판단 연습</h2>
+          <p className="text-center text-slate-700 mb-2 font-semibold text-lg">업무를 단계별로 쪼개고, 각 단계의 담당자를 전략적으로 배치하세요</p>
+          <p className="text-center text-slate-600 mb-8">"자동화 설계는 업무를 쪼개고(Unbundle), 역할을 배분하는(Assign) 것에서 시작합니다"</p>
 
           <div className="bg-white/70 backdrop-blur-xl border border-white/60 rounded-3xl p-8 shadow-sm">
             {/* Scenario Header */}
@@ -563,9 +715,10 @@ export default function Step8WorkflowEducation({ onNext, onBack }: Step8Workflow
 
             {/* Simulation Analysis */}
             <div className="p-8 bg-gradient-to-r from-blue-50/50 to-purple-50/50 rounded-2xl">
-              <h3 className="text-xl font-bold text-slate-900 mb-2">📊 Simulation Analysis</h3>
+              <h3 className="text-xl font-bold text-slate-900 mb-2">📊 전략적 판단 시뮬레이션</h3>
               <p className="text-slate-600 mb-6">
-                정답은 없습니다. 위 단계의 역할을 이리저리 바꿔보며 어떤 리스크와 관리 포인트가 발생하는지 시뮬레이션 해보세요.
+                <span className="font-semibold text-slate-900">정답은 없습니다.</span> 각 단계의 역할을 바꿔보며 <span className="font-semibold">리스크, 효율성, 신뢰성</span>을 비교하고,
+                우리 팀에 최적화된 자동화 전략을 찾아보세요.
               </p>
 
               <div className="space-y-4">
