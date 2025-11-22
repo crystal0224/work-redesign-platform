@@ -132,18 +132,23 @@ export default function Step8WorkflowEducation({ onNext, onBack }: Step8Workflow
           <div className="max-w-4xl mx-auto bg-gradient-to-r from-indigo-50/80 to-purple-50/80 rounded-2xl p-8 border-2 border-indigo-200/50 shadow-lg">
             <div className="space-y-5">
               <p className="text-xl text-slate-800 leading-relaxed font-bold text-indigo-900">
-                무엇을 자동화할지, 무엇을 사람이 해야할지 판단하는 시간입니다.
+                <span className="bg-yellow-100/70 px-2 py-0.5 rounded">어디에 AI를 쓰고, 어디에 사람을 배치할지</span> 결정하는 시간입니다.
               </p>
 
-              <p className="text-lg text-slate-800 leading-relaxed">
-                모든 업무를 자동화할 수 있는 것도, 해야 하는 것도 아닙니다.<br />
-                팀 리더로서 <span className="font-bold text-slate-900 bg-yellow-100/70 px-1 rounded">어디에 AI를 쓰고, 어디에 사람의 판단을 남겨둘지</span> 전략적으로 결정해야 합니다.
-              </p>
+              <div className="text-lg text-slate-800 leading-relaxed space-y-3">
+                <p>
+                  <span className="font-bold text-indigo-900">업무를 Human / AI / Together 3가지로 나누는 원칙</span>을 배우고,<br />
+                  실전 시나리오에 적용하여 팀의 자동화 전략을 수립합니다.
+                </p>
+                <div className="flex items-start gap-2 text-base text-slate-700 bg-white/60 rounded-lg p-4">
+                  <span className="text-lg mt-0.5">💡</span>
+                  <span>모든 업무를 자동화할 필요도, 자동화할 수 있는 것도 아닙니다. 반복 작업은 AI에게, 판단이 필요한 부분은 사람에게, 협업이 필요한 곳은 Together로 배치하는 것이 핵심입니다.</span>
+                </div>
+              </div>
 
               <div className="pt-5 border-t border-indigo-200/40">
-                <p className="text-base text-indigo-700 font-medium flex items-start gap-2">
-                  <span className="text-xl mt-0.5">👇</span>
-                  <span>아래에서 업무 자동화의 원칙을 이해하고, 실전 시나리오를 통해 직접 전략을 수립해보세요.</span>
+                <p className="text-base text-indigo-700 font-medium">
+                  <span className="font-bold">진행 순서:</span> 2030년 업무 변화 트렌드 확인 → 실전 시나리오로 판단 연습 → 우리 팀 전략 수립
                 </p>
               </div>
             </div>
