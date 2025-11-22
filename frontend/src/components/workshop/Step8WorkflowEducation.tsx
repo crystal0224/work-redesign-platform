@@ -545,9 +545,17 @@ export default function Step8WorkflowEducation({ onNext, onBack }: Step8Workflow
                   <div className="flex items-start gap-3">
                     <span className="text-indigo-600 font-black text-xl mt-1 min-w-[28px]">2.</span>
                     <p className="text-base leading-relaxed">
-                      <span className="font-bold text-slate-900 bg-yellow-100/80 px-2 py-0.5 rounded">각 단계의 특성을 파악해야 합니다.</span>
+                      <span className="font-bold text-slate-900 bg-yellow-100/80 px-2 py-0.5 rounded">명확한 판단 기준을 가지는 것이 중요합니다.</span>
                       <br />
-                      <span className="text-slate-700 mt-1 inline-block">반복적인가? 판단이 필요한가? 맥락 이해가 중요한가? 이 질문들이 Human/AI/Together 선택의 기준입니다.</span>
+                      <span className="text-slate-700 mt-1 inline-block">
+                        <span className="font-semibold text-slate-900">"무엇을 AI가, 무엇을 사람이 하는지"</span> 결정하려면 각 단계의 특성을 파악해야 합니다.
+                        <br />
+                        <span className="bg-indigo-100/60 px-2 py-0.5 rounded font-semibold text-indigo-900 mt-1 inline-block">
+                          반복적인가? 판단이 필요한가? 맥락 이해가 중요한가?
+                        </span>
+                        <br />
+                        이 질문들이 Human/AI/Together 선택의 기준이 됩니다.
+                      </span>
                     </p>
                   </div>
                   <div className="flex items-start gap-3">
