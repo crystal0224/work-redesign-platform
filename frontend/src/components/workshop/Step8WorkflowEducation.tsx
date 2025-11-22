@@ -143,13 +143,22 @@ export default function Step8WorkflowEducation({ onNext, onBack }: Step8Workflow
           <div className="bg-gradient-to-br from-white/80 via-purple-50/50 to-blue-50/50 backdrop-blur-xl border border-purple-200/30 rounded-3xl p-10 shadow-xl hover:shadow-2xl transition-all duration-300">
             {/* Title */}
             <div className="text-center mb-10">
+              {/* WEF Badge - Prominent Source */}
+              <div className="inline-flex items-center gap-2 bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-5 py-2.5 rounded-full mb-4 shadow-lg">
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <span className="font-bold text-sm">World Economic Forum</span>
+                <span className="opacity-90 text-xs">Future of Jobs Report 2025</span>
+              </div>
+
               <h3 className="text-3xl md:text-4xl font-black text-slate-900 mb-3">
                 2030년, 당신의 업무는 어떻게 변할까요?
               </h3>
-              <p className="text-slate-600 text-sm mb-1">
-                World Economic Forum 예측 <span className="font-semibold">(1,000개 기업 조사 기반)</span>
+              <p className="text-slate-600 text-base font-medium mb-1">
+                1,000개 글로벌 기업 조사 기반 예측
               </p>
-              <p className="text-slate-500 text-xs">
+              <p className="text-slate-500 text-sm">
                 업무의 3분할: 사람만 / AI 완전자동 / 협업
               </p>
             </div>
@@ -230,11 +239,8 @@ export default function Step8WorkflowEducation({ onNext, onBack }: Step8Workflow
               </div>
             </div>
 
-            {/* Source & CTA */}
+            {/* CTA */}
             <div className="text-center">
-              <p className="text-xs text-slate-500 mb-4">
-                출처: World Economic Forum, Future of Jobs Report 2025
-              </p>
               <div className="inline-block">
                 <div className="bg-gradient-to-r from-purple-600 to-blue-600 text-white px-6 py-3 rounded-xl font-semibold text-sm shadow-lg hover:shadow-xl hover:scale-105 transition-all cursor-default">
                   ↓ 우리 팀은 어떻게 준비할까요?
