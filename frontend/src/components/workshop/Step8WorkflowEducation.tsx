@@ -573,7 +573,7 @@ export default function Step8WorkflowEducation({ onNext, onBack }: Step8Workflow
                       </select>
                     </div>
                     <textarea
-                      value={step.name}
+                      value={stepScenarios[step.id]?.[step.role]?.situation || step.name}
                       readOnly
                       rows={3}
                       className="w-full px-3 py-2 border border-blue-100 bg-white/30 rounded-lg text-sm resize-vertical"
