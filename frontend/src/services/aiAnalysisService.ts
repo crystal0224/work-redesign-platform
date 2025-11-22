@@ -1,5 +1,6 @@
 // AI 분석 서비스 모듈
 import { API_CONFIG } from '@/config/api';
+import { fetchWithErrorHandling, getErrorMessage, logError } from '@/lib/error-handler';
 // 이 파일을 수정하여 AI 분석 로직을 고도화할 수 있습니다.
 
 import { defaultAnalysisConfig, type AnalysisConfig, type AnalysisResult } from '../config/aiAnalysisConfig';
@@ -47,26 +48,24 @@ class AIAnalysisService {
         .map(doc => `[${doc.filename}]\n${doc.content}`)
         .join('\n\n---\n\n');
 
-      // 백엔드 AI 분석 API 호출
-      const analysisResponse = await fetch(`${API_CONFIG.baseURL}/api/ai/analyze`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          domains: input.domains,
-          documents: combinedDocuments,
-          userContext: `워크샵 ID: ${input.workshopId}`
-        }),
-      });
+      // 백엔드 AI 분석 API 호출 (에러 핸들링 개선)
+      const { data: analysisInfo } = await fetchWithErrorHandling<{ data: { analysisId: string } }>(
+        `${API_CONFIG.baseURL}/api/ai/analyze`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            domains: input.domains,
+            documents: combinedDocuments,
+            userContext: `워크샵 ID: ${input.workshopId}`
+          }),
+          timeout: 60000, // 60초 타임아웃
+        }
+      );
 
-      if (!analysisResponse.ok) {
-        throw new Error('AI 분석 API 호출 실패');
-      }
-
-      const { data: analysisInfo } = await analysisResponse.json();
       const analysisId = analysisInfo.analysisId;
-
       console.log(`📊 분석 ID: ${analysisId} - 분석 진행 중...`);
 
       // 분석 완료까지 폴링
@@ -76,8 +75,15 @@ class AIAnalysisService {
       return tasks;
 
     } catch (error) {
-      console.error('AI 분석 중 오류 발생:', error);
-      throw new Error('AI 분석에 실패했습니다.');
+      logError(error, {
+        context: 'AI 분석',
+        workshopId: input.workshopId,
+        documentCount: input.documents.length,
+        domains: input.domains,
+      });
+
+      // 사용자 친화적인 에러 메시지로 재throw
+      throw new Error(getErrorMessage(error));
     }
   }
 
@@ -88,13 +94,10 @@ class AIAnalysisService {
 
     while (attempts < maxAttempts) {
       try {
-        const response = await fetch(`${API_CONFIG.baseURL}/api/ai/analysis/${analysisId}`);
-
-        if (!response.ok) {
-          throw new Error('분석 상태 조회 실패');
-        }
-
-        const { data: analysis } = await response.json();
+        const { data: analysis } = await fetchWithErrorHandling<{ data: any }>(
+          `${API_CONFIG.baseURL}/api/ai/analysis/${analysisId}`,
+          { timeout: 10000 }
+        );
 
         if (analysis.status === 'completed') {
           // 백엔드 응답을 프론트엔드 형식으로 변환
@@ -107,12 +110,12 @@ class AIAnalysisService {
         await this.delay(1000);
         attempts++;
       } catch (error) {
-        console.error('분석 상태 조회 오류:', error);
+        logError(error, { context: 'AI 분석 상태 조회', analysisId, attempts });
         throw error;
       }
     }
 
-    throw new Error('분석 시간 초과');
+    throw new Error('분석 시간이 초과되었습니다. 다시 시도해주세요.');
   }
 
   // 백엔드 태스크를 프론트엔드 형식으로 변환
