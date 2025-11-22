@@ -527,12 +527,18 @@ export default function Step8WorkflowEducation({ onNext, onBack }: Step8Workflow
 
           <div className="bg-white/70 backdrop-blur-xl border border-white/60 rounded-3xl p-8 shadow-sm">
             {/* Scenario Header */}
-            <div className="flex justify-between items-start mb-8 flex-wrap gap-4">
+            <div className="flex justify-between items-start mb-6 flex-wrap gap-4">
               <div>
                 <div className="inline-flex items-center gap-2 px-3 py-1 bg-gradient-to-r from-blue-100/50 to-purple-100/50 border border-blue-200/50 rounded-full mb-3">
                   <span className="text-xs font-semibold text-blue-700 uppercase tracking-wide">EXAMPLE SCENARIO</span>
                 </div>
-                <h3 className="text-2xl font-bold text-slate-900">주간 팀 성과 보고 (Weekly Report)</h3>
+                <h3 className="text-2xl font-bold text-slate-900 mb-2">주간 팀 성과 보고 (Weekly Report)</h3>
+                <p className="text-sm text-slate-600">
+                  <span className="inline-flex items-center gap-1">
+                    <span className="text-blue-600 font-semibold">▼</span>
+                    각 단계의 역할을 선택하여 시나리오를 확인하세요
+                  </span>
+                </p>
               </div>
               <button
                 onClick={resetWorkflow}
@@ -577,7 +583,6 @@ export default function Step8WorkflowEducation({ onNext, onBack }: Step8Workflow
                             ▼
                           </div>
                         </div>
-                        <span className="text-[10px] text-slate-500 text-center">역할 선택</span>
                       </div>
                       <textarea
                         value={stepScenarios[step.id]?.[step.role]?.situation || step.name}
