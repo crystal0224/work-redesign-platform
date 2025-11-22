@@ -130,15 +130,17 @@ export default function Step8WorkflowEducation({ onNext, onBack }: Step8Workflow
 
           {/* Introduction Box */}
           <div className="max-w-4xl mx-auto bg-gradient-to-r from-indigo-50/80 to-purple-50/80 rounded-2xl p-8 border-2 border-indigo-200/50 shadow-lg">
-            <div className="space-y-4">
-              <p className="text-lg text-slate-800 leading-relaxed">
-                <span className="font-bold text-indigo-900">무엇을 자동화할지, 무엇을 사람이 해야할지 판단하는 시간입니다.</span>
+            <div className="space-y-5">
+              <p className="text-xl text-slate-800 leading-relaxed font-bold text-indigo-900">
+                무엇을 자동화할지, 무엇을 사람이 해야할지 판단하는 시간입니다.
               </p>
+
               <p className="text-lg text-slate-800 leading-relaxed">
-                모든 업무를 자동화할 수 있는 것도, 해야 하는 것도 아닙니다.
+                모든 업무를 자동화할 수 있는 것도, 해야 하는 것도 아닙니다.<br />
                 팀 리더로서 <span className="font-bold text-slate-900 bg-yellow-100/70 px-1 rounded">어디에 AI를 쓰고, 어디에 사람의 판단을 남겨둘지</span> 전략적으로 결정해야 합니다.
               </p>
-              <div className="pt-4 border-t border-indigo-200/40">
+
+              <div className="pt-5 border-t border-indigo-200/40">
                 <p className="text-base text-indigo-700 font-medium flex items-start gap-2">
                   <span className="text-xl mt-0.5">👇</span>
                   <span>아래에서 업무 자동화의 원칙을 이해하고, 실전 시나리오를 통해 직접 전략을 수립해보세요.</span>
