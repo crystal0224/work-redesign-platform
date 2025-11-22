@@ -730,15 +730,24 @@ export default function Step8WorkflowEducation({ onNext, onBack }: Step8Workflow
                 </div>
               </div>
 
-              <div className="mt-6 p-5 bg-blue-50 rounded-xl border border-blue-200">
-                <div className="flex items-start gap-3">
-                  <span className="text-2xl">💡</span>
-                  <div className="text-sm text-blue-900">
-                    <p className="font-semibold mb-2">워크샵 발표 팁</p>
-                    <ul className="text-blue-800 space-y-1.5 text-xs leading-relaxed">
-                      <li>• <span className="font-semibold">정답은 없습니다.</span> 우리 팀 상황에 맞는 최적의 조합을 찾는 것이 목표입니다.</li>
-                      <li>• <span className="font-semibold">한계점도 솔직하게 공유하세요.</span> 완벽한 전략은 없으며, 리스크를 인지하고 있다는 것이 중요합니다.</li>
-                      <li>• <span className="font-semibold">다른 팀과 비교하며 배우세요.</span> 같은 업무라도 다른 접근 방식이 있을 수 있습니다.</li>
+              <div className="mt-8 p-6 bg-gradient-to-r from-blue-100/80 to-indigo-100/80 rounded-2xl border-2 border-blue-300/60 shadow-md">
+                <div className="flex items-start gap-4">
+                  <span className="text-3xl">💡</span>
+                  <div className="flex-1">
+                    <p className="font-bold text-blue-900 text-lg mb-3">작성 팁</p>
+                    <ul className="text-blue-900 space-y-2.5 text-base leading-relaxed">
+                      <li className="flex items-start gap-2">
+                        <span className="font-bold mt-1">•</span>
+                        <span><span className="font-bold">정답은 없습니다.</span> 우리 팀 상황에 맞는 최적의 조합을 찾는 것이 목표입니다.</span>
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <span className="font-bold mt-1">•</span>
+                        <span><span className="font-bold">한계점도 솔직하게 공유하세요.</span> 완벽한 전략은 없으며, 리스크를 인지하고 있다는 것이 중요합니다.</span>
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <span className="font-bold mt-1">•</span>
+                        <span><span className="font-bold">다른 팀과 비교하며 배우세요.</span> 같은 업무라도 다른 접근 방식이 있을 수 있습니다.</span>
+                      </li>
                     </ul>
                   </div>
                 </div>
