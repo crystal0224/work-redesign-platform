@@ -451,52 +451,6 @@ export default function Step8WorkflowEducation({ onNext, onBack }: Step8Workflow
             각 업무 단계마다 <span className="font-semibold text-slate-900">"이 작업은 누가 하는 것이 최적인가?"</span>를 질문하세요.
           </p>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {/* Auto Card */}
-            <div className="bg-white/70 backdrop-blur-xl border-t-4 border-t-purple-500 border border-white/60 rounded-3xl p-6 shadow-sm hover:shadow-lg transition-all duration-300">
-              <div className="flex items-center gap-3 mb-4">
-                <span className="text-4xl">🤖</span>
-                <h3 className="text-xl font-bold text-slate-900">Auto (LLM)</h3>
-              </div>
-              <p className="text-blue-600 font-semibold mb-4">규칙이 있고 반복적인가?</p>
-              <ul className="space-y-2 mb-4 text-sm text-slate-700">
-                <li className="pl-5 relative before:content-['•'] before:absolute before:left-0 before:text-blue-600 before:font-bold">
-                  정답이 정해진 단순 변환
-                </li>
-                <li className="pl-5 relative before:content-['•'] before:absolute before:left-0 before:text-blue-600 before:font-bold">
-                  방대한 데이터 요약
-                </li>
-                <li className="pl-5 relative before:content-['•'] before:absolute before:left-0 before:text-blue-600 before:font-bold">
-                  초안 작성 (0 to 1)
-                </li>
-              </ul>
-              <div className="mt-6 p-3 bg-gradient-to-r from-blue-100/50 to-purple-100/50 rounded-xl text-center">
-                <span className="font-semibold text-blue-700">과감하게 위임 (Delegation)</span>
-              </div>
-            </div>
-
-            {/* Augment Card */}
-            <div className="bg-white/70 backdrop-blur-xl border-t-4 border-t-blue-500 border border-white/60 rounded-3xl p-6 shadow-sm hover:shadow-lg transition-all duration-300">
-              <div className="flex items-center gap-3 mb-4">
-                <span className="text-4xl">✨</span>
-                <h3 className="text-xl font-bold text-slate-900">Augment (Co-pilot)</h3>
-              </div>
-              <p className="text-blue-600 font-semibold mb-4">초안은 AI가, 판단은 사람이?</p>
-              <ul className="space-y-2 mb-4 text-sm text-slate-700">
-                <li className="pl-5 relative before:content-['•'] before:absolute before:left-0 before:text-blue-600 before:font-bold">
-                  아이디어 확장/브레인스토밍
-                </li>
-                <li className="pl-5 relative before:content-['•'] before:absolute before:left-0 before:text-blue-600 before:font-bold">
-                  비판적 피드백 요청
-                </li>
-                <li className="pl-5 relative before:content-['•'] before:absolute before:left-0 before:text-blue-600 before:font-bold">
-                  복잡한 데이터 분석
-                </li>
-              </ul>
-              <div className="mt-6 p-3 bg-gradient-to-r from-blue-100/50 to-purple-100/50 rounded-xl text-center">
-                <span className="font-semibold text-blue-700">생산성 2배 증폭 (Augmentation)</span>
-              </div>
-            </div>
-
             {/* Human Card */}
             <div className="bg-white/70 backdrop-blur-xl border-t-4 border-t-slate-500 border border-white/60 rounded-3xl p-6 shadow-sm hover:shadow-lg transition-all duration-300">
               <div className="flex items-center gap-3 mb-4">
@@ -517,6 +471,52 @@ export default function Step8WorkflowEducation({ onNext, onBack }: Step8Workflow
               </ul>
               <div className="mt-6 p-3 bg-gradient-to-r from-blue-100/50 to-purple-100/50 rounded-xl text-center">
                 <span className="font-semibold text-blue-700">깊이 더하기 (Human Touch)</span>
+              </div>
+            </div>
+
+            {/* AI Card */}
+            <div className="bg-white/70 backdrop-blur-xl border-t-4 border-t-purple-500 border border-white/60 rounded-3xl p-6 shadow-sm hover:shadow-lg transition-all duration-300">
+              <div className="flex items-center gap-3 mb-4">
+                <span className="text-4xl">🤖</span>
+                <h3 className="text-xl font-bold text-slate-900">AI</h3>
+              </div>
+              <p className="text-blue-600 font-semibold mb-4">규칙이 있고 반복적인가?</p>
+              <ul className="space-y-2 mb-4 text-sm text-slate-700">
+                <li className="pl-5 relative before:content-['•'] before:absolute before:left-0 before:text-blue-600 before:font-bold">
+                  정답이 정해진 단순 변환
+                </li>
+                <li className="pl-5 relative before:content-['•'] before:absolute before:left-0 before:text-blue-600 before:font-bold">
+                  방대한 데이터 요약
+                </li>
+                <li className="pl-5 relative before:content-['•'] before:absolute before:left-0 before:text-blue-600 before:font-bold">
+                  초안 작성 (0 to 1)
+                </li>
+              </ul>
+              <div className="mt-6 p-3 bg-gradient-to-r from-blue-100/50 to-purple-100/50 rounded-xl text-center">
+                <span className="font-semibold text-blue-700">과감하게 위임 (Delegation)</span>
+              </div>
+            </div>
+
+            {/* Together Card */}
+            <div className="bg-white/70 backdrop-blur-xl border-t-4 border-t-blue-500 border border-white/60 rounded-3xl p-6 shadow-sm hover:shadow-lg transition-all duration-300">
+              <div className="flex items-center gap-3 mb-4">
+                <span className="text-4xl">🤝</span>
+                <h3 className="text-xl font-bold text-slate-900">Together</h3>
+              </div>
+              <p className="text-blue-600 font-semibold mb-4">초안은 AI가, 판단은 사람이?</p>
+              <ul className="space-y-2 mb-4 text-sm text-slate-700">
+                <li className="pl-5 relative before:content-['•'] before:absolute before:left-0 before:text-blue-600 before:font-bold">
+                  아이디어 확장/브레인스토밍
+                </li>
+                <li className="pl-5 relative before:content-['•'] before:absolute before:left-0 before:text-blue-600 before:font-bold">
+                  비판적 피드백 요청
+                </li>
+                <li className="pl-5 relative before:content-['•'] before:absolute before:left-0 before:text-blue-600 before:font-bold">
+                  복잡한 데이터 분석
+                </li>
+              </ul>
+              <div className="mt-6 p-3 bg-gradient-to-r from-blue-100/50 to-purple-100/50 rounded-xl text-center">
+                <span className="font-semibold text-blue-700">생산성 2배 증폭 (Augmentation)</span>
               </div>
             </div>
           </div>
