@@ -10,7 +10,7 @@ interface Step8WorkflowEducationProps {
 interface WorkflowStep {
   id: number;
   name: string;
-  role: 'human' | 'copilot' | 'llm';
+  role: 'human' | 'ai' | 'together';
 }
 
 const stepScenarios: Record<number, Record<string, { situation: string; risk: string }>> = {
@@ -19,11 +19,11 @@ const stepScenarios: Record<number, Record<string, { situation: string; risk: st
       situation: "이메일로 실적 요청을 보내고, 답변이 오면 이메일 본문을 드래그해서 복사합니다. 엑셀 시트를 열고 해당 셀에 붙여넣은 뒤, 숫자만 남기고 불필요한 인사말은 지웁니다. 5명분을 반복합니다.",
       risk: "⏳ 이메일 확인 → 복사 → 붙여넣기 → 정리 작업의 반복으로 인한 피로도 증가"
     },
-    copilot: {
+    together: {
       situation: "이메일로 받은 데이터를 복사해서 AI에게 '이 내용을 표로 정리해줘'라고 시킵니다. AI가 만든 표를 엑셀에 붙여넣기만 하면 됩니다.",
       risk: "💡 원본 데이터 복사 과정에서의 누락 주의 필요"
     },
-    llm: {
+    ai: {
       situation: "공유 폴더에 팀원들이 업로드한 파일을 자동으로 읽어와 엑셀 시트에 채워 넣습니다. 클릭 한 번도 필요 없습니다.",
       risk: "⚠️ 파일 형식 불일치 시 전체 프로세스 중단 가능성"
     }
@@ -33,11 +33,11 @@ const stepScenarios: Record<number, Record<string, { situation: string; risk: st
       situation: "엑셀에서 날짜 컬럼을 선택하고 정렬 버튼을 누릅니다. 피벗 테이블 메뉴를 열어 부서별로 그룹화하고, 합계 함수를 설정합니다. 차트 삽입 메뉴에서 막대 그래프를 선택하고 데이터 범위를 지정합니다.",
       risk: "⏳ 엑셀 기능 숙지 필요, 실수 시 처음부터 다시"
     },
-    copilot: {
+    together: {
       situation: "엑셀 데이터를 AI에게 보여주고 '이 데이터를 날짜별로 정렬하고, 부서별 합계를 피벗 테이블로 만들어줘. 그리고 막대 그래프도 그려줘'라고 요청합니다. AI가 제안한 수식과 차트를 검토 후 적용합니다.",
       risk: "💡 AI가 제안한 수식이 의도와 다를 수 있으니 검토 필요"
     },
-    llm: {
+    ai: {
       situation: "스크립트가 자동으로 데이터를 정렬하고, 피벗 테이블을 생성하며, 차트를 그립니다. 결과물이 이메일로 전송됩니다.",
       risk: "⚠️ 예외 상황(결측치, 이상치) 처리 로직 사전 구현 필요"
     }
@@ -47,11 +47,11 @@ const stepScenarios: Record<number, Record<string, { situation: string; risk: st
       situation: "그래프를 보며 이번 주 특이사항을 고민합니다. 작년 동기 대비 증감률, 부서별 편차, 특정 이벤트 영향 등을 분석하고, 3줄 요약 멘트를 직접 작성합니다.",
       risk: "💭 깊은 사고와 맥락 이해 필요, 시간 소요"
     },
-    copilot: {
+    together: {
       situation: "AI에게 '이 그래프를 보고 3가지 인사이트를 뽑아줘'라고 요청합니다. AI가 제안한 인사이트를 검토하고, 회사 상황에 맞게 수정하거나 추가 멘트를 작성합니다.",
       risk: "💡 AI 인사이트가 피상적일 수 있으니 깊이 있는 검토 필요"
     },
-    llm: {
+    ai: {
       situation: "AI가 자동으로 그래프를 분석하고 3줄 요약을 생성합니다. 하지만 회사 내부 맥락이나 정치적 뉘앙스는 반영되지 않습니다.",
       risk: "⚠️ 맥락 없는 인사이트로 인한 오해 가능성, 최종 검토 필수"
     }
@@ -61,11 +61,11 @@ const stepScenarios: Record<number, Record<string, { situation: string; risk: st
       situation: "회사 PPT 템플릿을 열고, 텍스트와 차트를 복사해서 붙여넣습니다. 폰트 크기, 줄간격, 색상을 회사 가이드에 맞춰 조정합니다. 인쇄 설정을 확인하고 출력합니다.",
       risk: "⏳ 포맷팅 작업 시간 소요, 실수로 인한 재작업 가능성"
     },
-    copilot: {
+    together: {
       situation: "AI에게 '이 내용을 회사 PPT 템플릿에 맞춰 정리해줘'라고 요청합니다. AI가 생성한 슬라이드를 검토하고, 필요한 부분만 수정합니다.",
       risk: "💡 템플릿 준수 여부 확인 필요"
     },
-    llm: {
+    ai: {
       situation: "스크립트가 자동으로 PPT를 생성하고, 회사 템플릿에 맞춰 포맷팅합니다. 완성된 파일이 자동으로 공유 폴더에 저장됩니다.",
       risk: "⚠️ 템플릿 변경 시 스크립트 수정 필요, 유지보수 부담"
     }
@@ -73,9 +73,6 @@ const stepScenarios: Record<number, Record<string, { situation: string; risk: st
 };
 
 export default function Step8WorkflowEducation({ onNext, onBack }: Step8WorkflowEducationProps) {
-  const [task1, setTask1] = useState('');
-  const [task2, setTask2] = useState('');
-  const [task3, setTask3] = useState('');
   const [steps, setSteps] = useState<WorkflowStep[]>([
     { id: 1, name: '팀원 5명에게 이메일로 실적 요청하고, 답변 오면 이메일 본문을 복사해서 엑셀에 하나씩 붙여넣기', role: 'human' },
     { id: 2, name: '취합된 엑셀 데이터를 날짜별로 정렬하고, 피벗 테이블 돌려 부서별 합계 낸 뒤 그래프 그리기', role: 'human' },
@@ -84,11 +81,11 @@ export default function Step8WorkflowEducation({ onNext, onBack }: Step8Workflow
   ]);
 
   const getRoleIcon = (role: string) => {
-    const icons = { human: '👤', copilot: '✨', llm: '🤖' };
+    const icons = { human: '👤', together: '🤝', ai: '🤖' };
     return icons[role as keyof typeof icons];
   };
 
-  const updateRole = (stepId: number, newRole: 'human' | 'copilot' | 'llm') => {
+  const updateRole = (stepId: number, newRole: 'human' | 'together' | 'ai') => {
     setSteps(steps.map(s => s.id === stepId ? { ...s, role: newRole } : s));
   };
 
@@ -102,8 +99,8 @@ export default function Step8WorkflowEducation({ onNext, onBack }: Step8Workflow
   };
 
   const counts = {
-    llm: steps.filter(s => s.role === 'llm').length,
-    copilot: steps.filter(s => s.role === 'copilot').length,
+    ai: steps.filter(s => s.role === 'ai').length,
+    together: steps.filter(s => s.role === 'together').length,
     human: steps.filter(s => s.role === 'human').length
   };
 
@@ -522,47 +519,6 @@ export default function Step8WorkflowEducation({ onNext, onBack }: Step8Workflow
           </div>
         </div>
 
-        {/* Leader's Reflection */}
-        <div className="mb-16">
-          <h2 className="text-3xl font-bold text-slate-900 mb-3 text-center">리더의 전략적 고민</h2>
-          <p className="text-center text-slate-600 mb-2 font-semibold">팀 리더로서 가장 많은 시간을 쓰는 3가지 핵심 업무를 적어보세요</p>
-          <p className="text-center text-slate-500 text-sm mb-8">각 업무를 어떻게 자동화할지, 어디에 Human-in-the-Loop을 둘지 고민해보세요</p>
-          <div className="bg-white/70 backdrop-blur-xl border border-white/60 rounded-3xl p-8 shadow-sm max-w-3xl mx-auto">
-            <div className="space-y-6">
-              <div>
-                <label className="block font-semibold text-slate-900 mb-2">Task 1:</label>
-                <textarea
-                  rows={3}
-                  value={task1}
-                  onChange={(e) => setTask1(e.target.value)}
-                  placeholder="예: 주간 성과 보고서 작성 및 경영진 보고"
-                  className="w-full px-4 py-3 bg-white/50 border border-slate-200 rounded-xl resize-vertical focus:outline-none focus:bg-white focus:ring-2 focus:ring-blue-500 transition-all"
-                />
-              </div>
-              <div>
-                <label className="block font-semibold text-slate-900 mb-2">Task 2:</label>
-                <textarea
-                  rows={3}
-                  value={task2}
-                  onChange={(e) => setTask2(e.target.value)}
-                  placeholder="예: 팀원 1:1 미팅 및 성과 관리"
-                  className="w-full px-4 py-3 bg-white/50 border border-slate-200 rounded-xl resize-vertical focus:outline-none focus:bg-white focus:ring-2 focus:ring-blue-500 transition-all"
-                />
-              </div>
-              <div>
-                <label className="block font-semibold text-slate-900 mb-2">Task 3:</label>
-                <textarea
-                  rows={3}
-                  value={task3}
-                  onChange={(e) => setTask3(e.target.value)}
-                  placeholder="예: 신규 프로젝트 기획 및 예산 수립"
-                  className="w-full px-4 py-3 bg-white/50 border border-slate-200 rounded-xl resize-vertical focus:outline-none focus:bg-white focus:ring-2 focus:ring-blue-500 transition-all"
-                />
-              </div>
-            </div>
-          </div>
-        </div>
-
         {/* Workflow Unbundling Practice */}
         <div className="mb-16">
           <h2 className="text-3xl font-bold text-slate-900 mb-3 text-center">실전 판단 연습</h2>
@@ -594,7 +550,7 @@ export default function Step8WorkflowEducation({ onNext, onBack }: Step8Workflow
                 <div key={step.id} className="flex gap-6 mb-8 relative">
                   <div className={`w-14 h-14 rounded-full flex items-center justify-center text-2xl border-4 bg-white flex-shrink-0 relative z-10 ${
                     step.role === 'human' ? 'border-slate-500' :
-                    step.role === 'copilot' ? 'border-blue-500' :
+                    step.role === 'together' ? 'border-blue-500' :
                     'border-purple-500'
                   }`}>
                     {getRoleIcon(step.role)}
@@ -604,16 +560,16 @@ export default function Step8WorkflowEducation({ onNext, onBack }: Step8Workflow
                       <span className="font-bold text-blue-600">Step {step.id}</span>
                       <select
                         value={step.role}
-                        onChange={(e) => updateRole(step.id, e.target.value as 'human' | 'copilot' | 'llm')}
+                        onChange={(e) => updateRole(step.id, e.target.value as 'human' | 'together' | 'ai')}
                         className={`px-4 py-2 rounded-lg font-semibold cursor-pointer border-none text-white ${
                           step.role === 'human' ? 'bg-slate-500' :
-                          step.role === 'copilot' ? 'bg-blue-500' :
+                          step.role === 'together' ? 'bg-blue-500' :
                           'bg-purple-500'
                         }`}
                       >
                         <option value="human">👤 Human</option>
-                        <option value="copilot">✨ Co-pilot</option>
-                        <option value="llm">🤖 Auto (LLM)</option>
+                        <option value="together">🤝 Together</option>
+                        <option value="ai">🤖 AI</option>
                       </select>
                     </div>
                     <textarea
@@ -630,24 +586,24 @@ export default function Step8WorkflowEducation({ onNext, onBack }: Step8Workflow
             {/* Summary Cards */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
               <div className="flex items-center gap-4 p-6 rounded-2xl bg-white/50">
-                <span className="text-4xl">🤖</span>
-                <div>
-                  <div className="text-sm text-slate-600">Auto Steps</div>
-                  <div className="text-3xl font-bold text-blue-600">{counts.llm}</div>
-                </div>
-              </div>
-              <div className="flex items-center gap-4 p-6 rounded-2xl bg-white/50">
-                <span className="text-4xl">✨</span>
-                <div>
-                  <div className="text-sm text-slate-600">Augmented Steps</div>
-                  <div className="text-3xl font-bold text-blue-600">{counts.copilot}</div>
-                </div>
-              </div>
-              <div className="flex items-center gap-4 p-6 rounded-2xl bg-white/50">
                 <span className="text-4xl">👤</span>
                 <div>
                   <div className="text-sm text-slate-600">Human Steps</div>
                   <div className="text-3xl font-bold text-blue-600">{counts.human}</div>
+                </div>
+              </div>
+              <div className="flex items-center gap-4 p-6 rounded-2xl bg-white/50">
+                <span className="text-4xl">🤖</span>
+                <div>
+                  <div className="text-sm text-slate-600">AI Steps</div>
+                  <div className="text-3xl font-bold text-blue-600">{counts.ai}</div>
+                </div>
+              </div>
+              <div className="flex items-center gap-4 p-6 rounded-2xl bg-white/50">
+                <span className="text-4xl">🤝</span>
+                <div>
+                  <div className="text-sm text-slate-600">Together Steps</div>
+                  <div className="text-3xl font-bold text-blue-600">{counts.together}</div>
                 </div>
               </div>
             </div>
