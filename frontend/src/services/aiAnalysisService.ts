@@ -1,4 +1,5 @@
 // AI 분석 서비스 모듈
+import { API_CONFIG } from '@/config/api';
 // 이 파일을 수정하여 AI 분석 로직을 고도화할 수 있습니다.
 
 import { defaultAnalysisConfig, type AnalysisConfig, type AnalysisResult } from '../config/aiAnalysisConfig';
@@ -47,7 +48,7 @@ class AIAnalysisService {
         .join('\n\n---\n\n');
 
       // 백엔드 AI 분석 API 호출
-      const analysisResponse = await fetch('http://localhost:4000/api/ai/analyze', {
+      const analysisResponse = await fetch(`${API_CONFIG.baseURL}/api/ai/analyze`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -87,7 +88,7 @@ class AIAnalysisService {
 
     while (attempts < maxAttempts) {
       try {
-        const response = await fetch(`http://localhost:4000/api/ai/analysis/${analysisId}`);
+        const response = await fetch(`${API_CONFIG.baseURL}/api/ai/analysis/${analysisId}`);
 
         if (!response.ok) {
           throw new Error('분석 상태 조회 실패');
