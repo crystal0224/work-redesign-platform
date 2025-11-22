@@ -572,70 +572,72 @@ export default function Step8WorkflowEducation({ onNext, onBack }: Step8Workflow
             </div>
           </div>
 
-          <div className="bg-white/70 backdrop-blur-xl border border-white/60 rounded-3xl p-8 shadow-sm">
+          <div className="bg-gradient-to-br from-white/90 to-blue-50/40 backdrop-blur-xl border-2 border-blue-200/40 rounded-3xl p-10 shadow-xl hover:shadow-2xl transition-shadow duration-300">
             {/* Scenario Header */}
-            <div className="flex justify-between items-start mb-6 flex-wrap gap-4">
+            <div className="flex justify-between items-start mb-8 flex-wrap gap-4">
               <div>
-                <div className="inline-flex items-center gap-2 px-3 py-1 bg-gradient-to-r from-blue-100/50 to-purple-100/50 border border-blue-200/50 rounded-full mb-3">
-                  <span className="text-xs font-semibold text-blue-700 uppercase tracking-wide">EXAMPLE SCENARIO</span>
+                <div className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-blue-500 to-purple-600 border border-blue-300/50 rounded-full mb-4 shadow-md">
+                  <span className="text-xs font-bold text-white uppercase tracking-wider">⚡ EXAMPLE SCENARIO</span>
                 </div>
-                <h3 className="text-2xl font-bold text-slate-900 mb-2">주간 팀 성과 보고 (Weekly Report)</h3>
-                <p className="text-sm text-slate-600">
-                  <span className="inline-flex items-center gap-1">
-                    <span className="text-blue-600 font-semibold">▼</span>
-                    각 단계의 역할을 선택하여 시나리오를 확인하세요
+                <h3 className="text-3xl font-black text-slate-900 mb-3 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                  주간 팀 성과 보고 (Weekly Report)
+                </h3>
+                <p className="text-base text-slate-600 font-medium">
+                  <span className="inline-flex items-center gap-2">
+                    <span className="text-blue-600 font-bold text-lg">▼</span>
+                    <span>각 단계의 역할을 선택하여 시나리오를 확인하세요</span>
                   </span>
                 </p>
               </div>
               <button
                 onClick={resetWorkflow}
-                className="px-4 py-2 bg-blue-100/50 border border-blue-200/50 rounded-xl font-semibold text-blue-700 hover:bg-blue-200/50 transition-all"
+                className="px-6 py-3 bg-gradient-to-r from-blue-500 to-blue-600 border-2 border-blue-300 rounded-xl font-bold text-white hover:from-blue-600 hover:to-blue-700 hover:scale-105 transition-all shadow-md hover:shadow-lg"
               >
                 🔄 Reset
               </button>
             </div>
 
             {/* Workflow Steps */}
-            <div className="relative pl-12 mb-6">
-              <div className="absolute left-5 top-0 bottom-0 w-0.5 bg-gradient-to-b from-transparent via-blue-200 to-transparent"></div>
+            <div className="relative pl-16 mb-8">
+              <div className="absolute left-7 top-0 bottom-0 w-1 bg-gradient-to-b from-blue-200 via-purple-300 to-blue-200 rounded-full shadow-sm"></div>
 
               {steps.map((step) => (
-                <div key={step.id} className="flex gap-4 mb-5 relative">
-                  <div className={`w-10 h-10 rounded-full flex items-center justify-center text-xl border-3 bg-white flex-shrink-0 relative z-10 ${
-                    step.role === 'human' ? 'border-slate-500' :
-                    step.role === 'together' ? 'border-blue-500' :
-                    'border-purple-500'
+                <div key={step.id} className="flex gap-5 mb-6 relative">
+                  <div className={`w-14 h-14 rounded-full flex items-center justify-center text-2xl border-4 bg-white flex-shrink-0 relative z-10 shadow-lg transition-all duration-200 hover:scale-110 ${
+                    step.role === 'human' ? 'border-slate-500 shadow-slate-300' :
+                    step.role === 'together' ? 'border-blue-500 shadow-blue-300' :
+                    'border-purple-500 shadow-purple-300'
                   }`}>
                     {getRoleIcon(step.role)}
                   </div>
-                  <div className="flex-1 bg-white/50 rounded-xl p-4 hover:translate-y-[-1px] transition-transform">
-                    <div className="flex items-stretch gap-3">
-                      <div className="flex flex-col gap-1 flex-shrink-0">
-                        <div className="flex items-center gap-1.5 mb-0.5">
-                          <span className="font-bold text-blue-600 text-sm">Step {step.id}</span>
-                          <span className="text-slate-400 text-xs">•</span>
-                          <span className="font-semibold text-slate-700 text-xs">{step.title}</span>
+                  <div className="flex-1 bg-gradient-to-br from-white/80 to-blue-50/30 rounded-2xl p-5 hover:translate-y-[-2px] hover:shadow-xl transition-all duration-200 border border-blue-100/50">
+                    <div className="flex items-stretch gap-4">
+                      <div className="flex flex-col gap-2 flex-shrink-0 min-w-[180px]">
+                        <div className="flex items-center gap-2 mb-1">
+                          <span className="font-black text-blue-600 text-base">Step {step.id}</span>
+                          <span className="text-slate-400 text-sm">•</span>
+                          <span className="font-bold text-slate-800 text-sm">{step.title}</span>
                         </div>
                         <div className="relative flex-1">
                           <select
                             value={step.role}
                             onChange={(e) => updateRole(step.id, e.target.value as 'human' | 'together' | 'ai')}
-                            className={`h-full w-full px-3 py-2 pr-7 rounded-lg text-xs font-semibold cursor-pointer border-none text-white appearance-none ${
-                              step.role === 'human' ? 'bg-slate-500 hover:bg-slate-600' :
-                              step.role === 'together' ? 'bg-blue-500 hover:bg-blue-600' :
-                              'bg-purple-500 hover:bg-purple-600'
-                            } transition-colors`}
+                            className={`h-full w-full px-4 py-2.5 pr-8 rounded-xl text-sm font-bold cursor-pointer border-2 text-white appearance-none shadow-md hover:shadow-lg transition-all ${
+                              step.role === 'human' ? 'bg-gradient-to-r from-slate-500 to-slate-600 border-slate-400 hover:from-slate-600 hover:to-slate-700' :
+                              step.role === 'together' ? 'bg-gradient-to-r from-blue-500 to-blue-600 border-blue-400 hover:from-blue-600 hover:to-blue-700' :
+                              'bg-gradient-to-r from-purple-500 to-purple-600 border-purple-400 hover:from-purple-600 hover:to-purple-700'
+                            }`}
                           >
                             <option value="human">👤 Human</option>
                             <option value="together">🤝 Together</option>
                             <option value="ai">🤖 AI</option>
                           </select>
-                          <div className="absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none text-white text-xs">
+                          <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-white text-sm font-bold">
                             ▼
                           </div>
                         </div>
                       </div>
-                      <div className="flex-1 px-3 py-2 bg-slate-50/50 rounded-lg text-xs text-slate-700 leading-relaxed">
+                      <div className="flex-1 px-4 py-3 bg-white/60 rounded-xl text-sm text-slate-800 leading-relaxed font-medium border border-blue-100">
                         {stepScenarios[step.id]?.[step.role]?.situation || step.name}
                       </div>
                     </div>
@@ -645,26 +647,32 @@ export default function Step8WorkflowEducation({ onNext, onBack }: Step8Workflow
             </div>
 
             {/* Summary Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-              <div className="flex items-center gap-4 p-6 rounded-2xl bg-white/50">
-                <span className="text-4xl">👤</span>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+              <div className="flex items-center gap-5 p-6 rounded-2xl bg-gradient-to-br from-slate-50 to-slate-100/50 border-2 border-slate-200 shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-200">
+                <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-slate-500 to-slate-600 flex items-center justify-center shadow-md">
+                  <span className="text-4xl">👤</span>
+                </div>
                 <div>
-                  <div className="text-sm text-slate-600">Human Steps</div>
-                  <div className="text-3xl font-bold text-blue-600">{counts.human}</div>
+                  <div className="text-sm font-semibold text-slate-600 uppercase tracking-wide">Human Steps</div>
+                  <div className="text-4xl font-black bg-gradient-to-r from-slate-600 to-slate-700 bg-clip-text text-transparent">{counts.human}</div>
                 </div>
               </div>
-              <div className="flex items-center gap-4 p-6 rounded-2xl bg-white/50">
-                <span className="text-4xl">🤖</span>
+              <div className="flex items-center gap-5 p-6 rounded-2xl bg-gradient-to-br from-purple-50 to-purple-100/50 border-2 border-purple-200 shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-200">
+                <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-purple-500 to-purple-600 flex items-center justify-center shadow-md">
+                  <span className="text-4xl">🤖</span>
+                </div>
                 <div>
-                  <div className="text-sm text-slate-600">AI Steps</div>
-                  <div className="text-3xl font-bold text-blue-600">{counts.ai}</div>
+                  <div className="text-sm font-semibold text-purple-600 uppercase tracking-wide">AI Steps</div>
+                  <div className="text-4xl font-black bg-gradient-to-r from-purple-600 to-purple-700 bg-clip-text text-transparent">{counts.ai}</div>
                 </div>
               </div>
-              <div className="flex items-center gap-4 p-6 rounded-2xl bg-white/50">
-                <span className="text-4xl">🤝</span>
+              <div className="flex items-center gap-5 p-6 rounded-2xl bg-gradient-to-br from-blue-50 to-blue-100/50 border-2 border-blue-200 shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-200">
+                <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center shadow-md">
+                  <span className="text-4xl">🤝</span>
+                </div>
                 <div>
-                  <div className="text-sm text-slate-600">Together Steps</div>
-                  <div className="text-3xl font-bold text-blue-600">{counts.together}</div>
+                  <div className="text-sm font-semibold text-blue-600 uppercase tracking-wide">Together Steps</div>
+                  <div className="text-4xl font-black bg-gradient-to-r from-blue-600 to-blue-700 bg-clip-text text-transparent">{counts.together}</div>
                 </div>
               </div>
             </div>
