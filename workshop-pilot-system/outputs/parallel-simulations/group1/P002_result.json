@@ -1,6 +1,303 @@
 {
   "personaId": "P002",
-  "satisfaction": 8.47551212999719,
-  "timeSpent": 32.63395573196408,
-  "completed": true
+  "personaName": "이서연",
+  "department": "Sales",
+  "digitalMaturity": "Intermediate",
+  "startTime": "2025-11-23T00:47:18.186Z",
+  "endTime": "2025-11-23T00:49:13.478Z",
+  "totalDuration": 115,
+  "stageResults": [
+    {
+      "stageNumber": 1,
+      "stageName": "워크샵 시작",
+      "actualMinutes": 4,
+      "timePerception": "Just Right",
+      "easeOfUse": 8,
+      "clarity": 9,
+      "value": 9,
+      "painPoints": [
+        "초기 소개 시간이 약간 빠르게 느껴짐",
+        "세부 내용에 대한 추가 설명 필요"
+      ],
+      "positivePoints": [
+        "명확한 플랫폼 목표 제시",
+        "간결하고 집중된 소개",
+        "팀 변화에 대한 긍정적 기대감 형성"
+      ],
+      "suggestions": [
+        "플랫폼 목표에 대한 구체적인 사례 추가",
+        "팀원들의 잠재적 질문에 대비한 FAQ 섹션 마련"
+      ],
+      "wouldContinue": true,
+      "emotionalState": "호기롭고 기대되는 상태"
+    },
+    {
+      "stageNumber": 2,
+      "stageName": "미션 작성",
+      "actualMinutes": 12,
+      "timePerception": "Just Right",
+      "easeOfUse": 8,
+      "clarity": 9,
+      "value": 9,
+      "painPoints": [
+        "팀 미션 작성 시 구체적인 예시 부족",
+        "고객 가치 정의에 대한 추상적 가이드라인"
+      ],
+      "positivePoints": [
+        "명확한 단계별 진행 방식",
+        "팀의 전략적 방향성 수립에 도움",
+        "구성원들의 공감대 형성 기회"
+      ],
+      "suggestions": [
+        "미션 작성 시 구체적인 템플릿 제공",
+        "고객 가치 정의를 위한 추가 가이드 필요",
+        "실제 성공 사례 공유"
+      ],
+      "wouldContinue": true,
+      "emotionalState": "Motivated and Focused"
+    },
+    {
+      "stageNumber": 3,
+      "stageName": "팀 상황 확인",
+      "actualMinutes": 6,
+      "timePerception": "Just Right",
+      "easeOfUse": 8,
+      "clarity": 7,
+      "value": 9,
+      "painPoints": [
+        "팀 상황을 정량적으로 평가하는 기준이 다소 모호함",
+        "일부 평가 항목의 세부 기준이 명확하지 않음"
+      ],
+      "positivePoints": [
+        "팀의 현재 상태를 종합적으로 점검할 수 있는 기회",
+        "디지털 성숙도 평가 프로세스가 체계적임",
+        "팀의 강점과 개선 영역을 객관적으로 파악 가능"
+      ],
+      "suggestions": [
+        "팀 상황 평가 항목에 대한 더 구체적인 가이드라인 제공",
+        "정량적 평가 기준 추가",
+        "평가 과정에서 구체적인 예시 케이스 제공"
+      ],
+      "wouldContinue": true,
+      "emotionalState": "focused and curious"
+    },
+    {
+      "stageNumber": 4,
+      "stageName": "업무 영역 정의",
+      "actualMinutes": 12,
+      "timePerception": "Just Right",
+      "easeOfUse": 8,
+      "clarity": 7,
+      "value": 9,
+      "painPoints": [
+        "업무 영역 구분의 경계가 모호한 부분 있음",
+        "일부 업무 카테고리 분류의 중복 가능성",
+        "세부 업무 정의 시 추가 설명 필요"
+      ],
+      "positivePoints": [
+        "팀의 핵심 업무 영역을 체계적으로 정리할 수 있는 기회",
+        "각 업무의 중요도와 우선순위 파악에 도움",
+        "팀원들과 업무 공유 및 명확화 가능"
+      ],
+      "suggestions": [
+        "업무 영역별 예시 케이스 추가",
+        "업무 중첩 영역에 대한 가이드라인 제공",
+        "업무 정의 시 구체적인 템플릿 제안"
+      ],
+      "wouldContinue": true,
+      "emotionalState": "focused and slightly challenged"
+    },
+    {
+      "stageNumber": 5,
+      "stageName": "업무 내용 입력",
+      "actualMinutes": 18,
+      "timePerception": "Just Right",
+      "easeOfUse": 8,
+      "clarity": 7,
+      "value": 9,
+      "painPoints": [
+        "일부 업무 내용 기술 시 구체성 부족",
+        "업무별 세부 설명 템플릿 부재",
+        "업무 복잡성 표현의 어려움"
+      ],
+      "positivePoints": [
+        "팀의 실제 업무 내용을 깊이 있게 분석할 수 있는 기회",
+        "업무 프로세스 이해도 향상",
+        "팀원들과 업무 공유 및 정렬 가능"
+      ],
+      "suggestions": [
+        "업무 내용 입력을 위한 가이드라인 및 예시 추가",
+        "업무 복잡성을 측정할 수 있는 명확한 기준 제시",
+        "업무 설명에 대한 구조화된 템플릿 개발"
+      ],
+      "wouldContinue": true,
+      "emotionalState": "집중적이고 분석적인 상태"
+    },
+    {
+      "stageNumber": 6,
+      "stageName": "업무 추출 (AI)",
+      "actualMinutes": 4,
+      "timePerception": "Just Right",
+      "easeOfUse": 8,
+      "clarity": 7,
+      "value": 9,
+      "painPoints": [
+        "AI 분석 결과의 세부 해석 필요",
+        "일부 업무 추출 과정의 불투명성",
+        "자동 분류의 정확도에 대한 의문"
+      ],
+      "positivePoints": [
+        "빠른 업무 분석 속도",
+        "자동화된 프로세스",
+        "데이터 기반 객관적 접근"
+      ],
+      "suggestions": [
+        "AI 분석 결과에 대한 상세 설명 추가",
+        "수동 검토 옵션 제공",
+        "분류 알고리즘의 투명성 강화"
+      ],
+      "wouldContinue": true,
+      "emotionalState": "Curious and Slightly Cautious"
+    },
+    {
+      "stageNumber": 7,
+      "stageName": "결과 요약",
+      "actualMinutes": 12,
+      "timePerception": "Just Right",
+      "easeOfUse": 8,
+      "clarity": 7,
+      "value": 8,
+      "painPoints": [
+        "결과 요약의 세부 기준이 다소 모호함",
+        "AI 추출 결과의 정확성에 대한 불확실성",
+        "일부 업무 분류의 자동 추출 과정이 투명하지 않음"
+      ],
+      "positivePoints": [
+        "이전 단계들의 피드백이 반영된 느낌",
+        "AI 분석 결과를 빠르게 확인 가능",
+        "팀 업무 구조화에 대한 체계적 접근"
+      ],
+      "suggestions": [
+        "결과 요약 단계의 세부 가이드라인 보강",
+        "AI 추출 결과에 대한 상세 설명 추가",
+        "업무 분류 기준의 명확성 개선"
+      ],
+      "wouldContinue": true,
+      "emotionalState": "집중된 상태, 약간의 기대감과 호기심"
+    },
+    {
+      "stageNumber": 8,
+      "stageName": "AI 교육",
+      "actualMinutes": 17,
+      "timePerception": "Just Right",
+      "easeOfUse": 8,
+      "clarity": 7,
+      "value": 8,
+      "painPoints": [
+        "AI 교육 콘텐츠의 일부 내용이 추상적임",
+        "실제 업무 적용 사례 부족",
+        "자동화 기술의 구체적인 적용 방법 설명 미흡"
+      ],
+      "positivePoints": [
+        "AI 기술에 대한 기본적인 이해 제공",
+        "팀 업무 혁신 관점에서 유용한 접근",
+        "간결하고 압축적인 교육 구성"
+      ],
+      "suggestions": [
+        "실제 업무 사례 추가",
+        "AI 적용 가능한 구체적인 시나리오 제시",
+        "팀 특성에 맞는 맞춤형 자동화 가이드 개발"
+      ],
+      "wouldContinue": true,
+      "emotionalState": "curious and slightly overwhelmed"
+    },
+    {
+      "stageNumber": 9,
+      "stageName": "AI 컨설팅",
+      "actualMinutes": 12,
+      "timePerception": "Just Right",
+      "easeOfUse": 8,
+      "clarity": 7,
+      "value": 8,
+      "painPoints": [
+        "AI 도입 전략의 구체적인 실행 방안 부족",
+        "ROI 계산 방식의 모호성",
+        "팀 특성에 맞는 맞춤형 접근 부족"
+      ],
+      "positivePoints": [
+        "AI 컨설팅의 체계적인 접근 방식",
+        "비용 효율성 분석 제공",
+        "장기적 전략 수립에 도움"
+      ],
+      "suggestions": [
+        "산업별/팀 특성별 구체적인 ROI 사례 추가",
+        "AI 도입 단계별 세부 실행 가이드 제공",
+        "리스크 평가 및 대응 전략 상세화"
+      ],
+      "wouldContinue": true,
+      "emotionalState": "Curious and Cautiously Optimistic"
+    },
+    {
+      "stageNumber": 10,
+      "stageName": "워크플로우 설계",
+      "actualMinutes": 15,
+      "timePerception": "Just Right",
+      "easeOfUse": 8,
+      "clarity": 7,
+      "value": 8,
+      "painPoints": [
+        "자동화 워크플로우 설계의 구체적인 가이드라인 부족",
+        "팀 특성에 맞는 맞춤형 워크플로우 템플릿 미제공",
+        "복잡한 업무 프로세스의 표준화 어려움"
+      ],
+      "positivePoints": [
+        "AI 기반 워크플로우 자동 설계 시도",
+        "업무 효율성 개선 잠재력 확인",
+        "팀 전체 프로세스 최적화 가능성"
+      ],
+      "suggestions": [
+        "더 구체적인 워크플로우 설계 가이드 제공",
+        "업종/팀 특화 워크플로우 템플릿 개발",
+        "실제 업무 사례 기반 자동화 예시 추가"
+      ],
+      "wouldContinue": true,
+      "emotionalState": "기대감 있는 약간의 불확실성"
+    },
+    {
+      "stageNumber": 11,
+      "stageName": "최종 리포트",
+      "actualMinutes": 4,
+      "timePerception": "Just Right",
+      "easeOfUse": 8,
+      "clarity": 7,
+      "value": 8,
+      "painPoints": [
+        "결과 리포트의 세부 내용 해석이 다소 복잡함",
+        "AI 분석 결과의 투명성 부족",
+        "맞춤형 인사이트 제공 범위가 제한적"
+      ],
+      "positivePoints": [
+        "전체 워크샵 과정 요약 제공",
+        "AI 기반 분석 결과 다운로드 가능",
+        "팀 업무 개선을 위한 구조화된 접근 방식"
+      ],
+      "suggestions": [
+        "AI 분석 결과에 대한 더 자세한 설명 추가",
+        "결과 리포트의 시각화 개선",
+        "팀 특성에 맞는 더 구체적인 개선 제안 포함"
+      ],
+      "wouldContinue": true,
+      "emotionalState": "기대감과 약간의 불확실성"
+    }
+  ],
+  "overallSatisfaction": 8,
+  "wouldRecommend": true,
+  "finalThoughts": "Intermediate 수준의 사용자로서 전반적으로 유용한 플랫폼이라고 생각합니다.",
+  "topImprovements": [
+    "플랫폼 목표에 대한 구체적인 사례 추가",
+    "팀원들의 잠재적 질문에 대비한 FAQ 섹션 마련",
+    "미션 작성 시 구체적인 템플릿 제공",
+    "고객 가치 정의를 위한 추가 가이드 필요",
+    "실제 성공 사례 공유"
+  ]
 }
