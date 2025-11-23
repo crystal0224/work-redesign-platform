@@ -11,6 +11,7 @@
 import * as dotenv from 'dotenv';
 import * as path from 'path';
 import * as fs from 'fs';
+import { execSync } from 'child_process';
 import { runGroupSimulation as runActualGroupSimulation } from './group-simulations/run-group-simulation';
 
 // 환경 변수 로드
@@ -307,6 +308,18 @@ async function runParallelPilot() {
     `final-report-${new Date().toISOString().split('T')[0]}.json`
   );
   fs.writeFileSync(reportPath, JSON.stringify(finalReport, null, 2));
+
+  // 한국어 보고서 자동 생성
+  log('\n📝 Generating Korean report...', colors.cyan);
+  try {
+    const koreanReportScript = path.join(__dirname, '5-reports/generate-korean-report.ts');
+    execSync(`npx ts-node ${koreanReportScript}`, {
+      cwd: __dirname,
+      stdio: 'inherit'
+    });
+  } catch (error) {
+    log(`⚠️  Korean report generation failed: ${error}`, colors.yellow);
+  }
 
   // 결과 출력
   logSection('✅ Pilot Testing Complete');

@@ -187,10 +187,27 @@ workshop-pilot-system/outputs/
 │   ├── group2/
 │   └── ...
 └── parallel-reports/
-    └── final-report-2025-11-23.json  # 최종 통합 보고서
+    ├── final-report-2025-11-23.json      # JSON 통합 보고서
+    └── 종합_보고서_2025-11-23.md         # 한국어 종합 보고서 (자동 생성)
 ```
 
+**새 기능**: 시뮬레이션 완료 시 한국어 보고서가 자동으로 생성됩니다!
+
 ### 결과 분석 명령어
+
+#### 한국어 종합 보고서 보기 (권장)
+```bash
+# 한국어 보고서 열기
+cat workshop-pilot-system/outputs/parallel-reports/종합_보고서_*.md
+
+# 또는 VS Code로 열기
+code workshop-pilot-system/outputs/parallel-reports/종합_보고서_*.md
+
+# 한국어 보고서만 재생성
+npm run pilot:report
+```
+
+#### JSON 데이터 분석 (개발자용)
 ```bash
 # 전체 성공률 확인
 cd workshop-pilot-system
