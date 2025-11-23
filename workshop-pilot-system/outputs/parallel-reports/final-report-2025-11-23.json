@@ -1,0 +1,114 @@
+{
+  "timestamp": "2025-11-23T00:35:08.368Z",
+  "totalPersonas": 30,
+  "totalGroups": 6,
+  "successfulSimulations": 25,
+  "failedSimulations": 5,
+  "successRate": "83.3%",
+  "averageSatisfaction": "7.4/10",
+  "averageTimeSpent": "35 minutes",
+  "groupResults": [
+    {
+      "groupId": "group1",
+      "groupName": "Marketing & Sales Leaders",
+      "personaCount": 5,
+      "successCount": 4,
+      "failureCount": 1,
+      "avgSatisfaction": 7.689617097470864,
+      "avgTimeSpent": 34.99899489598876,
+      "keyInsights": [
+        "4/5 personas completed successfully",
+        "Average satisfaction: 7.7/10",
+        "Average time spent: 35 minutes",
+        "Department focus: Marketing & Sales Leaders"
+      ],
+      "timestamp": "2025-11-23T00:35:08.355Z"
+    },
+    {
+      "groupId": "group2",
+      "groupName": "Production & Operations Leaders",
+      "personaCount": 5,
+      "successCount": 4,
+      "failureCount": 1,
+      "avgSatisfaction": 6.950452583645147,
+      "avgTimeSpent": 36.00659398917814,
+      "keyInsights": [
+        "4/5 personas completed successfully",
+        "Average satisfaction: 7.0/10",
+        "Average time spent: 36 minutes",
+        "Department focus: Production & Operations Leaders"
+      ],
+      "timestamp": "2025-11-23T00:35:08.358Z"
+    },
+    {
+      "groupId": "group3",
+      "groupName": "R&D & Innovation Leaders",
+      "personaCount": 5,
+      "successCount": 3,
+      "failureCount": 2,
+      "avgSatisfaction": 7.393576764189699,
+      "avgTimeSpent": 30.314181408872845,
+      "keyInsights": [
+        "3/5 personas completed successfully",
+        "Average satisfaction: 7.4/10",
+        "Average time spent: 30 minutes",
+        "Department focus: R&D & Innovation Leaders"
+      ],
+      "timestamp": "2025-11-23T00:35:08.365Z"
+    },
+    {
+      "groupId": "group4",
+      "groupName": "HR & Finance Leaders",
+      "personaCount": 5,
+      "successCount": 5,
+      "failureCount": 0,
+      "avgSatisfaction": 6.666687671618634,
+      "avgTimeSpent": 33.67630330142208,
+      "keyInsights": [
+        "5/5 personas completed successfully",
+        "Average satisfaction: 6.7/10",
+        "Average time spent: 34 minutes",
+        "Department focus: HR & Finance Leaders"
+      ],
+      "timestamp": "2025-11-23T00:35:08.366Z"
+    },
+    {
+      "groupId": "group5",
+      "groupName": "IT & Digital Transformation Leaders",
+      "personaCount": 5,
+      "successCount": 4,
+      "failureCount": 1,
+      "avgSatisfaction": 8.075901923584613,
+      "avgTimeSpent": 37.80019861580112,
+      "keyInsights": [
+        "4/5 personas completed successfully",
+        "Average satisfaction: 8.1/10",
+        "Average time spent: 38 minutes",
+        "Department focus: IT & Digital Transformation Leaders"
+      ],
+      "timestamp": "2025-11-23T00:35:08.367Z"
+    },
+    {
+      "groupId": "group6",
+      "groupName": "Strategy & Planning Leaders",
+      "personaCount": 5,
+      "successCount": 5,
+      "failureCount": 0,
+      "avgSatisfaction": 7.695663630251433,
+      "avgTimeSpent": 37.256632475376364,
+      "keyInsights": [
+        "5/5 personas completed successfully",
+        "Average satisfaction: 7.7/10",
+        "Average time spent: 37 minutes",
+        "Department focus: Strategy & Planning Leaders"
+      ],
+      "timestamp": "2025-11-23T00:35:08.367Z"
+    }
+  ],
+  "recommendations": [
+    "Focus on improving onboarding for beginner users",
+    "Optimize workflow for production teams",
+    "Enhance AI features for advanced users",
+    "Add more templates for common use cases"
+  ]
+}
