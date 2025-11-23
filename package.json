@@ -38,7 +38,10 @@
     "migrate": "cd backend && npm run migrate",
     "seed": "cd backend && npm run seed",
     "deploy:dev": "./deploy.sh development deploy",
-    "deploy:prod": "./deploy.sh production deploy"
+    "deploy:prod": "./deploy.sh production deploy",
+    "pilot": "cd workshop-pilot-system && npx ts-node --project tsconfig.json run-pilot.ts",
+    "pilot:quick": "cd workshop-pilot-system && npx ts-node --project tsconfig.json run-pilot.ts --personas 3",
+    "pilot:full": "cd workshop-pilot-system && npx ts-node --project tsconfig.json run-pilot.ts --personas 30 --verbose"
   },
   "keywords": [
     "work-redesign",

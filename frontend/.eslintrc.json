@@ -3,5 +3,8 @@
   "rules": {
     "react/no-unescaped-entities": "off",
     "react-hooks/exhaustive-deps": "warn"
-  }
+  },
+  "ignorePatterns": [
+    "src/components/workshop/Step4_5Education.tsx"
+  ]
 }

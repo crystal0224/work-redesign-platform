@@ -1,0 +1,1038 @@
+# AI 페르소나 시뮬레이션 결과 분석 리포트
+
+## 1. Header Section
+
+**생성 일시:** {{EXECUTION_DATE}}
+**보고서 ID:** {{REPORT_ID}}
+**플랫폼:** 워크플로우 재설계 플랫폼
+
+### 요약 통계
+- **총 페르소나 수:** {{TOTAL_PERSONAS}}
+- **성공 완료율:** {{SUCCESS_RATE}}%
+- **총 토큰 사용량:** {{TOTAL_TOKENS:,}}
+- **평균 세션 시간:** {{AVERAGE_SESSION_TIME}} 분
+- **에러 발생률:** {{ERROR_RATE}}%
+
+---
+
+## 2. Executive Summary
+
+### 주요 발견사항
+
+1. **{{KEY_FINDING_1_TITLE}}**
+   - {{KEY_FINDING_1_DESCRIPTION}}
+   - 영향도: {{KEY_FINDING_1_IMPACT}}
+
+2. **{{KEY_FINDING_2_TITLE}}**
+   - {{KEY_FINDING_2_DESCRIPTION}}
+   - 영향도: {{KEY_FINDING_2_IMPACT}}
+
+3. **{{KEY_FINDING_3_TITLE}}**
+   - {{KEY_FINDING_3_DESCRIPTION}}
+   - 영향도: {{KEY_FINDING_3_IMPACT}}
+
+4. **{{KEY_FINDING_4_TITLE}}**
+   - {{KEY_FINDING_4_DESCRIPTION}}
+   - 영향도: {{KEY_FINDING_4_IMPACT}}
+
+5. **{{KEY_FINDING_5_TITLE}}**
+   - {{KEY_FINDING_5_DESCRIPTION}}
+   - 영향도: {{KEY_FINDING_5_IMPACT}}
+
+### 전반적 만족도
+
+| 평가 항목 | 점수 (1-5) | 응답자 수 |
+|--------|---------|--------|
+| 워크숍 사용성 | {{USABILITY_SCORE}} | {{USABILITY_COUNT}} |
+| 기능 충분성 | {{FEATURE_SUFFICIENCY_SCORE}} | {{FEATURE_SUFFICIENCY_COUNT}} |
+| UI/UX 디자인 | {{DESIGN_SCORE}} | {{DESIGN_COUNT}} |
+| 성과 달성 도움도 | {{GOAL_ACHIEVEMENT_SCORE}} | {{GOAL_ACHIEVEMENT_COUNT}} |
+| 전반적 만족도 | {{OVERALL_SATISFACTION_SCORE}} | {{OVERALL_SATISFACTION_COUNT}} |
+
+### 즉시 조치 필요 사항
+
+{{CRITICAL_ISSUES_COUNT}}개의 중대 이슈 발견됨:
+
+- **이슈 1:** {{CRITICAL_ISSUE_1}}
+  - 심각도: 🔴 Critical
+  - 영향 범위: {{CRITICAL_ISSUE_1_SCOPE}}
+  - 권장 해결 시간: {{CRITICAL_ISSUE_1_TIMELINE}}
+
+- **이슈 2:** {{CRITICAL_ISSUE_2}}
+  - 심각도: 🔴 Critical
+  - 영향 범위: {{CRITICAL_ISSUE_2_SCOPE}}
+  - 권장 해결 시간: {{CRITICAL_ISSUE_2_TIMELINE}}
+
+- **이슈 3:** {{CRITICAL_ISSUE_3}}
+  - 심각도: 🔴 Critical
+  - 영향 범위: {{CRITICAL_ISSUE_3_SCOPE}}
+  - 권장 해결 시간: {{CRITICAL_ISSUE_3_TIMELINE}}
+
+---
+
+## 3. Analysis by Job Function
+
+### 마케팅 팀 분석
+
+**팀 구성:**
+- 테스트한 페르소나: {{MARKETING_PERSONAS}}
+- 완료율: {{MARKETING_COMPLETION_RATE}}%
+- 평균 만족도: {{MARKETING_SATISFACTION}}/5
+
+**주요 강점:**
+- {{MARKETING_STRENGTH_1}}
+- {{MARKETING_STRENGTH_2}}
+- {{MARKETING_STRENGTH_3}}
+
+**개선 필요 사항:**
+- {{MARKETING_WEAKNESS_1}}
+- {{MARKETING_WEAKNESS_2}}
+- {{MARKETING_WEAKNESS_3}}
+
+**권장사항:**
+1. {{MARKETING_RECOMMENDATION_1}}
+2. {{MARKETING_RECOMMENDATION_2}}
+3. {{MARKETING_RECOMMENDATION_3}}
+
+---
+
+### 제조 팀 분석
+
+**팀 구성:**
+- 테스트한 페르소나: {{MANUFACTURING_PERSONAS}}
+- 완료율: {{MANUFACTURING_COMPLETION_RATE}}%
+- 평균 만족도: {{MANUFACTURING_SATISFACTION}}/5
+
+**주요 강점:**
+- {{MANUFACTURING_STRENGTH_1}}
+- {{MANUFACTURING_STRENGTH_2}}
+- {{MANUFACTURING_STRENGTH_3}}
+
+**개선 필요 사항:**
+- {{MANUFACTURING_WEAKNESS_1}}
+- {{MANUFACTURING_WEAKNESS_2}}
+- {{MANUFACTURING_WEAKNESS_3}}
+
+**권장사항:**
+1. {{MANUFACTURING_RECOMMENDATION_1}}
+2. {{MANUFACTURING_RECOMMENDATION_2}}
+3. {{MANUFACTURING_RECOMMENDATION_3}}
+
+---
+
+### R&D 팀 분석
+
+**팀 구성:**
+- 테스트한 페르소나: {{RND_PERSONAS}}
+- 완료율: {{RND_COMPLETION_RATE}}%
+- 평균 만족도: {{RND_SATISFACTION}}/5
+
+**주요 강점:**
+- {{RND_STRENGTH_1}}
+- {{RND_STRENGTH_2}}
+- {{RND_STRENGTH_3}}
+
+**개선 필요 사항:**
+- {{RND_WEAKNESS_1}}
+- {{RND_WEAKNESS_2}}
+- {{RND_WEAKNESS_3}}
+
+**권장사항:**
+1. {{RND_RECOMMENDATION_1}}
+2. {{RND_RECOMMENDATION_2}}
+3. {{RND_RECOMMENDATION_3}}
+
+---
+
+### Staff 팀 분석
+
+**팀 구성:**
+- 테스트한 페르소나: {{STAFF_PERSONAS}}
+- 완료율: {{STAFF_COMPLETION_RATE}}%
+- 평균 만족도: {{STAFF_SATISFACTION}}/5
+
+**주요 강점:**
+- {{STAFF_STRENGTH_1}}
+- {{STAFF_STRENGTH_2}}
+- {{STAFF_STRENGTH_3}}
+
+**개선 필요 사항:**
+- {{STAFF_WEAKNESS_1}}
+- {{STAFF_WEAKNESS_2}}
+- {{STAFF_WEAKNESS_3}}
+
+**권장사항:**
+1. {{STAFF_RECOMMENDATION_1}}
+2. {{STAFF_RECOMMENDATION_2}}
+3. {{STAFF_RECOMMENDATION_3}}
+
+---
+
+## 4. Analysis by Digital Maturity
+
+### 초보 수준 팀 (Digital Maturity Level 1)
+
+**팀 구성:**
+- 테스트한 페르소나: {{BEGINNER_PERSONAS}}
+- 완료율: {{BEGINNER_COMPLETION_RATE}}%
+- 평균 만족도: {{BEGINNER_SATISFACTION}}/5
+- 평균 세션 시간: {{BEGINNER_SESSION_TIME}} 분
+
+**공통 과제:**
+- {{BEGINNER_CHALLENGE_1}}
+- {{BEGINNER_CHALLENGE_2}}
+- {{BEGINNER_CHALLENGE_3}}
+
+**성공 요인:**
+- {{BEGINNER_SUCCESS_FACTOR_1}}
+- {{BEGINNER_SUCCESS_FACTOR_2}}
+- {{BEGINNER_SUCCESS_FACTOR_3}}
+
+**맞춤형 권장사항:**
+1. {{BEGINNER_RECOMMENDATION_1}}
+2. {{BEGINNER_RECOMMENDATION_2}}
+3. {{BEGINNER_RECOMMENDATION_3}}
+4. {{BEGINNER_RECOMMENDATION_4}}
+
+---
+
+### 중급 수준 팀 (Digital Maturity Level 2)
+
+**팀 구성:**
+- 테스트한 페르소나: {{INTERMEDIATE_PERSONAS}}
+- 완료율: {{INTERMEDIATE_COMPLETION_RATE}}%
+- 평균 만족도: {{INTERMEDIATE_SATISFACTION}}/5
+- 평균 세션 시간: {{INTERMEDIATE_SESSION_TIME}} 분
+
+**공통 과제:**
+- {{INTERMEDIATE_CHALLENGE_1}}
+- {{INTERMEDIATE_CHALLENGE_2}}
+- {{INTERMEDIATE_CHALLENGE_3}}
+
+**성공 요인:**
+- {{INTERMEDIATE_SUCCESS_FACTOR_1}}
+- {{INTERMEDIATE_SUCCESS_FACTOR_2}}
+- {{INTERMEDIATE_SUCCESS_FACTOR_3}}
+
+**맞춤형 권장사항:**
+1. {{INTERMEDIATE_RECOMMENDATION_1}}
+2. {{INTERMEDIATE_RECOMMENDATION_2}}
+3. {{INTERMEDIATE_RECOMMENDATION_3}}
+4. {{INTERMEDIATE_RECOMMENDATION_4}}
+
+---
+
+### 고급 수준 팀 (Digital Maturity Level 3)
+
+**팀 구성:**
+- 테스트한 페르소나: {{ADVANCED_PERSONAS}}
+- 완료율: {{ADVANCED_COMPLETION_RATE}}%
+- 평균 만족도: {{ADVANCED_SATISFACTION}}/5
+- 평균 세션 시간: {{ADVANCED_SESSION_TIME}} 분
+
+**공통 과제:**
+- {{ADVANCED_CHALLENGE_1}}
+- {{ADVANCED_CHALLENGE_2}}
+- {{ADVANCED_CHALLENGE_3}}
+
+**성공 요인:**
+- {{ADVANCED_SUCCESS_FACTOR_1}}
+- {{ADVANCED_SUCCESS_FACTOR_2}}
+- {{ADVANCED_SUCCESS_FACTOR_3}}
+
+**맞춤형 권장사항:**
+1. {{ADVANCED_RECOMMENDATION_1}}
+2. {{ADVANCED_RECOMMENDATION_2}}
+3. {{ADVANCED_RECOMMENDATION_3}}
+4. {{ADVANCED_RECOMMENDATION_4}}
+
+---
+
+## 5. Detailed Persona Feedback
+
+### Persona 1: {{PERSONA_1_NAME}}
+
+**개요:**
+- 직무: {{PERSONA_1_JOB_FUNCTION}}
+- 경험 수준: {{PERSONA_1_EXPERIENCE_LEVEL}}
+- 디지털 성숙도: {{PERSONA_1_DIGITAL_MATURITY}}
+- 목표: {{PERSONA_1_PRIMARY_GOAL}}
+
+**워크숍 경험 하이라이트:**
+- {{PERSONA_1_HIGHLIGHT_1}}
+- {{PERSONA_1_HIGHLIGHT_2}}
+- {{PERSONA_1_HIGHLIGHT_3}}
+
+**발견된 통증점:**
+1. {{PERSONA_1_PAIN_POINT_1}}
+   - 영향도: {{PERSONA_1_PAIN_POINT_1_IMPACT}}
+   - 빈도: {{PERSONA_1_PAIN_POINT_1_FREQUENCY}}
+
+2. {{PERSONA_1_PAIN_POINT_2}}
+   - 영향도: {{PERSONA_1_PAIN_POINT_2_IMPACT}}
+   - 빈도: {{PERSONA_1_PAIN_POINT_2_FREQUENCY}}
+
+3. {{PERSONA_1_PAIN_POINT_3}}
+   - 영향도: {{PERSONA_1_PAIN_POINT_3_IMPACT}}
+   - 빈도: {{PERSONA_1_PAIN_POINT_3_FREQUENCY}}
+
+**개선 제안:**
+1. {{PERSONA_1_SUGGESTION_1}}
+2. {{PERSONA_1_SUGGESTION_2}}
+3. {{PERSONA_1_SUGGESTION_3}}
+
+**세션 통계:**
+- 완료 시간: {{PERSONA_1_COMPLETION_TIME}} 분
+- 토큰 사용량: {{PERSONA_1_TOKENS_USED}}
+- 만족도: {{PERSONA_1_SATISFACTION}}/5
+- 재방문 의향: {{PERSONA_1_RETURN_INTENT}}/5
+
+---
+
+### Persona 2: {{PERSONA_2_NAME}}
+
+**개요:**
+- 직무: {{PERSONA_2_JOB_FUNCTION}}
+- 경험 수준: {{PERSONA_2_EXPERIENCE_LEVEL}}
+- 디지털 성숙도: {{PERSONA_2_DIGITAL_MATURITY}}
+- 목표: {{PERSONA_2_PRIMARY_GOAL}}
+
+**워크숍 경험 하이라이트:**
+- {{PERSONA_2_HIGHLIGHT_1}}
+- {{PERSONA_2_HIGHLIGHT_2}}
+- {{PERSONA_2_HIGHLIGHT_3}}
+
+**발견된 통증점:**
+1. {{PERSONA_2_PAIN_POINT_1}}
+   - 영향도: {{PERSONA_2_PAIN_POINT_1_IMPACT}}
+   - 빈도: {{PERSONA_2_PAIN_POINT_1_FREQUENCY}}
+
+2. {{PERSONA_2_PAIN_POINT_2}}
+   - 영향도: {{PERSONA_2_PAIN_POINT_2_IMPACT}}
+   - 빈도: {{PERSONA_2_PAIN_POINT_2_FREQUENCY}}
+
+3. {{PERSONA_2_PAIN_POINT_3}}
+   - 영향도: {{PERSONA_2_PAIN_POINT_3_IMPACT}}
+   - 빈도: {{PERSONA_2_PAIN_POINT_3_FREQUENCY}}
+
+**개선 제안:**
+1. {{PERSONA_2_SUGGESTION_1}}
+2. {{PERSONA_2_SUGGESTION_2}}
+3. {{PERSONA_2_SUGGESTION_3}}
+
+**세션 통계:**
+- 완료 시간: {{PERSONA_2_COMPLETION_TIME}} 분
+- 토큰 사용량: {{PERSONA_2_TOKENS_USED}}
+- 만족도: {{PERSONA_2_SATISFACTION}}/5
+- 재방문 의향: {{PERSONA_2_RETURN_INTENT}}/5
+
+---
+
+### Persona 3: {{PERSONA_3_NAME}}
+
+**개요:**
+- 직무: {{PERSONA_3_JOB_FUNCTION}}
+- 경험 수준: {{PERSONA_3_EXPERIENCE_LEVEL}}
+- 디지털 성숙도: {{PERSONA_3_DIGITAL_MATURITY}}
+- 목표: {{PERSONA_3_PRIMARY_GOAL}}
+
+**워크숍 경험 하이라이트:**
+- {{PERSONA_3_HIGHLIGHT_1}}
+- {{PERSONA_3_HIGHLIGHT_2}}
+- {{PERSONA_3_HIGHLIGHT_3}}
+
+**발견된 통증점:**
+1. {{PERSONA_3_PAIN_POINT_1}}
+   - 영향도: {{PERSONA_3_PAIN_POINT_1_IMPACT}}
+   - 빈도: {{PERSONA_3_PAIN_POINT_1_FREQUENCY}}
+
+2. {{PERSONA_3_PAIN_POINT_2}}
+   - 영향도: {{PERSONA_3_PAIN_POINT_2_IMPACT}}
+   - 빈도: {{PERSONA_3_PAIN_POINT_2_FREQUENCY}}
+
+3. {{PERSONA_3_PAIN_POINT_3}}
+   - 영향도: {{PERSONA_3_PAIN_POINT_3_IMPACT}}
+   - 빈도: {{PERSONA_3_PAIN_POINT_3_FREQUENCY}}
+
+**개선 제안:**
+1. {{PERSONA_3_SUGGESTION_1}}
+2. {{PERSONA_3_SUGGESTION_2}}
+3. {{PERSONA_3_SUGGESTION_3}}
+
+**세션 통계:**
+- 완료 시간: {{PERSONA_3_COMPLETION_TIME}} 분
+- 토큰 사용량: {{PERSONA_3_TOKENS_USED}}
+- 만족도: {{PERSONA_3_SATISFACTION}}/5
+- 재방문 의향: {{PERSONA_3_RETURN_INTENT}}/5
+
+---
+
+### Persona 4: {{PERSONA_4_NAME}}
+
+**개요:**
+- 직무: {{PERSONA_4_JOB_FUNCTION}}
+- 경험 수준: {{PERSONA_4_EXPERIENCE_LEVEL}}
+- 디지털 성숙도: {{PERSONA_4_DIGITAL_MATURITY}}
+- 목표: {{PERSONA_4_PRIMARY_GOAL}}
+
+**워크숍 경험 하이라이트:**
+- {{PERSONA_4_HIGHLIGHT_1}}
+- {{PERSONA_4_HIGHLIGHT_2}}
+- {{PERSONA_4_HIGHLIGHT_3}}
+
+**발견된 통증점:**
+1. {{PERSONA_4_PAIN_POINT_1}}
+   - 영향도: {{PERSONA_4_PAIN_POINT_1_IMPACT}}
+   - 빈도: {{PERSONA_4_PAIN_POINT_1_FREQUENCY}}
+
+2. {{PERSONA_4_PAIN_POINT_2}}
+   - 영향도: {{PERSONA_4_PAIN_POINT_2_IMPACT}}
+   - 빈도: {{PERSONA_4_PAIN_POINT_2_FREQUENCY}}
+
+3. {{PERSONA_4_PAIN_POINT_3}}
+   - 영향도: {{PERSONA_4_PAIN_POINT_3_IMPACT}}
+   - 빈도: {{PERSONA_4_PAIN_POINT_3_FREQUENCY}}
+
+**개선 제안:**
+1. {{PERSONA_4_SUGGESTION_1}}
+2. {{PERSONA_4_SUGGESTION_2}}
+3. {{PERSONA_4_SUGGESTION_3}}
+
+**세션 통계:**
+- 완료 시간: {{PERSONA_4_COMPLETION_TIME}} 분
+- 토큰 사용량: {{PERSONA_4_TOKENS_USED}}
+- 만족도: {{PERSONA_4_SATISFACTION}}/5
+- 재방문 의향: {{PERSONA_4_RETURN_INTENT}}/5
+
+---
+
+### Persona 5: {{PERSONA_5_NAME}}
+
+**개요:**
+- 직무: {{PERSONA_5_JOB_FUNCTION}}
+- 경험 수준: {{PERSONA_5_EXPERIENCE_LEVEL}}
+- 디지털 성숙도: {{PERSONA_5_DIGITAL_MATURITY}}
+- 목표: {{PERSONA_5_PRIMARY_GOAL}}
+
+**워크숍 경험 하이라이트:**
+- {{PERSONA_5_HIGHLIGHT_1}}
+- {{PERSONA_5_HIGHLIGHT_2}}
+- {{PERSONA_5_HIGHLIGHT_3}}
+
+**발견된 통증점:**
+1. {{PERSONA_5_PAIN_POINT_1}}
+   - 영향도: {{PERSONA_5_PAIN_POINT_1_IMPACT}}
+   - 빈도: {{PERSONA_5_PAIN_POINT_1_FREQUENCY}}
+
+2. {{PERSONA_5_PAIN_POINT_2}}
+   - 영향도: {{PERSONA_5_PAIN_POINT_2_IMPACT}}
+   - 빈도: {{PERSONA_5_PAIN_POINT_2_FREQUENCY}}
+
+3. {{PERSONA_5_PAIN_POINT_3}}
+   - 영향도: {{PERSONA_5_PAIN_POINT_3_IMPACT}}
+   - 빈도: {{PERSONA_5_PAIN_POINT_3_FREQUENCY}}
+
+**개선 제안:**
+1. {{PERSONA_5_SUGGESTION_1}}
+2. {{PERSONA_5_SUGGESTION_2}}
+3. {{PERSONA_5_SUGGESTION_3}}
+
+**세션 통계:**
+- 완료 시간: {{PERSONA_5_COMPLETION_TIME}} 분
+- 토큰 사용량: {{PERSONA_5_TOKENS_USED}}
+- 만족도: {{PERSONA_5_SATISFACTION}}/5
+- 재방문 의향: {{PERSONA_5_RETURN_INTENT}}/5
+
+---
+
+### Persona 6: {{PERSONA_6_NAME}}
+
+**개요:**
+- 직무: {{PERSONA_6_JOB_FUNCTION}}
+- 경험 수준: {{PERSONA_6_EXPERIENCE_LEVEL}}
+- 디지털 성숙도: {{PERSONA_6_DIGITAL_MATURITY}}
+- 목표: {{PERSONA_6_PRIMARY_GOAL}}
+
+**워크숍 경험 하이라이트:**
+- {{PERSONA_6_HIGHLIGHT_1}}
+- {{PERSONA_6_HIGHLIGHT_2}}
+- {{PERSONA_6_HIGHLIGHT_3}}
+
+**발견된 통증점:**
+1. {{PERSONA_6_PAIN_POINT_1}}
+   - 영향도: {{PERSONA_6_PAIN_POINT_1_IMPACT}}
+   - 빈도: {{PERSONA_6_PAIN_POINT_1_FREQUENCY}}
+
+2. {{PERSONA_6_PAIN_POINT_2}}
+   - 영향도: {{PERSONA_6_PAIN_POINT_2_IMPACT}}
+   - 빈도: {{PERSONA_6_PAIN_POINT_2_FREQUENCY}}
+
+3. {{PERSONA_6_PAIN_POINT_3}}
+   - 영향도: {{PERSONA_6_PAIN_POINT_3_IMPACT}}
+   - 빈도: {{PERSONA_6_PAIN_POINT_3_FREQUENCY}}
+
+**개선 제안:**
+1. {{PERSONA_6_SUGGESTION_1}}
+2. {{PERSONA_6_SUGGESTION_2}}
+3. {{PERSONA_6_SUGGESTION_3}}
+
+**세션 통계:**
+- 완료 시간: {{PERSONA_6_COMPLETION_TIME}} 분
+- 토큰 사용량: {{PERSONA_6_TOKENS_USED}}
+- 만족도: {{PERSONA_6_SATISFACTION}}/5
+- 재방문 의향: {{PERSONA_6_RETURN_INTENT}}/5
+
+---
+
+### Persona 7: {{PERSONA_7_NAME}}
+
+**개요:**
+- 직무: {{PERSONA_7_JOB_FUNCTION}}
+- 경험 수준: {{PERSONA_7_EXPERIENCE_LEVEL}}
+- 디지털 성숙도: {{PERSONA_7_DIGITAL_MATURITY}}
+- 목표: {{PERSONA_7_PRIMARY_GOAL}}
+
+**워크숍 경험 하이라이트:**
+- {{PERSONA_7_HIGHLIGHT_1}}
+- {{PERSONA_7_HIGHLIGHT_2}}
+- {{PERSONA_7_HIGHLIGHT_3}}
+
+**발견된 통증점:**
+1. {{PERSONA_7_PAIN_POINT_1}}
+   - 영향도: {{PERSONA_7_PAIN_POINT_1_IMPACT}}
+   - 빈도: {{PERSONA_7_PAIN_POINT_1_FREQUENCY}}
+
+2. {{PERSONA_7_PAIN_POINT_2}}
+   - 영향도: {{PERSONA_7_PAIN_POINT_2_IMPACT}}
+   - 빈도: {{PERSONA_7_PAIN_POINT_2_FREQUENCY}}
+
+3. {{PERSONA_7_PAIN_POINT_3}}
+   - 영향도: {{PERSONA_7_PAIN_POINT_3_IMPACT}}
+   - 빈도: {{PERSONA_7_PAIN_POINT_3_FREQUENCY}}
+
+**개선 제안:**
+1. {{PERSONA_7_SUGGESTION_1}}
+2. {{PERSONA_7_SUGGESTION_2}}
+3. {{PERSONA_7_SUGGESTION_3}}
+
+**세션 통계:**
+- 완료 시간: {{PERSONA_7_COMPLETION_TIME}} 분
+- 토큰 사용량: {{PERSONA_7_TOKENS_USED}}
+- 만족도: {{PERSONA_7_SATISFACTION}}/5
+- 재방문 의향: {{PERSONA_7_RETURN_INTENT}}/5
+
+---
+
+### Persona 8: {{PERSONA_8_NAME}}
+
+**개요:**
+- 직무: {{PERSONA_8_JOB_FUNCTION}}
+- 경험 수준: {{PERSONA_8_EXPERIENCE_LEVEL}}
+- 디지털 성숙도: {{PERSONA_8_DIGITAL_MATURITY}}
+- 목표: {{PERSONA_8_PRIMARY_GOAL}}
+
+**워크숍 경험 하이라이트:**
+- {{PERSONA_8_HIGHLIGHT_1}}
+- {{PERSONA_8_HIGHLIGHT_2}}
+- {{PERSONA_8_HIGHLIGHT_3}}
+
+**발견된 통증점:**
+1. {{PERSONA_8_PAIN_POINT_1}}
+   - 영향도: {{PERSONA_8_PAIN_POINT_1_IMPACT}}
+   - 빈도: {{PERSONA_8_PAIN_POINT_1_FREQUENCY}}
+
+2. {{PERSONA_8_PAIN_POINT_2}}
+   - 영향도: {{PERSONA_8_PAIN_POINT_2_IMPACT}}
+   - 빈도: {{PERSONA_8_PAIN_POINT_2_FREQUENCY}}
+
+3. {{PERSONA_8_PAIN_POINT_3}}
+   - 영향도: {{PERSONA_8_PAIN_POINT_3_IMPACT}}
+   - 빈도: {{PERSONA_8_PAIN_POINT_3_FREQUENCY}}
+
+**개선 제안:**
+1. {{PERSONA_8_SUGGESTION_1}}
+2. {{PERSONA_8_SUGGESTION_2}}
+3. {{PERSONA_8_SUGGESTION_3}}
+
+**세션 통계:**
+- 완료 시간: {{PERSONA_8_COMPLETION_TIME}} 분
+- 토큰 사용량: {{PERSONA_8_TOKENS_USED}}
+- 만족도: {{PERSONA_8_SATISFACTION}}/5
+- 재방문 의향: {{PERSONA_8_RETURN_INTENT}}/5
+
+---
+
+### Persona 9: {{PERSONA_9_NAME}}
+
+**개요:**
+- 직무: {{PERSONA_9_JOB_FUNCTION}}
+- 경험 수준: {{PERSONA_9_EXPERIENCE_LEVEL}}
+- 디지털 성숙도: {{PERSONA_9_DIGITAL_MATURITY}}
+- 목표: {{PERSONA_9_PRIMARY_GOAL}}
+
+**워크숍 경험 하이라이트:**
+- {{PERSONA_9_HIGHLIGHT_1}}
+- {{PERSONA_9_HIGHLIGHT_2}}
+- {{PERSONA_9_HIGHLIGHT_3}}
+
+**발견된 통증점:**
+1. {{PERSONA_9_PAIN_POINT_1}}
+   - 영향도: {{PERSONA_9_PAIN_POINT_1_IMPACT}}
+   - 빈도: {{PERSONA_9_PAIN_POINT_1_FREQUENCY}}
+
+2. {{PERSONA_9_PAIN_POINT_2}}
+   - 영향도: {{PERSONA_9_PAIN_POINT_2_IMPACT}}
+   - 빈도: {{PERSONA_9_PAIN_POINT_2_FREQUENCY}}
+
+3. {{PERSONA_9_PAIN_POINT_3}}
+   - 영향도: {{PERSONA_9_PAIN_POINT_3_IMPACT}}
+   - 빈도: {{PERSONA_9_PAIN_POINT_3_FREQUENCY}}
+
+**개선 제안:**
+1. {{PERSONA_9_SUGGESTION_1}}
+2. {{PERSONA_9_SUGGESTION_2}}
+3. {{PERSONA_9_SUGGESTION_3}}
+
+**세션 통계:**
+- 완료 시간: {{PERSONA_9_COMPLETION_TIME}} 분
+- 토큰 사용량: {{PERSONA_9_TOKENS_USED}}
+- 만족도: {{PERSONA_9_SATISFACTION}}/5
+- 재방문 의향: {{PERSONA_9_RETURN_INTENT}}/5
+
+---
+
+### Persona 10: {{PERSONA_10_NAME}}
+
+**개요:**
+- 직무: {{PERSONA_10_JOB_FUNCTION}}
+- 경험 수준: {{PERSONA_10_EXPERIENCE_LEVEL}}
+- 디지털 성숙도: {{PERSONA_10_DIGITAL_MATURITY}}
+- 목표: {{PERSONA_10_PRIMARY_GOAL}}
+
+**워크숍 경험 하이라이트:**
+- {{PERSONA_10_HIGHLIGHT_1}}
+- {{PERSONA_10_HIGHLIGHT_2}}
+- {{PERSONA_10_HIGHLIGHT_3}}
+
+**발견된 통증점:**
+1. {{PERSONA_10_PAIN_POINT_1}}
+   - 영향도: {{PERSONA_10_PAIN_POINT_1_IMPACT}}
+   - 빈도: {{PERSONA_10_PAIN_POINT_1_FREQUENCY}}
+
+2. {{PERSONA_10_PAIN_POINT_2}}
+   - 영향도: {{PERSONA_10_PAIN_POINT_2_IMPACT}}
+   - 빈도: {{PERSONA_10_PAIN_POINT_2_FREQUENCY}}
+
+3. {{PERSONA_10_PAIN_POINT_3}}
+   - 영향도: {{PERSONA_10_PAIN_POINT_3_IMPACT}}
+   - 빈도: {{PERSONA_10_PAIN_POINT_3_FREQUENCY}}
+
+**개선 제안:**
+1. {{PERSONA_10_SUGGESTION_1}}
+2. {{PERSONA_10_SUGGESTION_2}}
+3. {{PERSONA_10_SUGGESTION_3}}
+
+**세션 통계:**
+- 완료 시간: {{PERSONA_10_COMPLETION_TIME}} 분
+- 토큰 사용량: {{PERSONA_10_TOKENS_USED}}
+- 만족도: {{PERSONA_10_SATISFACTION}}/5
+- 재방문 의향: {{PERSONA_10_RETURN_INTENT}}/5
+
+---
+
+### Persona 11: {{PERSONA_11_NAME}}
+
+**개요:**
+- 직무: {{PERSONA_11_JOB_FUNCTION}}
+- 경험 수준: {{PERSONA_11_EXPERIENCE_LEVEL}}
+- 디지털 성숙도: {{PERSONA_11_DIGITAL_MATURITY}}
+- 목표: {{PERSONA_11_PRIMARY_GOAL}}
+
+**워크숍 경험 하이라이트:**
+- {{PERSONA_11_HIGHLIGHT_1}}
+- {{PERSONA_11_HIGHLIGHT_2}}
+- {{PERSONA_11_HIGHLIGHT_3}}
+
+**발견된 통증점:**
+1. {{PERSONA_11_PAIN_POINT_1}}
+   - 영향도: {{PERSONA_11_PAIN_POINT_1_IMPACT}}
+   - 빈도: {{PERSONA_11_PAIN_POINT_1_FREQUENCY}}
+
+2. {{PERSONA_11_PAIN_POINT_2}}
+   - 영향도: {{PERSONA_11_PAIN_POINT_2_IMPACT}}
+   - 빈도: {{PERSONA_11_PAIN_POINT_2_FREQUENCY}}
+
+3. {{PERSONA_11_PAIN_POINT_3}}
+   - 영향도: {{PERSONA_11_PAIN_POINT_3_IMPACT}}
+   - 빈도: {{PERSONA_11_PAIN_POINT_3_FREQUENCY}}
+
+**개선 제안:**
+1. {{PERSONA_11_SUGGESTION_1}}
+2. {{PERSONA_11_SUGGESTION_2}}
+3. {{PERSONA_11_SUGGESTION_3}}
+
+**세션 통계:**
+- 완료 시간: {{PERSONA_11_COMPLETION_TIME}} 분
+- 토큰 사용량: {{PERSONA_11_TOKENS_USED}}
+- 만족도: {{PERSONA_11_SATISFACTION}}/5
+- 재방문 의향: {{PERSONA_11_RETURN_INTENT}}/5
+
+---
+
+### Persona 12: {{PERSONA_12_NAME}}
+
+**개요:**
+- 직무: {{PERSONA_12_JOB_FUNCTION}}
+- 경험 수준: {{PERSONA_12_EXPERIENCE_LEVEL}}
+- 디지털 성숙도: {{PERSONA_12_DIGITAL_MATURITY}}
+- 목표: {{PERSONA_12_PRIMARY_GOAL}}
+
+**워크숍 경험 하이라이트:**
+- {{PERSONA_12_HIGHLIGHT_1}}
+- {{PERSONA_12_HIGHLIGHT_2}}
+- {{PERSONA_12_HIGHLIGHT_3}}
+
+**발견된 통증점:**
+1. {{PERSONA_12_PAIN_POINT_1}}
+   - 영향도: {{PERSONA_12_PAIN_POINT_1_IMPACT}}
+   - 빈도: {{PERSONA_12_PAIN_POINT_1_FREQUENCY}}
+
+2. {{PERSONA_12_PAIN_POINT_2}}
+   - 영향도: {{PERSONA_12_PAIN_POINT_2_IMPACT}}
+   - 빈도: {{PERSONA_12_PAIN_POINT_2_FREQUENCY}}
+
+3. {{PERSONA_12_PAIN_POINT_3}}
+   - 영향도: {{PERSONA_12_PAIN_POINT_3_IMPACT}}
+   - 빈도: {{PERSONA_12_PAIN_POINT_3_FREQUENCY}}
+
+**개선 제안:**
+1. {{PERSONA_12_SUGGESTION_1}}
+2. {{PERSONA_12_SUGGESTION_2}}
+3. {{PERSONA_12_SUGGESTION_3}}
+
+**세션 통계:**
+- 완료 시간: {{PERSONA_12_COMPLETION_TIME}} 분
+- 토큰 사용량: {{PERSONA_12_TOKENS_USED}}
+- 만족도: {{PERSONA_12_SATISFACTION}}/5
+- 재방문 의향: {{PERSONA_12_RETURN_INTENT}}/5
+
+---
+
+## 6. Priority Matrix
+
+### 우선순위 분류 기준
+
+| 우선순위 | 영향도 | 긴급도 | 설명 |
+|---------|-------|--------|------|
+| Critical | 높음 | 높음 | 즉시 해결 필요 |
+| High | 높음 | 낮음 또는 중간 | 빠른 시일 내 해결 |
+| Medium | 중간 | 중간 이상 | 계획된 일정에 포함 |
+| Low | 낮음 | 낮음 | 백로그에 저장 |
+
+### Critical Issues (높은 영향도, 높은 긴급도)
+
+**이슈:** {{CRITICAL_ISSUE_1_NAME}}
+- **설명:** {{CRITICAL_ISSUE_1_DESCRIPTION}}
+- **영향:** {{CRITICAL_ISSUE_1_AFFECTED_PERSONAS}} 개 페르소나 영향
+- **해결 시간:** {{CRITICAL_ISSUE_1_EFFORT}} 시간
+- **담당자:** {{CRITICAL_ISSUE_1_OWNER}}
+- **예정 완료:** {{CRITICAL_ISSUE_1_DUE_DATE}}
+
+**이슈:** {{CRITICAL_ISSUE_2_NAME}}
+- **설명:** {{CRITICAL_ISSUE_2_DESCRIPTION}}
+- **영향:** {{CRITICAL_ISSUE_2_AFFECTED_PERSONAS}} 개 페르소나 영향
+- **해결 시간:** {{CRITICAL_ISSUE_2_EFFORT}} 시간
+- **담당자:** {{CRITICAL_ISSUE_2_OWNER}}
+- **예정 완료:** {{CRITICAL_ISSUE_2_DUE_DATE}}
+
+### Quick Wins (높은 영향도, 낮은 노력)
+
+**개선 사항:** {{QUICK_WIN_1_NAME}}
+- **설명:** {{QUICK_WIN_1_DESCRIPTION}}
+- **영향:** {{QUICK_WIN_1_AFFECTED_PERSONAS}} 개 페르소나 영향
+- **예상 노력:** {{QUICK_WIN_1_EFFORT}} 시간
+- **담당자:** {{QUICK_WIN_1_OWNER}}
+- **예정 완료:** {{QUICK_WIN_1_DUE_DATE}}
+
+**개선 사항:** {{QUICK_WIN_2_NAME}}
+- **설명:** {{QUICK_WIN_2_DESCRIPTION}}
+- **영향:** {{QUICK_WIN_2_AFFECTED_PERSONAS}} 개 페르소나 영향
+- **예상 노력:** {{QUICK_WIN_2_EFFORT}} 시간
+- **담당자:** {{QUICK_WIN_2_OWNER}}
+- **예정 완료:** {{QUICK_WIN_2_DUE_DATE}}
+
+**개선 사항:** {{QUICK_WIN_3_NAME}}
+- **설명:** {{QUICK_WIN_3_DESCRIPTION}}
+- **영향:** {{QUICK_WIN_3_AFFECTED_PERSONAS}} 개 페르소나 영향
+- **예상 노력:** {{QUICK_WIN_3_EFFORT}} 시간
+- **담당자:** {{QUICK_WIN_3_OWNER}}
+- **예정 완료:** {{QUICK_WIN_3_DUE_DATE}}
+
+### Long-term Improvements (전략적 개선사항)
+
+**이니셔티브:** {{LONGTERM_1_NAME}}
+- **설명:** {{LONGTERM_1_DESCRIPTION}}
+- **전략적 가치:** {{LONGTERM_1_VALUE}}
+- **예상 노력:** {{LONGTERM_1_EFFORT}} 시간
+- **담당자:** {{LONGTERM_1_OWNER}}
+- **예정 시작:** {{LONGTERM_1_START_DATE}}
+- **예정 완료:** {{LONGTERM_1_DUE_DATE}}
+
+**이니셔티브:** {{LONGTERM_2_NAME}}
+- **설명:** {{LONGTERM_2_DESCRIPTION}}
+- **전략적 가치:** {{LONGTERM_2_VALUE}}
+- **예상 노력:** {{LONGTERM_2_EFFORT}} 시간
+- **담당자:** {{LONGTERM_2_OWNER}}
+- **예정 시작:** {{LONGTERM_2_START_DATE}}
+- **예정 완료:** {{LONGTERM_2_DUE_DATE}}
+
+**이니셔티브:** {{LONGTERM_3_NAME}}
+- **설명:** {{LONGTERM_3_DESCRIPTION}}
+- **전략적 가치:** {{LONGTERM_3_VALUE}}
+- **예상 노력:** {{LONGTERM_3_EFFORT}} 시간
+- **담당자:** {{LONGTERM_3_OWNER}}
+- **예정 시작:** {{LONGTERM_3_START_DATE}}
+- **예정 완료:** {{LONGTERM_3_DUE_DATE}}
+
+---
+
+## 7. Next Steps
+
+### Immediate Actions (1-2일 이내)
+
+#### Action 1: {{IMMEDIATE_ACTION_1_TITLE}}
+- **목적:** {{IMMEDIATE_ACTION_1_PURPOSE}}
+- **담당자:** {{IMMEDIATE_ACTION_1_OWNER}}
+- **소요 시간:** {{IMMEDIATE_ACTION_1_TIME}} 시간
+- **구체적 활동:**
+  1. {{IMMEDIATE_ACTION_1_STEP_1}}
+  2. {{IMMEDIATE_ACTION_1_STEP_2}}
+  3. {{IMMEDIATE_ACTION_1_STEP_3}}
+- **성공 기준:** {{IMMEDIATE_ACTION_1_SUCCESS_CRITERIA}}
+- **예정 완료:** {{IMMEDIATE_ACTION_1_DUE_DATE}}
+
+#### Action 2: {{IMMEDIATE_ACTION_2_TITLE}}
+- **목적:** {{IMMEDIATE_ACTION_2_PURPOSE}}
+- **담당자:** {{IMMEDIATE_ACTION_2_OWNER}}
+- **소요 시간:** {{IMMEDIATE_ACTION_2_TIME}} 시간
+- **구체적 활동:**
+  1. {{IMMEDIATE_ACTION_2_STEP_1}}
+  2. {{IMMEDIATE_ACTION_2_STEP_2}}
+  3. {{IMMEDIATE_ACTION_2_STEP_3}}
+- **성공 기준:** {{IMMEDIATE_ACTION_2_SUCCESS_CRITERIA}}
+- **예정 완료:** {{IMMEDIATE_ACTION_2_DUE_DATE}}
+
+### Short-term Improvements (1-2주)
+
+#### Initiative 1: {{SHORT_TERM_1_TITLE}}
+- **설명:** {{SHORT_TERM_1_DESCRIPTION}}
+- **담당자:** {{SHORT_TERM_1_OWNER}}
+- **소요 시간:** {{SHORT_TERM_1_TIME}} 시간
+- **예상 영향:** {{SHORT_TERM_1_EXPECTED_IMPACT}}
+- **주요 마일스톤:**
+  - {{SHORT_TERM_1_MILESTONE_1}}
+  - {{SHORT_TERM_1_MILESTONE_2}}
+  - {{SHORT_TERM_1_MILESTONE_3}}
+- **예정 완료:** {{SHORT_TERM_1_DUE_DATE}}
+
+#### Initiative 2: {{SHORT_TERM_2_TITLE}}
+- **설명:** {{SHORT_TERM_2_DESCRIPTION}}
+- **담당자:** {{SHORT_TERM_2_OWNER}}
+- **소요 시간:** {{SHORT_TERM_2_TIME}} 시간
+- **예상 영향:** {{SHORT_TERM_2_EXPECTED_IMPACT}}
+- **주요 마일스톤:**
+  - {{SHORT_TERM_2_MILESTONE_1}}
+  - {{SHORT_TERM_2_MILESTONE_2}}
+  - {{SHORT_TERM_2_MILESTONE_3}}
+- **예정 완료:** {{SHORT_TERM_2_DUE_DATE}}
+
+#### Initiative 3: {{SHORT_TERM_3_TITLE}}
+- **설명:** {{SHORT_TERM_3_DESCRIPTION}}
+- **담당자:** {{SHORT_TERM_3_OWNER}}
+- **소요 시간:** {{SHORT_TERM_3_TIME}} 시간
+- **예상 영향:** {{SHORT_TERM_3_EXPECTED_IMPACT}}
+- **주요 마일스톤:**
+  - {{SHORT_TERM_3_MILESTONE_1}}
+  - {{SHORT_TERM_3_MILESTONE_2}}
+  - {{SHORT_TERM_3_MILESTONE_3}}
+- **예정 완료:** {{SHORT_TERM_3_DUE_DATE}}
+
+### Long-term Roadmap (1개월+)
+
+#### Strategic Initiative 1: {{LONGTERM_ROADMAP_1_TITLE}}
+- **비전:** {{LONGTERM_ROADMAP_1_VISION}}
+- **담당자:** {{LONGTERM_ROADMAP_1_OWNER}}
+- **소요 시간:** {{LONGTERM_ROADMAP_1_TIME}} 시간
+- **예상 영향:** {{LONGTERM_ROADMAP_1_EXPECTED_IMPACT}}
+- **Phase별 계획:**
+  - **Phase 1 ({{LONGTERM_ROADMAP_1_PHASE1_DATE}}):** {{LONGTERM_ROADMAP_1_PHASE1}}
+  - **Phase 2 ({{LONGTERM_ROADMAP_1_PHASE2_DATE}}):** {{LONGTERM_ROADMAP_1_PHASE2}}
+  - **Phase 3 ({{LONGTERM_ROADMAP_1_PHASE3_DATE}}):** {{LONGTERM_ROADMAP_1_PHASE3}}
+
+#### Strategic Initiative 2: {{LONGTERM_ROADMAP_2_TITLE}}
+- **비전:** {{LONGTERM_ROADMAP_2_VISION}}
+- **담당자:** {{LONGTERM_ROADMAP_2_OWNER}}
+- **소요 시간:** {{LONGTERM_ROADMAP_2_TIME}} 시간
+- **예상 영향:** {{LONGTERM_ROADMAP_2_EXPECTED_IMPACT}}
+- **Phase별 계획:**
+  - **Phase 1 ({{LONGTERM_ROADMAP_2_PHASE1_DATE}}):** {{LONGTERM_ROADMAP_2_PHASE1}}
+  - **Phase 2 ({{LONGTERM_ROADMAP_2_PHASE2_DATE}}):** {{LONGTERM_ROADMAP_2_PHASE2}}
+  - **Phase 3 ({{LONGTERM_ROADMAP_2_PHASE3_DATE}}):** {{LONGTERM_ROADMAP_2_PHASE3}}
+
+#### Strategic Initiative 3: {{LONGTERM_ROADMAP_3_TITLE}}
+- **비전:** {{LONGTERM_ROADMAP_3_VISION}}
+- **담당자:** {{LONGTERM_ROADMAP_3_OWNER}}
+- **소요 시간:** {{LONGTERM_ROADMAP_3_TIME}} 시간
+- **예상 영향:** {{LONGTERM_ROADMAP_3_EXPECTED_IMPACT}}
+- **Phase별 계획:**
+  - **Phase 1 ({{LONGTERM_ROADMAP_3_PHASE1_DATE}}):** {{LONGTERM_ROADMAP_3_PHASE1}}
+  - **Phase 2 ({{LONGTERM_ROADMAP_3_PHASE2_DATE}}):** {{LONGTERM_ROADMAP_3_PHASE2}}
+  - **Phase 3 ({{LONGTERM_ROADMAP_3_PHASE3_DATE}}):** {{LONGTERM_ROADMAP_3_PHASE3}}
+
+---
+
+## 8. Appendix
+
+### A. Full Persona Definitions
+
+#### 페르소나 그룹 1: 마케팅 팀
+
+**페르소나 1:** {{APPENDIX_PERSONA_1_FULL_DEFINITION}}
+
+**페르소나 2:** {{APPENDIX_PERSONA_2_FULL_DEFINITION}}
+
+**페르소나 3:** {{APPENDIX_PERSONA_3_FULL_DEFINITION}}
+
+#### 페르소나 그룹 2: 제조 팀
+
+**페르소나 4:** {{APPENDIX_PERSONA_4_FULL_DEFINITION}}
+
+**페르소나 5:** {{APPENDIX_PERSONA_5_FULL_DEFINITION}}
+
+**페르소나 6:** {{APPENDIX_PERSONA_6_FULL_DEFINITION}}
+
+#### 페르소나 그룹 3: R&D 팀
+
+**페르소나 7:** {{APPENDIX_PERSONA_7_FULL_DEFINITION}}
+
+**페르소나 8:** {{APPENDIX_PERSONA_8_FULL_DEFINITION}}
+
+**페르소나 9:** {{APPENDIX_PERSONA_9_FULL_DEFINITION}}
+
+#### 페르소나 그룹 4: Staff 팀
+
+**페르소나 10:** {{APPENDIX_PERSONA_10_FULL_DEFINITION}}
+
+**페르소나 11:** {{APPENDIX_PERSONA_11_FULL_DEFINITION}}
+
+**페르소나 12:** {{APPENDIX_PERSONA_12_FULL_DEFINITION}}
+
+### B. Simulation Methodology
+
+#### 시뮬레이션 설계
+
+- **목표:** {{METHODOLOGY_OBJECTIVE}}
+- **테스트 기간:** {{METHODOLOGY_TEST_PERIOD}}
+- **테스트 환경:** {{METHODOLOGY_TEST_ENVIRONMENT}}
+- **AI 모델:** {{METHODOLOGY_AI_MODEL}}
+- **프롬프트 전략:** {{METHODOLOGY_PROMPT_STRATEGY}}
+
+#### 실험 설정
+
+**워크숍 진행:**
+1. {{METHODOLOGY_STEP_1}}
+2. {{METHODOLOGY_STEP_2}}
+3. {{METHODOLOGY_STEP_3}}
+4. {{METHODOLOGY_STEP_4}}
+5. {{METHODOLOGY_STEP_5}}
+
+**데이터 수집 방법:**
+- {{METHODOLOGY_DATA_COLLECTION_1}}
+- {{METHODOLOGY_DATA_COLLECTION_2}}
+- {{METHODOLOGY_DATA_COLLECTION_3}}
+
+**분석 방법론:**
+- {{METHODOLOGY_ANALYSIS_1}}
+- {{METHODOLOGY_ANALYSIS_2}}
+- {{METHODOLOGY_ANALYSIS_3}}
+
+#### 제약 사항 및 한계
+
+- {{METHODOLOGY_LIMITATION_1}}
+- {{METHODOLOGY_LIMITATION_2}}
+- {{METHODOLOGY_LIMITATION_3}}
+
+### C. Token Usage Breakdown
+
+#### 전체 토큰 사용 현황
+
+| 카테고리 | 입력 토큰 | 출력 토큰 | 총 토큰 | 비중 |
+|---------|----------|----------|--------|------|
+| 페르소나 설정 | {{TOKEN_SETUP_INPUT}} | {{TOKEN_SETUP_OUTPUT}} | {{TOKEN_SETUP_TOTAL}} | {{TOKEN_SETUP_PERCENT}}% |
+| Step 1-3 실행 | {{TOKEN_STEPS_1_3_INPUT}} | {{TOKEN_STEPS_1_3_OUTPUT}} | {{TOKEN_STEPS_1_3_TOTAL}} | {{TOKEN_STEPS_1_3_PERCENT}}% |
+| Step 4 실행 | {{TOKEN_STEP_4_INPUT}} | {{TOKEN_STEP_4_OUTPUT}} | {{TOKEN_STEP_4_TOTAL}} | {{TOKEN_STEP_4_PERCENT}}% |
+| Step 5 실행 | {{TOKEN_STEP_5_INPUT}} | {{TOKEN_STEP_5_OUTPUT}} | {{TOKEN_STEP_5_TOTAL}} | {{TOKEN_STEP_5_PERCENT}}% |
+| Step 6+ 실행 | {{TOKEN_STEPS_6_PLUS_INPUT}} | {{TOKEN_STEPS_6_PLUS_OUTPUT}} | {{TOKEN_STEPS_6_PLUS_TOTAL}} | {{TOKEN_STEPS_6_PLUS_PERCENT}}% |
+| **합계** | **{{TOKEN_TOTAL_INPUT}}** | **{{TOKEN_TOTAL_OUTPUT}}** | **{{TOKEN_TOTAL_USAGE}}** | **100%** |
+
+#### 페르소나별 토큰 사용
+
+| 페르소나 | 입력 토큰 | 출력 토큰 | 총 토큰 | 완료 시간 |
+|---------|----------|----------|--------|---------|
+| {{PERSONA_1_NAME}} | {{PERSONA_1_TOKEN_INPUT}} | {{PERSONA_1_TOKEN_OUTPUT}} | {{PERSONA_1_TOKEN_TOTAL}} | {{PERSONA_1_DURATION}} 분 |
+| {{PERSONA_2_NAME}} | {{PERSONA_2_TOKEN_INPUT}} | {{PERSONA_2_TOKEN_OUTPUT}} | {{PERSONA_2_TOKEN_TOTAL}} | {{PERSONA_2_DURATION}} 분 |
+| {{PERSONA_3_NAME}} | {{PERSONA_3_TOKEN_INPUT}} | {{PERSONA_3_TOKEN_OUTPUT}} | {{PERSONA_3_TOKEN_TOTAL}} | {{PERSONA_3_DURATION}} 분 |
+| {{PERSONA_4_NAME}} | {{PERSONA_4_TOKEN_INPUT}} | {{PERSONA_4_TOKEN_OUTPUT}} | {{PERSONA_4_TOKEN_TOTAL}} | {{PERSONA_4_DURATION}} 분 |
+| {{PERSONA_5_NAME}} | {{PERSONA_5_TOKEN_INPUT}} | {{PERSONA_5_TOKEN_OUTPUT}} | {{PERSONA_5_TOKEN_TOTAL}} | {{PERSONA_5_DURATION}} 분 |
+| {{PERSONA_6_NAME}} | {{PERSONA_6_TOKEN_INPUT}} | {{PERSONA_6_TOKEN_OUTPUT}} | {{PERSONA_6_TOKEN_TOTAL}} | {{PERSONA_6_DURATION}} 분 |
+| {{PERSONA_7_NAME}} | {{PERSONA_7_TOKEN_INPUT}} | {{PERSONA_7_TOKEN_OUTPUT}} | {{PERSONA_7_TOKEN_TOTAL}} | {{PERSONA_7_DURATION}} 분 |
+| {{PERSONA_8_NAME}} | {{PERSONA_8_TOKEN_INPUT}} | {{PERSONA_8_TOKEN_OUTPUT}} | {{PERSONA_8_TOKEN_TOTAL}} | {{PERSONA_8_DURATION}} 분 |
+| {{PERSONA_9_NAME}} | {{PERSONA_9_TOKEN_INPUT}} | {{PERSONA_9_TOKEN_OUTPUT}} | {{PERSONA_9_TOKEN_TOTAL}} | {{PERSONA_9_DURATION}} 분 |
+| {{PERSONA_10_NAME}} | {{PERSONA_10_TOKEN_INPUT}} | {{PERSONA_10_TOKEN_OUTPUT}} | {{PERSONA_10_TOKEN_TOTAL}} | {{PERSONA_10_DURATION}} 분 |
+| {{PERSONA_11_NAME}} | {{PERSONA_11_TOKEN_INPUT}} | {{PERSONA_11_TOKEN_OUTPUT}} | {{PERSONA_11_TOKEN_TOTAL}} | {{PERSONA_11_DURATION}} 분 |
+| {{PERSONA_12_NAME}} | {{PERSONA_12_TOKEN_INPUT}} | {{PERSONA_12_TOKEN_OUTPUT}} | {{PERSONA_12_TOKEN_TOTAL}} | {{PERSONA_12_DURATION}} 분 |
+
+#### 비용 분석
+
+- **예상 비용 (토큰 기준):** {{ESTIMATED_COST}}
+- **평균 페르소나당 비용:** {{COST_PER_PERSONA}}
+- **최고 비용 페르소나:** {{HIGHEST_COST_PERSONA}} ({{HIGHEST_COST_AMOUNT}})
+- **최저 비용 페르소나:** {{LOWEST_COST_PERSONA}} ({{LOWEST_COST_AMOUNT}})
+
+### D. Additional Data
+
+#### 응답자 피드백 요약
+
+{{ADDITIONAL_FEEDBACK_SUMMARY}}
+
+#### 자주 언급된 기능 요청
+
+1. {{FEATURE_REQUEST_1}} ({{FEATURE_REQUEST_1_COUNT}} 명)
+2. {{FEATURE_REQUEST_2}} ({{FEATURE_REQUEST_2_COUNT}} 명)
+3. {{FEATURE_REQUEST_3}} ({{FEATURE_REQUEST_3_COUNT}} 명)
+4. {{FEATURE_REQUEST_4}} ({{FEATURE_REQUEST_4_COUNT}} 명)
+5. {{FEATURE_REQUEST_5}} ({{FEATURE_REQUEST_5_COUNT}} 명)
+
+#### 발견된 버그 및 에러
+
+| 버그 ID | 설명 | 심각도 | 영향 페르소나 | 상태 |
+|--------|------|--------|----------|------|
+| BUG-001 | {{BUG_1_DESCRIPTION}} | {{BUG_1_SEVERITY}} | {{BUG_1_AFFECTED}} | {{BUG_1_STATUS}} |
+| BUG-002 | {{BUG_2_DESCRIPTION}} | {{BUG_2_SEVERITY}} | {{BUG_2_AFFECTED}} | {{BUG_2_STATUS}} |
+| BUG-003 | {{BUG_3_DESCRIPTION}} | {{BUG_3_SEVERITY}} | {{BUG_3_AFFECTED}} | {{BUG_3_STATUS}} |
+
+---
+
+## Report Metadata
+
+- **보고서 작성자:** {{REPORT_AUTHOR}}
+- **검토자:** {{REPORT_REVIEWER}}
+- **승인자:** {{REPORT_APPROVER}}
+- **마지막 업데이트:** {{LAST_UPDATE_DATE}}
+- **버전:** {{REPORT_VERSION}}
+- **분류 수준:** {{CLASSIFICATION_LEVEL}}
+
+---
+
+**문의 사항:** {{CONTACT_EMAIL}}
+**추가 정보:** {{ADDITIONAL_INFO_URL}}

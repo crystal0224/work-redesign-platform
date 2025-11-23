@@ -295,8 +295,8 @@ export function KanbanBoard() {
                                 {(provided, snapshot) => (
                                   <motion.div
                                     ref={provided.innerRef}
-                                    {...provided.draggableProps}
-                                    {...provided.dragHandleProps}
+                                    {...(provided.draggableProps as any)}
+                                    {...(provided.dragHandleProps as any)}
                                     initial={{ opacity: 0, y: 20 }}
                                     animate={{ opacity: 1, y: 0 }}
                                     exit={{ opacity: 0, y: -20 }}

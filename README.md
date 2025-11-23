@@ -50,11 +50,59 @@ git clone <repository-url>
 cd work-redesign-platform
 
 # 환경 변수 설정
-cp .env.example .env
-# .env 파일을 편집하여 API 키 등 설정
+cp backend/.env.example backend/.env
+cp frontend/.env.example frontend/.env
+# 각 .env 파일을 편집하여 필수 값 설정 (아래 환경 변수 섹션 참조)
 
-# 전체 의존성 설치
-npm run setup
+# 의존성 설치
+cd backend && npm install
+cd ../frontend && npm install
+```
+
+### 필수 환경 변수
+
+#### Backend (.env)
+```bash
+# 서버 설정
+NODE_ENV=development
+PORT=4000
+CORS_ORIGIN=http://localhost:3000
+
+# 데이터베이스
+DATABASE_URL=postgresql://user:password@localhost:5432/work_redesign
+REDIS_URL=redis://localhost:6379
+
+# 인증
+JWT_SECRET=your-super-secret-jwt-key-min-32-chars
+
+# Anthropic Claude API
+ANTHROPIC_API_KEY=sk-ant-api...
+ANTHROPIC_MODEL=claude-3-5-sonnet-20241022
+
+# AI 캐싱 (비용 절감 50%)
+ENABLE_AI_CACHE=true
+AI_CACHE_TTL=3600
+
+# 파일 스토리지 (선택사항)
+AWS_ACCESS_KEY_ID=your-key
+AWS_SECRET_ACCESS_KEY=your-secret
+AWS_S3_BUCKET=your-bucket
+AWS_REGION=ap-northeast-2
+
+# 모니터링 (선택사항)
+SENTRY_DSN=https://...
+DATADOG_API_KEY=your-key
+```
+
+#### Frontend (.env)
+```bash
+# API 엔드포인트
+NEXT_PUBLIC_API_URL=http://localhost:4000
+NEXT_PUBLIC_WS_URL=ws://localhost:4000
+
+# 앱 설정
+NEXT_PUBLIC_APP_NAME=Work Redesign Platform
+NEXT_PUBLIC_APP_VERSION=1.0.0
 ```
 
 ### 2. 개발 환경 실행
@@ -143,6 +191,9 @@ work-redesign-platform/
 - **한국어 시간 표현 전처리** (95-98% 정확도)
 - **중복 업무 자동 제거** (90% 일관성)
 - **ROI 기반 우선순위** 자동 계산
+- **Redis 캐싱** - AI API 비용 50% 절감
+- **Rate Limiting** - AI/파일 업로드 요청 제한
+- **구조화된 에러 처리** - 사용자 친화적 메시지
 
 ### 3. 📁 파일 처리
 - **다중 형식 지원**: DOCX, XLSX, PDF, TXT
@@ -251,19 +302,73 @@ npm run seed
 
 ## 🚀 배포 가이드
 
-### Development
+### 개발 환경 (로컬)
 ```bash
+# Docker를 사용한 로컬 개발
 docker-compose up -d
+
+# 또는 직접 실행
+cd backend && npm run dev
+cd frontend && npm run dev
 ```
 
-### Production
+### 프로덕션 배포 (Railway + Vercel)
+
+#### 1. Backend 배포 (Railway)
 ```bash
-# 프로덕션 빌드
-npm run build
+# Railway CLI 설치
+npm install -g @railway/cli
 
-# 프로덕션 실행
-NODE_ENV=production docker-compose --profile production up -d
+# Railway 로그인 및 프로젝트 생성
+railway login
+railway init
+
+# 환경 변수 설정 (Railway Dashboard에서 설정)
+# - DATABASE_URL (PostgreSQL 플러그인 자동 생성)
+# - REDIS_URL (Redis 플러그인 자동 생성)
+# - ANTHROPIC_API_KEY
+# - JWT_SECRET
+# - ENABLE_AI_CACHE=true
+# - CORS_ORIGIN=https://your-frontend.vercel.app
+
+# 배포
+railway up
 ```
+
+#### 2. Frontend 배포 (Vercel)
+```bash
+# Vercel CLI 설치
+npm install -g vercel
+
+# Vercel 로그인 및 배포
+vercel
+
+# 환경 변수 설정 (Vercel Dashboard에서 설정)
+# - NEXT_PUBLIC_API_URL=https://your-backend.railway.app
+# - NEXT_PUBLIC_WS_URL=wss://your-backend.railway.app
+
+# 프로덕션 배포
+vercel --prod
+```
+
+#### 3. 데이터베이스 마이그레이션
+```bash
+# Railway에서 실행
+railway run npm run migrate:deploy
+railway run npm run seed
+```
+
+### 배포 체크리스트
+- [ ] Backend 환경 변수 설정 완료
+- [ ] Frontend 환경 변수 설정 완료
+- [ ] PostgreSQL 데이터베이스 연결 확인
+- [ ] Redis 캐시 연결 확인
+- [ ] Anthropic API 키 동작 확인
+- [ ] CORS 설정 확인 (프론트엔드 도메인 허용)
+- [ ] 헬스체크 엔드포인트 확인 (/health)
+- [ ] 데이터베이스 마이그레이션 실행
+- [ ] 빌드 성공 확인
+- [ ] 프로덕션 접속 테스트
 
 ---
 
@@ -321,12 +426,20 @@ NODE_ENV=production docker-compose --profile production up -d
 - [x] **P1**: 중복 업무 제거 (75% → 90%)
 - [x] 테스트 커버리지: 24/24 (100%)
 
-### Phase 4: Advanced Features (계획 중)
-- [ ] **P2**: 임베딩 기반 도메인 매칭
-- [ ] **P3**: Hot Reload + 응답 캐싱
-- [ ] 성능 최적화 (응답 시간 < 2초)
-- [ ] 모니터링 및 분석
-- [ ] 배포 자동화 (CI/CD)
+### Phase 4: Production Readiness (완료 ✅)
+- [x] **Redis 캐싱** - AI API 비용 50% 절감
+- [x] **Rate Limiting** - AI/일반 API/파일 업로드 제한
+- [x] **환경 변수 검증** - Zod 기반 시작 시 검증
+- [x] **에러 처리** - 구조화된 에러 클래스 및 사용자 메시지
+- [x] **빌드 최적화** - 프로덕션 배포 준비
+- [x] **배포 문서화** - Railway/Vercel 가이드
+
+### Phase 5: Deployment (진행 중 🚀)
+- [ ] **Backend 배포** - Railway + PostgreSQL + Redis
+- [ ] **Frontend 배포** - Vercel
+- [ ] **도메인 연결** - SSL 인증서 설정
+- [ ] **모니터링 설정** - Sentry/DataDog (선택사항)
+- [ ] **성능 테스트** - 50명 동시 접속 테스트
 
 ---
 

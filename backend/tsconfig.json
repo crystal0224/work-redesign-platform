@@ -29,6 +29,8 @@
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
     "skipLibCheck": true,
+    "skipDefaultLibCheck": true,
+    "noEmitOnError": true,
     "baseUrl": "./src",
     "paths": {
       "@/*": ["*"],

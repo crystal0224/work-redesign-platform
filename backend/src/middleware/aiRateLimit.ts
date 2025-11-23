@@ -1,6 +1,6 @@
 import rateLimit from 'express-rate-limit';
 import { Redis } from 'ioredis';
-import { getRedis } from '../config/database';
+import { redis } from '../config/database';
 import logger from '../utils/logger';
 
 /**
@@ -43,7 +43,7 @@ export const createUserAIRateLimiter = () => {
         return next();
       }
 
-      const redis = getRedis();
+      // Use imported redis instance
       const key = `ai:ratelimit:user:${userId}`;
       const limit = 20; // 20 AI requests per minute per user
       const window = 60; // 60 seconds
@@ -136,7 +136,6 @@ export const aiCostTracker = async (req: any, res: any, next: any) => {
     });
 
     // Store usage metrics in Redis for cost analysis
-    const redis = getRedis();
     const dailyKey = `ai:usage:daily:${new Date().toISOString().split('T')[0]}`;
     redis.hincrby(dailyKey, req.user?.id || 'anonymous', 1).catch((err) => {
       logger.error('Failed to track AI usage:', err);

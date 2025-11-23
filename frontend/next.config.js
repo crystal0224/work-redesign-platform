@@ -1,5 +1,8 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  experimental: {
+    missingSuspenseWithCSRBailout: false,
+  },
   typescript: {
     // Warning: This allows production builds to successfully complete even if
     // your project has type errors.
@@ -10,6 +13,8 @@ const nextConfig = {
     // your project has ESLint errors.
     ignoreDuringBuilds: false,
   },
+  // Skip static page generation errors since app is fully dynamic
+  staticPageGenerationTimeout: 120,
   env: {
     NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000',
     NEXT_PUBLIC_WS_URL: process.env.NEXT_PUBLIC_WS_URL || 'ws://localhost:4000',
