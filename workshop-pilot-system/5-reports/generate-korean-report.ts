@@ -229,17 +229,23 @@ Work Redesign Platform의 11단계 워크샵을 ${reportData.totalPersonas}명�
 
   // 각 단계별 상세 분석
   stageAnalyses.forEach(stage => {
-    const satisfactionEmoji = stage.avgSatisfaction >= 8.5 ? '🟢' : stage.avgSatisfaction >= 7.5 ? '🟡' : '🔴';
-    const timeEmoji = stage.avgTimeSpent <= 10 ? '⚡' : stage.avgTimeSpent <= 20 ? '⏱️' : '🕐';
+    // 안전하게 숫자 포맷팅
+    const formatNum = (val: number | null | undefined, decimals: number = 1): string => {
+      return (val !== null && val !== undefined && !isNaN(val)) ? val.toFixed(decimals) : 'N/A';
+    };
+
+    const satisfaction = stage.avgSatisfaction ?? 0;
+    const satisfactionEmoji = satisfaction >= 8.5 ? '🟢' : satisfaction >= 7.5 ? '🟡' : '🔴';
+    const timeEmoji = (stage.avgTimeSpent ?? 0) <= 10 ? '⚡' : (stage.avgTimeSpent ?? 0) <= 20 ? '⏱️' : '🕐';
 
     report += `### ${satisfactionEmoji} Step ${stage.stageNumber}: ${stage.stageName}
 
-**평균 만족도**: ${stage.avgSatisfaction.toFixed(1)}/10 | **평균 소요시간**: ${timeEmoji} ${stage.avgTimeSpent.toFixed(0)}분
+**평균 만족도**: ${formatNum(stage.avgSatisfaction)}/10 | **평균 소요시간**: ${timeEmoji} ${formatNum(stage.avgTimeSpent, 0)}분
 
 #### 📊 세부 평가
-- **사용 편의성**: ${stage.avgEaseOfUse.toFixed(1)}/10
-- **명확성**: ${stage.avgClarity.toFixed(1)}/10
-- **가치**: ${stage.avgValue.toFixed(1)}/10
+- **사용 편의성**: ${formatNum(stage.avgEaseOfUse)}/10
+- **명확성**: ${formatNum(stage.avgClarity)}/10
+- **가치**: ${formatNum(stage.avgValue)}/10
 - **응답 수**: ${stage.totalResponses}명
 
 `;
@@ -296,7 +302,11 @@ Work Redesign Platform의 11단계 워크샵을 ${reportData.totalPersonas}명�
 
   report += `## 🚨 우선 개선 필요 단계 TOP 3\n\n`;
   problematicStages.forEach((stage, idx) => {
-    report += `### ${idx + 1}. Step ${stage.stageNumber}: ${stage.stageName} (만족도 ${stage.avgSatisfaction.toFixed(1)}/10)\n\n`;
+    const formatNum = (val: number | null | undefined, decimals: number = 1): string => {
+      return (val !== null && val !== undefined && !isNaN(val)) ? val.toFixed(decimals) : 'N/A';
+    };
+
+    report += `### ${idx + 1}. Step ${stage.stageNumber}: ${stage.stageName} (만족도 ${formatNum(stage.avgSatisfaction)}/10)\n\n`;
     report += `**주요 문제점**:\n`;
     stage.commonPainPoints.slice(0, 3).forEach(pain => {
       report += `- ${pain.text} (${pain.count}명 언급)\n`;
@@ -345,8 +355,15 @@ Work Redesign Platform의 11단계 워크샵을 ${reportData.totalPersonas}명�
   // 부서별 요약
   report += `## 🏢 부서별 결과 요약\n\n`;
   reportData.groupResults.forEach((group, index) => {
+    const satisfaction = (group.avgSatisfaction && !isNaN(group.avgSatisfaction))
+      ? group.avgSatisfaction.toFixed(1)
+      : 'N/A';
+    const completionRate = group.personaCount > 0
+      ? ((group.successCount / group.personaCount) * 100).toFixed(0)
+      : '0';
+
     report += `### ${index + 1}. ${group.groupName}\n`;
-    report += `**만족도**: ${group.avgSatisfaction.toFixed(1)}/10 | **완료율**: ${(group.successCount / group.personaCount * 100).toFixed(0)}%\n\n`;
+    report += `**만족도**: ${satisfaction}/10 | **완료율**: ${completionRate}%\n\n`;
     report += `**핵심 피드백**:\n`;
     group.keyInsights.slice(0, 3).forEach(insight => {
       report += `- ${insight}\n`;
