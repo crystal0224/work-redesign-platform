@@ -43,6 +43,7 @@
     "pilot:quick": "cd workshop-pilot-system && npx ts-node --project tsconfig.json run-pilot.ts --personas 3",
     "pilot:full": "cd workshop-pilot-system && npx ts-node --project tsconfig.json run-pilot.ts --personas 30 --verbose",
     "pilot:parallel": "cd workshop-pilot-system && npx ts-node --project tsconfig.json run-parallel-pilot.ts",
+    "pilot:test": "cd workshop-pilot-system && npx ts-node --project tsconfig.json test-single-group.ts",
     "pilot:group": "cd workshop-pilot-system/group-simulations && npx ts-node run-group-simulation.ts"
   },
   "keywords": [
