@@ -85,49 +85,67 @@ async function simulateStage(
   previousContext: string = ''
 ): Promise<StageResult> {
   const prompt = `당신은 ${persona.name}님입니다.
-직책: ${persona.department} 팀장
-담당 팀 규모: ${persona.teamSize}명
-디지털 성숙도: ${persona.digitalMaturity}
+**배경:**
+- 직책: ${persona.department} 팀장 (${persona.teamSize}명 관리)
+- 디지털 성숙도: ${persona.digitalMaturity}
+- 업무 특성: ${persona.department === 'Marketing' ? '캠페인 기획, 고객 데이터 분석, 콘텐츠 제작' :
+              persona.department === 'Sales' ? '영업 목표 관리, 고객 관계, 실적 추적' :
+              persona.department === 'Production' ? '제조 공정 관리, 품질 관리, 생산 계획' :
+              persona.department === 'Operations' ? '운영 프로세스, 효율성 개선, 리소스 관리' :
+              persona.department === 'R&D' ? '연구 프로젝트, 기술 개발, 실험 관리' :
+              persona.department === 'Innovation' ? '혁신 과제, 신기술 도입, 시범 프로젝트' :
+              persona.department === 'HR' ? '채용, 평가, 교육훈련, 조직문화' :
+              persona.department === 'Finance' ? '예산 편성, 재무 보고, 회계 감사' :
+              persona.department === 'IT' ? '시스템 운영, 개발 프로젝트, 기술 지원' :
+              persona.department === 'Digital' ? '디지털 전환, 신기술 적용, DX 프로젝트' :
+              persona.department === 'Data' ? '데이터 분석, ML 모델, 인사이트 도출' :
+              persona.department === 'Security' ? '보안 정책, 리스크 관리, 침해 대응' :
+              persona.department === 'Strategy' ? '전략 기획, 중장기 계획, 시장 분석' :
+              persona.department === 'Planning' ? '사업 기획, 프로젝트 관리, 예산 계획' :
+              persona.department === 'Business Dev' ? '신사업 개발, 파트너십, 시장 확대' :
+              persona.department === 'Quality' ? '품질 검사, 불량 관리, QC 프로세스' :
+              persona.department === 'Tech' ? '기술 연구, 아키텍처 설계, 기술 검토' : '팀 업무 관리'}
 
 **상황:**
-SK 그룹 팀장 일회성 교육 과정 (3시간)에 참여 중입니다.
-교육장에서 혼자 노트북으로 "Work Redesign Platform"을 처음 사용하며 자신의 팀 업무를 분석하고 있습니다.
-(팀원 없이 혼자 진행, 교육 후 다시 사용하지 않을 수도 있음)
+SK 그룹 팀장 일회성 교육 (3시간)에 참여 중. 교육장에서 혼자 노트북으로 "Work Redesign Platform"을 처음 사용하며 **실제 자신의 팀 업무**를 입력하고 있습니다.
 
-**현재 단계: Step ${stage.number} - ${stage.name}**
-실제 구현된 기능: ${stage.description}
-예상 소요시간: ${stage.expectedMinutes}분
+**Step ${stage.number}: ${stage.name}**
+${stage.description}
+예상 시간: ${stage.expectedMinutes}분
 
-${previousContext ? `이전 단계 경험:\n${previousContext}\n` : ''}
+${previousContext ? `이전 경험:\n${previousContext}\n` : ''}
 
-**중요**: 실제로 구현된 UI/UX를 기준으로 현실적으로 평가하세요.
-- 너무 긍정적이거나 이상적이지 않게
-- 첫 사용 경험의 솔직한 불편함도 포함
-- 일회성 교육이므로 깊이 있는 학습보다는 즉시 사용 가능성에 집중
+**중요 - 당신만의 고유한 관점으로 평가하세요:**
 
-다음 항목을 평가하세요:
+당신의 ${persona.department} 팀 업무 특성상 이 단계에서:
+- 어떤 부분이 우리 팀 업무에 맞지 않나요?
+- ${persona.digitalMaturity === 'Beginner' ? '기술적으로 어려운 부분이 있나요?' :
+   persona.digitalMaturity === 'Intermediate' ? '실무 적용 시 막히는 부분이 있나요?' :
+   persona.digitalMaturity === 'Advanced' ? '더 고급 기능이나 깊이가 필요한가요?' :
+   '이 수준의 기능으로 충분한가요? 더 전문적인 접근이 필요한가요?'}
+- ${persona.teamSize >= 15 ? '팀 규모가 큰 만큼 입력량이 너무 많지 않나요?' :
+   persona.teamSize <= 7 ? '작은 팀에게 이 시스템이 과도하지 않나요?' :
+   '우리 팀 규모에 적절한가요?'}
 
-1. 실제 소요시간 (분) - 처음 사용하는 사람이 혼자 완료하는데 걸리는 현실적 시간
-2. 시간 체감 (Too Short/Just Right/Too Long)
-3. 사용 편의성 (1-10) - 설명 없이 혼자 진행할 수 있는지 (낮은 점수도 솔직하게)
-4. 명확성 (1-10) - 무엇을 해야 하는지 바로 이해되었는지
-5. 가치 (1-10) - 지금 당장 내 팀에 적용할 수 있겠는지
-6. 불편한 점들 - 첫 사용자가 느끼는 실제 어려움 (구체적으로)
-7. 좋았던 점들 - 실제로 도움이 된 부분 (과장하지 말고)
-8. 개선 제안 - 첫 사용자를 위한 현실적 개선안
-9. 계속 진행 의향 (true/false) - 다음 단계를 계속하고 싶은지
-10. 현재 감정 상태 - 솔직한 심리 상태 (긍정/부정 모두 OK)
+1-10점 평가 (정직하게):
+- 사용 편의성: 우리 ${persona.department} 팀장이 혼자 사용하기 쉬운가?
+- 명확성: 우리 업무 맥락에서 무엇을 입력해야 할지 명확한가?
+- 가치: 우리 ${persona.department} 팀에 실제로 적용 가능한가?
 
-JSON 형식으로만 답변:
+불편한 점: **우리 팀 업무 특성상** 구체적으로 어떤 부분이 어려운지
+좋았던 점: **우리 팀에게** 실제로 도움이 된 부분
+개선 제안: **${persona.department} 팀을 위한** 구체적 개선안
+
+JSON 응답:
 {
   "actualMinutes": number,
   "timePerception": "Too Short" | "Just Right" | "Too Long",
   "easeOfUse": number,
   "clarity": number,
   "value": number,
-  "painPoints": ["string"],
-  "positivePoints": ["string"],
-  "suggestions": ["string"],
+  "painPoints": ["우리 팀 맥락에서 구체적으로"],
+  "positivePoints": ["우리 팀에게 실제로 도움된 점"],
+  "suggestions": ["우리 부서/업무 특성 반영한 개선안"],
   "wouldContinue": boolean,
   "emotionalState": "string"
 }`;
