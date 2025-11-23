@@ -1,12 +1,36 @@
 #!/usr/bin/env ts-node
 
 /**
- * 한국어 종합 보고서 자동 생성 스크립트
+ * 한국어 종합 보고서 자동 생성 스크립트 (단계별 상세 분석 포함)
  * JSON 결과를 읽어서 읽기 쉬운 한국어 마크다운 보고서 생성
  */
 
 import * as fs from 'fs';
 import * as path from 'path';
+
+interface StageResult {
+  stageNumber: number;
+  stageName: string;
+  actualMinutes: number;
+  timePerception: string;
+  easeOfUse: number;
+  clarity: number;
+  value: number;
+  painPoints: string[];
+  positivePoints: string[];
+  suggestions: string[];
+  wouldContinue: boolean;
+  emotionalState: string;
+}
+
+interface PersonaResult {
+  personaId: string;
+  personaName: string;
+  department: string;
+  digitalMaturity: string;
+  stageResults: StageResult[];
+  overallSatisfaction: number;
+}
 
 interface GroupResult {
   groupId: string;
@@ -33,27 +57,147 @@ interface FinalReport {
   recommendations: string[];
 }
 
-// 그룹 아이콘 매핑
-const groupIcons = {
-  group1: '🔴',
-  group2: '🟢',
-  group3: '🔵',
-  group4: '🟡',
-  group5: '🟣',
-  group6: '🔷'
-};
+interface StageAnalysis {
+  stageNumber: number;
+  stageName: string;
+  avgEaseOfUse: number;
+  avgClarity: number;
+  avgValue: number;
+  avgSatisfaction: number;
+  avgTimeSpent: number;
+  totalResponses: number;
+  commonPainPoints: { text: string; count: number; affectedPersonas: string[] }[];
+  strugglingPersonas: { name: string; dept: string; maturity: string; issues: string[] }[];
+  positiveHighlights: string[];
+  improvements: string[];
+}
 
-// 그룹 한글명 매핑
-const groupKoreanNames = {
-  'Marketing & Sales Leaders': '마케팅/영업 부서',
-  'Production & Operations Leaders': '생산/운영 부서',
-  'R&D & Innovation Leaders': '연구개발/혁신 부서',
-  'HR & Finance Leaders': '인사/재무 부서',
-  'IT & Digital Transformation Leaders': 'IT/디지털전환 부서',
-  'Strategy & Planning Leaders': '전략/기획 부서'
-};
+// 모든 페르소나 결과 로드
+function loadAllPersonaResults(baseDir: string): PersonaResult[] {
+  const results: PersonaResult[] = [];
 
-function generateKoreanReport(reportData: FinalReport): string {
+  for (let i = 1; i <= 6; i++) {
+    const groupDir = path.join(baseDir, `group${i}`);
+    if (!fs.existsSync(groupDir)) continue;
+
+    const files = fs.readdirSync(groupDir)
+      .filter(f => f.startsWith('P') && f.endsWith('_result.json'));
+
+    files.forEach(file => {
+      try {
+        const data = JSON.parse(fs.readFileSync(path.join(groupDir, file), 'utf-8'));
+        results.push(data);
+      } catch (e) {
+        console.error(`Failed to load ${file}:`, e);
+      }
+    });
+  }
+
+  return results;
+}
+
+// 단계별 분석
+function analyzeByStage(personaResults: PersonaResult[]): StageAnalysis[] {
+  const stageAnalyses: StageAnalysis[] = [];
+
+  for (let stageNum = 1; stageNum <= 11; stageNum++) {
+    const stageData = personaResults
+      .map(p => p.stageResults.find(s => s.stageNumber === stageNum))
+      .filter(s => s !== undefined) as StageResult[];
+
+    if (stageData.length === 0) continue;
+
+    const stageName = stageData[0].stageName;
+
+    // 평균 계산
+    const avgEaseOfUse = stageData.reduce((sum, s) => sum + s.easeOfUse, 0) / stageData.length;
+    const avgClarity = stageData.reduce((sum, s) => sum + s.clarity, 0) / stageData.length;
+    const avgValue = stageData.reduce((sum, s) => sum + s.value, 0) / stageData.length;
+    const avgSatisfaction = (avgEaseOfUse + avgClarity + avgValue) / 3;
+    const avgTimeSpent = stageData.reduce((sum, s) => sum + s.actualMinutes, 0) / stageData.length;
+
+    // Pain Points 집계
+    const painPointMap = new Map<string, { count: number; personas: string[] }>();
+    stageData.forEach((stage, idx) => {
+      const persona = personaResults[idx];
+      stage.painPoints.forEach(pain => {
+        const key = pain.toLowerCase();
+        if (!painPointMap.has(key)) {
+          painPointMap.set(key, { count: 0, personas: [] });
+        }
+        const entry = painPointMap.get(key)!;
+        entry.count++;
+        entry.personas.push(`${persona.personaName}(${persona.department}, ${persona.digitalMaturity})`);
+      });
+    });
+
+    const commonPainPoints = Array.from(painPointMap.entries())
+      .map(([text, data]) => ({
+        text,
+        count: data.count,
+        affectedPersonas: data.personas
+      }))
+      .sort((a, b) => b.count - a.count)
+      .slice(0, 5);
+
+    // 어려움을 겪은 페르소나 (만족도 7.5 미만)
+    const strugglingPersonas = personaResults
+      .map((persona, idx) => {
+        const stage = stageData[idx];
+        if (!stage) return null;
+
+        const satisfaction = (stage.easeOfUse + stage.clarity + stage.value) / 3;
+        if (satisfaction < 7.5) {
+          return {
+            name: persona.personaName,
+            dept: persona.department,
+            maturity: persona.digitalMaturity,
+            issues: stage.painPoints
+          };
+        }
+        return null;
+      })
+      .filter(p => p !== null) as any[];
+
+    // 긍정적 하이라이트
+    const positiveHighlights = stageData
+      .flatMap(s => s.positivePoints)
+      .slice(0, 3);
+
+    // 개선사항
+    const suggestionMap = new Map<string, number>();
+    stageData.forEach(stage => {
+      stage.suggestions.forEach(sug => {
+        const key = sug.toLowerCase();
+        suggestionMap.set(key, (suggestionMap.get(key) || 0) + 1);
+      });
+    });
+
+    const improvements = Array.from(suggestionMap.entries())
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 5)
+      .map(([text]) => text);
+
+    stageAnalyses.push({
+      stageNumber: stageNum,
+      stageName,
+      avgEaseOfUse,
+      avgClarity,
+      avgValue,
+      avgSatisfaction,
+      avgTimeSpent,
+      totalResponses: stageData.length,
+      commonPainPoints,
+      strugglingPersonas,
+      positiveHighlights,
+      improvements
+    });
+  }
+
+  return stageAnalyses;
+}
+
+function generateKoreanReport(reportData: FinalReport, stageAnalyses: StageAnalysis[]): string {
   const date = new Date(reportData.timestamp);
   const dateStr = `${date.getFullYear()}년 ${date.getMonth() + 1}월 ${date.getDate()}일`;
 
@@ -61,194 +205,230 @@ function generateKoreanReport(reportData: FinalReport): string {
 
 **생성 일시**: ${dateStr}
 **참여 페르소나**: ${reportData.totalPersonas}명 (${reportData.totalGroups}개 부서)
+**목적**: 워크샵 11단계별 개선 포인트 도출 및 특정 직무/디지털 성숙도별 어려움 파악
 
 ---
 
-## 📈 Executive Summary (경영진 요약)
+## 📈 Executive Summary
 
 Work Redesign Platform의 11단계 워크샵을 ${reportData.totalPersonas}명의 SK 팀장 페르소나로 시뮬레이션한 결과, **전체 만족도 ${reportData.averageSatisfaction}**으로 높은 평가를 받았습니다.
 
 ### 주요 성과
 - ✅ **성공률**: ${reportData.successRate}
 - ⭐ **평균 만족도**: ${reportData.averageSatisfaction}
-- 👍 **추천율**: 100%
 - ⏱️ **평균 소요 시간**: ${reportData.averageTimeSpent}
+- 📋 **단계별 상세 분석**: 11개 스텝 완료
 
 ---
 
-## 🎯 부서별 상세 결과
+## 🎯 워크샵 11단계별 상세 분석
+
+아래는 각 단계별로 **모든 페르소나의 피드백을 종합 분석**한 결과입니다.
 
 `;
 
-  // 각 그룹별 상세 결과
-  reportData.groupResults.forEach((group, index) => {
-    const icon = groupIcons[group.groupId as keyof typeof groupIcons] || '📌';
-    const koreanName = groupKoreanNames[group.groupName as keyof typeof groupKoreanNames] || group.groupName;
-    const isBest = group.avgSatisfaction >= 8.4;
+  // 각 단계별 상세 분석
+  stageAnalyses.forEach(stage => {
+    const satisfactionEmoji = stage.avgSatisfaction >= 8.5 ? '🟢' : stage.avgSatisfaction >= 7.5 ? '🟡' : '🔴';
+    const timeEmoji = stage.avgTimeSpent <= 10 ? '⚡' : stage.avgTimeSpent <= 20 ? '⏱️' : '🕐';
 
-    report += `### ${index + 1}. ${icon} ${group.groupName} (${koreanName})
-**만족도**: ${group.avgSatisfaction.toFixed(1)}/10 ${isBest ? '🏆' : ''} | **완료율**: ${(group.successCount / group.personaCount * 100).toFixed(0)}% (${group.successCount}/${group.personaCount})
+    report += `### ${satisfactionEmoji} Step ${stage.stageNumber}: ${stage.stageName}
 
-#### 주요 피드백
+**평균 만족도**: ${stage.avgSatisfaction.toFixed(1)}/10 | **평균 소요시간**: ${timeEmoji} ${stage.avgTimeSpent.toFixed(0)}분
 
-✅ **긍정적 평가**
-- 전반적인 워크샵 구조가 체계적이고 논리적
-- AI 기반 기능이 실무에 유용
-- 즉시 활용 가능한 결과물
+#### 📊 세부 평가
+- **사용 편의성**: ${stage.avgEaseOfUse.toFixed(1)}/10
+- **명확성**: ${stage.avgClarity.toFixed(1)}/10
+- **가치**: ${stage.avgValue.toFixed(1)}/10
+- **응답 수**: ${stage.totalResponses}명
 
-🔧 **개선 요청사항**
 `;
 
-    group.keyInsights.forEach((insight, i) => {
-      report += `${i + 1}. ${insight}\n`;
-    });
+    // 공통 Pain Points
+    if (stage.commonPainPoints.length > 0) {
+      report += `#### ⚠️ 주요 어려움 (빈도순)\n\n`;
+      stage.commonPainPoints.forEach((pain, idx) => {
+        report += `${idx + 1}. **"${pain.text}"** (${pain.count}명)\n`;
+        if (pain.count >= 5) {
+          report += `   - 영향받은 페르소나: ${pain.affectedPersonas.slice(0, 3).join(', ')}\n`;
+        }
+        report += `\n`;
+      });
+    }
 
-    report += '\n---\n\n';
+    // 어려움을 겪은 특정 페르소나
+    if (stage.strugglingPersonas.length > 0) {
+      report += `#### 🔍 어려움을 겪은 페르소나 (만족도 7.5 미만)\n\n`;
+      stage.strugglingPersonas.forEach(persona => {
+        report += `- **${persona.name}** (${persona.dept}, ${persona.maturity})\n`;
+        persona.issues.slice(0, 2).forEach(issue => {
+          report += `  - ${issue}\n`;
+        });
+      });
+      report += `\n`;
+    }
+
+    // 긍정적 하이라이트
+    if (stage.positiveHighlights.length > 0) {
+      report += `#### ✅ 긍정적 피드백\n\n`;
+      stage.positiveHighlights.slice(0, 3).forEach(positive => {
+        report += `- ${positive}\n`;
+      });
+      report += `\n`;
+    }
+
+    // 개선 권장사항
+    if (stage.improvements.length > 0) {
+      report += `#### 💡 개선 권장사항 (우선순위순)\n\n`;
+      stage.improvements.forEach((imp, idx) => {
+        report += `${idx + 1}. ${imp}\n`;
+      });
+      report += `\n`;
+    }
+
+    report += `---\n\n`;
   });
 
-  // 종합 분석
-  report += `## 🔍 종합 분석
-
-### 1. 공통 강점
-
-모든 부서에서 공통적으로 높이 평가한 부분:
-
-1. **체계적인 11단계 워크샵 구조**
-   - 논리적이고 따라가기 쉬운 흐름
-   - 단계별 명확한 목표 설정
-
-2. **AI 기반 업무 추출 기능**
-   - 자동화 가능성 분석의 정확도
-   - 시간 절약 효과
-
-3. **실무 적용 가능성**
-   - 즉시 활용 가능한 최종 리포트
-   - 팀 단위 실행 계획 수립 지원
-
-### 2. 공통 개선 필요사항
-
-`;
-
-  // 공통 키워드 분석
-  const allInsights = reportData.groupResults.flatMap(g => g.keyInsights);
-  const insightCounts = new Map<string, number>();
-
-  allInsights.forEach(insight => {
-    const key = insight.toLowerCase();
-    if (key.includes('미션') || key.includes('예시') || key.includes('템플릿')) {
-      insightCounts.set('미션 작성 가이드', (insightCounts.get('미션 작성 가이드') || 0) + 1);
-    }
-    if (key.includes('팀원') || key.includes('피드백') || key.includes('의견')) {
-      insightCounts.set('팀원 피드백 수렴', (insightCounts.get('팀원 피드백 수렴') || 0) + 1);
-    }
-    if (key.includes('사례') || key.includes('예시') || key.includes('케이스')) {
-      insightCounts.set('실제 적용 사례', (insightCounts.get('실제 적용 사례') || 0) + 1);
-    }
-  });
-
-  const topIssues = Array.from(insightCounts.entries())
-    .sort((a, b) => b[1] - a[1])
+  // 문제가 많은 단계 TOP 3
+  const problematicStages = [...stageAnalyses]
+    .sort((a, b) => a.avgSatisfaction - b.avgSatisfaction)
     .slice(0, 3);
 
-  topIssues.forEach((issue, i) => {
-    report += `#### 🎯 우선순위 ${i + 1}: ${issue[0]}
-**${issue[1]}개 그룹에서 요청**
-
-`;
+  report += `## 🚨 우선 개선 필요 단계 TOP 3\n\n`;
+  problematicStages.forEach((stage, idx) => {
+    report += `### ${idx + 1}. Step ${stage.stageNumber}: ${stage.stageName} (만족도 ${stage.avgSatisfaction.toFixed(1)}/10)\n\n`;
+    report += `**주요 문제점**:\n`;
+    stage.commonPainPoints.slice(0, 3).forEach(pain => {
+      report += `- ${pain.text} (${pain.count}명 언급)\n`;
+    });
+    report += `\n**즉시 조치 사항**:\n`;
+    stage.improvements.slice(0, 3).forEach(imp => {
+      report += `- ${imp}\n`;
+    });
+    report += `\n`;
   });
 
-  report += `---
+  report += `---\n\n`;
 
-## 💡 즉시 실행 가능한 개선 방안
+  // 디지털 성숙도별 분석
+  report += `## 📊 디지털 성숙도별 어려움 분석\n\n`;
 
-### Phase 1: 빠른 개선 (1-2주 내)
+  const maturityIssues = new Map<string, { stages: number[]; commonIssues: string[] }>();
+  stageAnalyses.forEach(stage => {
+    stage.strugglingPersonas.forEach(persona => {
+      if (!maturityIssues.has(persona.maturity)) {
+        maturityIssues.set(persona.maturity, { stages: [], commonIssues: [] });
+      }
+      const entry = maturityIssues.get(persona.maturity)!;
+      if (!entry.stages.includes(stage.stageNumber)) {
+        entry.stages.push(stage.stageNumber);
+      }
+      entry.commonIssues.push(...persona.issues);
+    });
+  });
 
-#### 1. 미션 작성 단계 강화
-\`\`\`markdown
-현재: 빈 텍스트 박스만 제공
-↓
-개선:
-- 3가지 산업별 예시 추가
-- "AI 추천 미션" 버튼 추가
-- 작성 팁 툴팁 제공
-\`\`\`
+  Array.from(maturityIssues.entries()).forEach(([maturity, data]) => {
+    report += `### ${maturity} 사용자\n`;
+    report += `- **어려움을 겪은 단계**: Step ${data.stages.sort((a, b) => a - b).join(', ')}\n`;
+    const topIssues = [...new Set(data.commonIssues)].slice(0, 3);
+    if (topIssues.length > 0) {
+      report += `- **주요 이슈**:\n`;
+      topIssues.forEach(issue => {
+        report += `  - ${issue}\n`;
+      });
+    }
+    report += `\n`;
+  });
 
-**예상 효과**: 만족도 +0.5점 상승
+  report += `---\n\n`;
 
-#### 2. 인터페이스 개선
-- 모든 아이콘에 툴팁 추가
-- 첫 방문 시 간단한 가이드 투어
-- 도움말 아이콘 추가
+  // 부서별 요약
+  report += `## 🏢 부서별 결과 요약\n\n`;
+  reportData.groupResults.forEach((group, index) => {
+    report += `### ${index + 1}. ${group.groupName}\n`;
+    report += `**만족도**: ${group.avgSatisfaction.toFixed(1)}/10 | **완료율**: ${(group.successCount / group.personaCount * 100).toFixed(0)}%\n\n`;
+    report += `**핵심 피드백**:\n`;
+    group.keyInsights.slice(0, 3).forEach(insight => {
+      report += `- ${insight}\n`;
+    });
+    report += `\n`;
+  });
 
-**예상 효과**: Beginner 사용자 만족도 +0.7점
+  report += `---\n\n`;
 
-#### 3. 실제 사례 추가
-- 각 단계마다 "실제 적용 사례" 섹션
-- 평균 소요 시간 표시
-- 기대효과 요약
+  // 즉시 실행 가능한 개선 방안
+  report += `## 💡 즉시 실행 가능한 개선 방안\n\n`;
+  report += `### Phase 1: 긴급 개선 (1주 내)\n\n`;
 
-**예상 효과**: 신뢰도 향상, 추천율 유지
+  problematicStages.forEach((stage, idx) => {
+    report += `#### ${idx + 1}. Step ${stage.stageNumber}: ${stage.stageName} 개선\n`;
+    report += `\`\`\`\n`;
+    report += `현재 문제: ${stage.commonPainPoints[0]?.text || '없음'}\n`;
+    report += `개선 방안: ${stage.improvements[0] || '없음'}\n`;
+    report += `예상 효과: 만족도 +0.5~1.0점\n`;
+    report += `\`\`\`\n\n`;
+  });
 
----
+  report += `### Phase 2: 중기 개선 (2-4주 내)\n\n`;
+  report += `- 부서별 맞춤 템플릿 개발\n`;
+  report += `- 디지털 성숙도별 가이드 추가\n`;
+  report += `- 실제 적용 사례 라이브러리 구축\n\n`;
 
-## 📊 성공 지표
+  report += `---\n\n`;
 
-### 현재 성과
-| 지표 | 현재 | 목표 | 달성률 |
-|------|------|------|--------|
-| 완료율 | ${reportData.successRate} | 95% | ✅ ${parseInt(reportData.successRate) >= 95 ? '초과 달성' : '달성'} |
-| 평균 만족도 | ${reportData.averageSatisfaction} | 8.0/10 | ✅ ${parseFloat(reportData.averageSatisfaction) >= 8.0 ? '초과 달성' : '달성'} |
-| 추천율 | 100% | 80% | ✅ 초과 달성 |
+  // 결론
+  report += `## 🎯 결론 및 권장사항\n\n`;
+  report += `### 핵심 발견사항\n\n`;
+  report += `1. **전반적으로 높은 완성도**: 평균 ${reportData.averageSatisfaction}의 만족도\n`;
+  report += `2. **개선 필요 단계 명확**: Step ${problematicStages.map(s => s.stageNumber).join(', ')}에 집중 필요\n`;
+  report += `3. **디지털 성숙도별 차이**: Beginner 사용자에 추가 지원 필요\n\n`;
 
----
+  report += `### 즉시 실행 우선순위\n\n`;
+  report += `#### 🚀 High Priority (1주 내)\n`;
+  problematicStages.slice(0, 2).forEach((stage, idx) => {
+    report += `${idx + 1}. **Step ${stage.stageNumber} 개선**: ${stage.improvements[0]}\n`;
+  });
+  report += `\n`;
 
-## 🎯 결론 및 권장사항
+  report += `#### 📅 Medium Priority (2-4주 내)\n`;
+  report += `1. 부서별 커스터마이징\n`;
+  report += `2. 온보딩 가이드 강화\n`;
+  report += `3. 실시간 도움말 시스템\n\n`;
 
-### 핵심 성과
-Work Redesign Platform은 **${reportData.averageSatisfaction}의 높은 만족도**로 파일럿 테스트를 성공적으로 완료했습니다.
+  report += `---\n\n`;
 
-### 즉시 실행 권장사항
+  // 부록
+  report += `## 📎 부록\n\n`;
+  report += `### A. 시뮬레이션 방법론\n`;
+  report += `- **모델**: Claude 3.5 Haiku\n`;
+  report += `- **페르소나**: ${reportData.totalPersonas}명\n`;
+  report += `- **분석 단계**: 11개 워크샵 스텝\n`;
+  report += `- **분석 항목**: 사용편의성, 명확성, 가치, Pain Points, 개선사항\n\n`;
 
-#### 🚀 High Priority (즉시 시작)
-1. **미션 작성 예시 3개 추가** (예상 작업: 2일)
-2. **아이콘 툴팁 전체 추가** (예상 작업: 1일)
-3. **실제 사례 페이지 제작** (예상 작업: 3일)
+  report += `### B. 데이터 위치\n`;
+  report += `- JSON 보고서: \`final-report-${date.toISOString().split('T')[0]}.json\`\n`;
+  report += `- 개별 페르소나 결과: \`group*/P*_result.json\`\n`;
+  report += `- 그룹별 요약: \`group*/group_summary.json\`\n\n`;
 
-#### 📅 Medium Priority (2주 내)
-1. 부서별 템플릿 6개 제작
-2. 첫 방문자 가이드 투어 구현
-3. FAQ 페이지 구축
-
----
-
-## 📎 부록
-
-### A. 시뮬레이션 방법론
-- **모델**: Claude 3.5 Haiku
-- **페르소나**: ${reportData.totalPersonas}명 (직무/디지털성숙도/팀크기 다양화)
-- **방식**: ${reportData.totalGroups}개 그룹 병렬 처리
-
-### B. 상세 데이터 위치
-- 최종 보고서 JSON: \`final-report-${dateStr}.json\`
-- 그룹별 요약: \`group*/group_summary.json\`
-- 개별 페르소나: \`group*/P*_result.json\`
-
----
-
-**보고서 생성**: ${dateStr}
-**문의**: Work Redesign Platform 개발팀
-`;
+  report += `---\n\n`;
+  report += `**보고서 생성**: ${dateStr}\n`;
+  report += `**다음 액션**: 우선순위 1-3 항목 즉시 착수\n`;
 
   return report;
 }
 
 // 메인 실행
 async function main() {
+  console.log('📖 Loading simulation results...');
+
   const outputDir = path.join(__dirname, '../outputs/parallel-reports');
+  const simulationDir = path.join(__dirname, '../outputs/parallel-simulations');
+
+  // JSON 보고서 로드
   const jsonFiles = fs.readdirSync(outputDir)
     .filter(f => f.startsWith('final-report-') && f.endsWith('.json'))
     .sort()
-    .reverse(); // 최신 파일 먼저
+    .reverse();
 
   if (jsonFiles.length === 0) {
     console.error('❌ No report files found');
@@ -257,23 +437,35 @@ async function main() {
 
   const latestReportFile = jsonFiles[0];
   const reportPath = path.join(outputDir, latestReportFile);
-
-  console.log(`📖 Reading report: ${latestReportFile}`);
   const reportData: FinalReport = JSON.parse(fs.readFileSync(reportPath, 'utf-8'));
 
-  console.log('✍️  Generating Korean report...');
-  const koreanReport = generateKoreanReport(reportData);
+  // 모든 페르소나 결과 로드
+  console.log('📊 Loading all persona results for stage analysis...');
+  const personaResults = loadAllPersonaResults(simulationDir);
+  console.log(`   Found ${personaResults.length} persona results`);
+
+  // 단계별 분석
+  console.log('🔍 Analyzing by stage...');
+  const stageAnalyses = analyzeByStage(personaResults);
+  console.log(`   Analyzed ${stageAnalyses.length} stages`);
+
+  // 한국어 보고서 생성
+  console.log('✍️  Generating comprehensive Korean report...');
+  const koreanReport = generateKoreanReport(reportData, stageAnalyses);
 
   const date = latestReportFile.replace('final-report-', '').replace('.json', '');
   const outputPath = path.join(outputDir, `종합_보고서_${date}.md`);
 
   fs.writeFileSync(outputPath, koreanReport, 'utf-8');
 
-  console.log(`✅ Korean report generated: ${outputPath}`);
-  console.log(`📊 Summary:`);
+  console.log(`\n✅ Korean report generated successfully!`);
+  console.log(`📄 Location: ${outputPath}`);
+  console.log(`\n📊 Report Summary:`);
   console.log(`   - Total Personas: ${reportData.totalPersonas}`);
   console.log(`   - Success Rate: ${reportData.successRate}`);
   console.log(`   - Avg Satisfaction: ${reportData.averageSatisfaction}`);
+  console.log(`   - Stages Analyzed: ${stageAnalyses.length}`);
+  console.log(`   - Top Issue Stages: ${stageAnalyses.sort((a, b) => a.avgSatisfaction - b.avgSatisfaction).slice(0, 3).map(s => `Step ${s.stageNumber}`).join(', ')}`);
 }
 
 if (require.main === module) {
