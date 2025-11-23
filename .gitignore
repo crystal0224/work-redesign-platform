@@ -45,6 +45,9 @@ generated_templates/
 *.swp
 *.swo
 
+# Claude Code settings (contains API keys)
+.claude/settings.local.json
+
 # OS generated files
 .DS_Store
 .DS_Store?
