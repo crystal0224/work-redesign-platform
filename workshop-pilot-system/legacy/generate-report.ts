@@ -9,7 +9,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { AnalysisReport } from '../4-analysis/analyze';
 import { SimulationResult } from '../3-simulation/simulate';
-import { SK_PERSONAS } from '../2-personas/personas';
+import { PERSONAS_V3 as SK_PERSONAS } from '../2-personas/personas-v3';
 import { WORKSHOP_UI_SPECS } from '../1-ui-extraction/extract-ui';
 
 /**

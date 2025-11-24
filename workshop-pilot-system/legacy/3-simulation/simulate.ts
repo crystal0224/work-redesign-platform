@@ -9,7 +9,7 @@ import * as dotenv from 'dotenv';
 import Anthropic from '@anthropic-ai/sdk';
 import * as path from 'path';
 import * as fs from 'fs';
-import { SK_PERSONAS, Persona } from '../2-personas/personas';
+import { PERSONAS_V3 as SK_PERSONAS, Persona } from '../2-personas/personas-v3';
 import { WORKSHOP_UI_SPECS } from '../1-ui-extraction/extract-ui';
 
 dotenv.config({ path: path.join(__dirname, '../../.env') });
@@ -142,7 +142,7 @@ async function simulateStep(
 
   try {
     const message = await anthropic.messages.create({
-      model: 'claude-3-5-haiku-20241022',
+      model: 'claude-haiku-4-5-20251001',
       max_tokens: 2000,
       temperature: 0.7,
       messages: [{ role: 'user', content: prompt }],
@@ -295,7 +295,7 @@ Work Redesign Platform 워크샵을 경험했습니다.
 
   try {
     const message = await anthropic.messages.create({
-      model: 'claude-3-5-haiku-20241022',
+      model: 'claude-haiku-4-5-20251001',
       max_tokens: 500,
       temperature: 0.7,
       messages: [{ role: 'user', content: prompt }],

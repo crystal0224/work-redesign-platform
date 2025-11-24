@@ -321,6 +321,18 @@ async function runParallelPilot() {
     log(`⚠️  Korean report generation failed: ${error}`, colors.yellow);
   }
 
+  // UI/UX 분석 보고서 자동 생성
+  log('\n🔍 Generating UI/UX analysis report...', colors.cyan);
+  try {
+    const uiuxReportScript = path.join(__dirname, '5-reports/generate-uiux-analysis.ts');
+    execSync(`npx ts-node ${uiuxReportScript}`, {
+      cwd: __dirname,
+      stdio: 'inherit'
+    });
+  } catch (error) {
+    log(`⚠️  UI/UX analysis report generation failed: ${error}`, colors.yellow);
+  }
+
   // 결과 출력
   logSection('✅ Pilot Testing Complete');
 

@@ -39,13 +39,10 @@
     "seed": "cd backend && npm run seed",
     "deploy:dev": "./deploy.sh development deploy",
     "deploy:prod": "./deploy.sh production deploy",
-    "pilot": "cd workshop-pilot-system && npx ts-node --project tsconfig.json run-pilot.ts",
-    "pilot:quick": "cd workshop-pilot-system && npx ts-node --project tsconfig.json run-pilot.ts --personas 3",
-    "pilot:full": "cd workshop-pilot-system && npx ts-node --project tsconfig.json run-pilot.ts --personas 30 --verbose",
-    "pilot:parallel": "cd workshop-pilot-system && npx ts-node --project tsconfig.json run-parallel-pilot.ts",
-    "pilot:test": "cd workshop-pilot-system && npx ts-node --project tsconfig.json test-single-group.ts",
-    "pilot:group": "cd workshop-pilot-system/group-simulations && npx ts-node run-group-simulation.ts",
-    "pilot:report": "cd workshop-pilot-system && npx ts-node 5-reports/generate-korean-report.ts"
+    "pilot:ui-extract": "cd workshop-pilot-system && FRONTEND_URL=http://localhost:3000 npx ts-node 1-ui-crawler/extract-workshop-ui.ts",
+    "pilot:real": "cd workshop-pilot-system && npx ts-node run-real-pilot.ts",
+    "pilot:real:full": "cd workshop-pilot-system && npx ts-node run-real-pilot-parallel.ts",
+    "pilot:report:uiux": "cd workshop-pilot-system && npx ts-node 5-reports/generate-uiux-analysis.ts"
   },
   "keywords": [
     "work-redesign",
@@ -59,8 +56,9 @@
   "author": "SK Academy",
   "license": "MIT",
   "devDependencies": {
+    "@playwright/test": "^1.56.1",
     "concurrently": "^8.2.2",
-    "@playwright/test": "^1.40.1"
+    "playwright": "^1.56.1"
   },
   "workspaces": [
     "backend",

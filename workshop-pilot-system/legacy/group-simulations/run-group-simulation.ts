@@ -9,9 +9,23 @@ import * as dotenv from 'dotenv';
 import * as path from 'path';
 import * as fs from 'fs';
 import Anthropic from '@anthropic-ai/sdk';
+import { loadUISnapshot, getStepUI, formatUIForPrompt, UISnapshot } from '../2-ui-loader/load-ui-snapshot';
 
 // 환경 변수 로드
 dotenv.config({ path: path.join(__dirname, '../../backend/.env') });
+
+// Load UI snapshot once at module level
+let uiSnapshot: UISnapshot | null = null;
+try {
+  uiSnapshot = loadUISnapshot();
+  if (uiSnapshot) {
+    console.log(`✅ UI Snapshot loaded (${uiSnapshot.steps.length} steps, captured at ${new Date(uiSnapshot.timestamp).toLocaleString()})`);
+  } else {
+    console.warn('⚠️  No UI snapshot found - run UI crawler first for accurate simulation');
+  }
+} catch (error) {
+  console.warn('⚠️  Failed to load UI snapshot:', error);
+}
 
 const apiKey = process.env.ANTHROPIC_API_KEY;
 if (!apiKey) {
@@ -113,6 +127,8 @@ SK 그룹 팀장 일회성 교육 (3시간)에 참여 중. 교육장에서 혼�
 ${stage.description}
 예상 시간: ${stage.expectedMinutes}분
 
+${formatUIForPrompt(getStepUI(stage.number, uiSnapshot))}
+
 ${previousContext ? `이전 경험:\n${previousContext}\n` : ''}
 
 **중요 - 당신만의 고유한 관점으로 평가하세요:**
@@ -152,7 +168,7 @@ JSON 응답:
 
   try {
     const response = await anthropic.messages.create({
-      model: 'claude-3-5-haiku-20241022',
+      model: 'claude-haiku-4-5-20251001',
       max_tokens: 1000,
       temperature: 0.7,
       messages: [{
