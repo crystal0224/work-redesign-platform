@@ -1,0 +1,183 @@
+{
+  "timestamp": "2025-11-23T03:49:43.349Z",
+  "frontendVersion": "latest",
+  "baseUrl": "http://localhost:3000",
+  "steps": [
+    {
+      "stepNumber": 1,
+      "stepName": "워크샵 시작",
+      "url": "http://localhost:3000/workshop",
+      "pageTitle": "AI Trends 2025",
+      "mainHeading": "AI 2025: The Next Wave",
+      "subHeading": "",
+      "instructions": [
+        "11개월간의 변화 따라잡기"
+      ],
+      "inputFields": [],
+      "buttons": [],
+      "helpText": [],
+      "warnings": [],
+      "features": []
+    },
+    {
+      "stepNumber": 2,
+      "stepName": "팀 정보 입력",
+      "url": "http://localhost:3000/workshop?step=2",
+      "pageTitle": "AI Trends 2025",
+      "mainHeading": "AI 2025: The Next Wave",
+      "subHeading": "",
+      "instructions": [
+        "11개월간의 변화 따라잡기"
+      ],
+      "inputFields": [],
+      "buttons": [],
+      "helpText": [],
+      "warnings": [],
+      "features": []
+    },
+    {
+      "stepNumber": 3,
+      "stepName": "팀원 정보 입력",
+      "url": "http://localhost:3000/workshop?step=3",
+      "pageTitle": "AI Trends 2025",
+      "mainHeading": "AI 2025: The Next Wave",
+      "subHeading": "",
+      "instructions": [
+        "11개월간의 변화 따라잡기"
+      ],
+      "inputFields": [],
+      "buttons": [],
+      "helpText": [],
+      "warnings": [],
+      "features": []
+    },
+    {
+      "stepNumber": 4,
+      "stepName": "역할 입력",
+      "url": "http://localhost:3000/workshop?step=4",
+      "pageTitle": "AI Trends 2025",
+      "mainHeading": "AI 2025: The Next Wave",
+      "subHeading": "",
+      "instructions": [
+        "11개월간의 변화 따라잡기"
+      ],
+      "inputFields": [],
+      "buttons": [],
+      "helpText": [],
+      "warnings": [],
+      "features": []
+    },
+    {
+      "stepNumber": 5,
+      "stepName": "업무 내용 입력",
+      "url": "http://localhost:3000/workshop?step=5",
+      "pageTitle": "AI Trends 2025",
+      "mainHeading": "AI 2025: The Next Wave",
+      "subHeading": "",
+      "instructions": [
+        "11개월간의 변화 따라잡기"
+      ],
+      "inputFields": [],
+      "buttons": [],
+      "helpText": [],
+      "warnings": [],
+      "features": []
+    },
+    {
+      "stepNumber": 6,
+      "stepName": "AI 업무 추출",
+      "url": "http://localhost:3000/workshop?step=6",
+      "pageTitle": "AI Trends 2025",
+      "mainHeading": "AI 2025: The Next Wave",
+      "subHeading": "",
+      "instructions": [
+        "11개월간의 변화 따라잡기"
+      ],
+      "inputFields": [],
+      "buttons": [],
+      "helpText": [],
+      "warnings": [],
+      "features": []
+    },
+    {
+      "stepNumber": 7,
+      "stepName": "AI 업무 분석 결과",
+      "url": "http://localhost:3000/workshop?step=7",
+      "pageTitle": "AI Trends 2025",
+      "mainHeading": "AI 2025: The Next Wave",
+      "subHeading": "",
+      "instructions": [
+        "11개월간의 변화 따라잡기"
+      ],
+      "inputFields": [],
+      "buttons": [],
+      "helpText": [],
+      "warnings": [],
+      "features": []
+    },
+    {
+      "stepNumber": 8,
+      "stepName": "AI 교육",
+      "url": "http://localhost:3000/workshop?step=8",
+      "pageTitle": "AI Trends 2025",
+      "mainHeading": "AI 2025: The Next Wave",
+      "subHeading": "",
+      "instructions": [
+        "11개월간의 변화 따라잡기"
+      ],
+      "inputFields": [],
+      "buttons": [],
+      "helpText": [],
+      "warnings": [],
+      "features": []
+    },
+    {
+      "stepNumber": 9,
+      "stepName": "1:1 상담",
+      "url": "http://localhost:3000/workshop?step=9",
+      "pageTitle": "AI Trends 2025",
+      "mainHeading": "AI 2025: The Next Wave",
+      "subHeading": "",
+      "instructions": [
+        "11개월간의 변화 따라잡기"
+      ],
+      "inputFields": [],
+      "buttons": [],
+      "helpText": [],
+      "warnings": [],
+      "features": []
+    },
+    {
+      "stepNumber": 10,
+      "stepName": "워크플로우 설계",
+      "url": "http://localhost:3000/workshop?step=10",
+      "pageTitle": "AI Trends 2025",
+      "mainHeading": "AI 2025: The Next Wave",
+      "subHeading": "",
+      "instructions": [
+        "11개월간의 변화 따라잡기"
+      ],
+      "inputFields": [],
+      "buttons": [],
+      "helpText": [],
+      "warnings": [],
+      "features": []
+    },
+    {
+      "stepNumber": 11,
+      "stepName": "워크샵 완료",
+      "url": "http://localhost:3000/workshop?step=11",
+      "pageTitle": "AI Trends 2025",
+      "mainHeading": "AI 2025: The Next Wave",
+      "subHeading": "",
+      "instructions": [
+        "11개월간의 변화 따라잡기"
+      ],
+      "inputFields": [],
+      "buttons": [],
+      "helpText": [],
+      "warnings": [],
+      "features": []
+    }
+  ]
+}
