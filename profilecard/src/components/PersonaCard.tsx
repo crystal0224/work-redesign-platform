@@ -43,14 +43,14 @@ const PersonaCard: React.FC<PersonaCardProps> = ({ persona }) => {
                 {/* Header Section */}
                 <div className="flex gap-6 mb-6 border-b pb-4 border-gray-100">
                     {/* Photo Area - Premium Minimalist */}
-                    <div className="w-40 h-40 flex-shrink-0 relative group">
+                    <div className="w-40 h-52 flex-shrink-0 relative group">
                         {/* Soft diffused shadow for depth */}
-                        <div className="absolute inset-4 bg-gray-900/20 blur-xl rounded-full opacity-0 group-hover:opacity-30 transition-opacity duration-700"></div>
+                        <div className="absolute inset-4 bg-gray-900/20 blur-xl rounded-2xl opacity-0 group-hover:opacity-30 transition-opacity duration-700"></div>
 
                         <img
                             src={`/images/personas/${persona.id}.jpg`}
                             alt={persona.name}
-                            className="w-full h-full object-cover rounded-[2rem] shadow-[0_8px_30px_rgb(0,0,0,0.12)] ring-1 ring-black/5 relative z-10 transition-all duration-500 ease-out group-hover:scale-[1.02] group-hover:shadow-[0_20px_40px_rgb(0,0,0,0.12)]"
+                            className="w-full h-full object-cover rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.12)] ring-1 ring-black/5 relative z-10 transition-all duration-500 ease-out group-hover:scale-[1.02] group-hover:shadow-[0_20px_40px_rgb(0,0,0,0.12)]"
                             onError={(e) => {
                                 // Fallback if image fails to load
                                 (e.target as HTMLImageElement).src = `https://i.pravatar.cc/400?u=${persona.id}`;
@@ -140,250 +140,250 @@ const PersonaCard: React.FC<PersonaCardProps> = ({ persona }) => {
                                     </div>
                                 </div>
                             </div>
-                </section>
+                        </section>
 
 
 
-                {/* Team Resistance Factors */}
-                < section >
-                    <h3 className="text-[10px] font-bold text-red-400 uppercase tracking-wider mb-2 border-b pb-1 border-red-100">Resistance Factors</h3>
-                    <div className="space-y-2">
-                        {persona.team.resistanceFactors?.map((factor, i) => (
-                            <div key={i} className="flex gap-2 items-start">
-                                <span className="flex-shrink-0 w-1.5 h-1.5 rounded-full bg-red-400 mt-1.5"></span>
-                                <p className="text-gray-600 text-[10px] leading-tight">{factor}</p>
+                        {/* Team Resistance Factors */}
+                        < section >
+                            <h3 className="text-[10px] font-bold text-red-400 uppercase tracking-wider mb-2 border-b pb-1 border-red-100">Resistance Factors</h3>
+                            <div className="space-y-2">
+                                {persona.team.resistanceFactors?.map((factor, i) => (
+                                    <div key={i} className="flex gap-2 items-start">
+                                        <span className="flex-shrink-0 w-1.5 h-1.5 rounded-full bg-red-400 mt-1.5"></span>
+                                        <p className="text-gray-600 text-[10px] leading-tight">{factor}</p>
+                                    </div>
+                                ))}
                             </div>
-                        ))}
-                    </div>
-                </section >
+                        </section >
 
-                {/* Personality Radar/Stats */}
-                < section className="flex-1 flex flex-col" >
-                    <h3 className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-2 border-b pb-1">Leader Personality</h3>
-                    <div className="flex items-center justify-center relative mb-2">
-                        {/* Radar Chart - Compact & Highlighted */}
-                        <svg viewBox="0 0 100 100" className="w-32 h-32">
-                            {/* Background Grid */}
-                            {[20, 40, 60, 80].map(r => (
-                                <polygon key={r} points="50,10 90,40 75,90 25,90 10,40" fill="none" stroke="#e2e8f0" strokeWidth="0.5" transform={`scale(${r / 100})`} style={{ transformOrigin: '50px 50px' }} />
-                            ))}
-                            {/* Axes */}
-                            <line x1="50" y1="50" x2="50" y2="10" stroke="#e2e8f0" strokeWidth="0.5" />
-                            <line x1="50" y1="50" x2="90" y2="40" stroke="#e2e8f0" strokeWidth="0.5" />
-                            <line x1="50" y1="50" x2="75" y2="90" stroke="#e2e8f0" strokeWidth="0.5" />
-                            <line x1="50" y1="50" x2="25" y2="90" stroke="#e2e8f0" strokeWidth="0.5" />
-                            <line x1="50" y1="50" x2="10" y2="40" stroke="#e2e8f0" strokeWidth="0.5" />
+                        {/* Personality Radar/Stats */}
+                        < section className="flex-1 flex flex-col" >
+                            <h3 className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-2 border-b pb-1">Leader Personality</h3>
+                            <div className="flex items-center justify-center relative mb-2">
+                                {/* Radar Chart - Compact & Highlighted */}
+                                <svg viewBox="0 0 100 100" className="w-32 h-32">
+                                    {/* Background Grid */}
+                                    {[20, 40, 60, 80].map(r => (
+                                        <polygon key={r} points="50,10 90,40 75,90 25,90 10,40" fill="none" stroke="#e2e8f0" strokeWidth="0.5" transform={`scale(${r / 100})`} style={{ transformOrigin: '50px 50px' }} />
+                                    ))}
+                                    {/* Axes */}
+                                    <line x1="50" y1="50" x2="50" y2="10" stroke="#e2e8f0" strokeWidth="0.5" />
+                                    <line x1="50" y1="50" x2="90" y2="40" stroke="#e2e8f0" strokeWidth="0.5" />
+                                    <line x1="50" y1="50" x2="75" y2="90" stroke="#e2e8f0" strokeWidth="0.5" />
+                                    <line x1="50" y1="50" x2="25" y2="90" stroke="#e2e8f0" strokeWidth="0.5" />
+                                    <line x1="50" y1="50" x2="10" y2="40" stroke="#e2e8f0" strokeWidth="0.5" />
 
-                            {/* Data Polygon */}
-                            {(() => {
-                                // Normalize values to 0-40 range (radius)
-                                const v1 = (persona.personality.techSavvy / 10) * 40; // Top: Tech
-                                const v2 = (persona.personality.patience / 10) * 40; // Top Right: Patience
-                                const v3 = (persona.personality.changeResistance === 'low' ? 40 : persona.personality.changeResistance === 'medium' ? 25 : 10); // Bottom Right: Adaptability
-                                const v4 = (persona.personality.learningSpeed === 'fast' ? 40 : persona.personality.learningSpeed === 'medium' ? 25 : 10); // Bottom Left: Learning
-                                const v5 = ((persona.personality.confidenceLevel || 5) / 10) * 40; // Top Left: Confidence
+                                    {/* Data Polygon */}
+                                    {(() => {
+                                        // Normalize values to 0-40 range (radius)
+                                        const v1 = (persona.personality.techSavvy / 10) * 40; // Top: Tech
+                                        const v2 = (persona.personality.patience / 10) * 40; // Top Right: Patience
+                                        const v3 = (persona.personality.changeResistance === 'low' ? 40 : persona.personality.changeResistance === 'medium' ? 25 : 10); // Bottom Right: Adaptability
+                                        const v4 = (persona.personality.learningSpeed === 'fast' ? 40 : persona.personality.learningSpeed === 'medium' ? 25 : 10); // Bottom Left: Learning
+                                        const v5 = ((persona.personality.confidenceLevel || 5) / 10) * 40; // Top Left: Confidence
 
-                                // Calculate points
-                                const p1 = `50,${50 - v1}`;
-                                const p2 = `${50 + v2 * 0.95},${50 - v2 * 0.31}`;
-                                const p3 = `${50 + v3 * 0.59},${50 + v3 * 0.81}`;
-                                const p4 = `${50 - v4 * 0.59},${50 + v4 * 0.81}`;
-                                const p5 = `${50 - v5 * 0.95},${50 - v5 * 0.31}`;
+                                        // Calculate points
+                                        const p1 = `50,${50 - v1}`;
+                                        const p2 = `${50 + v2 * 0.95},${50 - v2 * 0.31}`;
+                                        const p3 = `${50 + v3 * 0.59},${50 + v3 * 0.81}`;
+                                        const p4 = `${50 - v4 * 0.59},${50 + v4 * 0.81}`;
+                                        const p5 = `${50 - v5 * 0.95},${50 - v5 * 0.31}`;
 
-                                return (
-                                    <g>
-                                        <polygon points={`${p1} ${p2} ${p3} ${p4} ${p5}`} fill="rgba(99, 102, 241, 0.15)" stroke="#6366f1" strokeWidth="1.5" />
-                                        {/* Highlight Points */}
-                                        {[p1, p2, p3, p4, p5].map((p, i) => (
-                                            <circle key={i} cx={p.split(',')[0]} cy={p.split(',')[1]} r="1.5" fill="#4f46e5" />
-                                        ))}
-                                    </g>
-                                );
-                            })()}
+                                        return (
+                                            <g>
+                                                <polygon points={`${p1} ${p2} ${p3} ${p4} ${p5}`} fill="rgba(99, 102, 241, 0.15)" stroke="#6366f1" strokeWidth="1.5" />
+                                                {/* Highlight Points */}
+                                                {[p1, p2, p3, p4, p5].map((p, i) => (
+                                                    <circle key={i} cx={p.split(',')[0]} cy={p.split(',')[1]} r="1.5" fill="#4f46e5" />
+                                                ))}
+                                            </g>
+                                        );
+                                    })()}
 
-                            {/* Labels - Compact */}
-                            <text x="50" y="6" textAnchor="middle" fontSize="5" fontWeight="bold" fill="#64748b">Tech</text>
-                            <text x="94" y="38" textAnchor="start" fontSize="5" fontWeight="bold" fill="#64748b">Patience</text>
-                            <text x="77" y="98" textAnchor="middle" fontSize="5" fontWeight="bold" fill="#64748b">Adapt</text>
-                            <text x="23" y="98" textAnchor="middle" fontSize="5" fontWeight="bold" fill="#64748b">Learn</text>
-                            <text x="6" y="38" textAnchor="end" fontSize="5" fontWeight="bold" fill="#64748b">Confid</text>
-                        </svg>
-                    </div>
+                                    {/* Labels - Compact */}
+                                    <text x="50" y="6" textAnchor="middle" fontSize="5" fontWeight="bold" fill="#64748b">Tech</text>
+                                    <text x="94" y="38" textAnchor="start" fontSize="5" fontWeight="bold" fill="#64748b">Patience</text>
+                                    <text x="77" y="98" textAnchor="middle" fontSize="5" fontWeight="bold" fill="#64748b">Adapt</text>
+                                    <text x="23" y="98" textAnchor="middle" fontSize="5" fontWeight="bold" fill="#64748b">Learn</text>
+                                    <text x="6" y="38" textAnchor="end" fontSize="5" fontWeight="bold" fill="#64748b">Confid</text>
+                                </svg>
+                            </div>
 
-                    {/* Bar Charts (Restored) */}
-                    <div className="space-y-2 mb-3 px-2">
-                        {[
-                            { label: 'Tech Savvy', value: persona.personality.techSavvy, color: 'bg-indigo-500' },
-                            { label: 'Patience', value: persona.personality.patience, color: 'bg-teal-500' },
-                            { label: 'Stress Level', value: persona.personality.stressLevel || 5, color: 'bg-rose-500' },
-                            { label: 'Confidence', value: persona.personality.confidenceLevel || 5, color: 'bg-amber-500' },
-                        ].map((stat) => (
-                            <div key={stat.label}>
-                                <div className="flex justify-between text-[10px] mb-0.5">
-                                    <span className="text-gray-600">{stat.label}</span>
-                                    <span className="font-medium">{stat.value}/10</span>
+                            {/* Bar Charts (Restored) */}
+                            <div className="space-y-2 mb-3 px-2">
+                                {[
+                                    { label: 'Tech Savvy', value: persona.personality.techSavvy, color: 'bg-indigo-500' },
+                                    { label: 'Patience', value: persona.personality.patience, color: 'bg-teal-500' },
+                                    { label: 'Stress Level', value: persona.personality.stressLevel || 5, color: 'bg-rose-500' },
+                                    { label: 'Confidence', value: persona.personality.confidenceLevel || 5, color: 'bg-amber-500' },
+                                ].map((stat) => (
+                                    <div key={stat.label}>
+                                        <div className="flex justify-between text-[10px] mb-0.5">
+                                            <span className="text-gray-600">{stat.label}</span>
+                                            <span className="font-medium">{stat.value}/10</span>
+                                        </div>
+                                        <div className="w-full bg-gray-100 rounded-full h-1">
+                                            <div className={`h-1 rounded-full ${stat.color}`} style={{ width: `${stat.value * 10}%` }}></div>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+
+                            <div className="mt-4 space-y-1.5">
+                                <div className="flex justify-between items-center text-[10px] border-b border-gray-50 py-1.5">
+                                    <span className="text-gray-500">Change Resistance</span>
+                                    <span className={`px-1.5 py-0.5 rounded ${persona.personality.changeResistance === 'high' ? 'bg-red-100 text-red-700' :
+                                        persona.personality.changeResistance === 'medium' ? 'bg-yellow-100 text-yellow-700' :
+                                            'bg-green-100 text-green-700'
+                                        }`}>{persona.personality.changeResistance.toUpperCase()}</span>
                                 </div>
-                                <div className="w-full bg-gray-100 rounded-full h-1">
-                                    <div className={`h-1 rounded-full ${stat.color}`} style={{ width: `${stat.value * 10}%` }}></div>
+                                <div className="flex justify-between items-center text-[10px] border-b border-gray-50 py-1.5">
+                                    <span className="text-gray-500">Learning Speed</span>
+                                    <span className="font-medium text-gray-800">{persona.personality.learningSpeed.toUpperCase()}</span>
                                 </div>
                             </div>
-                        ))}
-                    </div>
+                        </section >
 
-                    <div className="mt-4 space-y-1.5">
-                        <div className="flex justify-between items-center text-[10px] border-b border-gray-50 py-1.5">
-                            <span className="text-gray-500">Change Resistance</span>
-                            <span className={`px-1.5 py-0.5 rounded ${persona.personality.changeResistance === 'high' ? 'bg-red-100 text-red-700' :
-                                persona.personality.changeResistance === 'medium' ? 'bg-yellow-100 text-yellow-700' :
-                                    'bg-green-100 text-green-700'
-                                }`}>{persona.personality.changeResistance.toUpperCase()}</span>
-                        </div>
-                        <div className="flex justify-between items-center text-[10px] border-b border-gray-50 py-1.5">
-                            <span className="text-gray-500">Learning Speed</span>
-                            <span className="font-medium text-gray-800">{persona.personality.learningSpeed.toUpperCase()}</span>
-                        </div>
-                    </div>
-                </section >
-
-                {/* Workshop Psychology - Compact */}
-                < section >
-                    <h3 className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1.5 border-b pb-1">Workshop Mindset</h3>
-                    <div className="bg-slate-50/80 backdrop-blur-sm p-2.5 rounded-lg flex items-center justify-between gap-3 border border-slate-100">
-                        <div className="flex-1 min-w-0 border-r border-slate-200 pr-3">
-                            <span className="text-[9px] text-gray-400 uppercase tracking-wider block mb-0.5">Initial Attitude</span>
-                            <span className="font-bold text-slate-800 text-xs leading-tight block">
-                                {persona.expectedBehavior.initialAttitude}
-                            </span>
-                        </div>
-                        <div className="flex-shrink-0 flex flex-col items-end">
-                            <span className="text-[9px] text-gray-400 uppercase tracking-wider block mb-0.5">Dropout Risk</span>
-                            <div className="flex items-center gap-1.5">
-                                <div className="w-10 bg-gray-200 rounded-full h-1">
-                                    <div className={`h-1 rounded-full ${persona.expectedBehavior.dropoutRisk > 50 ? 'bg-red-500' :
-                                        persona.expectedBehavior.dropoutRisk > 20 ? 'bg-yellow-500' : 'bg-green-500'
-                                        }`} style={{ width: `${persona.expectedBehavior.dropoutRisk}%` }}></div>
+                        {/* Workshop Psychology - Compact */}
+                        < section >
+                            <h3 className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1.5 border-b pb-1">Workshop Mindset</h3>
+                            <div className="bg-slate-50/80 backdrop-blur-sm p-2.5 rounded-lg flex items-center justify-between gap-3 border border-slate-100">
+                                <div className="flex-1 min-w-0 border-r border-slate-200 pr-3">
+                                    <span className="text-[9px] text-gray-400 uppercase tracking-wider block mb-0.5">Initial Attitude</span>
+                                    <span className="font-bold text-slate-800 text-xs leading-tight block">
+                                        {persona.expectedBehavior.initialAttitude}
+                                    </span>
                                 </div>
-                                <span className={`text-[10px] font-bold ${persona.expectedBehavior.dropoutRisk > 50 ? 'text-red-600' : 'text-gray-700'}`}>{persona.expectedBehavior.dropoutRisk}%</span>
-                            </div>
-                        </div>
-                    </div>
-                </section >
-
-            </div >
-
-            {/* Right Column: Work Details (8 cols) */}
-            < div className="col-span-8 flex flex-col gap-5" >
-
-                {/* Main Tasks */}
-                < section >
-                    <h3 className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-2 border-b pb-1">Key Responsibilities</h3>
-                    <ul className="list-disc list-outside ml-4 space-y-0.5 text-gray-700 text-xs">
-                        {persona.work.mainTasks.map((task, i) => (
-                            <li key={i} className="pl-1">{task}</li>
-                        ))}
-                    </ul>
-                </section >
-
-                {/* Workflow & Routine - Vertical Flow (N-shape) */}
-                < section className="bg-white/60 backdrop-blur-sm p-3 rounded-xl border border-gray-200 shadow-sm" >
-                    <h3 className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-2">Daily Workflow Flow</h3>
-                    <div className="flex gap-4 relative">
-                        {/* Left Column (AM) */}
-                        <div className="flex-1 flex flex-col gap-2 relative">
-                            <div className="absolute top-2 bottom-2 left-1.5 w-0.5 bg-indigo-100"></div>
-                            {persona.work.dailyWorkflow.split('→').slice(0, Math.ceil(persona.work.dailyWorkflow.split('→').length / 2)).map((step, i) => (
-                                <div key={i} className="relative pl-4">
-                                    <div className="absolute left-0 top-1.5 w-3 h-3 rounded-full bg-white border-2 border-indigo-400 z-10"></div>
-                                    <p className="text-[10px] text-gray-600 leading-tight bg-white/50 rounded px-1">{step.trim()}</p>
+                                <div className="flex-shrink-0 flex flex-col items-end">
+                                    <span className="text-[9px] text-gray-400 uppercase tracking-wider block mb-0.5">Dropout Risk</span>
+                                    <div className="flex items-center gap-1.5">
+                                        <div className="w-10 bg-gray-200 rounded-full h-1">
+                                            <div className={`h-1 rounded-full ${persona.expectedBehavior.dropoutRisk > 50 ? 'bg-red-500' :
+                                                persona.expectedBehavior.dropoutRisk > 20 ? 'bg-yellow-500' : 'bg-green-500'
+                                                }`} style={{ width: `${persona.expectedBehavior.dropoutRisk}%` }}></div>
+                                        </div>
+                                        <span className={`text-[10px] font-bold ${persona.expectedBehavior.dropoutRisk > 50 ? 'text-red-600' : 'text-gray-700'}`}>{persona.expectedBehavior.dropoutRisk}%</span>
+                                    </div>
                                 </div>
-                            ))}
-                        </div>
+                            </div>
+                        </section >
 
-                        {/* Right Column (PM) */}
-                        <div className="flex-1 flex flex-col gap-2 relative mt-4">
-                            <div className="absolute top-2 bottom-2 left-1.5 w-0.5 bg-indigo-100"></div>
-                            {persona.work.dailyWorkflow.split('→').slice(Math.ceil(persona.work.dailyWorkflow.split('→').length / 2)).map((step, i) => (
-                                <div key={i} className="relative pl-4">
-                                    <div className="absolute left-0 top-1.5 w-3 h-3 rounded-full bg-indigo-500 border-2 border-white shadow-sm z-10"></div>
-                                    <p className="text-[10px] text-gray-600 leading-tight bg-white/50 rounded px-1">{step.trim()}</p>
+                    </div >
+
+                    {/* Right Column: Work Details (8 cols) */}
+                    < div className="col-span-8 flex flex-col gap-5" >
+
+                        {/* Main Tasks */}
+                        < section >
+                            <h3 className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-2 border-b pb-1">Key Responsibilities</h3>
+                            <ul className="list-disc list-outside ml-4 space-y-0.5 text-gray-700 text-xs">
+                                {persona.work.mainTasks.map((task, i) => (
+                                    <li key={i} className="pl-1">{task}</li>
+                                ))}
+                            </ul>
+                        </section >
+
+                        {/* Workflow & Routine - Vertical Flow (N-shape) */}
+                        < section className="bg-white/60 backdrop-blur-sm p-3 rounded-xl border border-gray-200 shadow-sm" >
+                            <h3 className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-2">Daily Workflow Flow</h3>
+                            <div className="flex gap-4 relative">
+                                {/* Left Column (AM) */}
+                                <div className="flex-1 flex flex-col gap-2 relative">
+                                    <div className="absolute top-2 bottom-2 left-1.5 w-0.5 bg-indigo-100"></div>
+                                    {persona.work.dailyWorkflow.split('→').slice(0, Math.ceil(persona.work.dailyWorkflow.split('→').length / 2)).map((step, i) => (
+                                        <div key={i} className="relative pl-4">
+                                            <div className="absolute left-0 top-1.5 w-3 h-3 rounded-full bg-white border-2 border-indigo-400 z-10"></div>
+                                            <p className="text-[10px] text-gray-600 leading-tight bg-white/50 rounded px-1">{step.trim()}</p>
+                                        </div>
+                                    ))}
                                 </div>
-                            ))}
-                        </div>
-                    </div>
-                </section >
 
-                {/* Leader's Hidden Struggles & Battery */}
-                < section className="bg-orange-50/80 backdrop-blur-sm p-4 rounded-xl border border-orange-100" >
-                    <div className="flex justify-between items-center mb-2">
-                        <h3 className="text-[10px] font-bold text-orange-800 uppercase tracking-wider">Leader's Hidden Struggles</h3>
-                        {/* Energy Battery */}
-                        <div className="flex items-center gap-1" title="Mental Energy Level">
-                            <span className="text-[9px] text-orange-600 font-bold">ENERGY</span>
-                            <div className="w-6 h-3 border border-orange-400 rounded-sm p-0.5 flex items-center">
-                                <div
-                                    className={`h-full rounded-[1px] ${persona.expectedBehavior.dropoutRisk > 20 ? 'bg-red-500' : 'bg-green-500'}`}
-                                    style={{ width: `${Math.max(10, 100 - persona.expectedBehavior.dropoutRisk)}%` }}
-                                ></div>
+                                {/* Right Column (PM) */}
+                                <div className="flex-1 flex flex-col gap-2 relative mt-4">
+                                    <div className="absolute top-2 bottom-2 left-1.5 w-0.5 bg-indigo-100"></div>
+                                    {persona.work.dailyWorkflow.split('→').slice(Math.ceil(persona.work.dailyWorkflow.split('→').length / 2)).map((step, i) => (
+                                        <div key={i} className="relative pl-4">
+                                            <div className="absolute left-0 top-1.5 w-3 h-3 rounded-full bg-indigo-500 border-2 border-white shadow-sm z-10"></div>
+                                            <p className="text-[10px] text-gray-600 leading-tight bg-white/50 rounded px-1">{step.trim()}</p>
+                                        </div>
+                                    ))}
+                                </div>
                             </div>
-                            <div className="w-0.5 h-1.5 bg-orange-400 rounded-r-sm"></div>
-                        </div>
-                    </div>
-                    <div className="space-y-1.5">
-                        {persona.leaderProfile.hiddenStruggles?.map((struggle, i) => (
-                            <div key={i} className="flex gap-2 items-start">
-                                <span className="text-orange-400 text-[10px] mt-0.5">💭</span>
-                                <p className="text-orange-900 text-xs italic">{struggle}</p>
+                        </section >
+
+                        {/* Leader's Hidden Struggles & Battery */}
+                        < section className="bg-orange-50/80 backdrop-blur-sm p-4 rounded-xl border border-orange-100" >
+                            <div className="flex justify-between items-center mb-2">
+                                <h3 className="text-[10px] font-bold text-orange-800 uppercase tracking-wider">Leader's Hidden Struggles</h3>
+                                {/* Energy Battery */}
+                                <div className="flex items-center gap-1" title="Mental Energy Level">
+                                    <span className="text-[9px] text-orange-600 font-bold">ENERGY</span>
+                                    <div className="w-6 h-3 border border-orange-400 rounded-sm p-0.5 flex items-center">
+                                        <div
+                                            className={`h-full rounded-[1px] ${persona.expectedBehavior.dropoutRisk > 20 ? 'bg-red-500' : 'bg-green-500'}`}
+                                            style={{ width: `${Math.max(10, 100 - persona.expectedBehavior.dropoutRisk)}%` }}
+                                        ></div>
+                                    </div>
+                                    <div className="w-0.5 h-1.5 bg-orange-400 rounded-r-sm"></div>
+                                </div>
                             </div>
-                        ))}
-                    </div>
-                </section >
-
-                {/* Pain Points */}
-                < section >
-                    <h3 className="text-[10px] font-bold text-red-400 uppercase tracking-wider mb-2 border-b pb-1 border-red-100">Pain Points & Struggles</h3>
-                    <div className="space-y-2">
-                        {persona.work.painPoints.map((point, i) => (
-                            <div key={i} className="flex gap-2 items-start">
-                                <span className="flex-shrink-0 w-4 h-4 rounded-full bg-red-50 text-red-500 flex items-center justify-center text-[10px] font-bold mt-0.5">{i + 1}</span>
-                                <p className="text-gray-700 text-xs">{point}</p>
+                            <div className="space-y-1.5">
+                                {persona.leaderProfile.hiddenStruggles?.map((struggle, i) => (
+                                    <div key={i} className="flex gap-2 items-start">
+                                        <span className="text-orange-400 text-[10px] mt-0.5">💭</span>
+                                        <p className="text-orange-900 text-xs italic">{struggle}</p>
+                                    </div>
+                                ))}
                             </div>
-                        ))}
-                    </div>
-                </section >
+                        </section >
 
-                {/* Automation Needs */}
-                < section >
-                    <h3 className="text-[10px] font-bold text-blue-400 uppercase tracking-wider mb-2 border-b pb-1 border-blue-100">Automation Needs</h3>
-                    <div className="grid grid-cols-1 gap-1.5">
-                        {persona.work.automationNeeds.map((need, i) => (
-                            <div key={i} className="bg-blue-50 text-blue-900 px-3 py-1.5 rounded-lg text-xs font-medium flex items-center">
-                                <svg className="w-3.5 h-3.5 mr-2 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
-                                {need}
+                        {/* Pain Points */}
+                        < section >
+                            <h3 className="text-[10px] font-bold text-red-400 uppercase tracking-wider mb-2 border-b pb-1 border-red-100">Pain Points & Struggles</h3>
+                            <div className="space-y-2">
+                                {persona.work.painPoints.map((point, i) => (
+                                    <div key={i} className="flex gap-2 items-start">
+                                        <span className="flex-shrink-0 w-4 h-4 rounded-full bg-red-50 text-red-500 flex items-center justify-center text-[10px] font-bold mt-0.5">{i + 1}</span>
+                                        <p className="text-gray-700 text-xs">{point}</p>
+                                    </div>
+                                ))}
                             </div>
-                        ))}
-                    </div>
-                </section >
+                        </section >
 
-                {/* Tools */}
-                < section >
-                    <h3 className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-2">Tools Used</h3>
-                    <div className="flex flex-wrap gap-1.5">
-                        {persona.work.toolsUsed.map((tool, i) => (
-                            <span key={i} className="px-2 py-0.5 bg-gray-100 text-gray-600 rounded text-[10px] border border-gray-200">
-                                {tool}
-                            </span>
-                        ))}
-                    </div>
-                </section >
+                        {/* Automation Needs */}
+                        < section >
+                            <h3 className="text-[10px] font-bold text-blue-400 uppercase tracking-wider mb-2 border-b pb-1 border-blue-100">Automation Needs</h3>
+                            <div className="grid grid-cols-1 gap-1.5">
+                                {persona.work.automationNeeds.map((need, i) => (
+                                    <div key={i} className="bg-blue-50 text-blue-900 px-3 py-1.5 rounded-lg text-xs font-medium flex items-center">
+                                        <svg className="w-3.5 h-3.5 mr-2 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                                        {need}
+                                    </div>
+                                ))}
+                            </div>
+                        </section >
 
-            </div >
-        </div >
+                        {/* Tools */}
+                        < section >
+                            <h3 className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-2">Tools Used</h3>
+                            <div className="flex flex-wrap gap-1.5">
+                                {persona.work.toolsUsed.map((tool, i) => (
+                                    <span key={i} className="px-2 py-0.5 bg-gray-100 text-gray-600 rounded text-[10px] border border-gray-200">
+                                        {tool}
+                                    </span>
+                                ))}
+                            </div>
+                        </section >
 
-                {/* Footer Branding */ }
-    < div className="absolute bottom-4 right-6 text-right" >
-        <div className="text-[10px] text-gray-300 font-bold tracking-[0.2em] uppercase">Work Redesign Platform</div>
-        <div className="text-[9px] text-gray-300">Persona Card #{persona.id}</div>
-    </div >
+                    </div >
+                </div >
+
+                {/* Footer Branding */}
+                < div className="absolute bottom-4 right-6 text-right" >
+                    <div className="text-[10px] text-gray-300 font-bold tracking-[0.2em] uppercase">Work Redesign Platform</div>
+                    <div className="text-[9px] text-gray-300">Persona Card #{persona.id}</div>
+                </div >
             </div >
         </div >
     );
