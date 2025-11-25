@@ -25,7 +25,7 @@ export const prisma = new PrismaClient({
 });
 
 // Prisma Logging
-prisma.$on('query', (e) => {
+prisma.$on('query', e => {
   if (process.env.NODE_ENV === 'development') {
     logger.debug('Query: ' + e.query);
     logger.debug('Params: ' + e.params);
@@ -33,15 +33,15 @@ prisma.$on('query', (e) => {
   }
 });
 
-prisma.$on('error', (e) => {
+prisma.$on('error', e => {
   logger.error('Prisma Error:', e);
 });
 
-prisma.$on('info', (e) => {
+prisma.$on('info', e => {
   logger.info('Prisma Info:', e.message);
 });
 
-prisma.$on('warn', (e) => {
+prisma.$on('warn', e => {
   logger.warn('Prisma Warning:', e.message);
 });
 
@@ -65,7 +65,7 @@ redis.on('connect', () => {
   logger.info('Redis connected successfully');
 });
 
-redis.on('error', (error) => {
+redis.on('error', error => {
   logger.error('Redis connection error:', error);
 });
 

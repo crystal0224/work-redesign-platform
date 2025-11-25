@@ -18,7 +18,9 @@ export const config = {
 
   // Database
   database: {
-    url: process.env.DATABASE_URL || 'postgresql://workredesign:password123@localhost:5432/work_redesign',
+    url:
+      process.env.DATABASE_URL ||
+      'postgresql://workredesign:password123@localhost:5432/work_redesign',
     host: process.env.DB_HOST || 'localhost',
     port: parseInt(process.env.DB_PORT || '5432'),
     name: process.env.DB_NAME || 'work_redesign',
@@ -86,12 +88,22 @@ export const config = {
   upload: {
     directory: process.env.UPLOAD_DIR || './uploads',
     maxFileSize: parseInt(process.env.MAX_FILE_SIZE_MB || '50') * 1024 * 1024,
-    allowedTypes: ['image/jpeg', 'image/png', 'image/gif', 'application/pdf', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'],
+    allowedTypes: [
+      'image/jpeg',
+      'image/png',
+      'image/gif',
+      'application/pdf',
+      'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    ],
   },
 
   // CORS configuration
   cors: {
-    origin: process.env.CORS_ORIGIN?.split(',') || ['http://localhost:3000', 'http://localhost:3001'],
+    origin: process.env.CORS_ORIGIN?.split(',') || [
+      'http://localhost:3000',
+      'http://localhost:3001',
+    ],
     credentials: true,
   },
 
@@ -160,10 +172,7 @@ export const config = {
 
 // Validation
 export const validateConfig = (): void => {
-  const required = [
-    'DATABASE_URL',
-    'JWT_SECRET',
-  ];
+  const required = ['DATABASE_URL', 'JWT_SECRET'];
 
   const missing = required.filter(key => !process.env[key]);
 

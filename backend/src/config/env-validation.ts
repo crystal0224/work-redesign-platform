@@ -13,8 +13,8 @@ const envSchema = z.object({
   PORT: z
     .string()
     .default('4000')
-    .transform((val) => parseInt(val, 10))
-    .refine((val) => val > 0 && val < 65536, {
+    .transform(val => parseInt(val, 10))
+    .refine(val => val > 0 && val < 65536, {
       message: 'PORT must be between 1 and 65535',
     }),
 
@@ -59,26 +59,23 @@ const envSchema = z.object({
     .string()
     .optional()
     .default('true')
-    .transform((val) => val === 'true'),
+    .transform(val => val === 'true'),
 
   AI_CACHE_TTL: z
     .string()
     .optional()
     .default('86400')
-    .transform((val) => parseInt(val, 10)),
+    .transform(val => parseInt(val, 10)),
 
   // Rate Limiting
   RATE_LIMIT_RPM: z
     .string()
     .optional()
     .default('100')
-    .transform((val) => parseInt(val, 10)),
+    .transform(val => parseInt(val, 10)),
 
   // 로그 레벨
-  LOG_LEVEL: z
-    .enum(['error', 'warn', 'info', 'debug'])
-    .optional()
-    .default('info'),
+  LOG_LEVEL: z.enum(['error', 'warn', 'info', 'debug']).optional().default('info'),
 });
 
 export type Env = z.infer<typeof envSchema>;
@@ -111,7 +108,7 @@ export function validateEnv(): Env {
       logger.error('❌ Invalid environment variables:');
       logger.error('');
 
-      error.errors.forEach((err) => {
+      error.errors.forEach(err => {
         const field = err.path.join('.');
         logger.error(`  • ${field}: ${err.message}`);
       });

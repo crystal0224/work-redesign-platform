@@ -29,7 +29,7 @@ export const logger = winston.createLogger({
   format: logFormat,
   defaultMeta: {
     service: 'work-redesign-api',
-    version: process.env.APP_VERSION || '1.0.0'
+    version: process.env.APP_VERSION || '1.0.0',
   },
   transports: [
     // Error log file
@@ -49,44 +49,38 @@ export const logger = winston.createLogger({
   ],
 
   // Handle uncaught exceptions
-  exceptionHandlers: [
-    new winston.transports.File({ filename: 'logs/exceptions.log' })
-  ],
+  exceptionHandlers: [new winston.transports.File({ filename: 'logs/exceptions.log' })],
 
   // Handle unhandled promise rejections
-  rejectionHandlers: [
-    new winston.transports.File({ filename: 'logs/rejections.log' })
-  ]
+  rejectionHandlers: [new winston.transports.File({ filename: 'logs/rejections.log' })],
 });
 
 // Add console transport for development
 if (process.env.NODE_ENV === 'development') {
-  logger.add(new winston.transports.Console({
-    format: consoleFormat
-  }));
+  logger.add(
+    new winston.transports.Console({
+      format: consoleFormat,
+    })
+  );
 }
 
 // Production logging adjustments
 if (process.env.NODE_ENV === 'production') {
   // Add additional transports for production
-  logger.add(new winston.transports.Console({
-    format: winston.format.combine(
-      winston.format.timestamp(),
-      winston.format.json()
-    )
-  }));
+  logger.add(
+    new winston.transports.Console({
+      format: winston.format.combine(winston.format.timestamp(), winston.format.json()),
+    })
+  );
 }
 
 // HTTP request logger
 export const httpLogger = winston.createLogger({
   level: 'info',
-  format: winston.format.combine(
-    winston.format.timestamp(),
-    winston.format.json()
-  ),
+  format: winston.format.combine(winston.format.timestamp(), winston.format.json()),
   defaultMeta: {
     service: 'work-redesign-api-http',
-    type: 'http-request'
+    type: 'http-request',
   },
   transports: [
     new winston.transports.File({
@@ -98,27 +92,28 @@ export const httpLogger = winston.createLogger({
 });
 
 if (process.env.NODE_ENV === 'development') {
-  httpLogger.add(new winston.transports.Console({
-    format: winston.format.combine(
-      winston.format.colorize(),
-      winston.format.timestamp({ format: 'HH:mm:ss' }),
-      winston.format.printf(({ timestamp, level, message, method, url, status, responseTime }) => {
-        return `${timestamp} [HTTP]: ${method} ${url} ${status} - ${responseTime}ms`;
-      })
-    )
-  }));
+  httpLogger.add(
+    new winston.transports.Console({
+      format: winston.format.combine(
+        winston.format.colorize(),
+        winston.format.timestamp({ format: 'HH:mm:ss' }),
+        winston.format.printf(
+          ({ timestamp, level, message, method, url, status, responseTime }) => {
+            return `${timestamp} [HTTP]: ${method} ${url} ${status} - ${responseTime}ms`;
+          }
+        )
+      ),
+    })
+  );
 }
 
 // AI request logger
 export const aiLogger = winston.createLogger({
   level: 'info',
-  format: winston.format.combine(
-    winston.format.timestamp(),
-    winston.format.json()
-  ),
+  format: winston.format.combine(winston.format.timestamp(), winston.format.json()),
   defaultMeta: {
     service: 'work-redesign-api-ai',
-    type: 'ai-request'
+    type: 'ai-request',
   },
   transports: [
     new winston.transports.File({
@@ -132,13 +127,10 @@ export const aiLogger = winston.createLogger({
 // Performance logger
 export const performanceLogger = winston.createLogger({
   level: 'info',
-  format: winston.format.combine(
-    winston.format.timestamp(),
-    winston.format.json()
-  ),
+  format: winston.format.combine(winston.format.timestamp(), winston.format.json()),
   defaultMeta: {
     service: 'work-redesign-api-performance',
-    type: 'performance'
+    type: 'performance',
   },
   transports: [
     new winston.transports.File({
@@ -152,13 +144,10 @@ export const performanceLogger = winston.createLogger({
 // Security logger
 export const securityLogger = winston.createLogger({
   level: 'info',
-  format: winston.format.combine(
-    winston.format.timestamp(),
-    winston.format.json()
-  ),
+  format: winston.format.combine(winston.format.timestamp(), winston.format.json()),
   defaultMeta: {
     service: 'work-redesign-api-security',
-    type: 'security'
+    type: 'security',
   },
   transports: [
     new winston.transports.File({
@@ -197,7 +186,13 @@ export const logRequest = (req: any, res: any, responseTime: number) => {
   });
 };
 
-export const logAIRequest = (type: string, prompt: string, response: string, duration: number, tokens?: number) => {
+export const logAIRequest = (
+  type: string,
+  prompt: string,
+  response: string,
+  duration: number,
+  tokens?: number
+) => {
   aiLogger.info('AI Request', {
     type,
     promptLength: prompt.length,

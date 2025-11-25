@@ -185,8 +185,7 @@ export const requireProjectAccess = async (
     const hasAccess =
       req.user.role === 'ADMIN' ||
       project.createdBy === req.user.id ||
-      (project.team &&
-       project.team.members.some(member => member.userId === req.user.id));
+      (project.team && project.team.members.some(member => member.userId === req.user.id));
 
     if (!hasAccess) {
       ResponseUtil.forbidden(res, 'Access denied to this project');

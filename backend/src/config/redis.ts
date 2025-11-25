@@ -28,7 +28,7 @@ export const getRedisClient = (): Redis => {
       logger.info('Redis client ready');
     });
 
-    redis.on('error', (error) => {
+    redis.on('error', error => {
       logger.error('Redis connection error:', error);
     });
 

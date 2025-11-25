@@ -19,7 +19,9 @@ export const aiRateLimiter = rateLimit({
   standardHeaders: true,
   legacyHeaders: false,
   handler: (req, res) => {
-    logger.warn(`AI rate limit exceeded for IP: ${req.ip}, User: ${(req as any).user?.email || 'anonymous'}`);
+    logger.warn(
+      `AI rate limit exceeded for IP: ${req.ip}, User: ${(req as any).user?.email || 'anonymous'}`
+    );
     res.status(429).json({
       success: false,
       error: 'AI API rate limit exceeded',
@@ -59,7 +61,9 @@ export const createUserAIRateLimiter = () => {
       // Check if limit exceeded
       if (current > limit) {
         const ttl = await redis.ttl(key);
-        logger.warn(`User AI rate limit exceeded for user: ${req.user?.email}, requests: ${current}`);
+        logger.warn(
+          `User AI rate limit exceeded for user: ${req.user?.email}, requests: ${current}`
+        );
 
         return res.status(429).json({
           success: false,
@@ -137,7 +141,7 @@ export const aiCostTracker = async (req: any, res: any, next: any) => {
 
     // Store usage metrics in Redis for cost analysis
     const dailyKey = `ai:usage:daily:${new Date().toISOString().split('T')[0]}`;
-    redis.hincrby(dailyKey, req.user?.id || 'anonymous', 1).catch((err) => {
+    redis.hincrby(dailyKey, req.user?.id || 'anonymous', 1).catch(err => {
       logger.error('Failed to track AI usage:', err);
     });
     redis.expire(dailyKey, 30 * 24 * 60 * 60); // Keep for 30 days

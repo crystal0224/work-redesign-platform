@@ -8,7 +8,7 @@ import {
   CreateWorkshopResponse,
   UploadFilesResponse,
   GenerateTemplatesRequest,
-  GenerateTemplatesResponse
+  GenerateTemplatesResponse,
 } from '../types/workshop';
 import { logger } from '../utils/logger';
 
@@ -30,7 +30,7 @@ export class WorkshopController {
       if (!domains || domains.length !== 3) {
         res.status(400).json({
           success: false,
-          error: '3개의 도메인이 필요합니다'
+          error: '3개의 도메인이 필요합니다',
         });
         return;
       }
@@ -38,22 +38,21 @@ export class WorkshopController {
       const workshop = this.workshopService.createWorkshop({
         name,
         domains,
-        participantCount: participantCount || 1
+        participantCount: participantCount || 1,
       });
 
       const response: CreateWorkshopResponse = {
         success: true,
         id: workshop.id,
-        message: '워크샵이 생성되었습니다'
+        message: '워크샵이 생성되었습니다',
       };
 
       res.status(201).json(response);
-
     } catch (error) {
       logger.error('Workshop creation error:', error);
       res.status(500).json({
         success: false,
-        error: '서버 오류가 발생했습니다'
+        error: '서버 오류가 발생했습니다',
       });
     }
   };
@@ -66,7 +65,7 @@ export class WorkshopController {
       if (!workshopId) {
         res.status(400).json({
           success: false,
-          error: 'workshopId가 필요합니다'
+          error: 'workshopId가 필요합니다',
         });
         return;
       }
@@ -76,7 +75,7 @@ export class WorkshopController {
       if (!workshop) {
         res.status(404).json({
           success: false,
-          error: '워크샵을 찾을 수 없습니다'
+          error: '워크샵을 찾을 수 없습니다',
         });
         return;
       }
@@ -85,7 +84,7 @@ export class WorkshopController {
       if (!req.files || !Array.isArray(req.files) || req.files.length === 0) {
         res.status(400).json({
           success: false,
-          error: '업로드된 파일이 없습니다'
+          error: '업로드된 파일이 없습니다',
         });
         return;
       }
@@ -100,7 +99,7 @@ export class WorkshopController {
           mimetype: file.mimetype,
           size: file.size,
           path: file.path,
-          workshopId: workshopId
+          workshopId: workshopId,
         });
 
         uploadedFileIds.push(fileRecord.id);
@@ -113,11 +112,10 @@ export class WorkshopController {
         success: true,
         fileIds: uploadedFileIds,
         count: req.files.length,
-        message: `${req.files.length}개 파일 업로드 완료`
+        message: `${req.files.length}개 파일 업로드 완료`,
       };
 
       res.json(response);
-
     } catch (error) {
       logger.error('File upload error:', error);
 
@@ -128,7 +126,7 @@ export class WorkshopController {
 
       res.status(500).json({
         success: false,
-        error: error instanceof Error ? error.message : '파일 업로드 중 오류가 발생했습니다'
+        error: error instanceof Error ? error.message : '파일 업로드 중 오류가 발생했습니다',
       });
     }
   };
@@ -144,7 +142,7 @@ export class WorkshopController {
       if (!workshop) {
         res.status(404).json({
           success: false,
-          error: '워크샵을 찾을 수 없습니다'
+          error: '워크샵을 찾을 수 없습니다',
         });
         return;
       }
@@ -153,7 +151,7 @@ export class WorkshopController {
 
       // 업로드된 파일 내용 가져오기
       const uploadedDocuments = await Promise.all(
-        workshop.fileIds.map(async (fileId) => {
+        workshop.fileIds.map(async fileId => {
           const fileRecord = this.workshopService.getFile(fileId);
           if (!fileRecord) {
             logger.warn(`File not found: ${fileId}`);
@@ -173,7 +171,7 @@ export class WorkshopController {
 
           return {
             filename: fileRecord.originalName,
-            content: fileRecord.content
+            content: fileRecord.content,
           };
         })
       );
@@ -189,7 +187,7 @@ export class WorkshopController {
       const extractedTasks = await this.taskExtractionService.extractTasks({
         domains: workshop.domains,
         uploadedDocuments: validDocuments,
-        manualInput: manualInput || undefined
+        manualInput: manualInput || undefined,
       });
 
       logger.info(`✅ Extracted ${extractedTasks.length} tasks`);
@@ -198,14 +196,13 @@ export class WorkshopController {
         success: true,
         tasks: extractedTasks,
         count: extractedTasks.length,
-        message: `${extractedTasks.length}개 업무가 추출되었습니다`
+        message: `${extractedTasks.length}개 업무가 추출되었습니다`,
       });
-
     } catch (error) {
       logger.error('Task extraction error:', error);
       res.status(500).json({
         success: false,
-        error: error instanceof Error ? error.message : '업무 추출 중 오류가 발생했습니다'
+        error: error instanceof Error ? error.message : '업무 추출 중 오류가 발생했습니다',
       });
     }
   };
@@ -218,7 +215,7 @@ export class WorkshopController {
       if (!workshopId || !tasks || tasks.length === 0) {
         res.status(400).json({
           success: false,
-          error: '워크샵 ID와 태스크 목록이 필요합니다'
+          error: '워크샵 ID와 태스크 목록이 필요합니다',
         });
         return;
       }
@@ -227,7 +224,7 @@ export class WorkshopController {
       if (!workshop) {
         res.status(404).json({
           success: false,
-          error: '워크샵을 찾을 수 없습니다'
+          error: '워크샵을 찾을 수 없습니다',
         });
         return;
       }
@@ -242,19 +239,18 @@ export class WorkshopController {
           id: t.id,
           type: t.type,
           name: t.name,
-          taskId: t.taskId
+          taskId: t.taskId,
         })),
         downloadUrl: result.downloadUrl,
-        message: `${result.templates.length}개 도구 생성 완료`
+        message: `${result.templates.length}개 도구 생성 완료`,
       };
 
       res.json(response);
-
     } catch (error) {
       logger.error('Template generation error:', error);
       res.status(500).json({
         success: false,
-        error: error instanceof Error ? error.message : '도구 생성 중 오류가 발생했습니다'
+        error: error instanceof Error ? error.message : '도구 생성 중 오류가 발생했습니다',
       });
     }
   };
@@ -268,21 +264,20 @@ export class WorkshopController {
       if (!workshop) {
         res.status(404).json({
           success: false,
-          error: '워크샵을 찾을 수 없습니다'
+          error: '워크샵을 찾을 수 없습니다',
         });
         return;
       }
 
       res.json({
         success: true,
-        workshop
+        workshop,
       });
-
     } catch (error) {
       logger.error('Get workshop error:', error);
       res.status(500).json({
         success: false,
-        error: '서버 오류가 발생했습니다'
+        error: '서버 오류가 발생했습니다',
       });
     }
   };
@@ -296,7 +291,7 @@ export class WorkshopController {
       if (!workshop) {
         res.status(404).json({
           success: false,
-          error: '워크샵을 찾을 수 없습니다'
+          error: '워크샵을 찾을 수 없습니다',
         });
         return;
       }
@@ -305,14 +300,13 @@ export class WorkshopController {
 
       res.json({
         success: true,
-        message: '워크샵이 삭제되었습니다'
+        message: '워크샵이 삭제되었습니다',
       });
-
     } catch (error) {
       logger.error('Delete workshop error:', error);
       res.status(500).json({
         success: false,
-        error: '서버 오류가 발생했습니다'
+        error: '서버 오류가 발생했습니다',
       });
     }
   };
@@ -325,14 +319,13 @@ export class WorkshopController {
       res.json({
         success: true,
         workshops,
-        count: workshops.length
+        count: workshops.length,
       });
-
     } catch (error) {
       logger.error('Get all workshops error:', error);
       res.status(500).json({
         success: false,
-        error: '서버 오류가 발생했습니다'
+        error: '서버 오류가 발생했습니다',
       });
     }
   };
