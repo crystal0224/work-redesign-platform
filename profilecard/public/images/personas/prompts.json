@@ -1,0 +1,182 @@
+[
+  {
+    "id": "P001",
+    "name": "김지훈",
+    "desc": "SK플래닛 디지털마케팅팀 팀장 (37세, 남성)",
+    "image_prompt": "Photorealistic ID photo of a 37 year old Korean male, Marketing Team Lead, wearing a smart casual dark blue suit jacket over a white collared shirt, slight smile, confident yet approachable expression. Shot on 85mm lens, f/1.8, bokeh, Soft studio lighting, Rembrandt lighting, Detailed skin texture, skin pores, hyper-realistic, 4k, 8k, UHD, raw photo."
+  },
+  {
+    "id": "P002",
+    "name": "박서연",
+    "desc": "SK텔레콤 기업영업팀 팀장 (35세, 여성)",
+    "image_prompt": "Photorealistic ID photo of a 35 year old Korean female, Sales Team Lead, wearing a professional navy blue blazer with a subtle patterned blouse, determined yet friendly expression. Shot on 85mm lens, f/1.8, bokeh, Soft studio lighting, Rembrandt lighting, Detailed skin texture, skin pores, hyper-realistic, 4k, 8k, UHD, raw photo."
+  },
+  {
+    "id": "P003",
+    "name": "이현수",
+    "desc": "SK하이닉스 생산관리팀 팀장 (42세, 남성)",
+    "image_prompt": "Photorealistic ID photo of a 42 year old Korean male, Operations Team Lead, wearing a clean SK Hynix branded work uniform with safety vest over it, serious and focused expression. Shot on 85mm lens, f/1.8, bokeh, Soft studio lighting, Rembrandt lighting, Detailed skin texture, skin pores, hyper-realistic, 4k, 8k, UHD, raw photo."
+  },
+  {
+    "id": "P004",
+    "name": "정민호",
+    "desc": "SK이노베이션 B2B영업팀 팀장 (36세, 남성)",
+    "image_prompt": "Photorealistic ID photo of a 36 year old Korean male, Sales Team Lead, wearing a sharp, modern business suit, confident and sharp-minded expression. Shot on 85mm lens, f/1.8, bokeh, Soft studio lighting, Rembrandt lighting, Detailed skin texture, skin pores, hyper-realistic, 4k, 8k, UHD, raw photo."
+  },
+  {
+    "id": "P005",
+    "name": "최유진",
+    "desc": "SK네트웍스 리테일영업팀 팀장 (37세, 여성)",
+    "image_prompt": "Photorealistic ID photo of a 37 year old Korean female, Sales Team Lead, wearing a smart business casual outfit, approachable and energetic expression. Shot on 85mm lens, f/1.8, bokeh, Soft studio lighting, Rembrandt lighting, Detailed skin texture, skin pores, hyper-realistic, 4k, 8k, UHD, raw photo."
+  },
+  {
+    "id": "P006",
+    "name": "윤재현",
+    "desc": "SK하이닉스 반도체생산팀 팀장 (37세, 남성)",
+    "image_prompt": "Photorealistic ID photo of a 37 year old Korean male, Operations Team Lead, wearing a clean SK Hynix branded work uniform with safety vest, determined and alert expression. Shot on 85mm lens, f/1.8, bokeh, Soft studio lighting, Rembrandt lighting, Detailed skin texture, skin pores, hyper-realistic, 4k, 8k, UHD, raw photo."
+  },
+  {
+    "id": "P007",
+    "name": "강민지",
+    "desc": "SK에너지 물류관리팀 팀장 (38세, 여성)",
+    "image_prompt": "Photorealistic ID photo of a 38 year old Korean female, Operations Team Lead, wearing a professional, practical outfit, perhaps a navy blazer over a light blue blouse, composed and efficient expression. Shot on 85mm lens, f/1.8, bokeh, Soft studio lighting, Rembrandt lighting, Detailed skin texture, skin pores, hyper-realistic, 4k, 8k, UHD, raw photo."
+  },
+  {
+    "id": "P008",
+    "name": "이동훈",
+    "desc": "SK실트론 품질관리팀 팀장 (38세, 남성)",
+    "image_prompt": "Photorealistic ID photo of a 38 year old Korean male, Operations Team Lead, wearing a crisp, clean white shirt and dark trousers, professional and meticulous expression. Shot on 85mm lens, f/1.8, bokeh, Soft studio lighting, Rembrandt lighting, Detailed skin texture, skin pores, hyper-realistic, 4k, 8k, UHD, raw photo."
+  },
+  {
+    "id": "P009",
+    "name": "박수현",
+    "desc": "SK온 배터리생산팀 팀장 (39세, 남성)",
+    "image_prompt": "Photorealistic ID photo of a 39 year old Korean male, Operations Team Lead, wearing a SK On branded work uniform with safety equipment visible, strong and resolute expression. Shot on 85mm lens, f/1.8, bokeh, Soft studio lighting, Rembrandt lighting, Detailed skin texture, skin pores, hyper-realistic, 4k, 8k, UHD, raw photo."
+  },
+  {
+    "id": "P010",
+    "name": "한승민",
+    "desc": "SK케미칼 생산계획팀 팀장 (39세, 남성)",
+    "image_prompt": "Photorealistic ID photo of a 39 year old Korean male, Operations Team Lead, wearing a smart casual outfit, perhaps a light grey blazer over a crisp white shirt, analytical and calm expression. Shot on 85mm lens, f/1.8, bokeh, Soft studio lighting, Rembrandt lighting, Detailed skin texture, skin pores, hyper-realistic, 4k, 8k, UHD, raw photo."
+  },
+  {
+    "id": "P011",
+    "name": "신하늘",
+    "desc": "SK바이오팜 신약개발팀 팀장 (39세, 남성)",
+    "image_prompt": "Photorealistic ID photo of a 39 year old Korean male, R&D Team Lead, wearing a smart casual attire, perhaps a neat button-down shirt, intelligent and thoughtful expression. Shot on 85mm lens, f/1.8, bokeh, Soft studio lighting, Rembrandt lighting, Detailed skin texture, skin pores, hyper-realistic, 4k, 8k, UHD, raw photo."
+  },
+  {
+    "id": "P012",
+    "name": "오현우",
+    "desc": "SK하이닉스 반도체설계팀 팀장 (40세, 남성)",
+    "image_prompt": "Photorealistic ID photo of a 40 year old Korean male, R&D Team Lead, wearing a smart casual outfit, perhaps a dark, well-fitted shirt, highly intelligent and focused expression. Shot on 85mm lens, f/1.8, bokeh, Soft studio lighting, Rembrandt lighting, Detailed skin texture, skin pores, hyper-realistic, 4k, 8k, UHD, raw photo."
+  },
+  {
+    "id": "P013",
+    "name": "임하린",
+    "desc": "SK C&C AI연구팀 팀장 (40세, 여성)",
+    "image_prompt": "Photorealistic ID photo of a 40 year old Korean female, R&D Team Lead, wearing stylish smart casual attire, perhaps a minimalist blouse, sharp and innovative expression. Shot on 85mm lens, f/1.8, bokeh, Soft studio lighting, Rembrandt lighting, Detailed skin texture, skin pores, hyper-realistic, 4k, 8k, UHD, raw photo."
+  },
+  {
+    "id": "P014",
+    "name": "류소영",
+    "desc": "SK이노베이션 배터리기술연구팀 팀장 (41세, 여성)",
+    "image_prompt": "Photorealistic ID photo of a 41 year old Korean female, R&D Team Lead, wearing professional attire, perhaps a sophisticated suit jacket, dedicated and precise expression. Shot on 85mm lens, f/1.8, bokeh, Soft studio lighting, Rembrandt lighting, Detailed skin texture, skin pores, hyper-realistic, 4k, 8k, UHD, raw photo."
+  },
+  {
+    "id": "P015",
+    "name": "조민석",
+    "desc": "SK바이오사이언스 백신연구팀 팀장 (41세, 남성)",
+    "image_prompt": "Photorealistic ID photo of a 41 year old Korean male, R&D Team Lead, wearing clean, professional attire, perhaps a light blue button-down shirt, ethical and deeply knowledgeable expression. Shot on 85mm lens, f/1.8, bokeh, Soft studio lighting, Rembrandt lighting, Detailed skin texture, skin pores, hyper-realistic, 4k, 8k, UHD, raw photo."
+  },
+  {
+    "id": "P016",
+    "name": "김서연",
+    "desc": "SK텔레콤 인재영입팀 팀장 (36세, 여성)",
+    "image_prompt": "Photorealistic ID photo of a 36 year old Korean female, HR Team Lead, wearing a sharp, modern business suit, charismatic and professional expression. Shot on 85mm lens, f/1.8, bokeh, Soft studio lighting, Rembrandt lighting, Detailed skin texture, skin pores, hyper-realistic, 4k, 8k, UHD, raw photo."
+  },
+  {
+    "id": "P017",
+    "name": "이준호",
+    "desc": "SK하이닉스 조직문화팀 팀장 (43세, 남성)",
+    "image_prompt": "Photorealistic ID photo of a 43 year old Korean male, HR Team Lead, wearing friendly, approachable smart casual attire, warm and empathetic expression. Shot on 85mm lens, f/1.8, bokeh, Soft studio lighting, Rembrandt lighting, Detailed skin texture, skin pores, hyper-realistic, 4k, 8k, UHD, raw photo."
+  },
+  {
+    "id": "P018",
+    "name": "박지민",
+    "desc": "SK이노베이션 보상복리후생팀 팀장 (39세, 남성)",
+    "image_prompt": "Photorealistic ID photo of a 39 year old Korean male, HR Team Lead, wearing a precise, professional outfit, perhaps a neatly tucked shirt, meticulous and responsible expression. Shot on 85mm lens, f/1.8, bokeh, Soft studio lighting, Rembrandt lighting, Detailed skin texture, skin pores, hyper-realistic, 4k, 8k, UHD, raw photo."
+  },
+  {
+    "id": "P019",
+    "name": "최현석",
+    "desc": "SK스퀘어 HRD팀 팀장 (45세, 남성)",
+    "image_prompt": "Photorealistic ID photo of a 45 year old Korean male, HR Team Lead, wearing smart casual attire suitable for a learning environment, inspiring and knowledgeable expression. Shot on 85mm lens, f/1.8, bokeh, Soft studio lighting, Rembrandt lighting, Detailed skin texture, skin pores, hyper-realistic, 4k, 8k, UHD, raw photo."
+  },
+  {
+    "id": "P020",
+    "name": "정수진",
+    "desc": "SK네트웍스 노무관리팀 팀장 (37세, 여성)",
+    "image_prompt": "Photorealistic ID photo of a 37 year old Korean female, HR Team Lead, wearing professional and composed attire, fair and steady expression. Shot on 85mm lens, f/1.8, bokeh, Soft studio lighting, Rembrandt lighting, Detailed skin texture, skin pores, hyper-realistic, 4k, 8k, UHD, raw photo."
+  },
+  {
+    "id": "P021",
+    "name": "강수진",
+    "desc": "SK텔레콤 재무기획팀 팀장 (40세, 여성)",
+    "image_prompt": "Photorealistic ID photo of a 40 year old Korean female, Finance Team Lead, wearing a sharp business suit, analytical and shrewd expression. Shot on 85mm lens, f/1.8, bokeh, Soft studio lighting, Rembrandt lighting, Detailed skin texture, skin pores, hyper-realistic, 4k, 8k, UHD, raw photo."
+  },
+  {
+    "id": "P022",
+    "name": "이승우",
+    "desc": "SK하이닉스 회계팀 팀장 (38세, 남성)",
+    "image_prompt": "Photorealistic ID photo of a 38 year old Korean male, Finance Team Lead, wearing a formal business suit, highly detail-oriented and trustworthy expression. Shot on 85mm lens, f/1.8, bokeh, Soft studio lighting, Rembrandt lighting, Detailed skin texture, skin pores, hyper-realistic, 4k, 8k, UHD, raw photo."
+  },
+  {
+    "id": "P023",
+    "name": "박재훈",
+    "desc": "SK이노베이션 IR팀 팀장 (42세, 남성)",
+    "image_prompt": "Photorealistic ID photo of a 42 year old Korean male, Finance Team Lead, wearing a sharp business suit, sophisticated and strategic expression. Shot on 85mm lens, f/1.8, bokeh, Soft studio lighting, Rembrandt lighting, Detailed skin texture, skin pores, hyper-realistic, 4k, 8k, UHD, raw photo."
+  },
+  {
+    "id": "P024",
+    "name": "김동현",
+    "desc": "SK C&C 클라우드개발팀 팀장 (39세, 남성)",
+    "image_prompt": "Photorealistic ID photo of a 39 year old Korean male, IT Team Lead, wearing smart casual tech-industry attire, focused and innovative expression. Shot on 85mm lens, f/1.8, bokeh, Soft studio lighting, Rembrandt lighting, Detailed skin texture, skin pores, hyper-realistic, 4k, 8k, UHD, raw photo."
+  },
+  {
+    "id": "P025",
+    "name": "이민호",
+    "desc": "SK텔레콤 보안운영팀 팀장 (41세, 남성)",
+    "image_prompt": "Photorealistic ID photo of a 41 year old Korean male, IT Team Lead, wearing professional, secure attire, perhaps a dark shirt, vigilant and sharp expression. Shot on 85mm lens, f/1.8, bokeh, Soft studio lighting, Rembrandt lighting, Detailed skin texture, skin pores, hyper-realistic, 4k, 8k, UHD, raw photo."
+  },
+  {
+    "id": "P026",
+    "name": "김도현",
+    "desc": "SK주식회사 ESG전략팀 팀장 (44세, 남성)",
+    "image_prompt": "Photorealistic ID photo of a 44 year old Korean male, Strategy Team Lead, wearing a sophisticated suit, visionary and globally-minded expression. Shot on 85mm lens, f/1.8, bokeh, Soft studio lighting, Rembrandt lighting, Detailed skin texture, skin pores, hyper-realistic, 4k, 8k, UHD, raw photo."
+  },
+  {
+    "id": "P027",
+    "name": "박준영",
+    "desc": "SK텔레콤 서비스기획팀 팀장 (35세, 남성)",
+    "image_prompt": "Photorealistic ID photo of a 35 year old Korean male, Strategy Team Lead, wearing smart casual attire, quick-witted and dynamic expression. Shot on 85mm lens, f/1.8, bokeh, Soft studio lighting, Rembrandt lighting, Detailed skin texture, skin pores, hyper-realistic, 4k, 8k, UHD, raw photo."
+  },
+  {
+    "id": "P028",
+    "name": "최민지",
+    "desc": "SK플래닛 UX디자인팀 팀장 (32세, 여성)",
+    "image_prompt": "Photorealistic ID photo of a 32 year old Korean female, IT Team Lead, wearing trendy and creative smart casual attire, expressive and user-focused expression. Shot on 85mm lens, f/1.8, bokeh, Soft studio lighting, Rembrandt lighting, Detailed skin texture, skin pores, hyper-realistic, 4k, 8k, UHD, raw photo."
+  },
+  {
+    "id": "P029",
+    "name": "정우성",
+    "desc": "SK하이닉스 구매팀 팀장 (45세, 남성)",
+    "image_prompt": "Photorealistic ID photo of a 45 year old Korean male, Finance Team Lead, wearing a professional suit, strong negotiation and risk-aware expression. Shot on 85mm lens, f/1.8, bokeh, Soft studio lighting, Rembrandt lighting, Detailed skin texture, skin pores, hyper-realistic, 4k, 8k, UHD, raw photo."
+  },
+  {
+    "id": "P030",
+    "name": "강하나",
+    "desc": "SK텔레콤 브랜드마케팅팀 팀장 (34세, 여성)",
+    "image_prompt": "Photorealistic ID photo of a 34 year old Korean female, Marketing Team Lead, wearing stylish and modern smart casual attire, trendy and vibrant expression. Shot on 85mm lens, f/1.8, bokeh, Soft studio lighting, Rembrandt lighting, Detailed skin texture, skin pores, hyper-realistic, 4k, 8k, UHD, raw photo."
+  }
+]

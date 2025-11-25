@@ -31,11 +31,13 @@ const PersonaCard: React.FC<PersonaCardProps> = ({ persona }) => {
                 {/* Photo Area */}
                 <div className="w-40 h-40 flex-shrink-0">
                     <img
-                        src={['P001', 'P002', 'P003', 'P004', 'P005'].includes(persona.id)
-                            ? `/images/${persona.id}.jpg`
-                            : `https://i.pravatar.cc/400?u=${persona.id}`}
+                        src={`/images/personas/${persona.id}.png`}
                         alt={persona.name}
                         className="w-full h-full object-cover rounded-2xl shadow-sm bg-gray-50"
+                        onError={(e) => {
+                            // Fallback if image fails to load
+                            (e.target as HTMLImageElement).src = `https://i.pravatar.cc/400?u=${persona.id}`;
+                        }}
                     />
                 </div>
 
@@ -110,6 +112,19 @@ const PersonaCard: React.FC<PersonaCardProps> = ({ persona }) => {
                                 </div>
                                 <p className="text-right text-[10px] font-medium mt-0.5 text-gray-600">{persona.team.digitalMaturity}</p>
                             </div>
+                        </div>
+                    </section>
+
+                    {/* Team Resistance Factors */}
+                    <section>
+                        <h3 className="text-[10px] font-bold text-red-400 uppercase tracking-wider mb-2 border-b pb-1 border-red-100">Resistance Factors</h3>
+                        <div className="space-y-2">
+                            {persona.team.resistanceFactors?.map((factor, i) => (
+                                <div key={i} className="flex gap-2 items-start">
+                                    <span className="flex-shrink-0 w-1.5 h-1.5 rounded-full bg-red-400 mt-1.5"></span>
+                                    <p className="text-gray-600 text-[10px] leading-tight">{factor}</p>
+                                </div>
+                            ))}
                         </div>
                     </section>
 
@@ -191,6 +206,19 @@ const PersonaCard: React.FC<PersonaCardProps> = ({ persona }) => {
                     <section className="bg-gray-50 p-4 rounded-xl border border-gray-100">
                         <h3 className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-2">Daily Workflow</h3>
                         <p className="text-gray-700 italic leading-relaxed text-xs">"{persona.work.dailyWorkflow}"</p>
+                    </section>
+
+                    {/* Leader's Hidden Struggles */}
+                    <section className="bg-orange-50 p-4 rounded-xl border border-orange-100">
+                        <h3 className="text-[10px] font-bold text-orange-800 uppercase tracking-wider mb-2">Leader's Hidden Struggles</h3>
+                        <div className="space-y-1.5">
+                            {persona.leaderProfile.hiddenStruggles?.map((struggle, i) => (
+                                <div key={i} className="flex gap-2 items-start">
+                                    <span className="text-orange-400 text-[10px] mt-0.5">💭</span>
+                                    <p className="text-orange-900 text-xs italic">{struggle}</p>
+                                </div>
+                            ))}
+                        </div>
                     </section>
 
                     {/* Pain Points */}
