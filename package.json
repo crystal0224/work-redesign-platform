@@ -42,7 +42,10 @@
     "pilot:ui-extract": "cd workshop-pilot-system && FRONTEND_URL=http://localhost:3000 npx ts-node 1-ui-crawler/extract-workshop-ui.ts",
     "pilot:real": "cd workshop-pilot-system && npx ts-node run-real-pilot.ts",
     "pilot:real:full": "cd workshop-pilot-system && npx ts-node run-real-pilot-parallel.ts",
-    "pilot:report:uiux": "cd workshop-pilot-system && npx ts-node 5-reports/generate-uiux-analysis.ts"
+    "pilot:report:uiux": "cd workshop-pilot-system && npx ts-node 5-reports/generate-uiux-analysis.ts",
+    "pilot:personas": "cd workshop-pilot-system && npx slidev personas-slides.md",
+    "pilot:personas:build": "cd workshop-pilot-system && npx slidev build personas-slides.md",
+    "pilot:personas:export": "cd workshop-pilot-system && npx slidev export personas-slides.md --format pdf"
   },
   "keywords": [
     "work-redesign",
@@ -57,6 +60,8 @@
   "license": "MIT",
   "devDependencies": {
     "@playwright/test": "^1.56.1",
+    "@slidev/cli": "^52.9.1",
+    "@slidev/theme-default": "^0.25.0",
     "concurrently": "^8.2.2",
     "playwright": "^1.56.1"
   },
