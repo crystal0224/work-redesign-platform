@@ -1,0 +1,18 @@
+{
+  "name": "personas-slidev",
+  "private": true,
+  "scripts": {
+    "dev": "slidev personas-presentation.md",
+    "build": "slidev build personas-presentation.md",
+    "export": "slidev export personas-presentation.md",
+    "export-pdf": "slidev export personas-presentation.md --format pdf"
+  },
+  "dependencies": {
+    "@slidev/cli": "^0.47.0",
+    "@slidev/theme-default": "latest",
+    "@slidev/theme-seriph": "latest"
+  },
+  "devDependencies": {
+    "playwright-chromium": "^1.40.0"
+  }
+}
