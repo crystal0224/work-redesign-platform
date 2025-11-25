@@ -32,7 +32,7 @@ const PersonaCard: React.FC<PersonaCardProps> = ({ persona }) => {
                 <div className="w-40 h-40 flex-shrink-0">
                     <img
                         src={['P001', 'P002', 'P003', 'P004', 'P005'].includes(persona.id)
-                            ? `${import.meta.env.BASE_URL}images/${persona.id}.jpg`
+                            ? `/images/${persona.id}.jpg`
                             : `https://i.pravatar.cc/400?u=${persona.id}`}
                         alt={persona.name}
                         className="w-full h-full object-cover rounded-2xl shadow-sm bg-gray-50"

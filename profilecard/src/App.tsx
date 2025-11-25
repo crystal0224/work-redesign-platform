@@ -1,4 +1,4 @@
-import React from 'react';
+
 import PersonaCard from './components/PersonaCard';
 import { PERSONAS_V3 } from './data/personas';
 
