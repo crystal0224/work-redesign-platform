@@ -1,0 +1,157 @@
+{
+  "personaId": "P004",
+  "personaName": "최유진",
+  "department": "Sales",
+  "digitalMaturity": "Advanced",
+  "startTime": "2025-11-23T01:59:06.565Z",
+  "endTime": "2025-11-23T02:00:34.370Z",
+  "totalDuration": 88,
+  "stageResults": [
+    {
+      "stageNumber": 1,
+      "stageName": "워크샵 시작",
+      "actualMinutes": 7,
+      "timePerception": "Just Right",
+      "easeOfUse": 6,
+      "clarity": 7,
+      "value": 5,
+      "painPoints": [
+        "초기 화면에서 무엇을 해야 할지 명확하지 않음",
+        "플랫폼의 첫인상이 다소 복잡해 보임",
+        "시작 버튼이나 가이드가 눈에 잘 띄지 않음"
+      ],
+      "positivePoints": [
+        "깔끔한 인터페이스 디자인",
+        "교육 목표가 간략하게 제시됨",
+        "기본적인 설명 텍스트가 있음"
+      ],
+      "suggestions": [
+        "더 명확한 시작 가이드 추가",
+        "첫 사용자를 위한 간단한 튜토리얼 제공",
+        "초기 화면에 명확한 액션 버튼 배치"
+      ],
+      "wouldContinue": true,
+      "emotionalState": "약간 혼란스러우나 호기심 있음"
+    },
+    {
+      "stageNumber": 2,
+      "stageName": "미션 작성",
+      "actualMinutes": 15,
+      "timePerception": "Too Long",
+      "easeOfUse": 5,
+      "clarity": 6,
+      "value": 7,
+      "painPoints": [
+        "미션 작성 가이드라인이 모호함",
+        "구체적인 예시 부족",
+        "입력 필드의 설명이 불충분함",
+        "어떤 수준으로 작성해야 할지 명확하지 않음"
+      ],
+      "positivePoints": [
+        "팀 목표를 직접 정의할 수 있는 자율성",
+        "고객 가치에 대해 생각해볼 기회 제공",
+        "간단한 입력 인터페이스"
+      ],
+      "suggestions": [
+        "단계별 명확한 가이드 추가",
+        "성공적인 미션 작성 예시 제공",
+        "입력 필드에 구체적인 힌트 추가",
+        "진행 상황 표시 바 개선"
+      ],
+      "wouldContinue": true,
+      "emotionalState": "약간 혼란스럽지만 호기심 유지"
+    },
+    {
+      "stageNumber": 3,
+      "stageName": "팀 상황 확인",
+      "actualMinutes": 12,
+      "timePerception": "Too Long",
+      "easeOfUse": 5,
+      "clarity": 6,
+      "value": 7,
+      "painPoints": [
+        "입력해야 할 항목이 너무 많음",
+        "각 항목의 기준이 모호함",
+        "어떤 수준으로 작성해야 할지 불분명",
+        "전문 용어가 많아 이해하기 어려움"
+      ],
+      "positivePoints": [
+        "팀 현황을 체계적으로 정리할 수 있는 기회",
+        "대략적인 팀 특성 파악에 도움",
+        "항목들이 체계적으로 구성됨"
+      ],
+      "suggestions": [
+        "각 입력 항목에 더 구체적인 가이드라인 추가",
+        "예시 데이터 제공",
+        "입력 필드에 간단한 도움말 툴팁 추가",
+        "불필요한 입력 항목 간소화"
+      ],
+      "wouldContinue": true,
+      "emotionalState": "약간 지루하고 혼란스러움, 그래도 호기심은 유지"
+    },
+    {
+      "stageNumber": 4,
+      "stageName": "업무 영역 정의",
+      "actualMinutes": 12,
+      "timePerception": "Too Long",
+      "easeOfUse": 4,
+      "clarity": 5,
+      "value": 6,
+      "painPoints": [
+        "업무 영역을 어떤 수준으로 작성해야 할지 모호함",
+        "입력 필드의 가이드라인이 부족함",
+        "전문적인 용어나 카테고리 선택이 어려움",
+        "입력해야 할 범위가 명확하지 않음"
+      ],
+      "positivePoints": [
+        "자신의 팀 업무를 직접 입력할 수 있는 기회",
+        "업무 영역을 체계적으로 정리할 수 있는 기본 틀 제공"
+      ],
+      "suggestions": [
+        "각 입력 항목에 명확한 예시 추가",
+        "업무 영역 입력을 위한 간단한 가이드 텍스트 제공",
+        "드롭다운 메뉴나 추천 카테고리 제공"
+      ],
+      "wouldContinue": true,
+      "emotionalState": "약간 혼란스러움, 진행은 하고 싶지만 어려움을 느낌"
+    },
+    {
+      "stageNumber": 5,
+      "stageName": "업무 내용 입력",
+      "actualMinutes": 22,
+      "timePerception": "Too Long",
+      "easeOfUse": 4,
+      "clarity": 3,
+      "value": 5,
+      "painPoints": [
+        "업무 내용을 어떤 수준으로 작성해야 할지 모호함",
+        "구체적인 가이드라인 부재",
+        "입력해야 할 업무 범위가 불명확함",
+        "전문 용어로 인한 이해 어려움",
+        "화면에서 어떤 정보를 입력해야 하는지 즉시 파악 어려움"
+      ],
+      "positivePoints": [
+        "업무 영역을 체계적으로 정리할 수 있는 기회",
+        "플랫폼의 기본적인 구조는 이해할 수 있음"
+      ],
+      "suggestions": [
+        "명확한 입력 가이드라인과 예시 제공",
+        "각 필드에 대한 구체적인 설명 추가",
+        "직관적인 UI/UX 개선",
+        "전문 용어에 대한 간단한 툴팁 추가"
+      ],
+      "wouldContinue": false,
+      "emotionalState": "혼란스럽고 약간 좌절감을 느낌"
+    }
+  ],
+  "overallSatisfaction": 5.4,
+  "wouldRecommend": false,
+  "finalThoughts": "Advanced 수준의 팀장으로서 전반적으로 개선이 필요한 교육 과정이라고 생각합니다. 실제 팀 업무에 적용할 수 있는 학습이었습니다.",
+  "topImprovements": [
+    "더 명확한 시작 가이드 추가",
+    "첫 사용자를 위한 간단한 튜토리얼 제공",
+    "초기 화면에 명확한 액션 버튼 배치",
+    "단계별 명확한 가이드 추가",
+    "성공적인 미션 작성 예시 제공"
+  ]
+}

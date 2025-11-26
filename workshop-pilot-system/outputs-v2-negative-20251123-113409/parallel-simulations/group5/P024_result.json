@@ -1,0 +1,156 @@
+{
+  "personaId": "P024",
+  "personaName": "홍수아",
+  "department": "Data",
+  "digitalMaturity": "Expert",
+  "startTime": "2025-11-23T01:57:02.368Z",
+  "endTime": "2025-11-23T01:58:33.843Z",
+  "totalDuration": 91,
+  "stageResults": [
+    {
+      "stageNumber": 1,
+      "stageName": "워크샵 시작",
+      "actualMinutes": 7,
+      "timePerception": "Just Right",
+      "easeOfUse": 6,
+      "clarity": 7,
+      "value": 5,
+      "painPoints": [
+        "초기 화면 레이아웃이 다소 복잡함",
+        "첫 사용자를 위한 명확한 가이드 부족",
+        "UI 아이콘의 의미가 직관적이지 않음"
+      ],
+      "positivePoints": [
+        "깔끔한 디자인",
+        "기본적인 워크샵 목표 설명 존재",
+        "빠르게 시작할 수 있는 인터페이스"
+      ],
+      "suggestions": [
+        "초기 사용자를 위한 간단한 튜토리얼 추가",
+        "아이콘에 마우스 오버 시 설명 표시",
+        "더 직관적인 메뉴 구조로 개선"
+      ],
+      "wouldContinue": true,
+      "emotionalState": "약간 혼란스러우나 호기심 있음"
+    },
+    {
+      "stageNumber": 2,
+      "stageName": "미션 작성",
+      "actualMinutes": 15,
+      "timePerception": "Too Long",
+      "easeOfUse": 5,
+      "clarity": 6,
+      "value": 7,
+      "painPoints": [
+        "미션 작성을 위한 구체적인 가이드라인 부족",
+        "입력해야 할 핵심 요소에 대한 명확한 예시 없음",
+        "팀 목표와 고객 가치를 어떤 수준/깊이로 작성해야 하는지 모호함"
+      ],
+      "positivePoints": [
+        "자유롭게 팀의 미션을 정의할 수 있는 유연성",
+        "고객 가치에 대해 깊이 생각해볼 기회 제공"
+      ],
+      "suggestions": [
+        "미션 작성을 위한 간단한 템플릿 또는 가이드 추가",
+        "성공적인 미션 작성 예시 제공",
+        "입력란에 힌트 텍스트 추가"
+      ],
+      "wouldContinue": true,
+      "emotionalState": "약간 혼란스러움, 그래도 호기심은 유지"
+    },
+    {
+      "stageNumber": 3,
+      "stageName": "팀 상황 확인",
+      "actualMinutes": 12,
+      "timePerception": "Too Long",
+      "easeOfUse": 4,
+      "clarity": 5,
+      "value": 6,
+      "painPoints": [
+        "입력해야 할 항목이 많고 모호함",
+        "각 항목의 구체적인 기준이 불명확함",
+        "팀 특성을 정량화하기 어려운 섹션 존재",
+        "UI 가이드 부족으로 혼란스러움"
+      ],
+      "positivePoints": [
+        "팀 현황을 체계적으로 정리할 수 있는 기회",
+        "대부분의 항목에 자유롭게 입력 가능",
+        "전체적인 팀 특성을 한 눈에 볼 수 있는 구조"
+      ],
+      "suggestions": [
+        "각 입력란에 명확한 작성 가이드 추가",
+        "예시 데이터 또는 템플릿 제공",
+        "입력 시간을 줄일 수 있는 자동 추천 기능 개발",
+        "필수/선택 항목을 더 명확하게 구분"
+      ],
+      "wouldContinue": true,
+      "emotionalState": "약간 지루하고 혼란스러움, 그래도 호기심은 유지됨"
+    },
+    {
+      "stageNumber": 4,
+      "stageName": "업무 영역 정의",
+      "actualMinutes": 12,
+      "timePerception": "Too Long",
+      "easeOfUse": 4,
+      "clarity": 5,
+      "value": 6,
+      "painPoints": [
+        "업무 영역을 입력할 범위와 깊이가 모호함",
+        "구체적인 예시나 가이드라인 부족",
+        "입력해야 할 항목에 대한 명확한 설명 없음",
+        "화면 레이아웃이 직관적이지 않음"
+      ],
+      "positivePoints": [
+        "데이터 팀의 주요 업무를 스스로 정리할 기회",
+        "입력 필드가 어느 정도 구조화되어 있음"
+      ],
+      "suggestions": [
+        "각 업무 영역별 입력 예시 추가",
+        "간단한 가이드 텍스트 제공",
+        "필수/선택 입력 항목 명확히 구분",
+        "UI 레이아웃 단순화"
+      ],
+      "wouldContinue": true,
+      "emotionalState": "약간 혼란스럽고 지침을 느끼는 상태"
+    },
+    {
+      "stageNumber": 5,
+      "stageName": "업무 내용 입력",
+      "actualMinutes": 22,
+      "timePerception": "Too Long",
+      "easeOfUse": 4,
+      "clarity": 3,
+      "value": 5,
+      "painPoints": [
+        "업무 내용을 어떤 수준/깊이로 입력해야 할지 모호함",
+        "구체적인 업무 설명을 위한 명확한 템플릿 부재",
+        "각 업무의 중요도와 비중을 어떻게 표현해야 할지 불확실",
+        "입력 항목이 너무 많고 복잡함",
+        "UI에서 도움되는 가이드라인이나 예시 정보 부족"
+      ],
+      "positivePoints": [
+        "업무를 체계적으로 정리할 수 있는 기본 프레임워크 제공",
+        "팀 업무를 전체적으로 조망할 수 있는 기회",
+        "디지털 플랫폼을 통한 업무 분석 시도"
+      ],
+      "suggestions": [
+        "각 업무 입력 항목에 대한 명확한 가이드라인과 예시 추가",
+        "업무 입력을 위한 간단한 템플릿 개발",
+        "불필요하게 많은 입력 항목 간소화",
+        "직관적인 UI/UX 개선"
+      ],
+      "wouldContinue": false,
+      "emotionalState": "약간 좌절감, 시간 낭비 느낌"
+    }
+  ],
+  "overallSatisfaction": 5.2,
+  "wouldRecommend": false,
+  "finalThoughts": "Expert 수준의 팀장으로서 전반적으로 개선이 필요한 교육 과정이라고 생각합니다. 실제 팀 업무에 적용할 수 있는 학습이었습니다.",
+  "topImprovements": [
+    "초기 사용자를 위한 간단한 튜토리얼 추가",
+    "아이콘에 마우스 오버 시 설명 표시",
+    "더 직관적인 메뉴 구조로 개선",
+    "미션 작성을 위한 간단한 템플릿 또는 가이드 추가",
+    "성공적인 미션 작성 예시 제공"
+  ]
+}

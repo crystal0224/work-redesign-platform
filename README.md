@@ -394,10 +394,41 @@ railway run npm run seed
 
 ---
 
+## 📚 문서
+
+프로젝트 문서는 `/docs` 폴더에 체계적으로 정리되어 있습니다.
+
+### 주요 문서
+
+#### [📁 1-persona-integration/](docs/1-persona-integration/) ⭐ **최신 (2025-11-26)**
+**페르소나 데이터 통합 가이드**
+
+- [PERSONA_INTEGRATION_GUIDE.md](docs/1-persona-integration/PERSONA_INTEGRATION_GUIDE.md) - 완벽한 통합 가이드
+- [PERSONA_SYNC_QUICKSTART.md](docs/1-persona-integration/PERSONA_SYNC_QUICKSTART.md) - 5분 빠른 시작
+
+**사용**: 페르소나 데이터 수정 시
+```bash
+./scripts/sync-personas.sh  # 데이터 동기화
+./scripts/sync-images.sh    # 이미지 동기화
+```
+
+#### [📁 2-deployment/](docs/2-deployment/)
+배포 및 인프라 가이드
+
+#### [📁 3-workshop-demo/](docs/3-workshop-demo/)
+워크샵 진행 및 데모 가이드
+
+#### [📁 4-testing/](docs/4-testing/)
+테스팅 전략 및 가이드
+
+**상세 목록**: [docs/README.md](docs/README.md)
+
+---
+
 ## 📞 지원
 
 - **이슈 리포트**: GitHub Issues
-- **문서**: `/docs` 폴더
+- **문서**: [/docs](docs/) 폴더
 - **API 문서**: http://localhost:4000/docs
 
 ---

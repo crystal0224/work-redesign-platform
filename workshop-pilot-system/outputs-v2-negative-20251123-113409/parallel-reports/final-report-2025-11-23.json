@@ -1,0 +1,120 @@
+{
+  "timestamp": "2025-11-23T02:02:33.059Z",
+  "totalPersonas": 30,
+  "totalGroups": 6,
+  "successfulSimulations": 30,
+  "failedSimulations": 0,
+  "successRate": "100.0%",
+  "averageSatisfaction": "3.1/10",
+  "averageTimeSpent": "60 minutes",
+  "groupResults": [
+    {
+      "groupId": "group1",
+      "groupName": "Marketing & Sales Leaders",
+      "personaCount": 5,
+      "successCount": 5,
+      "failureCount": 0,
+      "avgSatisfaction": 4.720000000000001,
+      "avgTimeSpent": 60,
+      "keyInsights": [
+        "초기 사용자를 위한 더 상세한 가이드 추가",
+        "목표 설정 단계의 구체적인 예시 제공",
+        "진행 단계별 명확한 안내 문구 삽입",
+        "명확한 미션 작성 가이드 추가",
+        "예시 템플릿 제공"
+      ],
+      "timestamp": "2025-11-23T02:02:19.490Z"
+    },
+    {
+      "groupId": "group2",
+      "groupName": "Production & Operations Leaders",
+      "personaCount": 5,
+      "successCount": 5,
+      "failureCount": 0,
+      "avgSatisfaction": null,
+      "avgTimeSpent": 60,
+      "keyInsights": [
+        "초기 사용자를 위한 간단한 팝업 가이드 추가",
+        "메뉴 구조 단순화",
+        "첫 화면에 명확한 진행 방법 안내",
+        "각 입력 필드에 구체적인 작성 예시 추가",
+        "목표 작성을 위한 간단한 템플릿 제공"
+      ],
+      "timestamp": "2025-11-23T02:00:59.212Z"
+    },
+    {
+      "groupId": "group3",
+      "groupName": "R&D & Innovation Leaders",
+      "personaCount": 5,
+      "successCount": 5,
+      "failureCount": 0,
+      "avgSatisfaction": 4.5,
+      "avgTimeSpent": 60,
+      "keyInsights": [
+        "초기 사용자를 위한 더 구체적인 가이드 추가",
+        "단계별 명확한 예시 제공",
+        "빠른 시작을 위한 템플릿 또는 가이드 워크시트 마련",
+        "목표 작성 예시 추가",
+        "각 입력란에 상세 설명 툴팁 제공"
+      ],
+      "timestamp": "2025-11-23T02:02:33.052Z"
+    },
+    {
+      "groupId": "group4",
+      "groupName": "HR & Finance Leaders",
+      "personaCount": 5,
+      "successCount": 5,
+      "failureCount": 0,
+      "avgSatisfaction": 4.4,
+      "avgTimeSpent": 60,
+      "keyInsights": [
+        "첫 사용자를 위한 간단한 가이드 추가",
+        "직관적인 시작 버튼 배치",
+        "초기 화면의 정보 간소화",
+        "단계별 명확한 가이드 텍스트 추가",
+        "성공적인 미션 작성 예시 제공"
+      ],
+      "timestamp": "2025-11-23T02:02:14.744Z"
+    },
+    {
+      "groupId": "group5",
+      "groupName": "IT & Digital Transformation Leaders",
+      "personaCount": 5,
+      "successCount": 5,
+      "failureCount": 0,
+      "avgSatisfaction": null,
+      "avgTimeSpent": 60,
+      "keyInsights": [
+        "초기 사용자를 위한 간단한 튜토리얼 추가",
+        "메뉴 구조 단순화",
+        "각 단계별 명확한 가이드 텍스트 제공",
+        "입력 가이드와 예시 텍스트 추가",
+        "각 입력 필드에 대한 상세 설명 제공"
+      ],
+      "timestamp": "2025-11-23T02:00:24.711Z"
+    },
+    {
+      "groupId": "group6",
+      "groupName": "Strategy & Planning Leaders",
+      "personaCount": 5,
+      "successCount": 5,
+      "failureCount": 0,
+      "avgSatisfaction": 4.779999999999999,
+      "avgTimeSpent": 60,
+      "keyInsights": [
+        "초기 사용자를 위한 간단한 튜토리얼 추가",
+        "아이콘에 마우스 오버 시 설명 추가",
+        "첫 화면의 정보 간소화",
+        "미션 작성 예시 추가",
+        "각 입력란에 대한 간단한 힌트 제공"
+      ],
+      "timestamp": "2025-11-23T02:02:07.523Z"
+    }
+  ],
+  "recommendations": [
+    "Focus on improving onboarding for beginner users",
+    "Optimize workflow for production teams",
+    "Enhance AI features for advanced users",
+    "Add more templates for common use cases"
+  ]
+}

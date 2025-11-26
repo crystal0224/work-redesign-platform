@@ -1,0 +1,272 @@
+{
+  "personaId": "P011",
+  "personaName": "한승민",
+  "department": "R&D",
+  "digitalMaturity": "Expert",
+  "startTime": "2025-11-23T01:54:08.359Z",
+  "endTime": "2025-11-23T01:55:16.824Z",
+  "totalDuration": 68,
+  "stageResults": [
+    {
+      "stageNumber": 1,
+      "stageName": "워크샵 시작",
+      "actualMinutes": 7,
+      "timePerception": "Just Right",
+      "easeOfUse": 6,
+      "clarity": 7,
+      "value": 5,
+      "painPoints": [
+        "초기 화면의 안내 문구가 다소 추상적임",
+        "무엇을 정확히 해야 할지 즉시 파악하기 어려움",
+        "플랫폼의 전체 구조가 바로 이해되지 않음"
+      ],
+      "positivePoints": [
+        "직관적인 인터페이스",
+        "깔끔한 디자인",
+        "교육 목표가 명확하게 제시됨"
+      ],
+      "suggestions": [
+        "초기 사용자를 위한 더 구체적인 가이드 추가",
+        "단계별 명확한 예시 제공",
+        "빠른 시작을 위한 템플릿 또는 가이드 워크시트 마련"
+      ],
+      "wouldContinue": true,
+      "emotionalState": "약간 혼란스러우나 호기심 있음"
+    },
+    {
+      "stageNumber": 2,
+      "stageName": "미션 작성",
+      "actualMinutes": 15,
+      "timePerception": "Too Long",
+      "easeOfUse": 5,
+      "clarity": 6,
+      "value": 7,
+      "painPoints": [
+        "미션 작성에 대한 구체적인 가이드라인 부족",
+        "어떤 수준과 깊이로 작성해야 할지 모호함",
+        "팀 목표와 고객 가치 연결 방법이 불분명함"
+      ],
+      "positivePoints": [
+        "자유롭게 팀의 목표를 정의할 수 있는 유연성",
+        "텍스트 입력 인터페이스가 직관적임"
+      ],
+      "suggestions": [
+        "목표 작성 예시 추가",
+        "각 입력란에 상세 설명 툴팁 제공",
+        "고객 가치와 팀 목표 연결 방법에 대한 간단한 가이드 필요"
+      ],
+      "wouldContinue": true,
+      "emotionalState": "약간 혼란스러움, 그래도 호기심은 유지됨"
+    },
+    {
+      "stageNumber": 3,
+      "stageName": "팀 상황 확인",
+      "actualMinutes": 12,
+      "timePerception": "Too Long",
+      "easeOfUse": 5,
+      "clarity": 6,
+      "value": 7,
+      "painPoints": [
+        "입력해야 할 항목이 많고 복잡함",
+        "각 항목의 구체적인 기준이 모호함",
+        "팀 특성을 정량화하기 어려운 섹션 존재",
+        "입력 가이드가 부족함"
+      ],
+      "positivePoints": [
+        "팀의 전반적인 상황을 체계적으로 정리할 수 있는 구조",
+        "다양한 관점에서 팀을 평가할 수 있는 항목들",
+        "디지털 성숙도 관련 평가 섹션이 직관적"
+      ],
+      "suggestions": [
+        "각 입력 항목에 대한 명확한 예시 추가",
+        "입력 중 중간 저장 기능 필요",
+        "복잡한 항목에 대한 간단한 툴팁 설명 추가",
+        "입력 진행 상황을 시각적으로 표시"
+      ],
+      "wouldContinue": true,
+      "emotionalState": "약간 지루하고 혼란스러움, 그래도 호기심은 유지됨"
+    },
+    {
+      "stageNumber": 4,
+      "stageName": "업무 영역 정의",
+      "actualMinutes": 12,
+      "timePerception": "Too Long",
+      "easeOfUse": 4,
+      "clarity": 5,
+      "value": 6,
+      "painPoints": [
+        "업무 영역을 어떤 수준과 깊이로 입력해야 할지 불명확함",
+        "입력 가이드라인이 부족해 무엇을 써야 할지 헷갈림",
+        "기존 업무를 어떻게 구조화해야 할지 판단하기 어려움",
+        "전문 용어와 추상적인 표현이 많아 이해하기 힘듦"
+      ],
+      "positivePoints": [
+        "업무 영역을 직접 입력할 수 있는 유연성",
+        "자신의 팀 업무를 스스로 정의할 수 있는 기회",
+        "입력 필드가 어느 정도 구조화되어 있음"
+      ],
+      "suggestions": [
+        "각 입력 필드에 구체적인 작성 예시 추가",
+        "업무 영역 입력을 위한 간단한 가이드 텍스트 제공",
+        "입력 시 도움말 툴팁 추가",
+        "업무 영역 분류에 대한 간단한 템플릿 제공"
+      ],
+      "wouldContinue": true,
+      "emotionalState": "약간 혼란스럽고 지침을 원함"
+    },
+    {
+      "stageNumber": 5,
+      "stageName": "업무 내용 입력",
+      "actualMinutes": 22,
+      "timePerception": "Too Long",
+      "easeOfUse": 4,
+      "clarity": 3,
+      "value": 5,
+      "painPoints": [
+        "업무 내용을 어떤 수준으로 작성해야 할지 모호함",
+        "상세 업무를 입력할 가이드라인 부족",
+        "각 업무의 범위와 깊이 설정이 불명확함",
+        "전문 용어와 추상적 표현이 많아 이해하기 어려움",
+        "입력 필드의 의미와 목적이 불분명함"
+      ],
+      "positivePoints": [
+        "업무를 체계적으로 정리할 수 있는 기회",
+        "팀 업무를 한눈에 볼 수 있는 템플릿 제공",
+        "디지털 방식으로 업무 분석 가능"
+      ],
+      "suggestions": [
+        "구체적인 업무 입력 예시 추가",
+        "각 입력 필드에 명확한 가이드라인 제공",
+        "업무 범위 설정을 위한 간단한 튜토리얼 개발",
+        "전문 용어에 대한 툴팁 또는 설명 추가"
+      ],
+      "wouldContinue": true,
+      "emotionalState": "약간 혼란스럽고 지침을 느끼는 상태"
+    },
+    {
+      "stageNumber": 6,
+      "stageName": "업무 추출 (AI)",
+      "actualMinutes": 7,
+      "timePerception": "Too Long",
+      "easeOfUse": 4,
+      "clarity": 3,
+      "value": 5,
+      "painPoints": [
+        "AI 추출 기능의 의도와 범위가 불명확함",
+        "어떤 업무가 자동 추출되는지 예측할 수 없음",
+        "추출된 결과에 대한 신뢰성 의문",
+        "추출 과정의 투명성 부족",
+        "추가 설명이나 가이드 문구 부재"
+      ],
+      "positivePoints": [
+        "자동 추출 기능 자체의 잠재력",
+        "추가 입력 없이 빠른 분석 시도"
+      ],
+      "suggestions": [
+        "추출 과정에 대한 상세 안내 문구 추가",
+        "추출된 결과에 대한 신뢰도 표시",
+        "사용자가 결과를 쉽게 검토하고 수정할 수 있는 인터페이스 제공",
+        "추출 알고리즘의 기준이나 원리 간단히 설명"
+      ],
+      "wouldContinue": true,
+      "emotionalState": "약간 혼란스럽고 의구심이 드는 상태"
+    },
+    {
+      "stageNumber": 7,
+      "stageName": "결과 요약",
+      "actualMinutes": 15,
+      "timePerception": "Too Long",
+      "easeOfUse": 4,
+      "clarity": 3,
+      "value": 5,
+      "painPoints": [
+        "AI 추출 결과의 신뢰성 낮음",
+        "결과 수정 방법이 명확하지 않음",
+        "어떤 부분을 어떻게 수정해야 할지 모호함",
+        "추출된 내용의 맥락과 범위가 불분명함",
+        "수정을 위한 직관적인 가이드 부족"
+      ],
+      "positivePoints": [
+        "AI가 일부 업무 내용을 자동으로 추출함",
+        "전체 내용을 한눈에 볼 수 있는 화면 구성",
+        "수정 가능한 인터페이스 제공"
+      ],
+      "suggestions": [
+        "각 추출 결과에 대한 신뢰도 표시",
+        "수정 가이드라인 및 예시 제공",
+        "추출 결과에 대한 상세 설명 추가",
+        "수정이 쉬운 인터랙티브한 UI 개선"
+      ],
+      "wouldContinue": true,
+      "emotionalState": "약간 혼란스럽고 지침을 잃은 느낌"
+    },
+    {
+      "stageNumber": 8,
+      "stageName": "AI 교육",
+      "actualMinutes": 20,
+      "timePerception": "Too Long",
+      "easeOfUse": 4,
+      "clarity": 3,
+      "value": 5,
+      "painPoints": [
+        "자동화 개념 설명이 너무 추상적임",
+        "실제 팀 업무에 어떻게 적용할지 구체적 가이드 부족",
+        "복잡한 전문 용어 사용으로 이해 어려움",
+        "자동화 사례가 내 팀과 직접적 연관성 부족",
+        "AI 기술의 실제 적용 방법 불명확"
+      ],
+      "positivePoints": [
+        "자동화 트렌드에 대한 기본 개념 학습",
+        "AI 기술 접목 가능성 일부 확인",
+        "새로운 업무 혁신 관점 제시"
+      ],
+      "suggestions": [
+        "실제 R&D 팀 사례 중심으로 자동화 개념 설명",
+        "구체적인 적용 가능한 자동화 템플릿 제공",
+        "복잡한 용어 대신 쉬운 언어로 설명",
+        "실무자 관점의 명확한 적용 가이드라인 필요"
+      ],
+      "wouldContinue": true,
+      "emotionalState": "약간 혼란스러움, 그래도 호기심은 유지"
+    },
+    {
+      "stageNumber": 9,
+      "stageName": "AI 컨설팅",
+      "actualMinutes": 15,
+      "timePerception": "Too Long",
+      "easeOfUse": 3,
+      "clarity": 2,
+      "value": 4,
+      "painPoints": [
+        "AI 컨설팅의 구체적인 의미와 범위가 불명확함",
+        "자동화 도입 전략의 구체적인 가이드라인 부족",
+        "팀 특성에 맞는 자동화 방향성 제시 어려움",
+        "복잡한 전문 용어와 추상적인 설명",
+        "실제 적용 가능성에 대한 의문"
+      ],
+      "positivePoints": [
+        "AI 기반 자동화 전략 수립 시도",
+        "팀 업무 분석에 대한 체계적 접근 가능성",
+        "자동화 관점에서 업무 재설계 기회"
+      ],
+      "suggestions": [
+        "더 구체적이고 직관적인 자동화 가이드 제공",
+        "실제 사례 중심의 설명 추가",
+        "팀 규모/업종별 맞춤형 자동화 전략 템플릿 개발",
+        "복잡한 전문 용어 대신 쉬운 언어로 설명"
+      ],
+      "wouldContinue": false,
+      "emotionalState": "혼란스럽고 약간 좌절감을 느낌"
+    }
+  ],
+  "overallSatisfaction": 4.7,
+  "wouldRecommend": false,
+  "finalThoughts": "Expert 수준의 팀장으로서 전반적으로 개선이 필요한 교육 과정이라고 생각합니다. 실제 팀 업무에 적용할 수 있는 학습이었습니다.",
+  "topImprovements": [
+    "초기 사용자를 위한 더 구체적인 가이드 추가",
+    "단계별 명확한 예시 제공",
+    "빠른 시작을 위한 템플릿 또는 가이드 워크시트 마련",
+    "목표 작성 예시 추가",
+    "각 입력란에 상세 설명 툴팁 제공"
+  ]
+}

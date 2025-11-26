@@ -1,0 +1,158 @@
+{
+  "personaId": "P026",
+  "personaName": "추민지",
+  "department": "Strategy",
+  "digitalMaturity": "Advanced",
+  "startTime": "2025-11-23T01:54:08.359Z",
+  "endTime": "2025-11-23T01:54:44.964Z",
+  "totalDuration": 37,
+  "stageResults": [
+    {
+      "stageNumber": 1,
+      "stageName": "워크샵 시작",
+      "actualMinutes": 7,
+      "timePerception": "Just Right",
+      "easeOfUse": 6,
+      "clarity": 7,
+      "value": 5,
+      "painPoints": [
+        "첫 화면의 정보가 조금 복잡함",
+        "아이콘의 의미가 즉시 명확하지 않음",
+        "초기 사용자를 위한 가이드가 부족함"
+      ],
+      "positivePoints": [
+        "깔끔한 인터페이스",
+        "목적이 비교적 명확함",
+        "직관적인 레이아웃"
+      ],
+      "suggestions": [
+        "초기 사용자를 위한 간단한 튜토리얼 추가",
+        "아이콘에 마우스 오버 시 설명 추가",
+        "첫 화면의 정보 간소화"
+      ],
+      "wouldContinue": true,
+      "emotionalState": "약간 기대되지만 조금 혼란스러움"
+    },
+    {
+      "stageNumber": 2,
+      "stageName": "미션 작성",
+      "actualMinutes": 15,
+      "timePerception": "Too Long",
+      "easeOfUse": 5,
+      "clarity": 6,
+      "value": 7,
+      "painPoints": [
+        "미션 작성 항목이 추상적임",
+        "구체적인 가이드라인 부족",
+        "입력해야 할 내용의 범위가 모호함",
+        "팀 목표와 고객 가치 연결이 쉽지 않음"
+      ],
+      "positivePoints": [
+        "자유롭게 작성할 수 있는 입력 방식",
+        "팀의 본질적 가치를 고민할 기회",
+        "간결한 입력 화면"
+      ],
+      "suggestions": [
+        "미션 작성 예시 추가",
+        "각 입력란에 대한 간단한 힌트 제공",
+        "빠른 작성을 위한 템플릿 제공"
+      ],
+      "wouldContinue": true,
+      "emotionalState": "약간 혼란스러움, 그래도 호기심은 있음"
+    },
+    {
+      "stageNumber": 3,
+      "stageName": "팀 상황 확인",
+      "actualMinutes": 12,
+      "timePerception": "Too Long",
+      "easeOfUse": 5,
+      "clarity": 6,
+      "value": 7,
+      "painPoints": [
+        "팀 특성을 입력할 항목들이 너무 많고 복잡함",
+        "각 항목의 기준이 모호함",
+        "내가 입력해야 할 구체적인 정보의 범위가 불분명함",
+        "입력 항목들이 SK 그룹의 특정 맥락에 맞춰져 있어 일반적 팀에 바로 적용하기 어려움"
+      ],
+      "positivePoints": [
+        "팀의 전반적인 특성을 체계적으로 돌아볼 수 있는 기회",
+        "디지털 성숙도 등 자가진단 항목이 흥미로움",
+        "팀 규모와 업무 특성을 종합적으로 볼 수 있는 프레임워크"
+      ],
+      "suggestions": [
+        "각 입력 항목에 대한 명확한 가이드라인과 예시 추가",
+        "입력 필드를 좀 더 직관적이고 간결하게 구성",
+        "불필요하게 복잡한 항목 간소화",
+        "입력 중간에 진행 상황을 보여주는 프로그레스 바 추가"
+      ],
+      "wouldContinue": true,
+      "emotionalState": "약간 지침 + 호기심"
+    },
+    {
+      "stageNumber": 4,
+      "stageName": "업무 영역 정의",
+      "actualMinutes": 12,
+      "timePerception": "Too Long",
+      "easeOfUse": 4,
+      "clarity": 5,
+      "value": 6,
+      "painPoints": [
+        "업무 영역을 어떤 수준으로 입력해야 할지 모호함",
+        "입력 필드의 가이드라인이 부족함",
+        "전문 용어와 추상적인 표현이 많아 이해하기 어려움",
+        "입력해야 할 업무 영역의 범위가 명확하지 않음"
+      ],
+      "positivePoints": [
+        "팀의 주요 업무를 체계적으로 정리할 수 있는 기회",
+        "자유롭게 업무 영역을 입력할 수 있는 유연성"
+      ],
+      "suggestions": [
+        "각 입력 필드에 명확한 예시 추가",
+        "간단한 툴팁이나 도움말 제공",
+        "업무 영역 입력을 위한 간단한 템플릿 또는 가이드 라인 제시",
+        "입력 필드의 복잡성 간소화"
+      ],
+      "wouldContinue": true,
+      "emotionalState": "약간 혼란스럽고 지침을 필요로 함"
+    },
+    {
+      "stageNumber": 5,
+      "stageName": "업무 내용 입력",
+      "actualMinutes": 22,
+      "timePerception": "Too Long",
+      "easeOfUse": 4,
+      "clarity": 3,
+      "value": 5,
+      "painPoints": [
+        "업무 내용을 구체적으로 어떤 수준으로 입력해야 할지 모호함",
+        "입력해야 할 세부 항목의 기준이 불분명함",
+        "업무 설명을 위한 충분한 예시나 가이드라인 부족",
+        "전문 용어와 추상적인 표현으로 인한 혼란",
+        "입력 필드의 범위와 깊이가 명확하지 않음"
+      ],
+      "positivePoints": [
+        "팀의 업무를 체계적으로 정리할 수 있는 기회",
+        "업무 영역을 구조화할 수 있는 기본 틀 제공",
+        "디지털 플랫폼을 통한 업무 분석 시도"
+      ],
+      "suggestions": [
+        "각 입력 항목에 대한 명확한 가이드라인과 예시 추가",
+        "업무 내용 입력을 위한 간단한 템플릿 제공",
+        "입력 필드별 상세 설명 및 힌트 추가",
+        "업무 내용 입력의 난이도를 낮추기 위한 단계별 안내"
+      ],
+      "wouldContinue": false,
+      "emotionalState": "약간 좌절감, 혼란스러움, 지치는 느낌"
+    }
+  ],
+  "overallSatisfaction": 5.4,
+  "wouldRecommend": false,
+  "finalThoughts": "Advanced 수준의 팀장으로서 전반적으로 개선이 필요한 교육 과정이라고 생각합니다. 실제 팀 업무에 적용할 수 있는 학습이었습니다.",
+  "topImprovements": [
+    "초기 사용자를 위한 간단한 튜토리얼 추가",
+    "아이콘에 마우스 오버 시 설명 추가",
+    "첫 화면의 정보 간소화",
+    "미션 작성 예시 추가",
+    "각 입력란에 대한 간단한 힌트 제공"
+  ]
+}

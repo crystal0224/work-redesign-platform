@@ -1,0 +1,245 @@
+{
+  "personaId": "P010",
+  "personaName": "김동훈",
+  "department": "Operations",
+  "digitalMaturity": "Expert",
+  "startTime": "2025-11-23T01:59:04.839Z",
+  "endTime": "2025-11-23T02:00:59.211Z",
+  "totalDuration": 114,
+  "stageResults": [
+    {
+      "stageNumber": 1,
+      "stageName": "워크샵 시작",
+      "actualMinutes": 7,
+      "timePerception": "Just Right",
+      "easeOfUse": 6,
+      "clarity": 7,
+      "value": 5,
+      "painPoints": [
+        "초기 화면의 정보가 다소 복잡해 보임",
+        "어떤 데이터를 입력해야 할지 명확하지 않음",
+        "첫 화면에서 바로 직관적으로 이해하기 어려움"
+      ],
+      "positivePoints": [
+        "간결한 인터페이스",
+        "기본 설명이 제공됨",
+        "교육 목표가 명시되어 있음"
+      ],
+      "suggestions": [
+        "초기 사용자를 위한 더 명확한 가이드 필요",
+        "첫 화면의 정보 배치를 더 직관적으로 개선",
+        "간단한 예시 데이터 제공"
+      ],
+      "wouldContinue": true,
+      "emotionalState": "약간 혼란스러움, 그러나 호기심 있음"
+    },
+    {
+      "stageNumber": 2,
+      "stageName": "미션 작성",
+      "actualMinutes": 15,
+      "timePerception": "Too Long",
+      "easeOfUse": 4,
+      "clarity": 5,
+      "value": 6,
+      "painPoints": [
+        "미션 작성 항목이 모호함",
+        "입력해야 할 구체적인 내용이 불분명",
+        "팀 목표와 고객 가치의 경계가 명확하지 않음",
+        "추상적인 용어들로 인한 혼란"
+      ],
+      "positivePoints": [
+        "자유로운 입력 방식",
+        "팀의 핵심 가치를 정리할 수 있는 기회",
+        "간단한 텍스트 입력 인터페이스"
+      ],
+      "suggestions": [
+        "각 입력 필드에 명확한 예시 추가",
+        "가이드라인 텍스트 구체화",
+        "입력 범위와 깊이에 대한 명확한 안내 필요",
+        "필수/선택 입력 항목 구분"
+      ],
+      "wouldContinue": true,
+      "emotionalState": "약간 혼란스러움, 그래도 호기심은 있음"
+    },
+    {
+      "stageNumber": 3,
+      "stageName": "팀 상황 확인",
+      "actualMinutes": 12,
+      "timePerception": "Too Long",
+      "easeOfUse": 4,
+      "clarity": 5,
+      "value": 6,
+      "painPoints": [
+        "입력해야 할 항목의 의미가 모호함",
+        "각 필드의 구체적인 기대값이 불명확함",
+        "팀 현황을 정량화하는 기준이 주관적임",
+        "데이터 입력 과정에서 혼란스러운 용어들",
+        "자세한 가이드라인 부재"
+      ],
+      "positivePoints": [
+        "팀 현황을 종합적으로 볼 수 있는 프레임워크",
+        "자기 팀에 대해 객관적으로 생각해볼 기회",
+        "간단한 UI 구조"
+      ],
+      "suggestions": [
+        "각 입력 항목에 대한 명확한 예시 추가",
+        "필드별 간단한 도움말 툴팁 제공",
+        "데이터 입력 기준에 대한 가이드 문구 삽입",
+        "입력 과정의 진행 상황 표시"
+      ],
+      "wouldContinue": true,
+      "emotionalState": "약간 혼란스럽지만 호기심은 유지됨"
+    },
+    {
+      "stageNumber": 4,
+      "stageName": "업무 영역 정의",
+      "actualMinutes": 12,
+      "timePerception": "Too Long",
+      "easeOfUse": 4,
+      "clarity": 3,
+      "value": 5,
+      "painPoints": [
+        "업무 영역을 어떤 수준으로 입력해야 하는지 불명확함",
+        "구체적인 가이드라인 부재",
+        "입력 필드의 의미가 모호함",
+        "전문 용어로 인한 혼란",
+        "어떤 수준의 상세도로 작성해야 할지 감이 안 잡힘"
+      ],
+      "positivePoints": [
+        "기본적인 업무 영역 분류 가능",
+        "시각적으로 깔끔한 인터페이스"
+      ],
+      "suggestions": [
+        "각 입력 필드에 예시 텍스트 추가",
+        "명확한 가이드라인과 도움말 제공",
+        "입력 시 상세 수준에 대한 명확한 기준 제시",
+        "간단한 튜토리얼 또는 퀵 가이드 추가"
+      ],
+      "wouldContinue": true,
+      "emotionalState": "약간 혼란스럽고 조금 좌절감을 느낌"
+    },
+    {
+      "stageNumber": 5,
+      "stageName": "업무 내용 입력",
+      "actualMinutes": 20,
+      "timePerception": "Too Long",
+      "easeOfUse": 3,
+      "clarity": 2,
+      "value": 4,
+      "painPoints": [
+        "업무 내용을 어떤 수준으로 작성해야 할지 모호함",
+        "구체적인 입력 가이드라인 부재",
+        "팀의 업무를 세부적으로 분류하는 기준이 불명확함",
+        "전문 용어로 인한 이해의 어려움",
+        "입력해야 할 항목의 의미가 불분명함"
+      ],
+      "positivePoints": [
+        "팀 업무를 체계적으로 정리할 수 있는 기회",
+        "업무 영역을 한 눈에 볼 수 있는 플랫폼",
+        "디지털 도구를 통한 업무 분석 시도"
+      ],
+      "suggestions": [
+        "각 입력 항목에 대한 명확한 예시 제공",
+        "초보 사용자를 위한 상세 가이드 추가",
+        "업무 분류 기준에 대한 명확한 템플릿 제시",
+        "입력 필드에 마우스 오버 시 상세 설명 툴팁 추가"
+      ],
+      "wouldContinue": true,
+      "emotionalState": "약간 좌절감, 그래도 호기심은 유지됨"
+    },
+    {
+      "stageNumber": 6,
+      "stageName": "업무 추출 (AI)",
+      "actualMinutes": 7,
+      "timePerception": "Too Long",
+      "easeOfUse": 3,
+      "clarity": 2,
+      "value": 4,
+      "painPoints": [
+        "AI 추출 기능의 작동 방식이 불투명함",
+        "어떤 데이터가 정확히 추출되는지 이해하기 어려움",
+        "업무 추출 결과의 신뢰성에 의문",
+        "추출된 내용의 상세도와 정확성 불확실",
+        "추가 설명이나 가이드라인 부재"
+      ],
+      "positivePoints": [
+        "AI 자동 추출 기능 자체는 흥미로움",
+        "기존 수동 입력 대비 시간 절약 가능성",
+        "업무 분석의 새로운 접근 방식 시도"
+      ],
+      "suggestions": [
+        "추출 과정의 투명성 개선",
+        "결과에 대한 상세 설명 추가",
+        "사용자가 추출 결과를 쉽게 검증할 수 있는 기능 필요",
+        "추출된 데이터의 신뢰도 표시"
+      ],
+      "wouldContinue": true,
+      "emotionalState": "약간 혼란스러움, 인내심 필요"
+    },
+    {
+      "stageNumber": 7,
+      "stageName": "결과 요약",
+      "actualMinutes": 15,
+      "timePerception": "Too Long",
+      "easeOfUse": 3,
+      "clarity": 2,
+      "value": 4,
+      "painPoints": [
+        "AI 추출 결과의 신뢰성 불확실",
+        "결과 해석을 위한 명확한 가이드라인 부재",
+        "추출된 내용의 상세도가 모호함",
+        "결과 수정 방법이 직관적이지 않음"
+      ],
+      "positivePoints": [
+        "AI 기술을 통한 자동 추출 시도",
+        "결과를 직접 검토하고 수정할 수 있는 기능"
+      ],
+      "suggestions": [
+        "결과 해석을 위한 명확한 가이드라인 추가",
+        "추출 결과에 대한 신뢰도 표시",
+        "수정 방법에 대한 간단한 튜토리얼 제공",
+        "추출된 내용의 상세도를 조절할 수 있는 옵션 필요"
+      ],
+      "wouldContinue": true,
+      "emotionalState": "약간 혼란스럽고 지침을 잃은 느낌"
+    },
+    {
+      "stageNumber": 8,
+      "stageName": "AI 교육",
+      "actualMinutes": 22,
+      "timePerception": "Too Long",
+      "easeOfUse": 3,
+      "clarity": 2,
+      "value": 4,
+      "painPoints": [
+        "AI 교육 개념이 너무 추상적임",
+        "구체적인 자동화 적용 사례가 부족함",
+        "내 팀에 직접적으로 어떻게 적용할지 불명확함",
+        "전문 용어가 많아 이해하기 어려움",
+        "실제 업무와의 연결고리가 모호함"
+      ],
+      "positivePoints": [
+        "자동화에 대한 기본 개념 학습",
+        "새로운 관점에서 업무 접근 가능성 확인"
+      ],
+      "suggestions": [
+        "실제 사례 중심으로 더 구체적인 설명 필요",
+        "Operations 팀 관점의 맞춤형 자동화 가이드 제공",
+        "복잡한 용어 대신 쉬운 언어로 설명",
+        "즉시 적용 가능한 실무 예시 추가"
+      ],
+      "wouldContinue": false,
+      "emotionalState": "약간 혼란스럽고 지침"
+    }
+  ],
+  "overallSatisfaction": 4,
+  "wouldRecommend": false,
+  "finalThoughts": "Expert 수준의 팀장으로서 전반적으로 개선이 필요한 교육 과정이라고 생각합니다. 실제 팀 업무에 적용할 수 있는 학습이었습니다.",
+  "topImprovements": [
+    "초기 사용자를 위한 더 명확한 가이드 필요",
+    "첫 화면의 정보 배치를 더 직관적으로 개선",
+    "간단한 예시 데이터 제공",
+    "각 입력 필드에 명확한 예시 추가",
+    "가이드라인 텍스트 구체화"
+  ]
+}
