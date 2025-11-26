@@ -41,7 +41,7 @@ const PersonaCard: React.FC<PersonaCardProps> = ({ persona }) => {
 
             <div className="relative z-10 h-full flex flex-col">
                 {/* Header Section */}
-                <div className="flex gap-6 mb-6 border-b pb-4 border-gray-100">
+                <div className="flex gap-5 mb-4 border-b pb-3 border-gray-100">
                     {/* Photo Area - Premium Minimalist */}
                     <div className="w-40 h-52 flex-shrink-0 relative group">
                         {/* Soft diffused shadow for depth */}
@@ -99,10 +99,10 @@ const PersonaCard: React.FC<PersonaCardProps> = ({ persona }) => {
                 </div>
 
                 {/* Main Content Grid */}
-                <div className="grid grid-cols-12 gap-6 h-[calc(100%-200px)]">
+                <div className="grid grid-cols-12 gap-5 h-[calc(100%-200px)]">
 
                     {/* Left Column: Team & Personality (4 cols) */}
-                    <div className="col-span-4 flex flex-col gap-5 border-r border-gray-100 pr-5">
+                    <div className="col-span-4 flex flex-col gap-6 border-r border-gray-100 pr-4">
 
                         {/* Team Structure Insight - Scalable (Donut Chart) */}
                         <section>
@@ -158,11 +158,11 @@ const PersonaCard: React.FC<PersonaCardProps> = ({ persona }) => {
                         </section >
 
                         {/* Personality Radar/Stats */}
-                        < section className="flex-1 flex flex-col" >
-                            <h3 className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-2 border-b pb-1">Leader Personality</h3>
-                            <div className="flex items-center justify-center relative mb-2">
+                        <section className="flex-1 flex flex-col">
+                            <h3 className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1 border-b pb-1">Leader Personality</h3>
+                            <div className="flex items-center justify-center relative my-4">
                                 {/* Radar Chart - Compact & Highlighted */}
-                                <svg viewBox="0 0 100 100" className="w-32 h-32">
+                                <svg viewBox="0 0 100 100" className="w-28 h-28">
                                     {/* Background Grid */}
                                     {[20, 40, 60, 80].map(r => (
                                         <polygon key={r} points="50,10 90,40 75,90 25,90 10,40" fill="none" stroke="#e2e8f0" strokeWidth="0.5" transform={`scale(${r / 100})`} style={{ transformOrigin: '50px 50px' }} />
@@ -269,17 +269,17 @@ const PersonaCard: React.FC<PersonaCardProps> = ({ persona }) => {
                             </div>
                         </section >
 
-                    </div >
+                    </div>
 
                     {/* Right Column: Work Details (8 cols) */}
-                    < div className="col-span-8 flex flex-col gap-5" >
+                    <div className="col-span-8 flex flex-col gap-5">
 
                         {/* Main Tasks */}
                         < section >
                             <h3 className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-2 border-b pb-1">Key Responsibilities</h3>
-                            <ul className="list-disc list-outside ml-4 space-y-0.5 text-gray-700 text-xs">
+                            <ul className="list-disc list-outside ml-4 space-y-1.5 text-gray-800 text-xs">
                                 {persona.work.mainTasks.map((task, i) => (
-                                    <li key={i} className="pl-1">{task}</li>
+                                    <li key={i} className="pl-1 leading-relaxed">{task}</li>
                                 ))}
                             </ul>
                         </section >
@@ -294,7 +294,7 @@ const PersonaCard: React.FC<PersonaCardProps> = ({ persona }) => {
                                     {persona.work.dailyWorkflow.split('→').slice(0, Math.ceil(persona.work.dailyWorkflow.split('→').length / 2)).map((step, i) => (
                                         <div key={i} className="relative pl-4">
                                             <div className="absolute left-0 top-1.5 w-3 h-3 rounded-full bg-white border-2 border-indigo-400 z-10"></div>
-                                            <p className="text-[10px] text-gray-600 leading-tight bg-white/50 rounded px-1">{step.trim()}</p>
+                                            <p className="text-xs text-gray-600 leading-tight bg-white/50 rounded px-1">{step.trim()}</p>
                                         </div>
                                     ))}
                                 </div>
@@ -305,15 +305,15 @@ const PersonaCard: React.FC<PersonaCardProps> = ({ persona }) => {
                                     {persona.work.dailyWorkflow.split('→').slice(Math.ceil(persona.work.dailyWorkflow.split('→').length / 2)).map((step, i) => (
                                         <div key={i} className="relative pl-4">
                                             <div className="absolute left-0 top-1.5 w-3 h-3 rounded-full bg-indigo-500 border-2 border-white shadow-sm z-10"></div>
-                                            <p className="text-[10px] text-gray-600 leading-tight bg-white/50 rounded px-1">{step.trim()}</p>
+                                            <p className="text-xs text-gray-600 leading-tight bg-white/50 rounded px-1">{step.trim()}</p>
                                         </div>
                                     ))}
                                 </div>
                             </div>
-                        </section >
+                        </section>
 
                         {/* Leader's Hidden Struggles & Battery */}
-                        < section className="bg-orange-50/80 backdrop-blur-sm p-4 rounded-xl border border-orange-100" >
+                        <section className="bg-orange-50/80 backdrop-blur-sm p-3 rounded-xl border border-orange-100">
                             <div className="flex justify-between items-center mb-2">
                                 <h3 className="text-[10px] font-bold text-orange-800 uppercase tracking-wider">Leader's Hidden Struggles</h3>
                                 {/* Energy Battery */}
@@ -338,18 +338,7 @@ const PersonaCard: React.FC<PersonaCardProps> = ({ persona }) => {
                             </div>
                         </section >
 
-                        {/* Pain Points */}
-                        < section >
-                            <h3 className="text-[10px] font-bold text-red-400 uppercase tracking-wider mb-2 border-b pb-1 border-red-100">Pain Points & Struggles</h3>
-                            <div className="space-y-2">
-                                {persona.work.painPoints.map((point, i) => (
-                                    <div key={i} className="flex gap-2 items-start">
-                                        <span className="flex-shrink-0 w-4 h-4 rounded-full bg-red-50 text-red-500 flex items-center justify-center text-[10px] font-bold mt-0.5">{i + 1}</span>
-                                        <p className="text-gray-700 text-xs">{point}</p>
-                                    </div>
-                                ))}
-                            </div>
-                        </section >
+
 
                         {/* Automation Needs */}
                         < section >
@@ -369,7 +358,7 @@ const PersonaCard: React.FC<PersonaCardProps> = ({ persona }) => {
                             <h3 className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-2">Tools Used</h3>
                             <div className="flex flex-wrap gap-1.5">
                                 {persona.work.toolsUsed.map((tool, i) => (
-                                    <span key={i} className="px-2 py-0.5 bg-gray-100 text-gray-600 rounded text-[10px] border border-gray-200">
+                                    <span key={i} className="px-2 py-0.5 bg-gray-100 text-gray-600 rounded text-xs border border-gray-200">
                                         {tool}
                                     </span>
                                 ))}

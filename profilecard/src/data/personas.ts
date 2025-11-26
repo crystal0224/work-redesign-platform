@@ -1,2372 +1,3667 @@
+#!/usr/bin/env ts-node
+
+/**
+ * 실전 파일럿 테스트용 30명 페르소나 (v3)
+ * - 팀장 개인 교육 (팀원 불참, 팀 상황 고려)
+ * - 팀 단위 디지털 성숙도
+ * - 업무 구조화 정도
+ * - 팀장 개인 특성
+ */
+
 export interface Persona {
-    // 기본 정보
-    id: string;
-    name: string;
-    age: number; // 30대 중반 ~ 40대 후반
-    company: string;
-    department: string;
-    role: string;
+  // 기본 정보
+  id: string;
+  name: string;
+  age: number; // 30대 중반 ~ 40대 후반
+  company: string;
+  department: string;
+  role: string;
 
-    // 부서 카테고리
-    category: 'Marketing' | 'Sales' | 'Operations' | 'R&D' | 'HR' | 'Finance' | 'IT' | 'Strategy';
+  // 부서 카테고리
+  category: 'Marketing' | 'Sales' | 'Operations' | 'R&D' | 'HR' | 'Finance' | 'IT' | 'Strategy';
 
-    // 팀장 개인 프로필 (신임 팀장)
-    leaderProfile: {
-        yearsInRole: number; // 0.5~1.5년 (신임 팀장)
-        previousRole: string; // 팀장 되기 전 역할
-        promotionReason: string; // 팀장으로 승진한 이유
-        leadershipStyle: string; // 리더십 스타일 간략 설명
-        biggestChallenge?: string; // 팀장으로서 가장 큰 도전
-        hiddenStruggles?: string[]; // 겉으로 드러나지 않는 고충들
+  // 팀장 개인 프로필 (신임 팀장)
+  leaderProfile: {
+    yearsInRole: number; // 0.5~1.5년 (신임 팀장)
+    previousRole: string; // 팀장 되기 전 역할
+    promotionReason: string; // 팀장으로 승진한 이유
+    leadershipStyle: string; // 리더십 스타일 간략 설명
+    biggestChallenge?: string; // 팀장으로서 가장 큰 도전
+    hiddenStruggles?: string[]; // 겉으로 드러나지 않는 고충들
+  };
+
+  // 팀 구성
+  team: {
+    size: number;
+    seniorCount: number; // 시니어 인원
+    juniorCount: number; // 주니어 인원
+    composition: string; // 팀 구성원 역할
+    digitalMaturity: 'Beginner' | 'Intermediate' | 'Advanced' | 'Expert'; // 팀 전체의 디지털 성숙도
+    maturityDistribution: string; // 팀원별 성숙도 분포
+    teamDynamics?: string; // 팀 내부 역학 관계
+    resistanceFactors?: string[]; // 변화 저항 요소들
+  };
+
+  // 구체적인 업무
+  work: {
+    mainTasks: string[]; // 팀의 주요 업무 3-5가지
+    dailyWorkflow: string; // 팀의 일상적인 업무 흐름 (아침 출근 후 ~ 퇴근까지 어떻게 일하는지)
+    weeklyRoutine: string; // 주간 루틴 (회의, 보고, 리뷰 등)
+    collaboration: string; // 팀 내/외부 협업 방식
+    toolsUsed: string[]; // 현재 사용 중인 도구
+    painPoints: string[]; // 신임 팀장으로서 느끼는 구체적인 어려움
+    automationNeeds: string[]; // 자동화 필요 영역
+    workStructure: {
+      level: '비구조화' | '반구조화' | '고도구조화';
+      description: string; // 구조화 수준 상세 설명
     };
+    realTimeExample?: string; // 실제 업무 상황 예시
+    typicalFireDrills?: string[]; // 빈번한 긴급 상황들
+  };
 
-    // 팀 구성
-    team: {
-        size: number;
-        seniorCount: number; // 시니어 인원
-        juniorCount: number; // 주니어 인원
-        composition: string; // 팀 구성원 역할
-        digitalMaturity: 'Beginner' | 'Intermediate' | 'Advanced' | 'Expert'; // 팀 전체의 디지털 성숙도
-        maturityDistribution: string; // 팀원별 성숙도 분포
-        teamDynamics?: string; // 팀 내부 역학 관계
-        resistanceFactors?: string[]; // 변화 저항 요소들
-    };
+  // 워크샵 심리 (팀장의 내면)
+  workshopPsychology?: {
+    initialAttitude: '기대함' | '중립' | '걱정' | '회의적';
+    hiddenMotivations: string[]; // 겉으로 드러나지 않는 참여 동기
+    deepConcerns: string[]; // 깊은 우려사항
+    successMetrics: string[]; // 성공 기준
+    dropoutRisk: number; // 0-100%
+    dropoutTriggers: string[]; // 이탈 트리거
+  };
 
-    // 구체적인 업무
-    work: {
-        mainTasks: string[]; // 팀의 주요 업무 3-5가지
-        dailyWorkflow: string; // 팀의 일상적인 업무 흐름 (아침 출근 후 ~ 퇴근까지 어떻게 일하는지)
-        weeklyRoutine: string; // 주간 루틴 (회의, 보고, 리뷰 등)
-        collaboration: string; // 팀 내/외부 협업 방식
-        toolsUsed: string[]; // 현재 사용 중인 도구
-        painPoints: string[]; // 신임 팀장으로서 느끼는 구체적인 어려움
-        automationNeeds: string[]; // 자동화 필요 영역
-        workStructure: {
-            level: '비구조화' | '반구조화' | '고도구조화';
-            description: string; // 구조화 수준 상세 설명
-        };
-        realTimeExample?: string; // 실제 업무 상황 예시
-        typicalFireDrills?: string[]; // 빈번한 긴급 상황들
-    };
+  // 워크샵 예상 행동 (팀장 개인)
+  expectedBehavior: {
+    initialAttitude: '기대함' | '중립' | '걱정' | '회의적';
+    concerns: string[]; // 팀장 본인의 워크샵 참여 우려사항
+    dropoutRisk: number; // 0-100%
+  };
 
-    // 워크샵 심리 (팀장의 내면)
-    workshopPsychology?: {
-        initialAttitude: '기대함' | '중립' | '걱정' | '회의적';
-        hiddenMotivations: string[]; // 겉으로 드러나지 않는 참여 동기
-        deepConcerns: string[]; // 깊은 우려사항
-        successMetrics: string[]; // 성공 기준
-        dropoutRisk: number; // 0-100%
-        dropoutTriggers: string[]; // 이탈 트리거
-    };
-
-    // 워크샵 예상 행동 (팀장 개인)
-    expectedBehavior: {
-        initialAttitude: '기대함' | '중립' | '걱정' | '회의적';
-        concerns: string[]; // 팀장 본인의 워크샵 참여 우려사항
-        dropoutRisk: number; // 0-100%
-    };
-
-    // 팀장 개인 특성
-    personality: {
-        patience: number; // 1-10, 팀장 개인의 인내심
-        techSavvy: number; // 1-10, 팀장 개인의 기술 친화도
-        changeResistance: 'low' | 'medium' | 'high'; // 팀장 개인의 변화 저항
-        learningSpeed: 'slow' | 'medium' | 'fast'; // 팀장 개인의 학습 속도
-        stressLevel?: number; // 1-10, 스트레스 수준
-        confidenceLevel?: number; // 1-10, 자신감 수준
-    };
+  // 팀장 개인 특성
+  personality: {
+    patience: number; // 1-10, 팀장 개인의 인내심
+    techSavvy: number; // 1-10, 팀장 개인의 기술 친화도
+    changeResistance: 'low' | 'medium' | 'high'; // 팀장 개인의 변화 저항
+    learningSpeed: 'slow' | 'medium' | 'fast'; // 팀장 개인의 학습 속도
+    stressLevel?: number; // 1-10, 스트레스 수준
+    confidenceLevel?: number; // 1-10, 자신감 수준
+  };
 }
 
 export const PERSONAS_V3: Persona[] = [
-    // ==================== MARKETING (3명) ====================
-    {
-        id: 'P001',
-        name: '김지훈',
-        age: 37,
-        company: 'SK플래닛',
-        department: '디지털마케팅팀',
-        role: '팀장',
-        category: 'Marketing',
-        leaderProfile: {
-            yearsInRole: 1.0, // 신임 팀장 (1년차)
-            previousRole: '시니어 캠페인 기획자 (6년 경력)',
-            promotionReason: '11번가 리브랜딩 캠페인 성공으로 매출 23% 증가, 데이터 기반 의사결정 능력 인정받아 승진',
-            leadershipStyle: '데이터를 보여주며 설득하는 스타일. 아직 팀원 관리와 우선순위 조율에 어려움을 느낌.',
-            hiddenStruggles: [
-                '나보다 나이 많은 시니어 팀원(특히 10년차 분석가)에게 업무 지시하기가 매번 껄끄러움',
-                '팀장 되고 나서 실무를 놓으니 감이 떨어지는 것 같아 불안함',
-                '경영진은 "혁신"을 원하는데 팀원들은 "현상 유지"를 원해서 중간에서 끼인 느낌'
-            ]
-        },
-        team: {
-            size: 9,
-            seniorCount: 4, // 시니어 4명 (본인보다 연차 높은 분석가 포함)
-            juniorCount: 5, // 주니어 5명
-            composition: '팀장 1명 + 시니어 캠페인 기획자 2명(8년차, 5년차) + 시니어 데이터 분석가 1명(10년차) + 시니어 디자이너 1명(7년차) + 주니어 콘텐츠 크리에이터 3명(2-3년차) + 주니어 퍼포먼스 마케터 2명(1-2년차)',
-            digitalMaturity: 'Advanced',
-            maturityDistribution: '시니어 분석가(Expert) + 시니어 기획자 2명(Advanced) + 시니어 디자이너(Advanced) + 주니어 5명(Intermediate)',
-            resistanceFactors: [
-                '시니어 분석가: "내가 해봤는데 그거 안 돼"라며 새로운 시도에 부정적',
-                '디자이너: "데이터가 디자인의 창의성을 해친다"며 정량적 분석 거부',
-                '주니어들: "팀장님이 시키는 대로만 할게요"라며 수동적인 태도'
-            ]
-        },
-        work: {
-            mainTasks: [
-                '11번가 앱 푸시/배너 캠페인 기획 및 실행 (월 평균 8개 캠페인 동시 진행)',
-                '카테고리별(패션/뷰티/식품/가전) 타겟 고객 세그먼트 분석 및 맞춤 메시지 설계',
-                'CRM 데이터 기반 재구매 유도 프로모션 설계',
-                '주간 캠페인 성과 리포트 작성 및 경영진 보고',
-                '외부 광고 대행사(네이버, 카카오, 메타) 커뮤니케이션 및 예산 관리'
-            ],
-            dailyWorkflow: '오전 9시 출근 → 전날 캠페인 성과 확인(GA4, Braze 대시보드) → 10시 데일리 스탠드업(15분, 각자 오늘 할 일 공유) → 오전에는 시니어들이 캠페인 전략 회의, 주니어들은 배너 제작/카피 작성 → 점심 후 1시부터 팀장이 기획서 검토 및 피드백(하루 평균 3-4건) → 오후 3시쯤 외부 대행사와 화상 미팅 → 오후 4-6시 급한 캠페인 수정 요청 처리(마케팅 본부장이나 MD팀에서 요청 들어옴) → 퇴근 전 내일 일정 정리',
-            weeklyRoutine: '월요일 오전: 주간 캠페인 계획 회의(1시간) / 화요일: 캠페인별 크리에이티브 리뷰 / 수요일 오후: 마케팅 본부 전체 회의 참석 및 주간 성과 보고 / 목요일: 시니어들과 1:1 면담(각 30분) / 금요일: 주니어들 그룹 피드백 세션(1시간), 다음주 캠페인 최종 승인',
-            collaboration: '팀 내에서는 Slack으로 실시간 소통. 캠페인별로 Notion 페이지 만들어서 진행상황 공유. 외부 대행사와는 이메일+주 1회 화상미팅. MD팀/상품기획팀과는 수시로 카톡 단톡방에서 협의. 디자인팀에 배너 요청할 때는 Jira 티켓 발행.',
-            toolsUsed: ['Google Analytics 4', 'Braze(CRM)', 'Facebook Ads Manager', 'Google Ads', 'Figma', 'Notion', 'Slack', 'Jira', 'Excel', 'PowerPoint'],
-            painPoints: [
-                '시니어 분석가(10년차)가 본인보다 연차가 높아서 데이터 해석에 이견이 있을 때 설득하기 어렵고 위축됨',
-                '8개 캠페인이 동시에 돌아가는데 우선순위를 정하지 못해 팀원들이 혼란스러워함. 본부장이 갑자기 급한 캠페인 요청하면 기존 계획이 다 틀어짐',
-                '주니어 크리에이터 3명이 같은 유형 작업을 반복하는데 서로 작업 방식이 달라서 품질이 들쭉날쭉. 표준 프로세스를 만들어야 하는데 시간이 없음',
-                '캠페인 성과 데이터를 GA4, Braze, 광고 대행사 리포트 등에서 수작업으로 취합해서 엑셀로 정리하는데 매주 금요일 오후 4시간 소요',
-                '본부장한테 보고할 때 "이 캠페인이 왜 잘 됐는지" 근거 자료 만드는 게 힘듦. 시니어 분석가한테 부탁하면 "제 업무가 아닌데요" 같은 반응'
-            ],
-            automationNeeds: [
-                '여러 채널 성과 데이터를 자동으로 통합해서 한눈에 보여주는 대시보드',
-                '주니어들이 배너 만들 때 쓸 수 있는 템플릿과 체크리스트',
-                '캠페인 우선순위 정하는 기준 (ROI, 공수, 긴급도 등을 수치화)'
-            ],
-            workStructure: {
-                level: '반구조화',
-                description: '캠페인 기획 → 디자인 → 검수 → 집행 프로세스는 있지만 문서화되지 않음. 팀원마다 일하는 방식이 다름. Notion에 캠페인 현황은 기록하지만 누가 언제까지 뭘 해야 하는지 명확하지 않음. 급한 요청이 들어오면 프로세스 무시하고 즉시 처리. 회의록은 작성하지만 액션 아이템 후속 관리는 안 됨.'
-            }
-        },
-        expectedBehavior: {
-            initialAttitude: '기대함',
-            concerns: [
-                '신임 팀장이라 팀 관리 경험이 부족한데, 워크샵에서 배운 걸 바로 적용했다가 시니어 팀원들이 "또 새로운 거 하냐"며 반발하면 어떡하지',
-                '워크샵이 3시간인데 우리 팀 복잡한 상황을 다 담을 수 있을까? 8개 캠페인 돌아가는 걸 어떻게 정리하지',
-                '디지털 도구는 잘 쓰는 편인데, AI 활용은 아직 초보 수준. 다른 팀장들이 잘하면 나만 못 따라가는 것 같아 보일까봐 걱정'
-            ],
-            dropoutRisk: 15,
-        },
-        personality: {
-            patience: 6, // 신임 팀장이라 조급함
-            techSavvy: 8,
-            changeResistance: 'low',
-            learningSpeed: 'fast'
-        }
+  // ==================== MARKETING (3명) ====================
+  {
+    id: 'P001',
+    name: '김지훈',
+    age: 37,
+    company: 'SK플래닛',
+    department: '디지털마케팅팀',
+    role: '팀장',
+    category: 'Marketing',
+    leaderProfile: {
+      yearsInRole: 1.0, // 신임 팀장 (1년차)
+      previousRole: '시니어 캠페인 기획자 (6년 경력)',
+      promotionReason: '11번가 리브랜딩 캠페인 성공으로 매출 23% 증가, 데이터 기반 의사결정 능력 인정받아 승진',
+      leadershipStyle: '데이터를 보여주며 설득하는 스타일. 아직 팀원 관리와 우선순위 조율에 어려움을 느낌.',
+      biggestChallenge: '8개 캠페인을 동시에 관리하면서 10년차 시니어 분석가와의 의견 충돌을 조율하는 것. 데이터 해석에서 이견이 생기면 경력 차이 때문에 밀리는 느낌',
+      hiddenStruggles: [
+        '본부장이 갑자기 캠페인 우선순위를 바꾸면 팀원들한테 "또 바뀌었어요"라고 말할 때 리더십 의심받는 것 같은 느낌',
+        '시니어 분석가가 회의에서 "그건 데이터를 잘못 본 거예요"라고 할 때 반박하고 싶지만 참아야 하는 답답함',
+        '주니어들이 야근할 때 먼저 퇴근 못하고 같이 남아있어야 할 것 같은 압박감',
+        '캠페인 성과가 안 나오면 "신임 팀장이라 그래"라는 시선이 두려움'
+      ]
     },
-
-    {
-        id: 'P002',
-        name: '박서연',
-        age: 35,
-        company: 'SK텔레콤',
-        department: '기업영업팀',
-        role: '팀장',
-        category: 'Sales',
-        leaderProfile: {
-            yearsInRole: 0.8,
-            previousRole: 'B2B 영업 시니어 (5년 경력)',
-            promotionReason: '금융권(KB, 신한) AICC(AI Contact Center) 구축 사업 200억 수주 성공. 경쟁사(KT) 대비 차별화된 제안 전략으로 승리',
-            leadershipStyle: '영업통, 관계 지향, "형님 리더십". 술자리 회식 선호하지만 요즘 주니어들 눈치 봄.',
-            hiddenStruggles: [
-                '매일 술 마시는 게 체력적으로 너무 힘든데 영업하려면 어쩔 수 없다고 합리화 중',
-                '실적 압박 때문에 잠을 잘 못 자고 탈모가 오는 것 같음',
-                '가족과 보낼 시간이 부족해서 아내와 아이들에게 항상 미안함'
-            ]
-        },
-        team: {
-            size: 11,
-            seniorCount: 5,
-            juniorCount: 6,
-            composition: '팀장 1명 + AM(Account Manager) 5명(금융/공공) + 제안 PM 4명 + 영업지원 2명',
-            digitalMaturity: 'Intermediate',
-            maturityDistribution: 'Intermediate 5명(시니어 AM) + Advanced 6명(주니어 PM)',
-            resistanceFactors: [
-                '시니어 AM: "영업은 발로 뛰는 거지 컴퓨터 앞에 앉아있는 게 아니다"라며 CRM 입력 거부',
-                '주니어 PM: "선배들이 자료를 안 줘서 일을 못하겠다"며 불만 토로',
-                '팀 전체: "매출만 잘 나오면 장땡 아니냐"는 성과 지상주의'
-            ]
-        },
-        work: {
-            mainTasks: [
-                '금융/공공기관 대상 AICC, Cloud, 5G MEC 솔루션 영업',
-                '대형 입찰(RFP) 제안서 작성 및 프레젠테이션 (수백 장 분량)',
-                '고객사 임원급(C-Level) 네트워크 관리 및 골프/식사 접대',
-                '계약 협상 및 수주 심의(Profitability Review) 대응',
-                '주간 파이프라인(Pipeline) 관리 및 매출 예측(Forecasting)'
-            ],
-            dailyWorkflow: '오전 9시 출근 → 9:30 전일 고객 미팅 결과 구두 보고 (CRM 입력 안 함) → 10-12시 제안 PM들과 전략 회의 ("이번 제안서에 AI 꼭 넣어") → 오후 1-3시 고객사(여의도) 방문 미팅 → 3-5시 본사 복귀해서 수주 심의 자료 검토 → 5-6시 팀원들과 담배 타임하며 정보 공유 → 저녁 7시 고객사 저녁 식사',
-            weeklyRoutine: '월: 주간 영업 회의 (매출 압박) | 화: 고객사 임원 조찬 | 수: 제안서 스토리라인 점검 | 목: 수주 심의 위원회 | 금: 주간 활동 보고 및 폭탄주 회식',
-            collaboration: '팀 내부: 카카오톡 단톡방이 메인. CRM(Salesforce)은 "숙제"처럼 입력. 타 부서: AI사업팀과 솔루션 스펙 싸움("이 기능 왜 안돼요?"), 법무팀과 계약 조항 검토. 외부: 고객사 IT 담당자와 형/동생 사이.',
-            toolsUsed: ['Salesforce(CRM)', 'PowerPoint', 'Excel', '카카오톡', 'T맵', '명함관리 앱(Remember)'],
-            painPoints: [
-                '시니어 AM들이 영업 활동(미팅, 접대) 내역을 CRM에 입력을 안 해서, 팀장이 본부장 보고할 때마다 "너네 뭐 했냐"고 깨짐',
-                '제안서 마감(Due date) 전날이면 주니어 PM들이 밤새서 PPT 만드는데, 시니어들은 "오타 확인해" 하고 퇴근함 (세대 갈등)',
-                '고객사가 "경쟁사는 이거 공짜로 주던데"라며 무리한 요구를 할 때, 내부 설득(가격 할인 승인)이 더 힘듦'
-            ],
-            automationNeeds: [
-                '영업 통화/미팅 녹음 자동 요약 및 CRM 자동 입력 (제발 수기 입력 좀 없애줘)',
-                'RFP(제안요청서) 파일 넣으면 제안서 초안(목차, 장표) 자동 생성',
-                '고객사 뉴스/인사이동 자동 알림 ("김 상무님 승진하셨대" 알려주기)'
-            ],
-            workStructure: {
-                level: '비구조화',
-                description: '영업은 "생물"이라 프로세스대로 안 됨. 고객 마음 바뀌면 다 뒤집어짐. 제안서는 정형적이나 영업 활동 자체는 매우 비정형적. "감"과 "네트워크" 의존도 높음.'
-            }
-        },
-        expectedBehavior: {
-            initialAttitude: '기대함',
-            concerns: [
-                '영업은 술 마시고 형님 동생 해야 되는데 AI가 그걸 대신해주나?',
-                'CRM 입력 자동화되면 진짜 편하긴 하겠는데, 내 영업 비밀(인맥)이 다 털리는 거 아닌가',
-                '주니어들이 AI로 제안서 쓰면 퀄리티가 나올까? (내가 다시 다 고쳐야 하는 거 아냐?)'
-            ],
-            dropoutRisk: 20,
-        },
-        personality: {
-            patience: 7,
-            techSavvy: 6,
-            changeResistance: 'medium',
-            learningSpeed: 'medium'
-        }
+    team: {
+      size: 9,
+      seniorCount: 4, // 시니어 4명 (본인보다 연차 높은 분석가 포함)
+      juniorCount: 5, // 주니어 5명
+      composition: '팀장 1명 + 시니어 캠페인 기획자 2명(8년차, 5년차) + 시니어 데이터 분석가 1명(10년차) + 시니어 디자이너 1명(7년차) + 주니어 콘텐츠 크리에이터 3명(2-3년차) + 주니어 퍼포먼스 마케터 2명(1-2년차)',
+      digitalMaturity: 'Advanced',
+      maturityDistribution: '시니어 분석가(Expert) + 시니어 기획자 2명(Advanced) + 시니어 디자이너(Advanced) + 주니어 5명(Intermediate)',
+      teamDynamics: '10년차 시니어 분석가가 팀 내 영향력이 크고 주니어들도 팀장보다 그분 의견을 더 따르는 분위기. 8년차 기획자는 협조적이지만 5년차는 승진 누락 후 소극적. 주니어 5명은 열정적이나 경험 부족으로 같은 실수 반복.',
+      resistanceFactors: [
+        '시니어 분석가의 "예전에도 이렇게 했는데 왜 바꾸냐"는 관성',
+        '주니어들의 "배너 만드는 게 제 일인데 프로세스까지 신경써야 해요?"라는 반발',
+        '본부장의 갑작스런 우선순위 변경으로 새로운 프로세스 정착 어려움',
+        '외부 대행사 의존도가 높아 내부 역량 강화에 시간 투자 꺼림'
+      ]
     },
-
-    {
-        id: 'P003',
-        name: '이현수',
-        age: 42,
-        company: 'SK하이닉스',
-        department: '생산관리팀',
-        role: '팀장',
-        category: 'Operations',
-        leaderProfile: {
-            yearsInRole: 1.2,
-            previousRole: '생산 공정 엔지니어 (9년 경력)',
-            promotionReason: 'M15 팹(Fab) Photo 공정 수율 95% 조기 달성. 노광 장비 가동률 최적화로 생산성 15% 향상',
-            leadershipStyle: '현장 밀착형, 데이터 기반 문제 해결, "현장에 답이 있다". 3교대 근무자들과 라면 먹으며 소통.',
-            hiddenStruggles: [
-                '현장 반장님들이 나를 "책상물림"이라고 무시하는 것 같아 위축됨',
-                '설비 고장 나면 내 탓인 것 같아 노이로제 걸릴 지경 (새벽 벨소리 공포증)',
-                '3교대라 밤낮이 바뀌어서 수면 장애와 만성 피로에 시달림'
-            ]
-        },
-        team: {
-            size: 24,
-            seniorCount: 8,
-            juniorCount: 16,
-            composition: '팀장 1명 + 파트장 4명(주간) + 교대조 조장 4명 + 오퍼레이터 15명(4조3교대)',
-            digitalMaturity: 'Beginner',
-            maturityDistribution: 'Intermediate 4명(파트장) + Beginner 20명(현장직)',
-            resistanceFactors: [
-                '현장 오퍼레이터: "바빠 죽겠는데 태블릿 들고 다니라고?"라며 디지털 도구 사용 거부',
-                '조장급: "우리는 우리만의 방식(노하우)이 있다"며 표준화/매뉴얼화 거부',
-                '고령 작업자: "눈 침침해서 작은 글씨 안 보인다"며 시스템 사용 회피'
-            ]
-        },
-        work: {
-            mainTasks: [
-                '반도체 전공정(Photo/Etch) 생산 라인 운영 및 스케줄링',
-                '설비 트러블(Down) 발생 시 긴급 조치 및 엔지니어 호출',
-                '일일/주간 생산 목표(WIP) 달성 관리',
-                '현장 안전 수칙 준수 및 5S(정리/정돈/청소/청결/습관화) 활동',
-                '교대 근무자 근태 및 인력 관리'
-            ],
-            dailyWorkflow: '오전 6:30 출근(일찍 옴) → 7시 야간조-주간조 인수인계 미팅 (특이사항 공유) → 8-10시 라인 순회 (방진복 착용, 설비 알람 체크) → 10:30 공정 회의 (수율 저하 원인 분석) → 12시 구내식당 → 오후 2시 설비 PM(예방정비) 일정 조율 → 3시 주간조-오후조 인수인계 → 4-5시 일일 생산 리포트 작성 → 6시 퇴근 (설비 고장나면 못 감)',
-            weeklyRoutine: '월: 주간 생산 목표달성 회의 | 화: 안전 환경 점검의 날 | 수: 설비 개선 제안 활동 | 목: 신입 사원 OJT 현황 점검 | 금: 주간 결산 및 주말 근무 편성',
-            collaboration: '팀 내부: 무전기와 사내 메신저, 수기 로그북 병행. 타 부서: 장비팀과 "설비 좀 빨리 고쳐달라" 싸움, 공정팀과 "레시피가 문제다" 논쟁. 외부: 협력사 직원(청소/유지보수) 관리.',
-            toolsUsed: ['MES(제조실행시스템)', 'Excel', 'PowerPoint', '무전기', '수기 인수인계 장부'],
-            painPoints: [
-                '야간에 설비 알람(Error Code 304) 뜨면 조장이 매뉴얼 책자 찾아보느라 30분 허비함 (그동안 라인 멈춤)',
-                '인수인계할 때 "아까 그 설비 이상 소리 나더라" 같은 중요한 정보가 구두로만 전달되고 기록이 안 남음',
-                '신입 사원들이 방진복 입고 클린룸 들어가면 누가 누군지 몰라서 교육하기 힘듦 (OJT 효율 저하)'
-            ],
-            automationNeeds: [
-                '설비 에러 코드 찍으면 조치 방법 바로 알려주는 AI 챗봇 (태블릿 연동)',
-                '음성 인식 기반 인수인계 자동 기록 및 요약 (무전기 내용 텍스트화)',
-                '신입 사원용 AR 매뉴얼 (설비 비추면 조작법 뜸)'
-            ],
-            workStructure: {
-                level: '반구조화',
-                description: '생산 절차는 표준화되어 있으나, 설비 고장 등 돌발 상황 대응은 경험(감)에 의존. 인수인계가 아날로그 방식. 데이터는 시스템에 쌓이나 현장 활용도 낮음.'
-            }
-        },
-        expectedBehavior: {
-            initialAttitude: '중립',
-            concerns: [
-                '현장 오퍼레이터들은 장갑 끼고 일하는데 터치스크린이나 키보드 칠 시간 없음',
-                'AI가 "설비 멈추세요" 했는데 오작동이면 하루 생산량 날아감. 책임 소재 불분명',
-                '3교대라 교육시킬 시간이 없음 (비번 날 불러내면 싫어함)'
-            ],
-            dropoutRisk: 35,
-        },
-        personality: {
-            patience: 5,
-            techSavvy: 4,
-            changeResistance: 'high',
-            learningSpeed: 'slow'
-        }
+    work: {
+      mainTasks: [
+        '11번가 앱 푸시/배너 캠페인 기획 및 실행 (월 평균 8개 캠페인 동시 진행)',
+        '카테고리별(패션/뷰티/식품/가전) 타겟 고객 세그먼트 분석 및 맞춤 메시지 설계',
+        'CRM 데이터 기반 재구매 유도 프로모션 설계',
+        '주간 캠페인 성과 리포트 작성 및 경영진 보고',
+        '외부 광고 대행사(네이버, 카카오, 메타) 커뮤니케이션 및 예산 관리'
+      ],
+      dailyWorkflow: '오전 9시 출근 → 전날 캠페인 성과 확인(GA4, Braze 대시보드) → 10시 데일리 스탠드업(15분, 각자 오늘 할 일 공유) → 오전에는 시니어들이 캠페인 전략 회의, 주니어들은 배너 제작/카피 작성 → 점심 후 1시부터 팀장이 기획서 검토 및 피드백(하루 평균 3-4건) → 오후 3시쯤 외부 대행사와 화상 미팅 → 오후 4-6시 급한 캠페인 수정 요청 처리(마케팅 본부장이나 MD팀에서 요청 들어옴) → 퇴근 전 내일 일정 정리',
+      weeklyRoutine: '월요일 오전: 주간 캠페인 계획 회의(1시간) / 화요일: 캠페인별 크리에이티브 리뷰 / 수요일 오후: 마케팅 본부 전체 회의 참석 및 주간 성과 보고 / 목요일: 시니어들과 1:1 면담(각 30분) / 금요일: 주니어들 그룹 피드백 세션(1시간), 다음주 캠페인 최종 승인',
+      collaboration: '팀 내에서는 Slack으로 실시간 소통. 캠페인별로 Notion 페이지 만들어서 진행상황 공유. 외부 대행사와는 이메일+주 1회 화상미팅. MD팀/상품기획팀과는 수시로 카톡 단톡방에서 협의. 디자인팀에 배너 요청할 때는 Jira 티켓 발행.',
+      toolsUsed: ['Google Analytics 4', 'Braze(CRM)', 'Facebook Ads Manager', 'Google Ads', 'Figma', 'Notion', 'Slack', 'Jira', 'Excel', 'PowerPoint'],
+      painPoints: [
+        '시니어 분석가(10년차)가 본인보다 연차가 높아서 데이터 해석에 이견이 있을 때 설득하기 어렵고 위축됨. 예를 들어 지난주 화요일 캠페인 리뷰 회의에서 "이 캠페인 클릭률이 2.3%면 좋은 성과"라고 말했더니 시니어 분석가가 "작년 같은 시기엔 2.8%였는데요. 이건 오히려 하락한 거예요"라고 공개적으로 반박. 신임 팀장으로서 체면이 구겨지고 주니어들 앞에서 권위가 떨어지는 느낌',
+        '8개 캠페인이 동시에 돌아가는데 우선순위를 정하지 못해 팀원들이 혼란스러워함. 본부장이 갑자기 급한 캠페인 요청하면 기존 계획이 다 틀어짐. 예를 들어 월요일 아침에 이번 주 계획을 공유했는데, 화요일 오후에 본부장이 "목요일까지 신규 브랜드 런칭 캠페인 기획해"라고 지시하면 기존에 진행하던 3개 캠페인을 누가 맡을지, 일정을 어떻게 조정할지 판단이 안 서서 팀원들한테 미안한 마음만 쌓임',
+        '주니어 크리에이터 3명이 같은 유형 작업(배너 제작)을 반복하는데 서로 작업 방식이 달라서 품질이 들쭉날쭉. A는 Figma에서 작업하고, B는 포토샵으로 하고, C는 Canva로 하는데 최종 결과물의 해상도, 파일 포맷, 네이밍 규칙이 제각각. 검수할 때마다 "이거 다시 해주세요"라고 하면 주니어들은 "뭐가 문제예요?"라고 반문. 표준 가이드를 만들어야 하는데 캠페인 실행에 쫓겨서 시간이 없음',
+        '캠페인 성과 데이터를 GA4, Braze, Facebook Ads Manager, Google Ads 등 4-5개 플랫폼에서 수작업으로 다운받아서 Excel에 복붙하고 피벗 테이블 만들어서 정리하는데 매주 금요일 오후 4시간 소요. 그나마 광고 대행사 리포트는 월요일에 늦게 와서 월요일 오전까지 추가 작업. 본부장은 "주간 리포트 금요일 오전까지 달라"고 하는데 시간이 모자라서 목요일 밤 야근 불가피',
+        '본부장한테 보고할 때 "이 캠페인이 왜 잘 됐는지" 근거 자료 만드는 게 힘듦. 단순히 "매출 23% 증가"만 말하면 "왜 증가했는지, 다음에도 재현 가능한지" 물어보는데 답변 준비가 안 돼 있음. 시니어 분석가한테 "이 데이터 좀 분석해주세요"라고 부탁하면 "그건 제 KPI가 아니라 팀장님이 하셔야죠"라는 식으로 선 긋기. 결국 혼자 구글링하면서 분석하는데 확신이 없어서 보고할 때 떨림'
+      ],
+      automationNeeds: [
+        '여러 채널 성과 데이터를 자동으로 통합해서 한눈에 보여주는 대시보드',
+        '주니어들이 배너 만들 때 쓸 수 있는 템플릿과 체크리스트',
+        '캠페인 우선순위 정하는 기준 (ROI, 공수, 긴급도 등을 수치화)'
+      ],
+      workStructure: {
+        level: '반구조화',
+        description: '캠페인 기획 → 디자인 → 검수 → 집행 프로세스는 있지만 문서화되지 않음. 팀원마다 일하는 방식이 다름. Notion에 캠페인 현황은 기록하지만 누가 언제까지 뭘 해야 하는지 명확하지 않음. 급한 요청이 들어오면 프로세스 무시하고 즉시 처리. 회의록은 작성하지만 액션 아이템 후속 관리는 안 됨.'
+      },
+      realTimeExample: '지난주 금요일 오후 4시, 본부장이 "월요일 앱 푸시에 신규 프로모션 추가해"라고 지시. 이미 8개 캠페인 중 3개가 월요일 예정. 시니어 기획자는 "일정상 불가능"이라 하고, 주니어 디자이너는 "주말에 일해야 하나요?" 눈치. 결국 팀장이 토요일 출근해서 기획서 작성하고 주니어한테 일요일 배너 작업 부탁. 월요일 캠페인은 성공했지만 팀 분위기 싸해짐.',
+      typicalFireDrills: [
+        '본부장 "경쟁사가 이런 캠페인 했는데 우리도 내일까지" - 긴급 벤치마킹 후 기획',
+        'MD팀 "재고 소진 급해요, 오늘 중 푸시 가능?" - 계획에 없던 긴급 캠페인',
+        '시니어 분석가 "이 데이터 이상해요, 리포트 다시 봐야 할 것 같은데" - 경영진 보고 직전 수정',
+        '외부 대행사 "광고 소재 승인 거절됐어요" - 새벽에 대체 소재 제작'
+      ]
     },
-
-    // ==================== SALES (2명) ====================
-    {
-        id: 'P004',
-        name: '정민호',
-        age: 36,
-        company: 'SK이노베이션',
-        department: 'B2B영업팀',
-        role: '팀장',
-        category: 'Sales',
-        leaderProfile: {
-            yearsInRole: 4,
-            previousRole: '시니어 영업 담당자',
-            promotionReason: '글로벌 완성차 업체(Ford, VW) 대상 2조원 규모 배터리 공급 계약 체결 주도. 기술 영업과 가격 협상력의 완벽한 조화로 평가받음',
-            leadershipStyle: '전략적, 코칭형. 하지만 장기 프로젝트 관리의 피로감과 팀원들의 번아웃을 걱정함.',
-            hiddenStruggles: [
-                '고객사는 갑, 우리는 을이라는 관계에서 오는 자괴감과 스트레스',
-                '해외 출장이 너무 잦아서 시차 적응이 안 되고 건강이 망가짐',
-                '기술적인 내용을 깊이 몰라서 R&D팀에게 무시당할 때가 있어 공부해야 한다는 압박감'
-            ]
-        },
-        team: {
-            size: 15,
-            seniorCount: 6,
-            juniorCount: 9,
-            composition: '팀장 1명 + Key Account Manager(KAM) 6명(북미/유럽 담당) + 기술 영업(Sales Engineer) 4명 + 영업 기획/지원 4명',
-            digitalMaturity: 'Advanced',
-            maturityDistribution: 'Advanced 10명(KAM, 기술영업) + Intermediate 5명(지원)',
-            resistanceFactors: [
-                '기술 영업: "영업팀이 기술도 모르면서 무리한 약속을 한다"며 비협조적 태도',
-                '지원팀: "맨날 급하다고만 한다"며 프로세스 준수 요구 (유연성 부족)',
-                'KAM: "고객 대응하느라 바쁜데 내부 보고용 자료 만들 시간 없다"며 반발'
-            ]
-        },
-        work: {
-            mainTasks: [
-                '글로벌 완성차 OEM 대상 배터리 장기 공급 계약(RFQ) 수주',
-                '고객사 기술 요구사항(Spec) 파악 및 내부 R&D/생산팀 조율',
-                '판가(Pricing) 시뮬레이션 및 수익성 분석',
-                '계약 협상 및 공급망 이슈 대응 (IRA 법안 대응 등)',
-                '분기별 QBR(Quarterly Business Review) 진행'
-            ],
-            dailyWorkflow: '오전 8시 출근 (미주/유럽 시차 때문에 일찍 시작) → 8:30 밤사이 들어온 고객사 이메일 확인 (평균 50통) → 9:30 내부 전략 회의 (R&D팀과 스펙 협의) → 11-12시 판가 시뮬레이션 엑셀 작업 → 오후 2-4시 고객사 화상 회의 (영어/독일어) → 4-6시 회의록 정리 및 본사 보고서 작성 → 저녁 8시 퇴근 (해외 출장 잦음)',
-            weeklyRoutine: '월: 주간 수주 현황 보고 (Global Sales Meeting) | 화: 기술 영업 미팅 | 수: 고객사 방문 또는 컨퍼런스 콜 | 목: 원가 분석 및 판가 전략 수립 | 금: 주간 이슈 정리 및 차주 출장 계획',
-            collaboration: '팀 내부: Salesforce로 기회(Opportunity) 관리, Teams로 소통. 타 부서: R&D팀과 배터리 성능 데이터 싸움, 생산팀과 납기 일정 조율(맨날 싸움). 외부: 고객사 구매/기술 담당자와 매일 연락.',
-            toolsUsed: ['Salesforce', 'SAP', 'Excel (매크로 필수)', 'Zoom/Teams', 'Jira (R&D 협업용)'],
-            painPoints: [
-                '고객사가 보내는 RFQ(견적요청서)가 수백 페이지짜리 PDF인데, 이걸 엑셀로 옮겨 적는 데만 3일 걸림',
-                'R&D팀은 "그 스펙 못 맞춘다"고 하고, 고객사는 "무조건 해달라"고 해서 중간에서 조율하느라 스트레스 폭발',
-                '환율, 원자재 가격 변동에 따라 수익성 시뮬레이션을 다시 돌려야 하는데 엑셀 수식이 너무 복잡해서 자주 깨짐'
-            ],
-            automationNeeds: [
-                'RFQ 문서 자동 분석 및 스펙 요건 추출 (PDF to Excel)',
-                '원자재 가격 연동 판가 자동 시뮬레이션',
-                '고객사 미팅 녹취 및 자동 요약 (다국어 지원 필수)'
-            ],
-            workStructure: {
-                level: '반구조화',
-                description: '수주 프로세스(RFQ → 제안 → 협상 → 계약)는 명확하나, 각 단계별 변수가 너무 많음. 고객사 요구사항이 수시로 바뀜. 내부 설득 과정이 더 힘듦.'
-            }
-        },
-        expectedBehavior: {
-            initialAttitude: '중립',
-            concerns: [
-                'B2B 영업은 "Human Touch"가 핵심인데 AI가 고객 관계를 대체할 수 있을까',
-                '보안이 생명인 계약 내용을 클라우드 AI에 올려도 되는지 (법무팀 승인 필요)',
-                '팀원들이 너무 바빠서 새로운 툴 배울 시간이 1도 없음'
-            ],
-            dropoutRisk: 15,
-        },
-        personality: {
-            patience: 8,
-            techSavvy: 7,
-            changeResistance: 'medium',
-            learningSpeed: 'fast'
-        }
+    workshopPsychology: {
+      initialAttitude: '기대함',
+      hiddenMotivations: [
+        '시니어 분석가도 인정할 만한 체계적인 업무 프로세스를 만들고 싶음',
+        '8개 캠페인 우선순위를 객관적으로 정하는 기준을 갖고 싶음',
+        '다른 회사 마케팅팀은 어떻게 일하는지 벤치마킹하고 싶음',
+        '신임 팀장으로서 "일 잘하는 팀장" 이미지를 구축하고 싶음'
+      ],
+      deepConcerns: [
+        '워크샵에서 배운 걸 적용하려다 시니어한테 "또 새로운 거냐"는 소리 들을까봐',
+        '마케팅은 창의성이 중요한데 프로세스가 오히려 제약이 될까봐',
+        '다른 팀장들이 더 잘하면 비교당할까봐',
+        '워크샵 시간에 긴급 캠페인 요청 들어오면 어떡하지'
+      ],
+      successMetrics: [
+        '캠페인 우선순위를 데이터 기반으로 정하는 방법',
+        '주니어들 작업 품질을 일정하게 유지하는 표준 프로세스',
+        '성과 리포트 작성 시간을 절반으로 줄이는 방법',
+        '시니어와의 의견 충돌을 생산적으로 해결하는 방법'
+      ],
+      dropoutRisk: 15,
+      dropoutTriggers: [
+        '본부장 긴급 캠페인 요청이 오는 경우',
+        '외부 대행사 이슈로 즉시 대응이 필요한 경우',
+        '워크샵 내용이 B2C 마케팅과 동떨어진 경우',
+        '시니어 분석가가 "그런 거 배워서 뭐하냐"고 냉소적으로 반응하는 경우'
+      ]
     },
-
-    {
-        id: 'P005',
-        name: '최유진',
-        age: 37,
-        company: 'SK네트웍스',
-        department: '리테일영업팀',
-        role: '팀장',
-        category: 'Sales',
-        leaderProfile: {
-            yearsInRole: 6,
-            previousRole: '지역 영업 담당자',
-            promotionReason: 'SK매직 렌탈 서비스 전국 판매 1위 달성. 지역 대리점과의 상생 모델 구축으로 이탈률 0% 기록',
-            leadershipStyle: '현장 중심, 형님 리더십, 발로 뛰는 영업. 디지털보다는 대면 소통 선호.',
-            hiddenStruggles: [
-                '본사 정책이 현장과 너무 동떨어져 있어서 중간에서 욕받이 역할 하느라 지침',
-                '나도 이제 나이가 들어서 하루 종일 운전하고 현장 뛰는 게 체력적으로 힘듦',
-                '디지털 전환 하라는데 솔직히 나부터가 키오스크도 잘 못 써서 두려움'
-            ]
-        },
-        team: {
-            size: 20,
-            seniorCount: 8,
-            juniorCount: 12,
-            composition: '팀장 1명 + 지역 영업 관리자(SV) 15명(서울/경기/지방) + 영업지원 4명',
-            digitalMaturity: 'Beginner',
-            maturityDistribution: 'Intermediate 3명(지원팀) + Beginner 17명(현장 SV, 40-50대 많음)',
-            resistanceFactors: [
-                '지역 SV: "현장 상황 모르는 소리 하지 마라"며 본사 지침 무시',
-                '대리점주: "복잡한 거 싫다"며 기존 방식(전화/종이) 고수',
-                '팀 전체: "영업은 사람이 하는 거지 기계가 하는 게 아니다"라는 강한 신념'
-            ]
-        },
-        work: {
-            mainTasks: [
-                '전국 SK매직 대리점 및 판매점 관리 (매장 순회)',
-                '렌탈 상품(정수기, 공기청정기) 프로모션 기획 및 전파',
-                '현장 판매 사원(MC) 교육 및 동기 부여',
-                '지역별 매출 목표 관리 및 실적 독려',
-                '고객 불만(VOC) 현장 해결'
-            ],
-            dailyWorkflow: '오전 8시 출근 → 8:30 전일 실적 집계표 확인 (엑셀) → 9시 지역 SV들과 단체 카톡방 조회 → 10시-오후 4시 대리점 현장 순회 (하루 평균 5곳 방문, 운전 4시간) → 4-5시 현장 이슈 본사 보고 → 5-6시 내일 방문 일정 조율 → 저녁 7시 대리점 사장님들과 저녁 식사(술자리)',
-            weeklyRoutine: '월: 주간 실적 회의 (본사) | 화-목: 지방 출장 및 현장 순회 | 금: 주간 프로모션 정산 및 비용 처리',
-            collaboration: '팀 내부: 카카오톡 단톡방이 메인. 공지사항도 카톡, 실적 보고도 카톡. 이메일은 잘 안 봄. 타 부서: 물류팀과 배송 지연 싸움, 마케팅팀과 판촉물 지원 요청. 외부: 대리점주들과 형/동생 하며 지냄.',
-            toolsUsed: ['카카오톡', 'Excel', '전화', 'T맵', '사내 모바일 영업 앱(느려서 잘 안 씀)'],
-            painPoints: [
-                '현장 SV들이 하루 종일 운전하느라 PC를 못 봄. 모든 보고를 카톡이나 전화로 해서 팀장이 다시 엑셀에 옮겨 적어야 함',
-                '프로모션 정책이 매주 바뀌는데, 대리점주들이 헷갈려서 옛날 가격으로 팔고 옴. 차액 정산하느라 머리 아픔',
-                '영업 앱이 너무 느리고 복잡해서 현장에서 아무도 안 씀. 결국 종이 계약서 쓰고 사진 찍어 보냄'
-            ],
-            automationNeeds: [
-                '카톡으로 실적 보내면 자동으로 엑셀에 정리해주는 봇',
-                '복잡한 렌탈 요금표를 챗봇으로 물어보면 바로 답해주는 기능',
-                '현장 방문 음성 기록 자동 텍스트 변환 (운전 중에 쓸 수 있게)'
-            ],
-            workStructure: {
-                level: '비구조화',
-                description: '현장 상황에 따라 유동적. 정해진 프로세스보다 "융통성"이 중요. 데이터보다 "감"과 "관계"로 영업. 본사 시스템과 현장의 괴리가 큼.'
-            }
-        },
-        expectedBehavior: {
-            initialAttitude: '회의적',
-            concerns: [
-                '현장 아재들이 AI를 쓸까? 카톡도 겨우 쓰는데',
-                '본사 책상물림들이 만든 툴이 현장에서 먹힐 리가 없음',
-                '자동화되면 우리 SV들 일자리 없어지는 거 아니냐는 불안감'
-            ],
-            dropoutRisk: 40,
-        },
-        personality: {
-            patience: 4,
-            techSavvy: 2,
-            changeResistance: 'high',
-            learningSpeed: 'slow'
-        }
+    expectedBehavior: {
+      initialAttitude: '기대함',
+      concerns: [
+        '신임 팀장이라 팀 관리 경험이 부족한데, 워크샵에서 배운 걸 바로 적용했다가 시니어 팀원들이 "또 새로운 거 하냐"며 반발하면 어떡하지',
+        '워크샵이 3시간인데 우리 팀 복잡한 상황을 다 담을 수 있을까? 8개 캠페인 돌아가는 걸 어떻게 정리하지',
+        '디지털 도구는 잘 쓰는 편인데, AI 활용은 아직 초보 수준. 다른 팀장들이 잘하면 나만 못 따라가는 것 같아 보일까봐 걱정'
+      ],
+      dropoutRisk: 15,
     },
-    // ==================== OPERATIONS (5명) ====================
-    {
-        id: 'P006',
-        name: '윤재현',
-        age: 37,
-        company: 'SK하이닉스',
-        department: '반도체생산팀',
-        role: '팀장',
-        category: 'Operations',
-        leaderProfile: {
-            yearsInRole: 7,
-            previousRole: '공정 엔지니어',
-            promotionReason: 'M16 팹(Fab) 초기 램프업(Ramp-up) 시기 수율 조기 안정화 달성. 공정 자동화 시스템 도입으로 인당 생산성 20% 향상',
-            leadershipStyle: '원칙 준수, 데이터 기반, 안전 제일. 24시간 긴장 상태 유지.',
-            hiddenStruggles: [
-                '24시간 돌아가는 공장이라 주말에도 전화 올까 봐 항상 긴장 상태 (휴대폰을 손에서 못 놓음)',
-                '엔지니어 출신이라 사람 관리보다 기계 관리가 더 편해서 팀원 상담이 어려움',
-                '수율 떨어지면 본사 임원들한테 깨지는 게 일상이라 자존감이 자주 하락함'
-            ]
-        },
-        team: {
-            size: 25,
-            seniorCount: 10,
-            juniorCount: 15,
-            composition: '팀장 1명 + 단위 공정(포토/에칭/증착) 엔지니어 5명 + 생산 교대조 관리자 12명(4조3교대) + 데이터 분석가 2명 + 설비 유지보수 5명',
-            digitalMaturity: 'Intermediate',
-            maturityDistribution: 'Advanced 7명(엔지니어, 분석가) + Intermediate 8명 + Beginner 10명(현장 교대조)',
-            resistanceFactors: [
-                '교대조: "인수인계 시간 늘어나는 거 싫다"며 새로운 툴 도입 반대',
-                '엔지니어: "데이터는 내가 직접 엑셀로 보는 게 제일 빠르다"며 시스템 불신',
-                '현장직: "방진복 입고 디바이스 조작하기 불편하다"며 수기 기록 선호'
-            ]
-        },
-        work: {
-            mainTasks: [
-                '반도체 팹(Fab) 24시간 무중단 운영 관리',
-                '공정 수율(Yield) 모니터링 및 저수율 원인 분석(Excursion 대응)',
-                '설비 가동률(OEE) 극대화 및 예방 정비 스케줄링',
-                '클린룸 내 안전 수칙 준수 관리',
-                '일일 생산 목표 달성 및 WIP(재공 재고) 관리'
-            ],
-            dailyWorkflow: '오전 8시 출근 → 8:30 아침 생산 회의 (전날 밤 이슈 확인) → 9-11시 라인 투어 (클린룸 방진복 착용) → 11-12시 수율 분석 미팅 → 오후 1-3시 설비 업체 미팅 → 3-4시 교대조 인수인계 참관 → 4-6시 일일 리포트 작성 및 본사 보고 → 퇴근 후에도 알람 대기',
-            weeklyRoutine: '월: 주간 수율 리뷰 | 화: 설비 PM(예방정비) 계획 | 수: 안전 환경 점검 | 목: 신규 공정 레시피 적용 검토 | 금: 주간 생산 결산',
-            collaboration: '팀 내부: MES, Spotfire로 데이터 확인. 교대조와는 전자 로그북(e-Log)으로 소통. 타 부서: 소자팀과 수율 개선 협업, 장비팀과 긴급 수리 대응. 외부: 장비 벤더(ASML, AMAT) 엔지니어 상주 관리.',
-            toolsUsed: ['MES(제조실행시스템)', 'Spotfire(데이터시각화)', 'YMS(수율관리시스템)', 'Excel', 'Splunk'],
-            painPoints: [
-                '수율이 0.1%만 떨어져도 비상인데, 원인 찾으려면 수만 개 공정 데이터를 엑셀/Spotfire로 일일이 뒤져야 함',
-                '교대 근무자 간 인수인계가 구두로 이뤄져서 정보 누락 발생 ("아까 말했는데 못 들었어?" 싸움)',
-                '설비가 갑자기 멈추면(Down) 1분당 수천만 원 손해인데, 엔지니어 올 때까지 손가락만 빨고 있음'
-            ],
-            automationNeeds: [
-                'AI 기반 공정 이상 징후(Excursion) 실시간 탐지 및 원인 추천',
-                '교대 근무 인수인계 자동 요약 및 중요 이슈 하이라이팅',
-                '설비 고장 예측(PdM) 및 부품 교체 시기 알림'
-            ],
-            workStructure: {
-                level: '고도구조화',
-                description: '반도체 공정은 나노 단위 정밀도 요구. 표준 작업 절차(SOP) 절대 준수. 모든 데이터는 시스템에 기록되나 분석은 사람 몫. 24시간 4조 3교대 시스템.'
-            }
-        },
-        expectedBehavior: {
-            initialAttitude: '중립',
-            concerns: [
-                '생산 라인은 1초도 멈추면 안 되는데, 새로운 AI 시스템 도입하다가 시스템 뻗으면 누가 책임지나',
-                '현장 오퍼레이터들은 복잡한 툴 싫어함. 버튼 하나로 끝나는 거 아니면 안 쓸 듯',
-                '보안 때문에 폐쇄망 쓰는데 클라우드 기반 AI 툴을 쓸 수나 있을지'
-            ],
-            dropoutRisk: 25,
-        },
-        personality: {
-            patience: 6,
-            techSavvy: 6,
-            changeResistance: 'medium',
-            learningSpeed: 'medium'
-        }
-    },
-
-    {
-        id: 'P007',
-        name: '강민지',
-        age: 38,
-        company: 'SK에너지',
-        department: '물류관리팀',
-        role: '팀장',
-        category: 'Operations',
-        leaderProfile: {
-            yearsInRole: 3,
-            previousRole: '물류 기획자',
-            promotionReason: '전국 물류 거점(Hub) 통폐합 프로젝트 성공으로 연간 물류비 50억 절감. AI 배차 시스템 도입 초석 마련',
-            leadershipStyle: '효율 중심, 데이터 기반, 시스템 개선 적극 추진. 하지만 현장 기사님들과의 소통은 어려워함.',
-            hiddenStruggles: [
-                '기사님들과의 거친 소통(욕설, 고성)에 감정 소모가 심해 퇴근하면 녹초가 됨',
-                '위험물 안전 사고 나면 형사 처벌 받을 수도 있다는 공포감을 항상 안고 삼',
-                '본사의 물류비 절감 압박과 현장의 현실적인 어려움 사이에서 괴리감 느낌'
-            ]
-        },
-        team: {
-            size: 18,
-            seniorCount: 7,
-            juniorCount: 11,
-            composition: '팀장 1명 + 물류 기획 3명 + 재고 관리 5명 + 운송 관리(배차) 7명 + 시스템 운영 2명',
-            digitalMaturity: 'Advanced',
-            maturityDistribution: 'Expert 2명(시스템) + Advanced 6명 + Intermediate 7명 + Beginner 3명(현장 관리)',
-            resistanceFactors: [
-                '운송 기사: "운전 중에 앱 조작하라고? 사고 나면 책임질 거냐"며 반발',
-                '현장 관리자: "기사님들 비위 맞추기도 힘든데 새로운 거 시키지 마라"며 방어적',
-                '기존 직원: "TMS 시스템도 복잡한데 AI까지 배우라고?"라며 피로감 호소'
-            ]
-        },
-        work: {
-            mainTasks: [
-                '전국 15개 저유소 및 물류센터 재고 통합 관리',
-                '탱크로리 운송 스케줄링 및 최적 경로 배차',
-                '위험물 안전 관리법 준수 및 사고 예방',
-                '성수기(동절기 난방유 등) 긴급 수송 대응',
-                '3PL(제3자 물류) 업체 성과 관리'
-            ],
-            dailyWorkflow: '오전 8:30 출근 → 9시 전국 저유소 재고 모니터링 → 10시 운송사 배차 회의 (전화 불남) → 11-12시 긴급 주문(주유소 재고 바닥) 대응 → 오후 1-3시 물류비 정산 및 시스템 오류 수정 → 3-5시 안전 사고 예방 교육 → 5-6시 익일 배차 계획 확정',
-            weeklyRoutine: '월: 주간 물류 운영 계획 | 화: 운송사 성과 리뷰 | 수: 재고 실사 현황 점검 | 목: 물류 시스템 개선 회의 | 금: 주간 물류비 결산',
-            collaboration: '팀 내부: TMS(운송관리시스템)가 메인. 카카오톡으로 기사님들과 소통. 타 부서: 영업팀과 출고 일정 조율(맨날 싸움), 생산팀과 입고 일정 공유. 외부: 운송사 및 지입 차주들과 매일 통화.',
-            toolsUsed: ['WMS(창고관리)', 'TMS(운송관리)', 'SAP', 'Excel', 'Tableau', 'T맵'],
-            painPoints: [
-                '기사님들이 배차 앱을 안 쓰고 자꾸 전화로 "어디로 가요?" 물어봄. 하루 통화량 100통',
-                '명절이나 연휴 전에는 주문 폭주해서 배차 꼬임. 수동으로 엑셀 돌려서 배차하느라 밤샘',
-                '위험물 운송이라 사고 나면 대형 참사인데, 실시간 위치 추적(GPS)이 가끔 끊겨서 불안함'
-            ],
-            automationNeeds: [
-                '실시간 교통정보 반영한 AI 자동 배차 및 경로 최적화',
-                '기사님 전용 음성 봇 (전화하면 AI가 배차 정보 알려줌)',
-                '위험물 운송 차량 실시간 관제 및 이상 징후 알림'
-            ],
-            workStructure: {
-                level: '고도구조화',
-                description: '물류 프로세스는 명확하나 현장 변수(날씨, 교통, 차 고장)가 너무 많음. 시스템은 잘 되어 있으나 현장 적용률이 떨어짐. 안전 규제 매우 엄격.'
-            }
-        },
-        expectedBehavior: {
-            initialAttitude: '중립',
-            concerns: [
-                '시스템은 이미 좋은 거 많은데, 현장 기사님들이 안 쓰면 무용지물',
-                'AI가 짠 배차 경로를 베테랑 기사님들이 "이 길 아닌데?" 하고 무시하면 어떡하나',
-                '물류비 절감도 중요하지만 안전이 최우선인데 AI가 그걸 고려할까'
-            ],
-            dropoutRisk: 15,
-        },
-        personality: {
-            patience: 7,
-            techSavvy: 8,
-            changeResistance: 'low',
-            learningSpeed: 'fast'
-        }
-    },
-
-    {
-        id: 'P008',
-        name: '이동훈',
-        age: 38,
-        company: 'SK실트론',
-        department: '품질관리팀',
-        role: '팀장',
-        category: 'Operations',
-        leaderProfile: {
-            yearsInRole: 5,
-            previousRole: '품질 엔지니어',
-            promotionReason: '글로벌 고객사(Intel) 품질 감사(Audit) 만점 통과. 웨이퍼 결함 자동 검출 알고리즘 도입으로 불량 유출 0건 달성',
-            leadershipStyle: '품질 제일주의, 데이터 기반 분석, 원칙 타협 없음. 깐깐하다는 평을 들음.',
-            hiddenStruggles: [
-                '품질 이슈 터지면 범인 취급 받는 게 억울하고 서러움 (잘하면 본전, 못하면 역적)',
-                '고객사 갑질에 스트레스 받지만 회사를 위해 참아야 한다는 압박감',
-                '완벽주의 성향 때문에 스스로를 갉아먹고 팀원들도 힘들게 하는 것 같아 고민'
-            ]
-        },
-        team: {
-            size: 12,
-            seniorCount: 4,
-            juniorCount: 8,
-            composition: '팀장 1명 + 품질 엔지니어 4명(고객 대응) + 공정 품질 관리 4명 + 데이터 분석가 1명 + 검사원 2명',
-            digitalMaturity: 'Intermediate',
-            maturityDistribution: 'Advanced 5명(엔지니어, 분석가) + Intermediate 4명 + Beginner 3명',
-            resistanceFactors: [
-                '생산팀: "품질팀 때문에 생산 못 해먹겠다"며 협조 거부 및 갈등',
-                '검사원: "내 눈이 기계보다 정확하다"며 AI 판독 결과 무시 및 불신',
-                '엔지니어: "데이터 분석은 내가 알아서 할 테니 툴 강요하지 마라"는 전문가적 고집'
-            ]
-        },
-        work: {
-            mainTasks: [
-                '웨이퍼 표면/엣지 결함 검사 및 출하 판정',
-                '고객사(삼성, 하이닉스, 인텔) 품질 이슈(VOC) 대응 및 재발 방지',
-                '공정 변경점(4M) 관리 및 품질 영향성 평가',
-                '품질 경영 시스템(ISO) 유지 및 고객 감사 수검',
-                '수율(Yield) 저하 원인 분석 및 개선'
-            ],
-            dailyWorkflow: '오전 8:30 출근 → 9시 전일 야간 생산분 품질 데이터(SPC) 확인 → 10시 불량 자재 격리 및 판정 회의 (살릴지 버릴지 결정) → 11-12시 공정 트러블 슈팅 → 오후 1-3시 고객사 품질 감사 대응 (영어 회의) → 3-5시 품질 개선 프로젝트 실험 → 5-6시 일일 품질 리포트 발행',
-            weeklyRoutine: '월: 주간 불량률 분석 | 화: 공정 변경점 리뷰 | 수: 계측기 교정 및 점검 | 목: 협력사 품질 지도 | 금: 고객 클레임 대책 회의',
-            collaboration: '팀 내부: QMS(품질관리시스템)로 데이터 공유. 타 부서: 생산팀과 불량 원인 공동 조사(범인 찾기), 개발팀과 신제품 품질 기준 수립. 외부: 고객사 품질 담당자와 매일 이메일 싸움.',
-            toolsUsed: ['KLA(검사장비 SW)', 'Minitab', 'JMP', 'SAP QM', 'PowerPoint'],
-            painPoints: [
-                '웨이퍼 결함 이미지를 엔지니어들이 눈으로 보고 분류하느라 하루 3시간 씀 (눈 아픔)',
-                '고객사가 "이거 왜 불량이야?" 물어보면 6개월 전 데이터까지 뒤져서 보고서 써야 함',
-                '생산팀은 "생산량 맞춰야 하니 좀 봐달라"고 하고, 우리는 "절대 안 된다"고 싸우는 게 일상'
-            ],
-            automationNeeds: [
-                'AI 기반 웨이퍼 결함 이미지 자동 분류 (Defect Classification)',
-                '품질 이슈 발생 시 과거 유사 사례 자동 검색 및 원인 추천',
-                '고객사 제출용 품질 성적서(COA) 자동 생성'
-            ],
-            workStructure: {
-                level: '고도구조화',
-                description: '품질 기준(Spec)은 법과 같음. 타협 불가. 검사 절차와 기준 명확히 문서화. 불량 발생 시 대응 프로토콜(OCAP) 존재. 데이터 분석 역량 중요.'
-            }
-        },
-        expectedBehavior: {
-            initialAttitude: '중립',
-            concerns: [
-                '품질 데이터(결함 이미지)는 극비 보안 사항인데 외부 AI에 올려도 되나',
-                'AI가 불량 판정했다가 만약에 불량 유출되면 책임은 누가 지나',
-                '엔지니어들의 "장인 정신"(내 눈이 정확하다)을 설득할 수 있을까'
-            ],
-            dropoutRisk: 20,
-        },
-        personality: {
-            patience: 6,
-            techSavvy: 6,
-            changeResistance: 'medium',
-            learningSpeed: 'medium'
-        }
-    },
-
-    {
-        id: 'P009',
-        name: '박수현',
-        age: 38,
-        company: 'SK온',
-        department: '배터리생산팀',
-        role: '팀장',
-        category: 'Operations',
-        leaderProfile: {
-            yearsInRole: 8,
-            previousRole: '공정 관리자',
-            promotionReason: '서산 공장 배터리 셀 2라인 셋업(Set-up) 및 조기 양산 안정화 주도. 화재 사고 0건 달성으로 안전 마스터 포상',
-            leadershipStyle: '안전 제일(Safety First), 현장 밀착, "기본을 지키자". 목소리 큼.',
-            hiddenStruggles: [
-                '현장 작업자들이 말을 너무 안 들어서 속 터질 때가 많음 (안전모 좀 쓰라고!)',
-                '과거 화재 사고 트라우마가 있어서 안전 문제에 과민 반응하게 됨',
-                '본사에서는 현장을 너무 모른다고 생각하며, 보고서 꾸미는 일에 회의감 느낌'
-            ]
-        },
-        team: {
-            size: 30,
-            seniorCount: 12,
-            juniorCount: 18,
-            composition: '팀장 1명 + 공정 파트장 4명 + 설비 엔지니어 6명 + 오퍼레이터 19명(3교대)',
-            digitalMaturity: 'Beginner',
-            maturityDistribution: 'Intermediate 6명(엔지니어) + Beginner 24명(현장직)',
-            resistanceFactors: [
-                '노조: "자동화 도입은 인력 감축을 위한 포석 아니냐"며 강력 반발',
-                '현장직: "장갑 끼고 터치 안 된다", "기름 묻어서 기계 고장 난다"며 태블릿 사용 거부',
-                '고참 반장: "라떼는 이런 거 없이도 잘만 만들었다"며 변화 거부'
-            ]
-        },
-        work: {
-            mainTasks: [
-                '배터리 전극/조립/화성 공정 생산 라인 운영',
-                '설비 가동률(OEE) 및 시간당 생산량(UPH) 관리',
-                '현장 안전(SHE) 점검 및 작업자 보호구 착용 관리',
-                '일일 생산 실적 집계 및 본사 보고',
-                '현장 3정 5S 활동 및 개선 제안'
-            ],
-            dailyWorkflow: '오전 8시 TBM(Tool Box Meeting) 주재 (안전 구호 제창) → 9-11시 전극 라인 믹싱 장비 점검 (분진 날림 확인) → 11시 오전 생산량 엑셀 입력 → 오후 1-3시 화성 공정(Aging) 온도 데이터 체크 → 3-4시 설비 알람 발생 시 현장 뛰어감 → 4-5시 작업자 고충 상담 (담배 타임) → 5-6시 야간조 인수인계 및 퇴근',
-            weeklyRoutine: '월: 주간 생산 계획 공유 | 화: 안전 교육 (동영상 시청) | 수: 설비 예방 정비(PM) | 목: 불량률 저감 분임조 활동 | 금: 주간 결산 및 대청소',
-            collaboration: '팀 내부: 무전기, 현장 화이트보드, 카톡방. 타 부서: 설비기술팀과 "부품 언제 오냐" 독촉, 자재팀과 "양극재 재고 부족하다" 연락. 외부: 장비 업체 엔지니어와 유지보수 일정 조율.',
-            toolsUsed: ['MES', 'Excel', '안전점검 체크리스트(종이)', '무전기', '사내 포털'],
-            painPoints: [
-                '설비 가동 데이터를 작업자들이 수기 일지에 적고, 나중에 엑셀에 또 입력함 (이중 작업, 오타 많음)',
-                '안전 점검 체크리스트가 종이 뭉치로 쌓여 있어서, 3년 전 점검 기록 찾으려면 창고 뒤져야 함',
-                '생산 실적 보고서 만드는데 데이터 취합만 2시간 걸림 (MES랑 엑셀이랑 숫자가 안 맞음)'
-            ],
-            automationNeeds: [
-                '설비 데이터 자동 수집 및 디지털 일지 변환 (태블릿 입력)',
-                '안전 점검 모바일 앱 (사진 찍어서 올리면 끝)',
-                '생산 실적 자동 집계 및 리포팅 봇'
-            ],
-            workStructure: {
-                level: '반구조화',
-                description: '생산 절차는 매뉴얼대로 하나, 데이터 관리는 아날로그. 안전 점검은 필수지만 형식적인 경우가 많음. 디지털 전환이 가장 시급한 현장.'
-            }
-        },
-        expectedBehavior: {
-            initialAttitude: '걱정',
-            concerns: [
-                '현장 작업자들은 나이도 많고 장갑 끼고 일해서 태블릿 같은 거 줘도 안 쓸 것 같음',
-                '자동화되면 작업자들 일자리 줄어든다고 노조에서 반발할까봐 걱정',
-                '3시간 워크샵으로 현장의 땀 냄새 나는 문제들을 해결할 수 있을까'
-            ],
-            dropoutRisk: 45,
-        },
-        personality: {
-            patience: 4,
-            techSavvy: 3,
-            changeResistance: 'high',
-            learningSpeed: 'slow'
-        }
-    },
-
-    {
-        id: 'P010',
-        name: '한승민',
-        age: 39,
-        company: 'SK케미칼',
-        department: '생산계획팀',
-        role: '팀장',
-        category: 'Operations',
-        leaderProfile: {
-            yearsInRole: 2,
-            previousRole: '수요 예측 분석가',
-            promotionReason: '친환경 소재(Copolyester) 수요 예측 모델 정확도 95% 달성으로 재고 비용 20억 절감. S&OP 프로세스 정착 기여',
-            leadershipStyle: '데이터 기반 의사결정, 논리적, 시스템 지향. "감으로 일하지 말자".',
-            hiddenStruggles: [
-                '영업과 생산 사이에서 샌드위치 신세라 항상 외롭고 편 들어주는 사람이 없음',
-                '예측이 틀리면 모든 비난을 혼자 감수해야 해서 결정 내리기가 두려움',
-                '데이터 분석가 출신이라 정치적인 싸움이나 목소리 큰 사람 상대하기가 힘듦'
-            ]
-        },
-        team: {
-            size: 9,
-            seniorCount: 3,
-            juniorCount: 6,
-            composition: '팀장 1명 + 생산 계획(PP) 4명 + 자재 수급(MM) 2명 + 수요 예측(Demand Planner) 2명',
-            digitalMaturity: 'Expert',
-            maturityDistribution: 'Expert 2명(데이터 분석가) + Advanced 5명 + Intermediate 2명',
-            resistanceFactors: [
-                '영업팀: "내 감이 데이터보다 정확하다", "현장은 다르다"며 예측치 무시',
-                '생산팀: "계획대로 생산 안 되는 게 현장이다"며 계획 준수 거부',
-                '팀원들: "어차피 틀릴 예측 뭐하러 복잡하게 하냐"며 패배주의 만연'
-            ]
-        },
-        work: {
-            mainTasks: [
-                '월간/주간 생산 계획(MPS) 수립 및 라인 배정',
-                '글로벌 수요 예측 및 적정 재고(Safety Stock) 관리',
-                '원자재(TPA, EG) 소요량 산출(MRP) 및 발주',
-                '영업-생산-구매 간 S&OP(Sales & Operations Planning) 회의 주관',
-                '공급망 리스크(물류 대란, 원자재 파동) 시뮬레이션'
-            ],
-            dailyWorkflow: '오전 9시 출근 → 9:30 전사 ERP 접속하여 전일 생산/판매 실적 확인 → 10시 영업팀과 긴급 주문 대응 회의 (납기 당겨달라고 사정함) → 11-12시 생산 라인별 부하(Load) 분석 → 오후 1-3시 자재 결품 예상 품목 체크 → 3-5시 주간 생산 계획 시뮬레이션 (엑셀 돌리기) → 5-6시 공장장 보고 및 계획 확정',
-            weeklyRoutine: '월: 주간 생산 계획 배포 | 화: 자재 입고 일정 점검 | 수: 수요 예측 정확도 분석 | 목: 중장기 Capa 분석 | 금: 주간 성과(KPI) 분석',
-            collaboration: '팀 내부: Jira로 이슈 트래킹, Slack으로 소통. 타 부서: 영업팀(판매 계획), 생산팀(라인 상황), 구매팀(자재 납기) 사이에서 조율자 역할. 외부: 주요 원자재 공급사와 납기 협의.',
-            toolsUsed: ['SAP APO', 'Python(수요예측)', 'Tableau', 'Excel(매크로)', 'Slack'],
-            painPoints: [
-                '영업팀은 "더 팔겠다"고 하고 생산팀은 "라인 꽉 찼다"고 싸우는데, 중간에서 엑셀로 시뮬레이션 돌려서 중재하느라 진 빠짐',
-                '원자재 공급사가 갑자기 "배가 늦게 뜬다"고 통보하면, 생산 계획 전체를 다시 짜야 함 (야근 확정)',
-                '수요 예측 모델(Python)을 만들었는데, 영업팀장님들이 "내 감이 더 정확해"라며 무시할 때 힘 빠짐'
-            ],
-            automationNeeds: [
-                'AI 기반 수요 예측 및 변동성 자동 반영 (영업팀 "감" 보정)',
-                '공급망 이슈(항만 파업 등) 발생 시 생산 계획 자동 재수립',
-                'S&OP 회의 자료(PPT) 자동 생성 및 실시간 대시보드'
-            ],
-            workStructure: {
-                level: '고도구조화',
-                description: '계획 수립 프로세스는 명확하나 변수(수요 급증, 설비 고장, 자재 지연)가 너무 많음. SAP 시스템이 메인이지만 유연성이 떨어져 엑셀 병행. 데이터 의존도 높음.'
-            }
-        },
-        expectedBehavior: {
-            initialAttitude: '중립',
-            concerns: [
-                '우리 팀은 이미 Python 쓰고 있는데 워크샵 내용이 너무 기초적이지 않을까',
-                '복잡한 공급망 변수(나비 효과)를 AI가 다 고려할 수 있을지 의문',
-                '영업팀이나 생산팀도 같이 들어야 효과가 있는데 우리만 들으면 소용없음'
-            ],
-            dropoutRisk: 5,
-        },
-        personality: {
-            patience: 9,
-            techSavvy: 9,
-            changeResistance: 'low',
-            learningSpeed: 'fast'
-        }
-    },
-
-    // ==================== R&D (5명) ====================
-    {
-        id: 'P011',
-        name: '신하늘',
-        age: 39,
-        company: 'SK바이오팜',
-        department: '신약개발팀',
-        role: '팀장',
-        category: 'R&D',
-        leaderProfile: {
-            yearsInRole: 4,
-            previousRole: '연구원',
-            promotionReason: '연구 프로세스 표준화로 개발 기간 25% 단축. 외부 기관과의 협업 프로젝트 성공적으로 리드',
-            leadershipStyle: '자율성 존중, 주간 연구 세미나, 논문 중심 성과 평가',
-            hiddenStruggles: [
-                '연구 성과가 언제 나올지 모르는 불확실성 때문에 항상 불안함 (10년 걸릴 수도 있음)',
-                '박사급 연구원들의 자존심 싸움 중재하느라 진 빠짐 (서로 내 분야가 최고라고 우김)',
-                '회사에서는 빨리 결과 내라고 쪼는데 연구는 시간이 필요해서 답답함'
-            ]
-        },
-        team: {
-            size: 7,
-            seniorCount: 2,
-            juniorCount: 5,
-            composition: '팀장 1명 + 연구원 5명 + 임상 코디네이터 1명',
-            digitalMaturity: 'Expert',
-            maturityDistribution: 'Expert 3명 + Advanced 4명',
-            resistanceFactors: [
-                '연구원: "내 연구 데이터는 나만의 자산(Know-how)"이라며 공유 거부',
-                '시니어: "AI가 신약 개발을 어떻게 하냐, 생물학은 복잡하다"며 기술적 불신',
-                '팀 전체: "연구는 창의적인 영역이라 표준화할 수 없다"는 인식 강함'
-            ]
-        },
-        work: {
-            mainTasks: [
-                '신약 후보물질 발굴 및 검증',
-                '실험 설계 및 수행',
-                '실험 데이터 분석 및 논문 작성',
-                '임상시험 준비 및 진행',
-                '연구 프로젝트 관리'
-            ],
-            dailyWorkflow: '오전 9시 출근 → 9:30 최신 논문 및 특허 검색 → 10-12시 실험실 미팅 및 데이터 리뷰 → 오후 1-3시 신약 후보물질 스크리닝 실험 → 3-5시 연구 결과 분석 및 토론 → 5-6시 연구 노트 작성',
-            weeklyRoutine: '월: 주간 실험 계획 | 화: 저널 클럽 (최신 논문 리뷰) | 수: 랩 미팅 (진행 상황 공유) | 목: 외부 전문가 초청 세미나 | 금: 주간 데이터 정리',
-            collaboration: '팀 내부: 전자연구노트(ELN)로 실험 결과 공유 | 타 부서: 임상팀과 후보물질 독성 테스트 협의, 특허팀과 출원 전략 논의 | 외부: 대학 연구실과 위탁 연구 관리',
-            toolsUsed: ['Lab Management System', 'GraphPad Prism', 'Python', 'R', 'EndNote', 'Slack'],
-            painPoints: [
-                '실험 데이터가 팀원들 로컬에 분산되어 협업 시 찾기 어려움',
-                '문헌 조사에 팀원들이 많은 시간 소비',
-                '연구 프로젝트 진행 상황을 팀 전체가 파악하기 어려움'
-            ],
-            automationNeeds: [
-                '실험 데이터 통합 관리 시스템',
-                'AI 기반 문헌 요약 및 인사이트 추출',
-                '연구 프로젝트 자동 진행 리포팅'
-            ],
-            workStructure: {
-                level: '반구조화',
-                description: '연구 주제별 담당자는 있으나 실험 방법은 연구원 재량. 주간 세미나로 진행 공유하나 일상 협업은 비정형적. 데이터 관리 규칙 미흡.'
-            }
-        },
-        expectedBehavior: {
-            initialAttitude: '중립',
-            concerns: [
-                'Expert 수준에서 프로세스가 너무 선형적이고 예측 가능하지 않을까',
-                '연구 업무의 창의성과 빠른 의사결정을 프레임워크가 제약할까 걱정',
-                '실제 도구 연동보다 개념 설명에 그치면 우리 팀에 도움 안될 듯'
-            ],
-            dropoutRisk: 5,
-        },
-        personality: {
-            patience: 8,
-            techSavvy: 9,
-            changeResistance: 'low',
-            learningSpeed: 'fast'
-        }
-    },
-
-    {
-        id: 'P012',
-        name: '오현우',
-        age: 40,
-        company: 'SK하이닉스',
-        department: '반도체설계팀',
-        role: '팀장',
-        category: 'R&D',
-        leaderProfile: {
-            yearsInRole: 6,
-            previousRole: '설계 엔지니어',
-            promotionReason: '차세대 메모리 칩 설계 성공으로 기술 경쟁력 확보. 설계 자동화 툴 도입으로 설계 오류 50% 감소',
-            leadershipStyle: '기술 중심, 코드 리뷰 문화, 주간 기술 공유',
-            hiddenStruggles: [
-                '설계 실수 하나가 수천억 손실(Respin)로 이어질 수 있다는 압박감에 시달림',
-                '최신 기술 트렌드가 너무 빨라서 따라가기가 점점 버거움',
-                '젊은 천재 엔지니어들에게 기술적으로 뒤처지는 것 같은 열등감'
-            ]
-        },
-        team: {
-            size: 12,
-            seniorCount: 4,
-            juniorCount: 8,
-            composition: '팀장 1명 + 설계 엔지니어 8명 + 검증 엔지니어 3명',
-            digitalMaturity: 'Expert',
-            maturityDistribution: 'Expert 9명 + Advanced 3명',
-            resistanceFactors: [
-                '설계 엔지니어: "기존 툴(EDA)도 복잡한데 새로운 거 배울 시간 없다"며 거부',
-                '검증팀: "AI가 검증했다가 놓치면 책임질 거냐"며 신뢰성 의문 제기',
-                '시니어: "라떼는 손으로 다 그렸다"며 자동화 툴의 완성도 무시'
-            ]
-        },
-        work: {
-            mainTasks: [
-                '반도체 회로 설계',
-                '설계 검증 및 시뮬레이션',
-                'IP(지적재산권) 관리',
-                '설계 문서화 및 리뷰',
-                '공정 엔지니어와 협업'
-            ],
-            dailyWorkflow: '오전 9:30 출근 → 10시 밤사이 시뮬레이션 결과 확인 → 10:30-12시 회로 설계 집중 → 오후 1-3시 설계 리뷰 미팅 (Code Review) → 3-5시 검증 엔지니어와 디버깅 → 5-6시 설계 문서 업데이트',
-            weeklyRoutine: '월: 주간 설계 마일스톤 점검 | 화: IP 기술 세미나 | 수: 설계-공정 협업 회의 | 목: 시뮬레이션 리소스 최적화 | 금: 주간 버그 리포트',
-            collaboration: '팀 내부: Git과 JIRA로 설계 데이터 및 이슈 관리 | 타 부서: 공정팀과 설계 마진(Margin) 협의, 마케팅팀과 제품 스펙 논의 | 외부: EDA 툴 벤더와 기술 지원',
-            toolsUsed: ['CAD 툴(Cadence, Synopsys)', 'Git', 'JIRA', 'Confluence', 'Python', 'Slack'],
-            painPoints: [
-                '설계 검증 시뮬레이션이 오래 걸려 팀원들 대기 시간 많음 (주당 20시간)',
-                '설계 변경 이력 추적이 수동이라 팀원들 혼란',
-                '타 팀과 협업 문서가 분산되어 찾기 어려움'
-            ],
-            automationNeeds: [
-                'AI 기반 설계 최적화 자동화',
-                '설계 변경 이력 자동 추적 시스템',
-                '협업 문서 통합 플랫폼'
-            ],
-            workStructure: {
-                level: '고도구조화',
-                description: '설계 프로세스와 검증 절차 명확히 문서화. Git으로 버전 관리, JIRA로 태스크 관리. 주간 기술 공유와 코드 리뷰 정례화. 협업 체계 확립.'
-            }
-        },
-        expectedBehavior: {
-            initialAttitude: '중립',
-            concerns: [
-                'Expert 관점에서 구체적인 디지털 도구 연동이 안보이면 기대 낮음',
-                '비정형적 R&D 업무를 어떻게 표준화할 것인지 의문',
-                '미션 작성이 너무 선형적이고 템플릿화되어 있으면 우리 팀에 안 맞음'
-            ],
-            dropoutRisk: 5,
-        },
-        personality: {
-            patience: 8,
-            techSavvy: 10,
-            changeResistance: 'low',
-            learningSpeed: 'fast'
-        }
-    },
-
-    {
-        id: 'P013',
-        name: '임하린',
-        age: 40,
-        company: 'SK C&C',
-        department: 'AI연구팀',
-        role: '팀장',
-        category: 'R&D',
-        leaderProfile: {
-            yearsInRole: 2,
-            previousRole: 'AI 연구원',
-            promotionReason: '자연어 처리(NLP) 모델 성능 SOTA(State-of-the-art) 달성. 사내 AI 챗봇 서비스 상용화 주도',
-            leadershipStyle: '빠른 실험, 실패 허용, 주 2회 페이퍼 리뷰',
-            hiddenStruggles: [
-                'AI 팀장인데 AI 발전 속도가 너무 빨라서 현기증 남 (매일 새로운 논문 쏟아짐)',
-                '팀원들이 나보다 더 똑똑해서 기술적으로 리딩하기가 어려움 (권위가 안 섬)',
-                '비즈니스 성과를 증명해야 한다는 압박감 ("그래서 돈은 언제 버냐"는 소리 들음)'
-            ]
-        },
-        team: {
-            size: 5,
-            seniorCount: 2,
-            juniorCount: 3,
-            composition: '팀장 1명 + AI 연구원 4명',
-            digitalMaturity: 'Expert',
-            maturityDistribution: 'Expert 5명',
-            resistanceFactors: [
-                '연구원: "우리가 만드는 게 AI인데 남이 만든 툴을 왜 쓰냐" (Not Invented Here 증후군)',
-                '팀원들: "연구의 자유를 침해하지 마라"며 프로세스화/관리 거부',
-                '주니어: "재미있는 연구만 하고 싶다"며 데이터 전처리 같은 잡무 기피'
-            ]
-        },
-        work: {
-            mainTasks: [
-                '딥러닝 모델 연구 및 개발',
-                '대규모 데이터셋 구축 및 전처리',
-                '모델 성능 실험 및 평가',
-                '연구 논문 작성 및 발표',
-                '프로덕션 모델 배포 지원'
-            ],
-            dailyWorkflow: '오전 10시 출근 → 10:30 ArXiv 신규 논문 체크 → 11-12시 모델 학습 현황 모니터링 → 오후 1-3시 코딩 및 실험 설계 → 3-4시 페이퍼 리뷰 및 아이디어 회의 → 4-6시 실험 결과 분석 및 디버깅 → 6-7시 다음 실험 걸어두고 퇴근',
-            weeklyRoutine: '월: 주간 연구 목표 설정 | 화: 최신 AI 트렌드 공유 | 수: 코드 리뷰 | 목: 모델 성능 벤치마크 | 금: 주간 회고 및 데모',
-            collaboration: '팀 내부: GitHub, Slack, Notion으로 비동기 소통 활발 | 타 부서: 서비스 기획팀과 AI 기능 정의, 인프라팀과 GPU 자원 할당 협의 | 외부: 학회 참석 및 오픈소스 커뮤니티 활동',
-            toolsUsed: ['PyTorch', 'TensorFlow', 'Kubernetes', 'MLflow', 'Weights & Biases', 'GitHub', 'Notion'],
-            painPoints: [
-                '실험 트래킹을 팀원들이 수동으로 하느라 실험 비교 어려움',
-                '데이터셋 버전 관리가 안되어 재현성 문제',
-                '연구-프로덕션 간 모델 전환이 복잡해서 팀원들 스트레스'
-            ],
-            automationNeeds: [
-                '실험 자동 트래킹 및 비교 시스템',
-                '데이터셋 버전 관리 자동화',
-                'MLOps 파이프라인 구축'
-            ],
-            workStructure: {
-                level: '반구조화',
-                description: '연구 주제는 자율적으로 선정. GitHub로 코드 관리하나 실험 프로세스는 비정형적. 주 2회 페이퍼 리뷰로 지식 공유. MLflow 도입했으나 정착 미흡.'
-            }
-        },
-        expectedBehavior: {
-            initialAttitude: '중립',
-            concerns: [
-                '전략 업무(장기 기획, 비정형 분석)와의 연결고리가 보이지 않으면 무용',
-                '우리 팀이 이걸 언제 어떻게 써야 하는가가 명확하지 않으면 의미 없음',
-                '워크샵이 일반적인 업무 관리에 치중하면 AI 연구팀 특성에 안 맞음'
-            ],
-            dropoutRisk: 5,
-        },
-        personality: {
-            patience: 9,
-            techSavvy: 10,
-            changeResistance: 'low',
-            learningSpeed: 'fast'
-        }
-    },
-
-    {
-        id: 'P014',
-        name: '류소영',
-        age: 41,
-        company: 'SK이노베이션',
-        department: '배터리기술연구팀',
-        role: '팀장',
-        category: 'R&D',
-        leaderProfile: {
-            yearsInRole: 1.2,
-            previousRole: '재료 연구원 (8년 경력)',
-            promotionReason: '리튬메탈 음극재 신소재 개발로 특허 5건 출원, 에너지밀도 15% 향상 성과로 승진',
-            leadershipStyle: '안정적 연구 관리, 월간 연구 리뷰, 특허 중시. 하지만 팀원들의 연구 속도와 방향 조율에 어려움 느낌.',
-            hiddenStruggles: [
-                '실험 실패가 계속될 때 팀원들 사기 진작시키기가 너무 힘듦 (나도 힘든데)',
-                '특허 분쟁 리스크 때문에 항상 법무팀 눈치 보며 연구 노트 검열함',
-                '생산팀으로 기술 이관할 때마다 "이걸 어떻게 양산하냐"고 욕먹어서 서러움'
-            ]
-        },
-        team: {
-            size: 8,
-            seniorCount: 3,
-            juniorCount: 5,
-            composition: '팀장 1명 + 시니어 재료 연구원 3명(박사급, 10-15년차) + 주니어 공정 연구원 2명(석사급, 3-4년차) + 주니어 분석 연구원 3명(석사급, 2-5년차)',
-            digitalMaturity: 'Advanced',
-            maturityDistribution: 'Advanced 6명(시니어 3명 + 주니어 3명) + Intermediate 2명(주니어 공정 연구원)',
-            resistanceFactors: [
-                '시니어 연구원: "내 실험 노트는 며느리도 안 보여준다"며 데이터 공유 거부',
-                '분석 연구원: "장비마다 데이터 포맷이 달라서 통합 불가능하다"며 포기',
-                '공정 연구원: "실험실이랑 양산 라인은 천지 차이다"며 스케일업(Scale-up) 예측 불신'
-            ]
-        },
-        work: {
-            mainTasks: [
-                '차세대 배터리 재료 연구 (리튬메탈, 전고체 전해질)',
-                '전기화학 실험 및 분석 (사이클 수명, 출력 특성 평가)',
-                '배터리 성능 테스트 (셀 제작 후 충방전 실험, 주 평균 20건)',
-                '특허 출원 및 기술 문서 작성 (월 평균 1-2건 특허 출원)',
-                '생산팀과 기술 이관 협업 (파일럿 양산 프로세스 검증)'
-            ],
-            dailyWorkflow: '오전 8시 출근 → 전날 실험 데이터 확인 (셀 사이클 테스트 결과, 전기화학 분석 데이터) → 9시 팀 미팅 (20분, 각자 실험 진행 상황 공유) → 9:30-12시 실험실에서 재료 합성, 셀 조립, 측정 장비 세팅 (시니어들은 자율적으로, 주니어들은 수시로 질문) → 점심 후 1-3시 실험 데이터 분석 (Origin으로 그래프 그리고 Excel로 정리) → 3-5시 팀장이 주니어들 실험 결과 리뷰 및 다음 실험 방향 논의 → 5-6시 특허 초안 작성 또는 생산팀과 화상 미팅 → 저녁 7시 퇴근 (단, 긴급 실험 이슈 시 8-9시까지)',
-            weeklyRoutine: '월요일 오전: 주간 실험 계획 회의(1시간, 재료별 목표 설정) / 화요일: 시니어 연구원들과 특허 전략 논의 / 수요일 오후: 연구소 전체 세미나 참석 (최신 배터리 기술 동향) / 목요일: 주니어들 실험 노트 검토 및 피드백 / 금요일: 월간 연구 리뷰 준비 (PPT 작성, 진행률 점검)',
-            collaboration: '팀 내에서는 SharePoint에 실험 계획과 결과를 기록하지만 실제로는 각자 로컬 PC에 원본 데이터 보관. 주간 미팅에서 구두로 진행 공유. 생산팀과는 이메일로 기술 이관 논의. 외부 대학 연구실과 공동 연구 시 PPT와 이메일로 데이터 주고받음. 특허팀과는 월 1회 대면 미팅.',
-            toolsUsed: ['실험 장비 SW(Gamry, Biologic)', 'Origin', 'Excel', 'PowerPoint', 'SharePoint', '이메일', 'Zoom'],
-            painPoints: [
-                '시니어 연구원 3명이 각자 독자적으로 실험하는데, 누가 어떤 데이터를 갖고 있는지 물어봐야 알 수 있음. 로컬 PC에 흩어져 있어서 협업 시 찾기 어려움',
-                '주니어들이 같은 유형 실험을 반복하는데 매번 시니어한테 물어봐야 함. 과거 실험 데이터 검색이 안 돼서 중복 실험 하는 경우 많음',
-                '실험 결과를 PPT로 만들어서 이메일로 공유하는데, 버전 관리가 안 돼서 "최종_최종_진짜최종.pptx" 같은 파일이 쌓임',
-                '특허 출원 시 과거 실험 데이터를 찾느라 일주일씩 걸림. 누가 언제 어떤 조건으로 실험했는지 기록이 체계적이지 않음',
-                '월간 연구 리뷰 자료 만들 때 팀원들한테 일일이 데이터 달라고 요청해서 취합하는데 주말 반나절 소요'
-            ],
-            automationNeeds: [
-                '실험 데이터 중앙 저장소 (조건별, 날짜별 검색 가능)',
-                '데이터 분석 자동화 툴 (그래프 자동 생성, 트렌드 분석)',
-                '연구 히스토리 검색 시스템 (과거 실험 조건과 결과를 빠르게 찾기)'
-            ],
-            workStructure: {
-                level: '반구조화',
-                description: '재료/공정/분석별 담당은 명확하나 협업 프로세스 비정형적. 월간 연구 리뷰로 진행 공유. 실험 데이터 관리 규칙 있으나 준수 미흡. 시니어들은 독립적으로 연구하고 주니어들은 팀장에게 수시 보고.'
-            }
-        },
-        expectedBehavior: {
-            initialAttitude: '중립',
-            concerns: [
-                'Advanced 수준에서 구체적 개선점 도출보다 개념 설명이면 실망',
-                '8명 팀원들 실제 업무 중인데 배운 내용 적용할 시간이 있을지',
-                '자체 미션/비전 명확한데 일반적인 미션 작성 과정은 불필요할 듯',
-                '시니어 연구원들이 "데이터 관리 시스템 만들자"고 해도 "지금도 잘 하고 있는데 왜 바꾸냐"며 반발할까봐 걱정',
-                '특허 출원이 급한데 워크샵에서 배운 내용을 언제 적용하지'
-            ],
-            dropoutRisk: 10,
-        },
-        personality: {
-            patience: 7,
-            techSavvy: 8,
-            changeResistance: 'low',
-            learningSpeed: 'fast'
-        }
-    },
-
-    {
-        id: 'P015',
-        name: '조민석',
-        age: 41,
-        company: 'SK바이오사이언스',
-        department: '백신연구팀',
-        role: '팀장',
-        category: 'R&D',
-        leaderProfile: {
-            yearsInRole: 7,
-            previousRole: '바이러스 연구원',
-            promotionReason: '신규 백신 플랫폼 기술 확보로 파이프라인 3개 확장. 글로벌 임상 3상 성공적 진입',
-            leadershipStyle: '규제 준수 중시, 주간 진행 회의, 문서화 강조',
-            hiddenStruggles: [
-                '임상 3상 실패하면 프로젝트가 통째로 날아간다는 공포감에 시달림',
-                '식약처 규제가 너무 까다로워서 숨이 막힘 (문서 하나 틀리면 반려)',
-                '인류를 구한다는 윤리적 책임감과 회사의 상업적 성공 사이에서 갈등'
-            ]
-        },
-        team: {
-            size: 10,
-            seniorCount: 4,
-            juniorCount: 6,
-            composition: '팀장 1명 + 바이러스 연구원 4명 + 임상 연구원 3명 + 데이터 분석가 2명',
-            digitalMaturity: 'Intermediate',
-            maturityDistribution: 'Advanced 5명(연구원, 분석가) + Intermediate 3명 + Beginner 2명',
-            resistanceFactors: [
-                '임상 연구원: "규제(GCP) 때문에 클라우드 못 쓴다"며 보안 이슈 제기',
-                '데이터 분석가: "기존 SAS 코드가 수만 줄인데 이걸 언제 다 바꾸냐"며 저항',
-                '팀 전체: "문서 작업 하느라 연구할 시간이 없다"며 불만 토로'
-            ]
-        },
-        work: {
-            mainTasks: [
-                '백신 후보물질 개발',
-                '전임상/임상 시험 설계 및 진행',
-                '임상 데이터 분석',
-                '규제 기관 제출 문서 작성',
-                '연구 프로젝트 관리'
-            ],
-            dailyWorkflow: '오전 9시 출근 → 9:30 임상 사이트별 환자 등록 현황 확인 → 10-12시 임상 데이터 모니터링 및 이상 반응 체크 → 오후 1-3시 식약처 제출용 문서 작성 → 3-5시 CRO(임상수탁기관) 미팅 → 5-6시 글로벌 파트너사와 컨퍼런스 콜',
-            weeklyRoutine: '월: 주간 임상 현황 리뷰 | 화: 데이터 안전성 모니터링 위원회(DSMB) 대응 | 수: 임상 프로토콜 개정 논의 | 목: 규제 동향 스터디 | 금: 주간 리포트',
-            collaboration: '팀 내부: SharePoint로 문서 공동 작업 | 타 부서: RA(규제과학)팀과 인허가 전략 논의, 사업개발팀과 라이선스 아웃 협의 | 외부: 병원 임상시험센터 및 식약처와 긴밀 소통',
-            toolsUsed: ['LIMS(실험실정보관리)', 'SAS', 'Excel', 'PowerPoint', 'SharePoint'],
-            painPoints: [
-                '임상 데이터가 여러 병원, 여러 형식이라 통합 관리 어려움',
-                '규제 문서 작성을 수작업으로 하느라 팀원들 야근 많음',
-                '연구 진행 상황을 실시간 파악 못해서 일정 지연 많음'
-            ],
-            automationNeeds: [
-                '임상 데이터 통합 플랫폼',
-                '규제 문서 자동 생성 시스템',
-                '프로젝트 진행 대시보드'
-            ],
-            workStructure: {
-                level: '고도구조화',
-                description: '임상시험 프로토콜과 규제 문서 작성 절차 명확. 주간 진행 회의와 월간 마일스톤 리뷰 정례화. LIMS로 데이터 관리하나 통합 부족.'
-            }
-        },
-        expectedBehavior: {
-            initialAttitude: '중립',
-            concerns: [
-                '임상 연구는 규제가 엄격한데 워크샵에서 제안하는 도구가 컴플라이언스 이슈 있을까',
-                '팀원 수준 차이 있는데 내가 배운 내용을 어떻게 각 수준에 맞게 전달할지',
-                '3시간으로 복잡한 임상 연구 프로세스를 다룰 수 있을지 의문'
-            ],
-            dropoutRisk: 20,
-        },
-        personality: {
-            patience: 6,
-            techSavvy: 6,
-            changeResistance: 'medium',
-            learningSpeed: 'medium'
-        }
-    },
-    // ==================== HR (5명) ====================
-    {
-        id: 'P016',
-        name: '김서연',
-        age: 36,
-        company: 'SK텔레콤',
-        department: '인재영입팀',
-        role: '팀장',
-        category: 'HR',
-        leaderProfile: {
-            yearsInRole: 1.5,
-            previousRole: '채용 담당자',
-            promotionReason: 'AI 분야 핵심 인재(박사급) 20명 영입 성공으로 "Global AI Company" 비전 달성 기여. 채용 리드타임 60일 → 35일 단축',
-            leadershipStyle: '데이터 기반 채용, 후보자 경험(CX) 집착, 신속한 피드백. "채용은 영업이다" 마인드.',
-            hiddenStruggles: [
-                '현업 팀장들이 "사람 없다"고 징징대면서 막상 면접관으로는 안 들어오려고 해서 중간에서 난처함',
-                '지원자가 합격 후 입사 포기(No-show)하면 내 실적 깎이는 거라 밤잠 설침',
-                '채용 브랜딩 하라는데 나는 마케터가 아니라서 뭘 해야 할지 막막함'
-            ]
-        },
-        team: {
-            size: 8,
-            seniorCount: 3,
-            juniorCount: 5,
-            composition: '팀장 1명 + 테크 리크루터 3명(AI/Cloud) + 캠퍼스 리크루팅 2명 + 채용 브랜딩/운영 2명',
-            digitalMaturity: 'Advanced',
-            maturityDistribution: 'Advanced 4명(리크루터) + Intermediate 4명',
-            resistanceFactors: [
-                '현업 면접관: "바빠 죽겠는데 면접 평가표 언제 다 쓰냐"며 대충 작성',
-                '인사팀(보상): "연봉 테이블 예외 승인 절대 안 된다"며 유연성 부족',
-                '채용 담당자: "후보자 감성은 AI가 모른다"며 자동화 툴 불신'
-            ]
-        },
-        work: {
-            mainTasks: [
-                'AI/DT 분야 S급 인재 타겟팅 및 다이렉트 소싱 (LinkedIn, GitHub)',
-                '채용 전형(서류-코테-면접-처우협의) 운영 및 일정 조율',
-                '채용 브랜딩 콘텐츠(유튜브, 블로그) 기획 및 기술 컨퍼런스 참가',
-                '면접관 교육 및 채용 데이터(Funnel) 분석',
-                '신규 입사자 온보딩(Onboarding) 프로그램 운영'
-            ],
-            dailyWorkflow: '오전 9시 출근 → 9:30 ATS(지원자관리시스템) 대시보드 확인 (밤사이 지원자 체크) → 10-12시 링크드인 서칭 및 콜드 메일 발송 (하루 50통) → 오후 1-3시 현업 면접관과 일정 조율 (전화 돌리느라 바쁨) → 3-5시 면접 진행 및 가이드 → 5-6시 합격자 처우 협의 (연봉 줄다리기) → 6-7시 채용 데이터 정리',
-            weeklyRoutine: '월: 주간 채용 파이프라인 리뷰 | 화: 기술 면접관 워크샵 | 수: 채용 브랜딩 회의 | 목: 신규 입사자 웰컴 세션 | 금: 주간 리포트 및 마감',
-            collaboration: '팀 내부: Greenhouse(ATS)와 Slack으로 후보자 상태 공유. 타 부서: 현업 개발 팀장들과 채용 요건(JD) 정의(눈높이 맞추기 힘듦), 인사팀과 연봉 테이블 협의. 외부: 헤드헌터 및 대학 취업센터와 협업.',
-            toolsUsed: ['Greenhouse(ATS)', 'LinkedIn Recruiter', 'Programmers(코테)', 'Notion', 'Slack', 'Zoom'],
-            painPoints: [
-                '현업 팀장들이 "사람 좀 빨리 뽑아달라"고 닥달하면서, 정작 면접 일정 잡으려고 하면 "바빠서 안 된다"고 함',
-                '면접 평가표가 엑셀이나 종이로 되어 있어서, "이 지원자 왜 떨어졌나요?"라고 물으면 기록 찾느라 진땀 뺌',
-                '지원자들의 단순 문의(합격 언제 나오나요, 주차 되나요)에 일일이 답변하느라 소싱할 시간이 부족함'
-            ],
-            automationNeeds: [
-                'AI 기반 면접 일정 자동 조율 (구글 캘린더 연동)',
-                '면접 평가 데이터 자동 분석 및 코멘트 요약',
-                '채용 문의 자동 응대 챗봇 (FAQ 처리)'
-            ],
-            workStructure: {
-                level: '반구조화',
-                description: '채용 프로세스는 명확하나(SOP 존재), 사람을 다루는 일이라 변수(No-show, 처우 결렬)가 많음. ATS 시스템 사용하지만 일정 조율은 수동. 데이터 기반 의사결정 지향.'
-            }
-        },
-        expectedBehavior: {
-            initialAttitude: '기대함',
-            concerns: [
-                '채용은 사람이 하는 일이라 자동화가 후보자 경험을 해칠까 우려',
-                '면접관들이 새로운 평가 시스템에 적응할 수 있을지',
-                '워크샵에서 배운 내용을 ATS와 어떻게 연동할지 기술적 고민'
-            ],
-            dropoutRisk: 10,
-        },
-        personality: {
-            patience: 8,
-            techSavvy: 8,
-            changeResistance: 'low',
-            learningSpeed: 'fast'
-        }
-    },
-
-    {
-        id: 'P017',
-        name: '이준호',
-        age: 43,
-        company: 'SK하이닉스',
-        department: '조직문화팀',
-        role: '팀장',
-        category: 'HR',
-        leaderProfile: {
-            yearsInRole: 3,
-            previousRole: '교육 담당자',
-            promotionReason: '사내 소통 앱 "Hy-Talk" 활성화로 임직원 참여율 80% 달성. "님" 호칭 문화 정착 및 세대 간 갈등 해소 프로그램 호평',
-            leadershipStyle: '소통 중심, 수평적 문화 지향, 감성 리더십. "행복 경영" 전도사.',
-            hiddenStruggles: [
-                '직원들이 "조직문화팀은 노는 부서"라고 생각하는 것 같아 억울함',
-                '경영진은 "행복"을 숫자로 가져오라고 하는데 그게 말이 되나 싶음',
-                '블라인드 악플 볼 때마다 상처받지만 쿨한 척해야 해서 속병 듦'
-            ]
-        },
-        team: {
-            size: 6,
-            seniorCount: 2,
-            juniorCount: 4,
-            composition: '팀장 1명 + 문화 기획 3명(행사/캠페인) + 사내 커뮤니케이션 2명(방송/뉴스레터)',
-            digitalMaturity: 'Intermediate',
-            maturityDistribution: 'Advanced 2명(영상/디자인) + Intermediate 2명 + Beginner 2명',
-            resistanceFactors: [
-                '직원들: "보여주기식 행사 지겹다", "이거 할 시간에 일찍 퇴근이나 시켜줘라"며 냉소적',
-                '팀장급: "일할 시간도 부족한데 무슨 워크샵이냐"며 팀원들 안 보냄',
-                '경영진: "돈 쓴 만큼 효과가 있냐"며 ROI 증명 압박'
-            ]
-        },
-        work: {
-            mainTasks: [
-                '조직문화 진단(Culture Survey) 및 개선 활동 (Happy Friday 등)',
-                'CEO 타운홀 미팅 및 전사 행사 기획/운영',
-                '사내 소통 채널(블라인드, 사내게시판) 모니터링 및 이슈 대응',
-                '핵심가치(SKMS) 내재화 워크샵 운영',
-                '임직원 몰입도(Engagement) 관리'
-            ],
-            dailyWorkflow: '오전 9시 출근 → 9:30 블라인드/사내게시판 여론 확인 (악플 있으면 긴장) → 10시 팀 아이디어 회의 (자유로운 분위기) → 11-12시 타운홀 미팅 리허설 → 오후 1-3시 현장 부서 인터뷰 (고충 청취) → 3-5시 사내 방송 콘텐츠 편집 확인 → 5-6시 설문 결과 보고서 작성',
-            weeklyRoutine: '월: 주간 이슈 점검 | 화: 문화 캠페인 기획 | 수: 사내 방송 녹화 | 목: 조직장 코칭 세션 | 금: Happy Friday 운영 지원',
-            collaboration: '팀 내부: Notion으로 아이디어 공유, Slack으로 짤방 대화. 타 부서: 홍보팀과 위기 관리 협업, 총무팀과 행사 지원 협의. 외부: 이벤트 대행사 및 강사 섭외.',
-            toolsUsed: ['SurveyMonkey', 'Notion', 'Slack', 'Premiere Pro', 'Excel'],
-            painPoints: [
-                '매년 하는 조직문화 진단 설문조사(객관식 50문항) 결과를 엑셀로 분석하는데, 주관식 답변 3,000개를 읽다가 눈 빠짐',
-                '타운홀 미팅 때 질문 안 나와서 정적 흐르면 식은땀 남. 사전 질문 취합하고 선별하는 게 일임',
-                '경영진은 "문화가 좋아졌다는 걸 숫자로 가져와라"고 하는데, 사람 마음을 어떻게 숫자로 증명하나 답답함'
-            ],
-            automationNeeds: [
-                'AI 기반 설문 주관식 응답 감성 분석 및 키워드 추출',
-                '타운홀 미팅 실시간 Q&A 필터링 및 요약',
-                '조직문화 변화 지표(참여율, 댓글 수 등) 자동 대시보드'
-            ],
-            workStructure: {
-                level: '비구조화',
-                description: '업무 특성상 매우 창의적이고 비정형적. 정답이 없음. 그때그때 여론에 따라 유연하게 대처해야 함. 정량적 성과 측정이 가장 어려움.'
-            }
-        },
-        expectedBehavior: {
-            initialAttitude: '중립',
-            concerns: [
-                '조직문화는 정성적인 영역인데 데이터/자동화로 접근하는게 맞을지',
-                '팀원들이 창의적인 업무보다 시스템 관리에 시간 뺏길까 걱정',
-                '워크샵 내용이 너무 딱딱하면 우리 팀 문화와 안 맞을 듯'
-            ],
-            dropoutRisk: 20,
-        },
-        personality: {
-            patience: 9,
-            techSavvy: 5,
-            changeResistance: 'medium',
-            learningSpeed: 'medium'
-        }
-    },
-
-    {
-        id: 'P018',
-        name: '박지민',
-        age: 39,
-        company: 'SK이노베이션',
-        department: '보상복리후생팀',
-        role: '팀장',
-        category: 'HR',
-        leaderProfile: {
-            yearsInRole: 4,
-            previousRole: '급여 담당자',
-            promotionReason: '통상임금 소송 대응 완벽 수행 및 급여 시스템 고도화로 연말정산 오류 0건 달성. 꼼꼼함의 대명사.',
-            leadershipStyle: '정확성 중시, 규정 준수(Compliance), 무결점 지향. "돈 문제는 1원도 틀리면 안 된다".',
-            hiddenStruggles: [
-                '월급날만 되면 혹시 이체 사고 날까 봐 심장이 쫄깃함 (꿈에서도 식은땀)',
-                '직원들이 고맙다는 말은 안 하고 "왜 이거밖에 안 들어왔냐"고 따질 때마다 회의감',
-                '법이 자꾸 바뀌어서 공부할 게 너무 많음 (매년 세무사 시험 다시 보는 기분)'
-            ]
-        },
-        team: {
-            size: 7,
-            seniorCount: 3,
-            juniorCount: 4,
-            composition: '팀장 1명 + 급여(Payroll) 담당 2명 + 4대보험/퇴직금 2명 + 복리후생(학자금/의료비) 2명',
-            digitalMaturity: 'Advanced',
-            maturityDistribution: 'Expert 1명(SAP HR) + Advanced 3명(Excel 장인) + Intermediate 3명',
-            resistanceFactors: [
-                'IT팀: "급여 시스템은 건드리면 큰일 난다"며 수정/연동 거부',
-                '직원들: "내가 낸 영수증 왜 반려하냐"며 규정 무시하고 떼씀',
-                '팀원들: "엑셀이 제일 편하다"며 새로운 시스템 도입 귀찮아함'
-            ]
-        },
-        work: {
-            mainTasks: [
-                '매월 급여 및 성과급(PS/PI) 계산 및 지급',
-                '4대보험 취득/상실 신고 및 연말정산 관리',
-                '복리후생(학자금, 의료비, 콘도) 운영 및 예산 관리',
-                '인건비 예산 수립 및 시뮬레이션',
-                '세법/노동법 변경에 따른 급여 테이블 조정'
-            ],
-            dailyWorkflow: '오전 9시 출근 → 9:30 전일 근태 마감 확인 (지각/연차 체크) → 10-12시 급여 변동분(승진, 부서이동) SAP 입력 → 오후 1-3시 직원 문의 전화 응대 (하루 30통) → 3-5시 4대보험 공단 신고 → 5-6시 일일 자금 집행 내역 검증',
-            weeklyRoutine: '월: 주간 급여 작업 스케줄링 | 화: 복리후생 신청 마감 | 수: 4대보험 정산 | 목: 급여 대장 가마감 및 검증 | 금: 자금 팀에 급여 이체 요청',
-            collaboration: '팀 내부: SAP HR 모듈과 엑셀(VLOOKUP 필수)로 교차 검증. 타 부서: 재무팀과 인건비 지급 일정 협의, 인사팀과 발령 정보 공유. 외부: 세무서, 노동부, 보험공단과 공문 수발신.',
-            toolsUsed: ['SAP HR', 'Excel (Power Query)', '홈택스', '4대보험 포털', '더존'],
-            painPoints: [
-                '연말정산 시즌(1-2월) 되면 전표 3,000장 풀칠하고 영수증 대조하느라 매일 야근 (집에 못 감)',
-                '직원들이 "내 월급 왜 이거밖에 안 들어왔냐", "세금 왜 이렇게 많이 떼냐" 전화해서 화냄 (감정 노동)',
-                '세법이 매년 바뀌는데 시스템에 반영하려면 IT팀에 수정 요청하고 테스트하느라 2달 걸림'
-            ],
-            automationNeeds: [
-                'RPA 기반 급여/4대보험 신고 자동화 및 오류 검증',
-                'AI 챗봇으로 "내 연차 며칠 남았어?", "의료비 신청 어떻게 해?" 같은 단순 문의 자동 응대',
-                '영수증 OCR 인식 및 연말정산 서류 자동 검토'
-            ],
-            workStructure: {
-                level: '고도구조화',
-                description: '급여/4대보험 프로세스는 법적 규제와 사규에 의해 100% 정해져 있음. 창의성보다는 정확성과 준법성이 핵심. 월간/연간 사이클이 명확함.'
-            }
-        },
-        expectedBehavior: {
-            initialAttitude: '기대함',
-            concerns: [
-                '급여 데이터 보안이 중요한데 외부 툴 사용이 가능할지',
-                'RPA 도입하고 싶은데 개발 리소스가 없어서 못하고 있음',
-                '워크샵에서 실질적인 자동화 툴을 배울 수 있을지 기대'
-            ],
-            dropoutRisk: 5,
-        },
-        personality: {
-            patience: 8,
-            techSavvy: 7,
-            changeResistance: 'low',
-            learningSpeed: 'medium'
-        }
-    },
-
-    {
-        id: 'P019',
-        name: '최현석',
-        age: 45,
-        company: 'SK스퀘어',
-        department: 'HRD팀',
-        role: '팀장',
-        category: 'HR',
-        leaderProfile: {
-            yearsInRole: 5,
-            previousRole: '교육 기획자',
-            promotionReason: 'SK그룹 공통 교육 플랫폼 "mySUNI" 사내 도입 및 활성화 주도. 학습 시간 이수제 정착으로 자기주도 학습 문화 조성',
-            leadershipStyle: '성장 지향, 학습 조직(Learning Organization) 구축, 코칭 리더십. "배워서 남 주자".',
-            hiddenStruggles: [
-                '교육 효과가 없다는 소리 들을까 봐 항상 전전긍긍함 (교육 무용론)',
-                '강사 섭외 펑크 나면 내가 때워야 해서 항상 강의안 준비해 다님',
-                '직원들이 교육을 "쉬러 가는 시간"으로만 생각해서 속상함'
-            ]
-        },
-        team: {
-            size: 9,
-            seniorCount: 4,
-            juniorCount: 5,
-            composition: '팀장 1명 + 교육 기획 4명(리더십/직무/온보딩) + 운영 담당 2명 + 콘텐츠 제작 2명(영상/카드뉴스)',
-            digitalMaturity: 'Advanced',
-            maturityDistribution: 'Advanced 5명(콘텐츠, 기획) + Intermediate 4명',
-            resistanceFactors: [
-                '현업 팀장: "교육 보내놨더니 일은 언제 하냐"며 불만',
-                '교육생: "이거 들어도 현업에 도움 안 된다", "너무 이론적이다"며 딴짓',
-                'IT팀: "LMS 서버 용량 부족하다"며 고화질 영상 업로드 제한'
-            ]
-        },
-        work: {
-            mainTasks: [
-                '연간 임직원 역량 개발 계획(IDP) 수립 및 운영',
-                '온라인 학습 플랫폼(LMS) 운영 및 큐레이션',
-                '핵심 인재(HIPO) 육성 프로그램 및 팀장 리더십 과정 기획',
-                '신입/경력 입사자 교육(Soft Landing) 운영',
-                '교육 효과성 측정(ROI) 및 결과 보고'
-            ],
-            dailyWorkflow: '오전 9시 출근 → 9:30 LMS 접속률 및 이수율 확인 → 10시 교육 과정 기획 회의 → 11-12시 외부 강사 섭외 통화 → 오후 1-3시 교육장 현장 점검 또는 온라인 웨비나 모니터링 → 3-5시 교육생 만족도 설문 분석 → 5-6시 결과 보고서 작성',
-            weeklyRoutine: '월: 주간 교육 일정 체크 | 화: 콘텐츠 제작 리뷰 | 수: 강사 미팅 | 목: 역량 진단 데이터 분석 | 금: 주간 교육 리포트 및 회고',
-            collaboration: '팀 내부: Notion으로 과정 기획안 공유. 타 부서: 현업 팀장들과 교육 니즈 인터뷰, IT팀과 LMS 시스템 오류 수정. 외부: 교육 컨설팅 업체 및 전문 강사들과 협업.',
-            toolsUsed: ['mySUNI(LMS)', 'Zoom/Webex', 'Articulate(저작도구)', 'Excel', 'Notion'],
-            painPoints: [
-                '교육 만족도 설문(5점 척도)만으로는 진짜 현업에 도움이 됐는지 알 수가 없음. "간식 맛있었어요" 같은 피드백만 옴',
-                '직원들이 바쁘다고 교육을 "숙제"처럼 생각하고 영상만 틀어놓고 딴짓함 (이수율 채우기 급급)',
-                '개인별로 필요한 역량이 다 다른데, 일괄적인 집합 교육만 하니까 효과가 떨어짐'
-            ],
-            automationNeeds: [
-                'AI 기반 개인별 직무/역량 맞춤형 콘텐츠 큐레이션 (넷플릭스처럼 추천)',
-                '교육 후 현업 적용도(Transfer) 추적 및 성과 연계 분석',
-                '교육 이수 자동 알림 및 독려 봇 (Gamification 적용)'
-            ],
-            workStructure: {
-                level: '반구조화',
-                description: '교육 기획은 창의적이나 운영은 정형적. LMS로 이력 관리. 연간 계획에 따라 움직이나 수시 과정 개설도 많음. 교육 효과 측정의 모호함이 과제.'
-            }
-        },
-        expectedBehavior: {
-            initialAttitude: '기대함',
-            concerns: [
-                '에듀테크 트렌드를 따라가고 싶은데 예산이 부족함',
-                'AI 추천 시스템 도입하려면 데이터가 더 필요할 것 같음',
-                '워크샵에서 배운 툴을 우리 LMS에 붙일 수 있을지'
-            ],
-            dropoutRisk: 10,
-        },
-        personality: {
-            patience: 9,
-            techSavvy: 8,
-            changeResistance: 'low',
-            learningSpeed: 'fast'
-        }
-    },
-
-    {
-        id: 'P020',
-        name: '정수진',
-        age: 37,
-        company: 'SK네트웍스',
-        department: '노무관리팀',
-        role: '팀장',
-        category: 'HR',
-        leaderProfile: {
-            yearsInRole: 2,
-            previousRole: '노무 담당자',
-            promotionReason: '주 52시간제 도입 시 유연근무제 설계로 법적 리스크 해소 및 직원 만족도 제고. 노사 분규 0건 유지',
-            leadershipStyle: '원칙 준수, 공정한 중재자, 리스크 관리. 감정적으로 휘둘리지 않음.',
-            hiddenStruggles: [
-                '직원들 징계할 때마다 마음이 너무 무거움 (나도 사람인데)',
-                '노사 협상 기간에는 집에 못 들어가고 사우나에서 잠 (체력 고갈)',
-                '법적 리스크 때문에 말 한마디도 조심해야 해서 성격이 예민해짐'
-            ]
-        },
-        team: {
-            size: 5,
-            seniorCount: 2,
-            juniorCount: 3,
-            composition: '팀장 1명 + 노무 담당(ER) 2명(노무사 자격증 소지) + 고충 처리/상담 2명',
-            digitalMaturity: 'Intermediate',
-            maturityDistribution: 'Advanced 1명 + Intermediate 2명 + Beginner 2명',
-            resistanceFactors: [
-                '현업 부서장: "우리 애가 좀 실수한 거 가지고 왜 그러냐"며 징계 반대',
-                '노조: "회사가 감시하려고 시스템 도입한다"며 강력 저항',
-                '팀원들: "보안 때문에 클라우드 못 쓴다"며 수기 작업 고수'
-            ]
-        },
-        work: {
-            mainTasks: [
-                '노사 협의회 운영 및 임금/단체 협약(임단협) 교섭',
-                '취업규칙 제/개정 및 인사 규정 관리 (노동법 준수)',
-                '직원 고충(직장 내 괴롭힘, 성희롱) 상담 및 조사',
-                '근로시간(주 52시간) 모니터링 및 위반 리스크 관리',
-                '노무 이슈 법률 자문 및 소송 대응'
-            ],
-            dailyWorkflow: '오전 9시 출근 → 9:30 전일 근태 위반자(연장근로 초과) 확인 및 경고 메일 발송 → 10-12시 노무 법인 자문 회의 → 오후 1-3시 직원 고충 상담 (비밀 보장 회의실) → 3-5시 취업규칙 개정안 검토 → 5-6시 노사 협의회 안건 정리',
-            weeklyRoutine: '월: 주간 근태 현황 점검 | 화: 고충 처리 위원회 | 수: 노무사 미팅 | 목: 규정 개정 검토 | 금: 주간 노무 리스크 보고',
-            collaboration: '팀 내부: 보안 폴더(접근 권한 제한)로 민감 정보 관리. 타 부서: 현업 부서장과 근태 관리 협의(왜 팀원들 야근 시키냐고 따짐), 법무팀과 소송 대응. 외부: 노무법인, 노동부 근로감독관과 소통.',
-            toolsUsed: ['근태관리시스템(Secom)', 'Excel', 'Word', '이메일', '녹음기'],
-            painPoints: [
-                '주 52시간 위반 임박한 직원들 찾아서 "퇴근하세요"라고 일일이 연락하는 게 일임 (경찰관 된 기분)',
-                '직장 내 괴롭힘 신고 들어오면 사실 관계 조사하느라 CCTV 돌려보고 인터뷰하고 녹취록 푸느라 한 달 다 감',
-                '노동법이 수시로 바뀌는데(판례 변경 등) 일일이 찾아서 규정에 반영하기가 너무 번거롭고 리스크 큼'
-            ],
-            automationNeeds: [
-                '근로시간 위반 예측 및 부서장/본인에게 자동 경고 알림',
-                '상담 내용 음성 인식 및 텍스트 변환(STT), 주요 키워드 추출',
-                '최신 노동법 판례 자동 검색 및 우리 회사 규정과의 차이점 분석'
-            ],
-            workStructure: {
-                level: '고도구조화',
-                description: '법적 규제(근로기준법)와 사규에 따라 매우 엄격하게 업무 수행. 절차와 기준 명확(Due Process). 보안 중요. 시스템보다 문서/대면 위주 업무.'
-            }
-        },
-        expectedBehavior: {
-            initialAttitude: '회의적',
-            concerns: [
-                '노무 정보는 민감해서 클라우드 툴 사용이 꺼려짐',
-                '사람 대 사람으로 해결해야 할 문제를 시스템으로 하려는 건 아닌지',
-                '워크샵 내용이 법적 리스크를 고려하고 있는지 의문'
-            ],
-            dropoutRisk: 30,
-        },
-        personality: {
-            patience: 8,
-            techSavvy: 4,
-            changeResistance: 'high',
-            learningSpeed: 'slow'
-        }
-    },
-    // ==================== FINANCE (3명) ====================
-    {
-        id: 'P021',
-        name: '강수진',
-        age: 40,
-        company: 'SK텔레콤',
-        department: '재무기획팀',
-        role: '팀장',
-        category: 'Finance',
-        leaderProfile: {
-            yearsInRole: 3,
-            previousRole: '재무 분석가',
-            promotionReason: '5G 네트워크 투자 비용(CAPEX) 3,000억 절감 방안 도출. 구독 마케팅 예산 ROI 분석 모델 개발로 마케팅 효율 20% 개선',
-            leadershipStyle: '냉철한 분석가, 숫자 검증 중시, 논리적 설득. "숫자는 거짓말을 하지 않는다".',
-            hiddenStruggles: [
-                '사업부장들이 예산 깎는다고 나를 "공공의 적" 취급해서 회사 다니기가 외로움',
-                'CEO가 갑자기 숫자 물어보면 바로 대답 못할까 봐 항상 긴장 상태 (숫자 강박증)',
-                '매년 반복되는 예산 전쟁에 지쳐서 "내가 이러려고 팀장 했나" 회의감 느낌'
-            ]
-        },
-        team: {
-            size: 6,
-            seniorCount: 2,
-            juniorCount: 4,
-            composition: '팀장 1명 + 예산 기획 2명(마케팅/네트워크) + 재무 분석 3명 + 투자 심의 1명',
-            digitalMaturity: 'Advanced',
-            maturityDistribution: 'Expert 2명(Excel/SAP) + Advanced 2명 + Intermediate 2명',
-            resistanceFactors: [
-                '사업부: "현장 상황 모르는 탁상공론이다", "돈 안 주면 사업 못 한다"며 예산 통제 반발',
-                '재무 분석가: "엑셀이 내 몸과 같다", "시스템은 느려서 못 쓴다"며 새로운 BI 툴 도입 거부',
-                '경영진: "그래서 결론이 뭐냐", "한 장으로 요약해라"며 깊이 있는 분석 무시'
-            ]
-        },
-        work: {
-            mainTasks: [
-                '전사 연간 예산(Budget) 수립 및 통제 (조 단위 규모)',
-                '사업부별 월간 손익(P&L) 분석 및 성과 평가',
-                '신규 사업(AI, 메타버스) 투자 타당성 검토 및 ROI 분석',
-                '비용 절감(Cost Saving) 프로젝트 주도',
-                '이사회 및 CEO 보고용 경영 실적 리포트 작성'
-            ],
-            dailyWorkflow: '오전 8:30 출근 → 9시 전일 매출/가입자 속보 확인 → 10-12시 사업부 예산 담당자와 실적 리뷰 (왜 목표 미달했는지 추궁) → 오후 1-3시 신규 투자 건 심의 보고서 검토 → 3-5시 CEO 보고 자료 작성 (PPT 장표 수정 무한 반복) → 5-6시 예산 전용(Transfer) 승인 처리',
-            weeklyRoutine: '월: 주간 자금/손익 전망 | 화: 마케팅 비용 효율화 회의 | 수: 투자 심의 위원회 | 목: 사업부별 이슈 점검 | 금: 주간 경영 실적 보고',
-            collaboration: '팀 내부: SAP ERP 데이터 엑셀로 받아서 가공. 타 부서: 사업부장들과 예산 따내기 전쟁(매번 싸움), 회계팀과 결산 데이터 대조. 외부: 컨설팅사와 비용 구조 진단 프로젝트.',
-            toolsUsed: ['SAP ERP', 'Excel (VBA, Power Pivot)', 'Tableau', 'PowerPoint'],
-            painPoints: [
-                '사업부에서 예산 더 달라고 떼쓰는데, 근거 데이터 가져오라고 하면 "영업 비밀"이라며 안 줌',
-                'CEO 보고 1시간 전인데 엑셀 수식 깨져서 #REF! 뜨면 심장 멎을 것 같음',
-                '매월 말일만 되면 "예산 남았는데 다 써야 한다"며 보도블록 갈아엎듯 불필요한 지출 결재 올라옴'
-            ],
-            automationNeeds: [
-                '예산 대비 실적 차이(Variance) 자동 분석 및 원인 코멘트 생성',
-                '투자 ROI 시뮬레이션 자동화 (변수만 넣으면 결과 나오게)',
-                'CEO 보고용 PPT 장표 자동 업데이트 (엑셀 연동)'
-            ],
-            workStructure: {
-                level: '고도구조화',
-                description: '재무 회계 기준(K-IFRS)과 사규에 따라 엄격한 프로세스. 월간/분기 결산 일정 고정. 데이터 정확성이 최우선. SAP 시스템 의존도 높음.'
-            }
-        },
-        expectedBehavior: {
-            initialAttitude: '중립',
-            concerns: [
-                '재무 데이터는 보안이 생명인데 클라우드 AI에 올려도 되는지 (CISO 승인 필요)',
-                'AI가 분석한 숫자를 경영진이 믿어줄까? "근거가 뭐야?" 하면 설명할 수 있어야 함',
-                '엑셀만큼 유연하게 내 맘대로 뜯어고칠 수 있는 툴이 있을지 의문'
-            ],
-            dropoutRisk: 10,
-        },
-        personality: {
-            patience: 8,
-            techSavvy: 7,
-            changeResistance: 'medium',
-            learningSpeed: 'medium'
-        }
-    },
-
-    {
-        id: 'P022',
-        name: '이승우',
-        age: 38,
-        company: 'SK하이닉스',
-        department: '회계팀',
-        role: '팀장',
-        category: 'Finance',
-        leaderProfile: {
-            yearsInRole: 2,
-            previousRole: '회계사',
-            promotionReason: 'IFRS 17 회계 기준 도입 프로젝트 성공적 완수. 결산 리드타임 5일 → 3일 단축으로 경영진 의사결정 속도 기여',
-            leadershipStyle: '원칙 준수, 꼼꼼함(Detail-oriented), 야근도 불사하는 책임감. "회계는 1원도 틀리면 안 된다".',
-            hiddenStruggles: [
-                '결산 시즌에는 가족 얼굴도 못 보고 회사에서 살아야 해서 가정 소홀에 대한 죄책감',
-                '세무 조사 나오면 내가 다 책임져야 한다는 부담감에 항상 위축됨',
-                '회계 기준이 너무 자주 바뀌어서 따라가기 벅참 (공부하다 늙는 기분)'
-            ]
-        },
-        team: {
-            size: 10,
-            seniorCount: 4,
-            juniorCount: 6,
-            composition: '팀장 1명 + 결산(Closing) 담당 4명 + 세무(Tax) 2명 + 자금(Treasury) 2명 + 내부회계 1명',
-            digitalMaturity: 'Advanced',
-            maturityDistribution: 'Expert 3명(SAP FI) + Advanced 4명 + Intermediate 3명',
-            resistanceFactors: [
-                '현업 부서: "영수증 처리 귀찮다", "알아서 좀 해주면 안 되냐"며 증빙 제출 지연',
-                '감사인: "시스템 데이터 못 믿겠다"며 원본 종이 서류 요구',
-                '팀원들: "단순 반복 업무 때문에 커리어 발전이 없다"며 퇴사 고민'
-            ]
-        },
-        work: {
-            mainTasks: [
-                '월간/분기/연간 재무제표 결산 및 공시',
-                '법인세/부가세 신고 및 세무 조사 대응',
-                '자금 집행 계획 수립 및 유동성 관리',
-                '내부회계관리제도(SOX) 운영 및 감사 대응',
-                '반도체 장비 감가상각비 관리'
-            ],
-            dailyWorkflow: '오전 9시 출근 → 9:30 전표 승인 대기 목록 확인 (하루 500건) → 10-12시 자금 집행 승인 (OTP 누르느라 바쁨) → 오후 1-3시 회계법인 감사인 대응 (자료 달라고 독촉) → 3-5시 세무 이슈 검토 → 5-6시 일일 자금 일보 보고',
-            weeklyRoutine: '월: 주간 자금 수지 계획 | 화: 미결 전표 독촉 | 수: 세무 리스크 점검 | 목: 내부통제 테스트 | 금: 주간 결산 이슈 정리',
-            collaboration: '팀 내부: SAP FI/CO 모듈 사용. 타 부서: 구매팀과 매입 채무 대조, 영업팀과 매출 채권 회수 독촉. 외부: 삼일회계법인, 국세청, 은행 담당자와 매일 통화.',
-            toolsUsed: ['SAP ERP', 'Excel', 'DART(공시시스템)', '홈택스', 'Unipass(관세)'],
-            painPoints: [
-                '월말 결산 시즌(D-5) 되면 새벽 2시 퇴근이 기본. 컵라면 먹으며 전표 맞춤',
-                '증빙 영수증이 종이로 오거나 사진 파일로 와서 일일이 엑셀에 타이핑해야 함 (OCR 도입 시급)',
-                '회계 기준이 바뀌면 SAP 시스템 뜯어고쳐야 하는데 IT팀 일정 잡기가 하늘의 별따기'
-            ],
-            automationNeeds: [
-                '전표 자동 처리 및 이상 징후(Anomaly) 탐지 (RPA + AI)',
-                '증빙 영수증 OCR 인식 및 계정 과목 자동 추천',
-                '결산 스케줄 자동 관리 및 지연 부서 알림 봇'
-            ],
-            workStructure: {
-                level: '고도구조화',
-                description: '회계 기준(K-IFRS)에 따라 절차 매우 엄격. 결산 프로세스 표준화됨. 시스템 의존도 매우 높음. 마감 기한(Deadline) 준수 필수.'
-            }
-        },
-        expectedBehavior: {
-            initialAttitude: '중립',
-            concerns: [
-                '회계는 실수가 용납 안 되는데 AI가 99% 정확하다고 해도 1% 틀리면 대형 사고',
-                '기존 SAP 시스템이 너무 무거워서 가벼운 AI 툴이랑 연동이 될지 의문',
-                '워크샵이 너무 일반적인 내용이면 전문적인 회계 업무에 적용하기 어려움'
-            ],
-            dropoutRisk: 15,
-        },
-        personality: {
-            patience: 9,
-            techSavvy: 6,
-            changeResistance: 'medium',
-            learningSpeed: 'medium'
-        }
-    },
-
-    {
-        id: 'P023',
-        name: '박재훈',
-        age: 42,
-        company: 'SK이노베이션',
-        department: 'IR팀',
-        role: '팀장',
-        category: 'Finance',
-        leaderProfile: {
-            yearsInRole: 4,
-            previousRole: '애널리스트',
-            promotionReason: 'SK온(배터리) 물적분할 및 프리IPO(Pre-IPO) 성공적 지원. 외국인 지분율 5%p 상승 견인',
-            leadershipStyle: '전략적 소통, 네트워크 중시, 위기 관리 능력. "주가는 회사의 얼굴이다".',
-            hiddenStruggles: [
-                '주가 떨어지면 주주들에게 욕먹고 경영진에게 깨지는 동네북 신세',
-                '투자자들 앞에서 회사의 치부도 포장해서 말해야 하는 감정 노동에 시달림',
-                '미공개 정보 유출될까 봐 친구들도 마음 편히 못 만남 (인간관계 단절)'
-            ]
-        },
-        team: {
-            size: 4,
-            seniorCount: 2,
-            juniorCount: 2,
-            composition: '팀장 1명 + 공시 담당 1명 + 해외 IR 1명 + 국내 IR 1명',
-            digitalMaturity: 'Advanced',
-            maturityDistribution: 'Expert 1명(Bloomberg) + Advanced 2명 + Intermediate 1명',
-            resistanceFactors: [
-                '경영진: "주가 부양할 수 있는 호재 없냐"며 무리한 보도자료 배포 요구',
-                '법무팀: "공시 위반 리스크 있다", "단어 하나라도 틀리면 안 된다"며 IR 자료 검열',
-                '사업부: "우리 실적 왜 이렇게 낮게 잡았냐"며 컨센서스 조정 항의'
-            ]
-        },
-        work: {
-            mainTasks: [
-                '국내외 기관 투자자 대상 NDR(Non-Deal Roadshow) 및 컨퍼런스',
-                '분기 실적 발표(Earnings Call) 시나리오 작성 및 Q&A 준비',
-                '주주총회 및 이사회 안건 준비',
-                '증권사 애널리스트 리포트 분석 및 대응 (Consensus 관리)',
-                '경영진 대상 주가 동향 및 시장 반응 보고'
-            ],
-            dailyWorkflow: '오전 7:30 출근 (장 시작 전 뉴스 체크) → 8:30 모닝 미팅 (전일 미 증시 영향 분석) → 9-15시 장중 주가 모니터링 및 투자자 전화 응대 (하루 50통) → 15:30 장 마감 후 기관 수급 분석 → 16-18시 애널리스트 미팅 또는 보고서 작성',
-            weeklyRoutine: '월: 주간 증시 전망 및 일정 | 화: 외국인 투자자 컨퍼런스 콜 | 수: 사업부 실적 체크 | 목: 예상 실적(Preview) 분석 | 금: 주간 IR 리포트 발송',
-            collaboration: '팀 내부: Bloomberg 단말기, Dart 편집기 사용. 타 부서: 재무팀과 실적 숫자 맞추기, 홍보팀과 보도자료 톤앤매너 조율. 외부: 모건스탠리, 골드만삭스 등 외국계 증권사와 영어로 소통.',
-            toolsUsed: ['Bloomberg Terminal', 'FnGuide', 'Excel', 'DART 편집기', 'Zoom'],
-            painPoints: [
-                '실적 발표 시즌 되면 "이번에 흑자 전환 하냐"고 묻는 투자자들 전화에 시달림 (답변 잘못하면 공시 위반)',
-                '수십 개 증권사 리포트를 다 읽고 요약해서 경영진한테 보고해야 하는데 시간이 너무 부족함',
-                '주가 떨어지면 주주들이 회사로 전화해서 욕함 (감정 노동 심함)'
-            ],
-            automationNeeds: [
-                '투자자 예상 질문(Q&A) 답변 자동 생성 및 스크립트 작성',
-                '전 세계 증권사 리포트 및 뉴스 자동 요약 (Sentiment 분석)',
-                '실적 발표 자료(PPT) 및 스크립트 자동 번역 (영문 공시용)'
-            ],
-            workStructure: {
-                level: '반구조화',
-                description: '실적 발표 등 정기 이벤트는 정형적이나, 시장 상황(주가 급등락)에 따른 대응은 매우 유동적. 정보의 정확성과 타이밍이 생명.'
-            }
-        },
-        expectedBehavior: {
-            initialAttitude: '기대함',
-            concerns: [
-                'AI가 투자자들의 미묘한 뉘앙스나 심리를 파악할 수 있을지',
-                '미공개 중요 정보(Material Info)를 AI에 입력했다가 유출되면 법적 책임 문제',
-                '블룸버그 터미널보다 더 빠르고 정확한 정보를 줄 수 있을까'
-            ],
-            dropoutRisk: 5,
-        },
-        personality: {
-            patience: 7,
-            techSavvy: 8,
-            changeResistance: 'low',
-            learningSpeed: 'fast'
-        }
-    },
-
-    // ==================== IT (2명) ====================
-    {
-        id: 'P024',
-        name: '김동현',
-        age: 39,
-        company: 'SK C&C',
-        department: '클라우드개발팀',
-        role: '팀장',
-        category: 'IT',
-        leaderProfile: {
-            yearsInRole: 3,
-            previousRole: '백엔드 개발자',
-            promotionReason: '그룹사 클라우드 전환(Migration) 프로젝트 성공으로 인프라 비용 30% 절감. MSA 도입으로 배포 속도 5배 향상',
-            leadershipStyle: '기술 리더십(Tech Lead), 코드 리뷰 중시, 자율과 책임. "개발자는 코드로 말한다".',
-            hiddenStruggles: [
-                '장애 나면 새벽에도 불려 나가야 해서 불면증과 만성 피로에 시달림',
-                '개발자들 연봉이 너무 올라서 팀원들 붙잡아두기가 힘듦 (나보다 많이 받는 팀원도 있음)',
-                '신기술 도입하고 싶은데 레거시 시스템 때문에 발목 잡혀서 답답함'
-            ]
-        },
-        team: {
-            size: 15,
-            seniorCount: 5,
-            juniorCount: 10,
-            composition: '팀장 1명 + 백엔드(Java/Spring) 6명 + 프론트엔드(React) 4명 + DevOps(AWS/K8s) 4명',
-            digitalMaturity: 'Expert',
-            maturityDistribution: 'Expert 8명(시니어) + Advanced 7명(주니어)',
-            resistanceFactors: [
-                '운영팀: "안정성이 최우선이다", "배포 자주 하지 마라"며 CI/CD 도입 반대',
-                '보안팀: "클라우드는 위험하다", "망분리 해야 한다"며 인프라 구조 제약',
-                '시니어 개발자: "내가 짠 코드가 완벽하다"며 AI 코드 리뷰 무시'
-            ]
-        },
-        work: {
-            mainTasks: [
-                'SK 그룹사 레거시 시스템의 클라우드(AWS/Azure) 마이그레이션',
-                'MSA(Microservices Architecture) 설계 및 구축',
-                'CI/CD 파이프라인 운영 및 자동화',
-                'Kubernetes 클러스터 운영 및 모니터링',
-                '주니어 개발자 코드 리뷰 및 멘토링'
-            ],
-            dailyWorkflow: '오전 9:30 출근 → 10시 데일리 스크럼 (어제 한 일, 오늘 할 일, Blocker 공유) → 10:30-12시 코드 리뷰 (PR 코멘트 달기) → 오후 1-3시 아키텍처 설계 회의 → 3-5시 집중 코딩 시간 (헤드폰 끼고 방해 금지) → 5-6시 트러블 슈팅 및 회고',
-            weeklyRoutine: '월: 스프린트 플래닝 | 화: 테크 세미나 | 수: 아키텍처 리뷰 | 목: 타운홀 미팅 | 금: 스프린트 리뷰 및 회고(Retrospective)',
-            collaboration: '팀 내부: Jira, Slack, GitHub, Confluence로 비동기 협업. 타 부서: 기획/디자인팀과 피그마 보면서 스펙 논쟁. 외부: AWS/MS 엔지니어와 기술 지원 티켓 씨름.',
-            toolsUsed: ['AWS', 'Kubernetes', 'Jenkins/ArgoCD', 'GitHub', 'Jira', 'Slack', 'IntelliJ', 'Datadog'],
-            painPoints: [
-                '기획팀에서 "간단한 수정이니까 금방 되죠?"라고 하는데, 구조 뜯어고쳐야 해서 3일 걸리는 일일 때 설명하기 힘듦',
-                '주니어들이 짠 코드 리뷰하다가 하루 다 감. "이거 왜 이렇게 짰어?" 물어보면 "GPT가 짰는데요"라고 함',
-                '새벽 3시에 서버 다운됐다고 알람(PagerDuty) 울리면 자다가 깨서 노트북 켜야 함'
-            ],
-            automationNeeds: [
-                'AI 기반 코드 자동 리뷰 및 버그 탐지 (SonarQube보다 똑똑한 거)',
-                '회의록 자동 요약 및 Jira 티켓 자동 생성',
-                '장애 로그(Log) 자동 분석 및 원인(Root Cause) 추적'
-            ],
-            workStructure: {
-                level: '고도구조화',
-                description: '애자일(Scrum) 방법론 철저 준수. 2주 단위 스프린트. 모든 코드는 깃허브로 관리되고 CI/CD로 자동 배포됨. 프로세스는 명확하나 기술적 난이도가 높음.'
-            }
-        },
-        expectedBehavior: {
-            initialAttitude: '기대함',
-            concerns: [
-                '이미 Copilot 쓰고 있는데 워크샵에서 더 새로운 걸 알려줄까',
-                '보안 규정 때문에 사내망에서 외부 AI 서비스 접속이 막혀있는데 해결책이 있나',
-                '비개발자(기획/디자인)들이랑 협업하는 툴이 더 필요함'
-            ],
-            dropoutRisk: 5,
-        },
-        personality: {
-            patience: 7,
-            techSavvy: 10,
-            changeResistance: 'low',
-            learningSpeed: 'fast'
-        }
-    },
-
-    {
-        id: 'P025',
-        name: '이민호',
-        age: 41,
-        company: 'SK텔레콤',
-        department: '보안운영팀',
-        role: '팀장',
-        category: 'IT',
-        leaderProfile: {
-            yearsInRole: 4,
-            previousRole: '보안 엔지니어',
-            promotionReason: '지능형 보안 관제 시스템(ESM) 구축으로 해킹 시도 방어율 99.99% 달성. ISMS-P 인증 심사 무결점 통과',
-            leadershipStyle: '보안 제일(Security First), 원칙 준수, 24시간 긴장. "보안은 뚫리면 끝이다".',
-            hiddenStruggles: [
-                '보안 사고 안 나면 본전이고 나면 역적이라 성과 인정받기 어려움 (잘해도 티가 안 남)',
-                '직원들이 나를 "감시자"나 "통제광"으로 보는 시선이 불편함',
-                '해커들은 날고 기는데 우리는 예산 부족으로 기어가는 느낌이라 무력감 느낌'
-            ]
-        },
-        team: {
-            size: 12,
-            seniorCount: 5,
-            juniorCount: 7,
-            composition: '팀장 1명 + 보안 관제(CERT) 6명(3교대) + 보안 정책/컴플라이언스 3명 + 모의해킹(Red Team) 2명',
-            digitalMaturity: 'Expert',
-            maturityDistribution: 'Expert 6명(해커 출신) + Advanced 6명',
-            resistanceFactors: [
-                '임직원: "보안 프로그램 때문에 PC 느려졌다", "일 좀 하게 해달라"며 삭제 요구',
-                '개발팀: "방화벽 때문에 외부 라이브러리 못 받는다"며 예외 처리 지속 요청',
-                '경영진: "보안에 돈 쓰면 매출이 오르냐"며 투자 인색'
-            ]
-        },
-        work: {
-            mainTasks: [
-                '24시간 365일 보안 관제 및 침해 사고 대응 (DDoS, 랜섬웨어)',
-                '임직원 PC/서버 취약점 점검 및 조치',
-                '정보보호 관리체계(ISMS-P) 인증 유지 및 심사 대응',
-                '악성 메일 모의 훈련 및 임직원 보안 교육',
-                '보안 솔루션(방화벽, IPS, WAF) 정책 관리'
-            ],
-            dailyWorkflow: '오전 9시 출근 → 9:30 전일 보안 이벤트(공격 시도) 리포트 확인 → 10시 침해 사고 분석 회의 → 11-12시 신규 취약점(Zero-day) 대응 방안 수립 → 오후 1-3시 보안 위규자(USB 무단 사용 등) 소명 처리 → 3-5시 보안 솔루션 정책 업데이트 → 5-6시 퇴근 전 보안 점검',
-            weeklyRoutine: '월: 주간 보안 동향 분석 | 화: 모의해킹 결과 리뷰 | 수: 보안 교육 자료 제작 | 목: ISMS 증적 관리 | 금: 주간 관제 리포트',
-            collaboration: '팀 내부: Splunk(로그분석)와 보안 메신저 사용. 타 부서: IT팀과 서버 패치 일정 싸움(서버 재부팅 해야 하니까), 현업 부서와 "사이트 접속 풀어달라" 민원 씨름. 외부: KISA(인터넷진흥원) 및 보안 업체와 위협 정보 공유.',
-            toolsUsed: ['Splunk', 'Wireshark', 'Kali Linux', 'Jira', 'Confluence', 'AhnLab'],
-            painPoints: [
-                '하루에 보안 로그가 100만 건씩 쌓이는데, 그중 99%가 오탐(False Positive)이라 진짜 공격 찾기가 모래사장 바늘 찾기임',
-                '임직원들이 "보안 때문에 일 못하겠다"고 불만 제기할 때마다 스트레스 받음 (우리는 회사를 지키는 건데)',
-                '해커들은 AI로 공격하는데 우리는 사람이 수동으로 방어하고 있음 (비대칭 전력)'
-            ],
-            automationNeeds: [
-                'AI 기반 보안 위협 자동 탐지 및 대응 (SOAR) - 오탐 줄이기',
-                '피싱 메일/악성 파일 자동 분석 및 격리',
-                '임직원 보안 문의(사이트 차단 해제 등) 자동 처리 챗봇'
-            ],
-            workStructure: {
-                level: '고도구조화',
-                description: '보안 규정과 절차는 법(Law)임. 예외 없음. 침해 대응 매뉴얼(Playbook) 존재. 24시간 교대 근무. 시스템 의존도 절대적.'
-            }
-        },
-        expectedBehavior: {
-            initialAttitude: '회의적',
-            concerns: [
-                '외부 AI 툴에 우리 회사 보안 로그를 올린다고? 절대 불가 (Data Leakage 우려)',
-                'AI가 판단 잘못해서 중요 서버 차단해버리면 장애 나는데 책임질 수 있나',
-                '폐쇄망(인터넷 안됨) 환경이라 클라우드 기반 AI 툴은 그림의 떡'
-            ],
-            dropoutRisk: 30,
-        },
-        personality: {
-            patience: 8,
-            techSavvy: 9,
-            changeResistance: 'high',
-            learningSpeed: 'medium'
-        }
-    },
-
-    // ==================== STRATEGY (1명) ====================
-    {
-        id: 'P026',
-        name: '김도현',
-        age: 44,
-        company: 'SK주식회사',
-        department: 'ESG전략팀',
-        role: '팀장',
-        category: 'Strategy',
-        leaderProfile: {
-            yearsInRole: 2,
-            previousRole: '경영 전략가',
-            promotionReason: 'SK그룹 Net Zero(탄소중립) 로드맵 수립 및 RE100 가입 주도. DJSI World 지수 3년 연속 편입 달성',
-            leadershipStyle: '비전 제시, 글로벌 감각, 이해관계자 소통. "착한 기업이 돈도 잘 번다".',
-            hiddenStruggles: [
-                'ESG가 "돈 먹는 하마"라고 생각하는 보수적인 임원들 설득하기가 너무 힘듦',
-                '글로벌 기준은 계속 높아지는데 우리 현실은 따라가기 벅차서 가랑이 찢어질 것 같음',
-                '좋은 일 한다고 자부하지만 정작 회사 내에서는 "비용 부서"라며 찬밥 신세'
-            ]
-        },
-        team: {
-            size: 6,
-            seniorCount: 3,
-            juniorCount: 3,
-            composition: '팀장 1명 + 환경(E) 담당 2명(탄소배출권) + 사회(S) 담당 2명(사회공헌) + 지배구조(G) 담당 1명',
-            digitalMaturity: 'Advanced',
-            maturityDistribution: 'Expert 1명(데이터) + Advanced 3명 + Intermediate 2명',
-            resistanceFactors: [
-                '공장장: "탄소 배출 줄이려면 공장 멈추라는 거냐"며 현실적 어려움 토로',
-                '구매팀: "친환경 소재 쓰면 원가 올라간다"며 비협조적 태도',
-                '계열사 담당자: "본사에서 시키니까 하긴 하는데 우리 사정 모른다"며 수동적 대응'
-            ]
-        },
-        work: {
-            mainTasks: [
-                '그룹 ESG 경영 전략 수립 및 KPI 관리',
-                '지속가능경영 보고서 발간 (GRI, SASB 기준)',
-                '글로벌 ESG 평가 대응 (MSCI, DJSI, CDP)',
-                '탄소배출권 거래 및 감축 프로젝트 관리',
-                '이사회 산하 ESG 위원회 운영 지원'
-            ],
-            dailyWorkflow: '오전 9시 출근 → 9:30 글로벌 ESG 뉴스/규제 동향 모니터링 (EU 공급망 실사법 등) → 10-12시 계열사 ESG 담당자 회의 (데이터 취합 독촉) → 오후 1-3시 지속가능경영 보고서 원고 검토 → 3-5시 평가 기관(MSCI) 질의서 답변 작성 → 5-6시 경영진 보고',
-            weeklyRoutine: '월: 주간 ESG 이슈 브리핑 | 화: 탄소배출량 데이터 검증 | 수: 사회공헌 프로그램 기획 | 목: 평가 대응 전략 회의 | 금: 주간 활동 보고',
-            collaboration: '팀 내부: Teams와 이메일로 자료 공유. 타 부서: 전 계열사 공장장들과 탄소 배출량 줄이기 협의(힘듦), 구매팀과 공급망 리스크 관리. 외부: 평가 기관, 컨설팅사, NGO와 소통.',
-            toolsUsed: ['Excel', 'PowerPoint', 'Teams', 'ESG 데이터 플랫폼(Salesforce Net Zero Cloud)', 'Zoom'],
-            painPoints: [
-                '계열사 공장마다 탄소 배출량 측정 기준이 달라서 엑셀 취합하다가 머리 터짐 (데이터 정합성 문제)',
-                '글로벌 평가 기관(MSCI, DJSI)마다 요구하는 데이터가 다르고 매년 기준이 바뀜',
-                '보고서 시즌(5-7월) 되면 디자인 업체랑 밤새면서 오타 수정하고 번역 검수함'
-            ],
-            automationNeeds: [
-                'ESG 데이터 자동 수집 및 표준화 (IoT 센서 연동)',
-                '글로벌 규제/평가 기준 변경 사항 자동 알림 및 갭 분석',
-                '지속가능경영 보고서 초안 자동 작성 및 다국어 번역'
-            ],
-            workStructure: {
-                level: '반구조화',
-                description: '전략 수립은 비정형적이나 데이터 취합은 정형적이어야 함(근데 잘 안됨). 글로벌 기준에 따라 업무 변화 많음. 협업 대상이 매우 광범위.'
-            }
-        },
-        expectedBehavior: {
-            initialAttitude: '기대함',
-            concerns: [
-                'ESG 데이터 관리에 AI 도입하면 그린워싱(Greenwashing) 리스크는 없을지',
-                '글로벌 트렌드 파악에 도움 될지',
-                '워크샵에서 배운 내용을 계열사 전체에 전파할 수 있을지 (표준화 가능성)'
-            ],
-            dropoutRisk: 5,
-        },
-        personality: {
-            patience: 8,
-            techSavvy: 7,
-            changeResistance: 'low',
-            learningSpeed: 'fast'
-        }
-    },
-
-    // Placeholders for P027-P030
-    {
-        id: 'P027',
-        name: '박준영',
-        age: 35,
-        company: 'SK텔레콤',
-        department: '서비스기획팀',
-        role: '팀장',
-        category: 'Strategy',
-        leaderProfile: {
-            yearsInRole: 1.5,
-            previousRole: '서비스 기획자',
-            promotionReason: 'SK텔레콤 구독 서비스 "T우주" 런칭 초기 기획 주도하여 가입자 100만 명 조기 달성. 데이터 기반의 요금제 설계로 ARPU 15% 증대 성과',
-            leadershipStyle: '데이터 중심, 애자일, 빠른 실행력. 하지만 개발/디자인 팀과의 협업에서 오는 마찰로 스트레스 받음.',
-            hiddenStruggles: [
-                '개발자, 디자이너, 사업부 사이에서 조율하느라 정작 기획할 시간이 없음 (회의 지옥)',
-                '경쟁사는 치고 나가는데 우리는 내부 프로세스에 발목 잡혀 있는 것 같아 답답함',
-                '실패하면 기획 탓, 성공하면 개발 덕분이라는 인식에 회의감 느낌'
-            ]
-        },
-        team: {
-            size: 8,
-            seniorCount: 2,
-            juniorCount: 6,
-            composition: '팀장 1명 + 서비스 기획자 5명(T우주 패스 담당 3명, 제휴 담당 2명) + UX 리서처 2명',
-            digitalMaturity: 'Advanced',
-            maturityDistribution: 'Advanced 4명(기획자, 리서처) + Intermediate 4명',
-            resistanceFactors: [
-                '개발팀: "기획서가 부실해서 개발 못하겠다", "스펙이 계속 바뀐다"며 반려',
-                '디자인팀: "개발 구현 안 된다고 디자인 퀄리티 낮추지 마라"며 고집',
-                '사업부: "돈 되는 기능을 먼저 넣어라"며 UX 무시하고 압박'
-            ]
-        },
-        work: {
-            mainTasks: [
-                'T우주 신규 제휴처 발굴 및 서비스 로드맵 수립 (분기별 3개 신규 제휴 목표)',
-                '가입자 이탈률(Churn Rate) 분석 및 방어 시나리오 설계',
-                '개발팀(백엔드/프론트) 및 디자인팀과 스프린트 일정 조율',
-                '경쟁사(네이버 플러스, 쿠팡 와우) 서비스 벤치마킹 및 대응 전략',
-                '주간 서비스 지표(가입자, 매출, 리텐션) 대시보드 관리'
-            ],
-            dailyWorkflow: '오전 9:30 데일리 스크럼 (Jira 보드 띄워놓고 15분) → 10-12시 Amplitude로 전날 가입/해지 데이터 분석 → 오후 1-3시 개발팀과 "선물하기" 기능 구현 스펙 논의 (개발팀장이 레거시 코드 때문에 안 된다고 반대 중) → 3-5시 신규 제휴사(요기요, 투썸) 미팅 → 5-6시 기획서(Figma/PPT) 디테일 보완',
-            weeklyRoutine: '월: 주간 스프린트 플래닝 (2시간) | 화: 데이터 딥다이브 (이탈 원인 분석) | 수: 경쟁사 동향 리뷰 | 목: 기획 리뷰 (디자이너/개발자 참여) | 금: 주간 성과 회고 (KPT 회고)',
-            collaboration: '팀 내부: Jira로 티켓 관리, Confluence에 기획서 작성. Slack으로 실시간 소통. 타 부서: 개발팀과는 Jira 연동, 마케팅팀과는 주 1회 정기 미팅. 외부: 제휴사와는 이메일/미팅.',
-            toolsUsed: ['Figma', 'Jira', 'Confluence', 'Amplitude', 'Slack', 'Notion'],
-            painPoints: [
-                '개발팀장이 "기획서가 부실해서 개발 못하겠다"며 티켓을 자꾸 반려함 (주당 3-4건)',
-                '수많은 사용자 리뷰(앱스토어, 커뮤니티)를 엑셀로 긁어서 수동으로 분류하느라 인사이트 도출이 3일씩 걸림',
-                '회의록 정리하고 Jira 티켓 쪼개는 데만 하루 2시간 씀. 정작 기획 고민할 시간이 부족함'
-            ],
-            automationNeeds: [
-                '회의 녹음 파일 자동 요약 및 Jira 티켓 자동 생성/할당',
-                '사용자 리뷰/피드백 자동 수집 및 감성 분석 (긍정/부정/버그/제안)',
-                '경쟁사 서비스 가격/정책 변동 사항 실시간 알림'
-            ],
-            workStructure: {
-                level: '반구조화',
-                description: '기획 업무는 창의적이나 프로세스는 애자일(Scrum) 방법론 따름. 2주 단위 스프린트로 돌아감. 데이터 분석은 정형적이나, 타 부서와의 협업 조율은 매우 정치적이고 비정형적.'
-            }
-        },
-        expectedBehavior: {
-            initialAttitude: '기대함',
-            concerns: [
-                '기획의 창의적인 영역(아이디에이션)까지 AI가 대체할 수 있을지 의문',
-                '고객 데이터(개인정보) 보안 문제로 실제 데이터를 AI에 넣기 어려움',
-                'Jira/Confluence랑 연동 안 되면 결국 또 다른 툴 하나 더 쓰는 셈이라 귀찮음'
-            ],
-            dropoutRisk: 10,
-        },
-        personality: {
-            patience: 7,
-            techSavvy: 9,
-            changeResistance: 'low',
-            learningSpeed: 'fast'
-        }
-    },
-
-    {
-        id: 'P028',
-        name: '최민지',
-        age: 32,
-        company: 'SK플래닛',
-        department: 'UX디자인팀',
-        role: '팀장',
-        category: 'IT',
-        leaderProfile: {
-            yearsInRole: 1,
-            previousRole: 'UX 디자이너',
-            promotionReason: '전사 디자인 시스템 "T-Design 2.0" 구축으로 디자인 일관성 확보 및 개발 효율 30% 증대. 에이닷(A.) 앱 UX 개편 주도',
-            leadershipStyle: '디테일 중시, 사용자 공감, 자유로운 피드백. 하지만 개발팀과의 구현 가능성 논쟁에 지쳐있음.',
-            hiddenStruggles: [
-                '디자인은 주관적이라 모두가 한마디씩 거드는 통에 스트레스 받음 (시어머니가 100명)',
-                '개발 구현 단계에서 디자인이 망가지는 걸 볼 때마다 가슴이 찢어짐 (픽셀이 안 맞음)',
-                '트렌드는 힙한 걸 원하는데 회사는 보수적인 걸 원해서 괴리감 느낌'
-            ]
-        },
-        team: {
-            size: 6,
-            seniorCount: 1,
-            juniorCount: 5,
-            composition: '팀장 1명 + UI 디자이너 3명(앱/웹) + UX 디자이너 2명(리서치/설계)',
-            digitalMaturity: 'Advanced',
-            maturityDistribution: 'Advanced 6명 (모두 툴 사용 능숙)',
-            resistanceFactors: [
-                '개발팀: "그 애니메이션 넣으면 앱 느려진다", "라이브러리 없다"며 구현 거부',
-                '기획팀: "화면 예쁜 것보다 기능이 중요하다", "버튼 더 크게 해달라"며 디자인 무시',
-                '마케팅팀: "로고 더 크게, 빨간색 더 진하게"라며 브랜드 가이드 위반 요구'
-            ]
-        },
-        work: {
-            mainTasks: [
-                '에이닷(A.) 서비스 UX/UI 리뉴얼 및 신규 기능 디자인',
-                'T-Design 시스템 컴포넌트 라이브러리 유지보수 및 고도화',
-                '사용자 사용성 테스트(UT) 설계 및 결과 분석',
-                '개발 산출물 디자인 검수(QA) 및 픽셀 퍼펙트 체크',
-                '마케팅 배너 및 프로모션 페이지 디자인 지원'
-            ],
-            dailyWorkflow: '오전 10시 디자인 크리틱 (Figma 화면 띄워놓고 서로 코멘트) → 11-1시 시안 작업 집중 (이어폰 끼고 말 안검) → 오후 2-3시 개발팀 핸드오프 미팅 (제플린 가이드 설명) → 3-5시 UT 참관 (미러룸에서 사용자 반응 관찰) → 5-6시 디자인 에셋 정리 및 네이밍',
-            weeklyRoutine: '월: 주간 디자인 스프린트 킥오프 | 화: 레퍼런스 스터디 (Behance, Dribbble) | 수: 디자인 시스템 위원회 (컴포넌트 추가 논의) | 목: 개발 QA (구현된 화면 캡쳐해서 피드백) | 금: 주간 회고 및 디자인 잼',
-            collaboration: '팀 내부: Figma 실시간 협업 (커서가 날아다님). Slack으로 시안 공유. 타 부서: 기획팀과 와이어프레임 논의, 개발팀과 구현 가능성 협의 (자주 싸움).',
-            toolsUsed: ['Figma', 'ProtoPie', 'Zeplin', 'Jira', 'Slack', 'Adobe CC'],
-            painPoints: [
-                '단순 반복적인 배너 리사이징(인스타용, 유튜브용, 앱배너용) 작업에 주니어들이 지쳐서 퇴사 고민함',
-                '개발팀이 디자인 가이드(Zeplin)를 줬는데도 제멋대로 구현해서 QA할 때마다 "이거 색상 코드 다르잖아요"라고 싸움',
-                '디자인 파일 버전 관리가 안 돼서 "최종_v2_real_fix.fig" 같은 파일이 쌓이고 히스토리 파악이 안 됨'
-            ],
-            automationNeeds: [
-                '배너/아이콘 등 단순 그래픽 에셋 AI 자동 생성 및 리사이징',
-                'Figma 디자인을 React/CSS 코드로 완벽하게 변환 (개발자 핑계 못 대게)',
-                '디자인 시스템 변경 사항이 자동으로 가이드 문서에 업데이트'
-            ],
-            workStructure: {
-                level: '반구조화',
-                description: '창의성이 요구되나 디자인 시스템 규칙(Color, Typography, Spacing) 준수 필수. 반복 작업(배너 양산) 존재. 협업 툴(Figma) 의존도 100%.'
-            }
-        },
-        expectedBehavior: {
-            initialAttitude: '기대함',
-            concerns: [
-                'AI가 만든 디자인이 우리 브랜드 톤앤매너(SKT Red, 폰트 등)를 정확히 지킬 수 있을지',
-                '디자이너들이 "AI가 다 하면 우리는 뭐 하냐"며 직무 불안감을 느낄까 봐',
-                '저작권 문제가 없는 이미지를 생성할 수 있는지 (상업적 이용 가능 여부)'
-            ],
-            dropoutRisk: 5,
-        },
-        personality: {
-            patience: 8,
-            techSavvy: 9,
-            changeResistance: 'low',
-            learningSpeed: 'fast'
-        }
-    },
-
-    {
-        id: 'P029',
-        name: '정우성',
-        age: 45,
-        company: 'SK하이닉스',
-        department: '구매팀',
-        role: '팀장',
-        category: 'Finance',
-        leaderProfile: {
-            yearsInRole: 5,
-            previousRole: '구매 담당',
-            promotionReason: '반도체 핵심 소재(네온 가스) 수급 위기 시 우크라이나 대체 공급망(중국, 국내) 3일 만에 확보하여 라인 중단 방지. 원가 12% 절감 달성',
-            leadershipStyle: '협상가형, 리스크 관리, 원칙 준수. 스트레스 내성 강함.',
-            hiddenStruggles: [
-                '원가 절감 압박과 공급사 단가 인상 요구 사이에서 샌드위치 신세',
-                '공급망 이슈 터지면 내 탓인 것 같아 자다가도 벌떡 일어남 (전쟁, 지진 공포)',
-                '협력사 접대받는다는 오해받을까 봐 밥도 편하게 못 먹음 (윤리 규정 압박)'
-            ]
-        },
-        team: {
-            size: 10,
-            seniorCount: 4,
-            juniorCount: 6,
-            composition: '팀장 1명 + 원자재 구매 4명(가스/케미칼) + 설비 구매 3명(노광/식각 장비) + 협력사 관리 3명(SCM)',
-            digitalMaturity: 'Intermediate',
-            maturityDistribution: 'Intermediate 10명 (SAP는 잘 쓰지만 신기술엔 보수적)',
-            resistanceFactors: [
-                '생산팀: "싼 게 비지떡이다, 좋은 자재 써라"며 원가 절감 반대',
-                '협력사: "더 이상 깎으면 우리 망한다", "납품 못 한다"며 배수진',
-                '법무팀: "계약서 문구 하나라도 불리하면 안 된다"며 승인 지연'
-            ]
-        },
-        work: {
-            mainTasks: [
-                '반도체 전공정 핵심 원자재(Wafer, Gas, Chemical) 구매 전략 수립',
-                '글로벌 공급망 리스크(전쟁, 지진, 무역제재) 실시간 모니터링',
-                '주요 장비(ASML 등) 리드타임 단축을 위한 협상',
-                '협력사 ESG 평가 및 단가 인하(CR) 활동',
-                '구매 계약서 법적 리스크 검토 및 체결'
-            ],
-            dailyWorkflow: '오전 8:30 블룸버그/로이터로 원자재 시황 및 환율 체크 → 9:30 팀 미팅 (수급 이슈 공유) → 10-12시 공급사(미국/일본)와 화상 협상 (시차 때문에 오전/밤에 많음) → 오후 1-3시 계약서 독소조항 검토 (법무팀과 통화) → 3-5시 발주(PO) 생성 및 결재 → 5-6시 자재 입고 현황 보고',
-            weeklyRoutine: '월: 주간 구매 계획 수립 | 화: 공급사 QBR(분기 리뷰) 준비 | 수: 원가 절감 아이디어 회의 | 목: 계약 심의 위원회 | 금: 주간 리스크 점검 및 재고 확인',
-            collaboration: '팀 내부: SAP MM 모듈로 데이터 공유. 타 부서: 생산팀과 자재 투입 일정 조율(매일 싸움), 품질팀과 불량 자재 반품 논의. 외부: 전 세계 공급사와 이메일/전화 협상.',
-            toolsUsed: ['SAP ERP', 'Excel', 'Teams', 'Outlook', 'Bloomberg Terminal'],
-            painPoints: [
-                '러시아-우크라이나 전쟁 같은 지정학적 이슈가 터지면 새벽에도 전화 받고 대체 공급사 찾느라 피가 마름',
-                '수백 장짜리 영문 계약서를 일일이 읽고 독소 조항(Liability, Warranty) 찾는 게 너무 힘듦. 법무팀은 "검토하세요"라고만 함',
-                '단순 발주(PO) 처리가 월 1,000건인데, 품목 코드 하나만 틀려도 시스템 에러 나서 수정하는 데 시간 다 씀'
-            ],
-            automationNeeds: [
-                '글로벌 뉴스/SNS 기반 공급망 리스크(파업, 재해) 실시간 감지 및 알림',
-                'AI 기반 영문 계약서 자동 분석 및 리스크 조항 하이라이팅',
-                '단순 반복 발주 자동화 (RPA) 및 품목 코드 자동 추천'
-            ],
-            workStructure: {
-                level: '고도구조화',
-                description: '구매 규정과 절차(SoX) 매우 엄격. 계약은 법적 구속력 있음. 시스템(SAP) 의존도 높으나 엑셀 작업도 많음. 윤리 경영 중요.'
-            }
-        },
-        expectedBehavior: {
-            initialAttitude: '중립',
-            concerns: [
-                '구매는 돈이 오가는 업무라 AI가 실수해서 잘못 발주 나가면 책임은 누가 지나',
-                '협상은 사람 간의 미묘한 줄다리기인데 AI가 도움이 될지 의문',
-                '기존 SAP 시스템이 너무 무겁고 폐쇄적인데 최신 AI 툴과 연동이 될지'
-            ],
-            dropoutRisk: 15,
-        },
-        personality: {
-            patience: 8,
-            techSavvy: 5,
-            changeResistance: 'medium',
-            learningSpeed: 'medium'
-        }
-    },
-
-    {
-        id: 'P030',
-        name: '강하나',
-        age: 34,
-        company: 'SK텔레콤',
-        department: '브랜드마케팅팀',
-        role: '팀장',
-        category: 'Marketing',
-        leaderProfile: {
-            yearsInRole: 1,
-            previousRole: '마케터',
-            promotionReason: 'MZ세대 타겟의 "0(Young)한 숏폼 챌린지" 캠페인 대성공으로 조회수 1,000만 회 달성. 브랜드 인지도 20% 상승 기여',
-            leadershipStyle: '트렌디함, 수평적 소통, 크리에이티브 존중. 꼰대 문화 극혐함.',
-            hiddenStruggles: [
-                '젊은 척, 힙한 척하려고 노력하지만 사실 트렌드 따라가기 버거움 (틱톡 봐도 이해 안 됨)',
-                '조회수 안 나오면 내 감이 죽었나 싶어서 자존감 떨어짐',
-                '회사에서는 "노는 부서", "돈 쓰는 부서"라고 생각해서 성과 증명하기가 어려움'
-            ]
-        },
-        team: {
-            size: 7,
-            seniorCount: 2,
-            juniorCount: 5,
-            composition: '팀장 1명 + 브랜드 마케터 4명(SNS 담당) + 콘텐츠 크리에이터 2명(영상/디자인)',
-            digitalMaturity: 'Advanced',
-            maturityDistribution: 'Advanced 7명 (모두 디지털 네이티브)',
-            resistanceFactors: [
-                '법무팀: "저작권 문제 소지 있다", "표현이 과격하다"며 콘텐츠 검열',
-                '임원진: "우리 회사 품격에 안 맞는다", "이게 왜 재밌냐"며 꼰대 같은 피드백',
-                '홍보팀: "리스크 관리 안 된다"며 부정적 이슈 우려'
-            ]
-        },
-        work: {
-            mainTasks: [
-                'SKT 브랜드 영(Young) 타겟 커뮤니케이션 전략 수립',
-                '유튜브/인스타그램/틱톡 채널 운영 및 숏폼 콘텐츠 기획',
-                '인플루언서(침착맨, 곽튜브 등) 협업 및 브랜디드 콘텐츠 제작',
-                'T1(e스포츠) 연계 마케팅 캠페인 실행',
-                '브랜드 지표(SOV, Engagement) 분석 및 리포팅'
-            ],
-            dailyWorkflow: '오전 9:30 트렌드 뉴스 클리핑 (캐릿, 틱톡 트렌드 확인) → 10시 아이디어 회의 (자유롭게 드립 치는 분위기) → 11-1시 콘텐츠 촬영/제작 (사내 스튜디오) → 오후 2-4시 대행사 미팅 및 시사 → 4-6시 댓글 반응 모니터링 및 대댓글 달기',
-            weeklyRoutine: '월: 주간 콘텐츠 캘린더 확정 | 화: 광고 소재 리뷰 | 수: 촬영/편집 데이 | 목: 대행사 주간 보고 | 금: 트렌드 리포트 공유 및 맛집 탐방',
-            collaboration: '팀 내부: Notion으로 스케줄 관리, Slack으로 짤 공유. 타 부서: 상품기획팀과 신제품 런칭 협업, 홍보팀과 리스크 체크. 외부: 광고 대행사, 인플루언서 소속사와 매일 카톡.',
-            toolsUsed: ['Instagram', 'YouTube', 'TikTok', 'GA4', 'Notion', 'Slack', 'Premiere Pro'],
-            painPoints: [
-                '트렌드가 하루가 다르게 바뀌어서(밈 수명 3일) 따라가기 벅참. 주말에도 인스타 봐야 함',
-                '채널별(인스타 릴스, 유튜브 쇼츠, 틱톡)로 포맷과 감성을 다르게 만들어야 해서 리소스가 3배로 듦',
-                '광고 성과 데이터를 채널마다 로그인해서 엑셀로 취합하기 번거로움 (API 연동 안 됨)'
-            ],
-            automationNeeds: [
-                '소셜 미디어 급상승 트렌드 및 키워드 실시간 알림',
-                'AI 기반 숏폼 영상 자동 편집 (컷편집, 자막) 및 리사이징',
-                '통합 마케팅 성과(조회수, 댓글, 공유) 대시보드 자동화'
-            ],
-            workStructure: {
-                level: '반구조화',
-                description: '매우 창의적이고 유동적. 정해진 답이 없음. 트렌드에 민감하게 반응해야 함. 외부 협업 많음. 출퇴근 시간 유연함.'
-            }
-        },
-        expectedBehavior: {
-            initialAttitude: '기대함',
-            concerns: [
-                'AI가 만든 카피나 콘텐츠가 "아재"스럽거나 우리 브랜드 감성(Hip함)을 못 살릴까 봐',
-                '너무 자동화에 의존하면 크리에이티브가 죽고 공장형 콘텐츠만 나올까 봐',
-                '생성형 AI 이미지 저작권 이슈나 딥페이크 논란 등 윤리적 문제'
-            ],
-            dropoutRisk: 5,
-        },
-        personality: {
-            patience: 7,
-            techSavvy: 9,
-            changeResistance: 'low',
-            learningSpeed: 'fast'
-        }
+    personality: {
+      patience: 6, // 신임 팀장이라 조급함
+      techSavvy: 8,
+      changeResistance: 'low',
+      learningSpeed: 'fast',
+      stressLevel: 7,
+      confidenceLevel: 6
     }
-];
+  },
+
+  {
+    id: 'P002',
+    name: '박서연',
+    age: 35,
+    company: 'SK텔레콤',
+    department: '기업영업팀',
+    role: '팀장',
+    category: 'Sales',
+    leaderProfile: {
+      yearsInRole: 0.8,
+      previousRole: 'B2B 영업 시니어 (5년 경력)',
+      promotionReason: '대기업 고객 3곳 신규 계약 성공 (연 매출 120억 기여), 고객 만족도 평가 1위로 승진',
+      leadershipStyle: '고객 최우선, 팀원 간 정보 공유 중시. 하지만 영업 노하우를 체계화하는 데는 어려움을 느낌.',
+      biggestChallenge: '시니어 5명이 각자 영업 스타일이 달라 CRM 시스템 활용도가 제각각. "제 방식이 잘 맞아요"라며 표준화 거부하는 상황을 어떻게 바꿀지 고민',
+      hiddenStruggles: [
+        '12년차 시니어가 "박 팀장, 영업은 숫자로만 하는 게 아니야"라고 할 때 할 말이 없는 무력감',
+        '팀원들 실적이 안 나오면 "신임 팀장이라 관리가 안 된다"는 평가가 두려움',
+        '고객사 미팅에서 시니어가 나서면 팀장 존재감이 없어지는 느낌',
+        '주니어들이 시니어 따라 CRM 안 쓰기 시작하면 통제 불가할 것 같은 불안'
+      ]
+    },
+    team: {
+      size: 11,
+      seniorCount: 5, // 시니어 5명 (영업 경력 7-12년)
+      juniorCount: 6, // 주니어 6명 (1-3년차)
+      composition: '팀장 1명 + 시니어 영업담당 5명(대기업 담당, 7-12년차) + 주니어 영업담당 4명(중견기업 담당, 1-3년차) + 영업지원 2명(제안서/계약서 작성, 2년차)',
+      digitalMaturity: 'Intermediate',
+      maturityDistribution: '시니어 5명(Intermediate, 영업 경험은 많으나 디지털 도구 활용 낮음) + 주니어 6명(Intermediate~Advanced, 신세대라 도구는 잘 씀)',
+      teamDynamics: '시니어 5명이 각자 대기업 고객 포트폴리오를 쥐고 있어 팀장보다 영향력 큼. 12년차는 "내가 팀장 될 줄 알았는데"라는 서운함이 있고, 7년차 2명은 경쟁 의식으로 정보 공유 안 함. 주니어 6명은 시니어 눈치 보느라 팀장한테 직접 보고 못함.',
+      resistanceFactors: [
+        '시니어들의 "CRM에 다 입력하면 내 노하우가 공개되잖아"라는 저항',
+        '"영업은 발로 뛰는 거지 시스템으로 하는 게 아니야"라는 구세대 마인드',
+        '실적 좋은 시니어의 "내 방식이 맞다"는 자신감에 반박 어려움',
+        '주니어들의 "시니어 분들도 안 하시는데 왜 저만"이라는 불만'
+      ]
+    },
+    work: {
+      mainTasks: [
+        '대기업/중견기업 B2B 5G 인프라, 클라우드, IoT 솔루션 영업',
+        '월 평균 15-20개 제안서 작성 및 PT (팀 전체 합산)',
+        '고객사 니즈 분석 및 맞춤 솔루션 설계',
+        '계약 협상 및 사후 관리 (유지보수 계약 갱신)',
+        '주간 영업 파이프라인 관리 및 본부 보고'
+      ],
+      dailyWorkflow: '오전 9시 출근 → 시니어들은 고객사 방문 준비 또는 외근, 주니어들은 사무실에서 제안서 작성 → 10시 팀장이 전날 영업 현황 확인 (CRM 시스템 + 팀원 구두 보고) → 오전 11시쯤 긴급 제안 요청 들어오면 팀장이 직접 초안 작성하거나 주니어에게 급하게 배정 → 점심 후 1-3시 고객사 미팅 (주 3-4회, 팀장 동행 또는 시니어 단독) → 오후 3-5시 영업지원팀이 계약서 검토, 주니어들은 고객 follow-up 전화 → 오후 5-6시 팀장이 제안서 최종 검토 및 수정 지시 → 저녁 7-8시 퇴근 (급한 제안 있으면 9-10시까지)',
+      weeklyRoutine: '월요일 오전: 주간 영업 목표 설정 회의(1시간) + 개인별 파이프라인 점검 / 화요일: 시니어 5명과 개별 고객사 전략 논의 (각 20분) / 수요일 오후: 영업본부 주간 회의 참석, 팀 실적 보고 / 목요일: 주니어 6명 그룹 코칭 (제안서 작성법, 고객 응대 스킬) / 금요일: 주간 실적 정리 및 다음주 우선순위 고객사 선정',
+      collaboration: '팀 내에서는 카카오톡 단톡방 + CRM 시스템(Salesforce)으로 고객 정보 공유. 하지만 시니어들은 카톡만 보고 CRM 입력 안 함. 제안서는 각자 개인 PC에 저장, Google Drive에 공유하지만 파일명이 중구난방. 기술팀(네트워크/클라우드)과 협업할 때는 이메일로 요청 → 회신 느림. 본부장한테 보고할 때는 팀장이 PPT 직접 작성.',
+      toolsUsed: ['Salesforce(CRM)', 'PowerPoint', 'Excel', 'Google Drive', 'Zoom', '카카오톡', 'Outlook'],
+      painPoints: [
+        '시니어 5명이 CRM 시스템에 고객 정보를 제대로 입력하지 않아서 팀장이 실제 영업 현황 파악하려면 일일이 전화로 물어봐야 함. 월요일 주간 회의에서 "이번 주 예상 계약 건수가 몇 건이죠?"라고 물으면 "제가 다 머릿속에 있어요. 3-4건 될 것 같은데요"라는 막연한 답변만. CRM에는 고객사 이름과 금액만 있고 언제 제안했는지, 다음 미팅이 언제인지는 비어 있음. 결국 시니어 5명에게 각각 전화해서 확인해야 하는데, 주니어들은 이런 노하우를 전혀 못 배우고 팀장도 정확한 현황 파악이 안 돼서 본부장 보고 때마다 불안',
+        '제안서 템플릿이 없어서 주니어가 만든 제안서를 팀장이 70% 다시 만드는 경우가 많아 주당 10시간 소요. 지난주 화요일 주니어가 3일 동안 30페이지 PPT 만들어왔는데, "제품 스펙만 나열했지 고객 니즈가 반영 안 됐네"라며 15페이지를 통째로 다시 작성. 결국 팀장이 목요일 밤 10시까지 남아서 직접 완성. 주니어는 "제가 쓸모없나봐요"라며 의욕 상실, 시니어들도 각자 본인 양식으로 제각각 만들어서 팀 브랜드 일관성 없음',
+        '고객사 미팅 후 follow-up을 누가 언제 해야 하는지 애매해서 놓치는 고객 발생. 지난달 7년차 시니어가 A기업 미팅 후 "다음 주에 연락하기로 했어요"라고 보고했는데, 다음 주에 물으니 "아, 깜빡했네요"라는 답변. 그 사이 경쟁사가 먼저 제안서 제출해서 기회 놓침. 팀장이 매일 follow-up 체크리스트 관리하지만 시니어들은 "제가 알아서 해요"라며 무시',
+        '월말 실적 집계할 때 각자 다른 엑셀 양식으로 보고해서 팀장이 수작업 합산하는 데 3-4시간 소요. 시니어들은 "고객사명|금액|확률" 또는 "업종|금액|단계" 등 제각각 양식이고, 어떤 시니어는 이메일로 "이번 달 3건, 총 15억"이라고 텍스트만 보냄. 금요일 오후 2시부터 데이터 복사 붙여넣기하고 피벗 테이블 만들어 정리하는데 6시까지 걸림. 본부장은 "금요일 오전까지 리포트 달라"고 하는데 불가능',
+        '시니어들끼리 경쟁 의식 때문에 고객 정보 공유 안 해서 같은 고객사에 중복 접촉하는 경우 발생. 지난달 S전자 구매팀에서 "같은 제안을 두 팀원이 따로 보냈는데 내부 소통 안 되나요?"라고 본부장한테 직접 전화. 7년차와 10년차 시니어가 서로 "내 고객"이라며 동시 제안서 제출. 결국 본부장 개입해서 정리했지만 "내 실적 뺏겼다"며 불만. CRM에 정보 제대로 입력했으면 막을 수 있었는데 시니어들은 "내 정보 공개되면 가로챌까봐" 경계'
+      ],
+      automationNeeds: [
+        'CRM 입력을 강제하거나 자동화하는 방법 (영업 미팅 후 자동 리마인드)',
+        '제안서 자동 생성 템플릿 (고객사 정보 입력하면 80% 완성)',
+        '고객 follow-up 알림 시스템 (담당자별로 자동 알림)'
+      ],
+      workStructure: {
+        level: '비구조화',
+        description: '영업 프로세스는 "고객 발굴 → 제안 → 계약 → 사후관리" 단계가 있지만, 실제로는 시니어들이 각자 스타일대로 진행. 주니어는 시니어 따라하는데 배우는 방식이 제각각. 제안서 양식도 통일 안 됨. 팀장이 "이렇게 하자"고 해도 시니어들이 "저는 제 방식이 있어요"라고 하면 더 이상 못 밀어붙임. CRM 시스템은 있지만 실제로는 카톡과 구두 보고가 주.'
+      },
+      realTimeExample: '지난달 분기 마감 주, 같은 고객사(S전자)에 시니어 2명이 따로 접촉한 게 발견됨. 고객이 "SK텔레콤 내부 소통이 안 되나요?"라고 불쾌감 표시. 팀장이 조율하려 했지만 시니어들은 "내가 먼저 관계 맺었다"며 양보 안 함. 결국 본부장이 개입해서 정리됐지만 팀장 관리 능력에 의문 제기됨.',
+      typicalFireDrills: [
+        '고객사 "다음주 PT인데 제안서 다시 만들어주세요" - 주말 작업',
+        '본부장 "이번 달 실적 왜 이래? 파이프라인 당장 점검" - 긴급 영업 회의',
+        '시니어 "이 고객 제가 할게요" vs "아니 제가요" - 중재 필요',
+        '주니어 "시니어님이 안 알려주셔서 실수했어요" - 갈등 봉합'
+      ]
+    },
+    workshopPsychology: {
+      initialAttitude: '기대함',
+      hiddenMotivations: [
+        '시니어들도 따를 수밖에 없는 객관적인 영업 프로세스를 만들고 싶음',
+        'CRM 활용률을 높여 고객 정보를 팀 자산화하고 싶음',
+        '제안서 작성 시간을 줄여 실제 영업 활동 시간을 늘리고 싶음',
+        '다른 B2B 영업팀장들은 시니어 관리를 어떻게 하는지 배우고 싶음'
+      ],
+      deepConcerns: [
+        '시니어들이 "또 새로운 거냐, 영업이나 하자"고 반발할까봐',
+        '영업은 관계 비즈니스인데 프로세스화가 맞는 접근인지 의문',
+        '제조업/IT 중심 워크샵이면 B2B 영업에 안 맞을 것 같음',
+        '워크샵 참석하는 동안 중요 고객 연락 놓칠까봐'
+      ],
+      successMetrics: [
+        '시니어들이 자발적으로 CRM 쓰게 만드는 방법',
+        '고객 중복 접촉을 막는 시스템',
+        '제안서 80%를 자동 생성하는 템플릿',
+        '팀 전체 영업 노하우를 공유하는 문화 만들기'
+      ],
+      dropoutRisk: 20,
+      dropoutTriggers: [
+        '중요 고객사 미팅이 잡히는 경우',
+        '분기 마감 시즌과 겹치는 경우',
+        '시니어-시니어 간 고객 분쟁이 터지는 경우',
+        '워크샵 내용이 영업 현실과 동떨어진 경우'
+      ]
+    },
+    expectedBehavior: {
+      initialAttitude: '기대함',
+      concerns: [
+        '시니어 5명이 "저는 이미 제 방식이 있다"며 새로운 프로세스 도입에 저항할까봐 걱정. 워크샵에서 배운 걸 적용하려고 하면 "팀장님, 영업은 그렇게 안 됩니다" 같은 말 들을까봐',
+        '영업은 사람마다 스타일이 다른데, 표준화/자동화가 가능할까? 오히려 창의성을 죽이는 건 아닐까',
+        '워크샵이 제조/IT 중심이면 영업에는 안 맞을 것 같은데...'
+      ],
+      dropoutRisk: 20,
+    },
+    personality: {
+      patience: 7,
+      techSavvy: 6,
+      changeResistance: 'medium',
+      learningSpeed: 'medium',
+      stressLevel: 7,
+      confidenceLevel: 5
+    }
+  },
+
+  {
+    id: 'P003',
+    name: '이현수',
+    age: 42,
+    company: 'SK하이닉스',
+    department: '생산관리팀',
+    role: '팀장',
+    category: 'Operations',
+    leaderProfile: {
+      yearsInRole: 1.2,
+      previousRole: '생산 공정 엔지니어 (9년 경력)',
+      promotionReason: '반도체 수율 개선 프로젝트 성공 (불량률 3.2% → 1.8% 감소), 데이터 분석 역량 인정받아 팀장 승진',
+      leadershipStyle: '데이터와 현장을 모두 중시. 하지만 3교대 팀원들 관리와 돌발 상황 대응에 어려움.',
+      biggestChallenge: '15년차, 20년차 조장들이 "우린 원래 이렇게 했다"며 새로운 방식 거부. 신임 팀장이라 강하게 밀어붙이기 어렵고, 야간조 문제는 현장 안 보이니 판단도 어려움',
+      hiddenStruggles: [
+        '새벽 3시 야간조장 전화 "팀장님 어떻게 할까요?" - 현장도 모르면서 결정해야 하는 공포',
+        '20년차 조장이 "팀장님은 현장을 몰라요"라고 할 때 반박할 수 없는 현실',
+        '설비 고장으로 라인 멈추면 "팀장 관리 부실"이라는 공장장 질책이 두려움',
+        '주니어들 교육을 조장들한테 맡기는데 조장마다 달라서 표준화 안 되는 답답함'
+      ]
+    },
+    team: {
+      size: 24,
+      seniorCount: 8, // 시니어 8명 (10-20년차 베테랑 포함)
+      juniorCount: 16, // 주니어 16명
+      composition: '팀장 1명 + 시니어 현장 관리자 8명(각 라인별 책임자, 10-20년차) + 주니어 생산 기사 14명(3교대 각 4-5명, 1-5년차) + 품질 검사원 2명(3년차)',
+      digitalMaturity: 'Beginner',
+      maturityDistribution: '시니어 8명(Beginner, 현장 경험 많지만 PC/시스템 취약) + 주니어 16명(Beginner~Intermediate, 젊지만 제조 현장이라 디지털 도구 접근 제한적)',
+      teamDynamics: '20년차 조장은 팀장보다 공장에 오래 있어서 현장 권위가 더 높음. 15년차 조장은 "내가 팀장 될 줄 알았는데"라는 서운함. 주니어 14명은 조장에게 배우는데 조장마다 가르치는 게 달라 혼란. 3교대라 팀 전체가 모이는 날이 없어 소속감 약함.',
+      resistanceFactors: [
+        '20년차 조장의 "내 경험이 시스템보다 정확해"라는 자부심',
+        '3교대 특성상 "새로운 거 배울 시간이 없다"는 현실적 제약',
+        '"MES 입력하느라 생산에 집중 못한다"는 현장 불만',
+        '"문제없이 돌아가는데 왜 바꾸냐"는 변화 거부'
+      ]
+    },
+    work: {
+      mainTasks: [
+        '반도체 웨이퍼 생산 라인 4개 라인 운영 관리 (일 생산량 1만 장)',
+        '3교대 근무자 스케줄링 및 인력 배치 (주간 7-3, 저녁 3-11, 야간 11-7)',
+        '생산 공정 모니터링 및 이상 징후 대응 (설비 다운타임 최소화)',
+        '주간/월간 생산 실적 집계 및 공장장 보고',
+        '안전사고 예방 활동 및 5S 활동 (정리정돈, 청소, 청결, 습관화)'
+      ],
+      dailyWorkflow: '오전 7시 출근 → 야간조 인수인계 (10분, 전날 생산량/이슈 확인) → 주간조 조회 (7:10, 오늘 목표 공유) → 8-11시 라인별 생산 현황 모니터링 (MES 시스템 + 현장 순회) → 11시 공장장 일일 보고 (생산량, 불량률, 설비 가동률) → 점심 후 1-3시 급한 설비 트러블 대응 또는 품질 이슈 회의 → 3시 저녁조 인수인계 → 3:30-5시 팀장실에서 주간 생산 계획 조정, 인력 스케줄 검토 → 5-6시 본부 회의 또는 협력사 미팅 → 저녁 7시 퇴근 (단, 급한 설비 문제 발생 시 야간까지 대기)',
+      weeklyRoutine: '월요일 오전: 주간 생산 목표 회의(공장장 주재) + 라인별 목표 하달 / 화요일: 시니어 관리자 8명과 라인별 현황 점검 (각 15분) / 수요일: 안전 점검의 날 (오전 2시간, 현장 안전 라운딩) / 목요일: 설비팀/품질팀과 협업 회의 (생산 이슈 해결) / 금요일: 주간 생산 실적 정리 및 차주 계획 수립, 3교대 전 조장 회의 (각 교대 대표)',
+      collaboration: '현장에서는 무전기 + 카톡으로 실시간 소통. MES(제조실행시스템)로 생산 데이터 기록하지만 시니어들은 수기 장부도 병행. 설비 고장 시 설비팀에 전화 요청 → 출동까지 평균 30분 소요. 품질 이슈 발생하면 품질팀과 현장 미팅 (즉석 대응). 본부 보고는 팀장이 직접 PPT 작성 (생산량, 불량률, 가동률 등).',
+      toolsUsed: ['MES(제조실행시스템)', 'Excel', 'PowerPoint', '무전기', '카카오톡', 'Outlook'],
+      painPoints: [
+        '3교대 조장 8명 중 2명이 본인보다 연차가 높아서 (15년차, 20년차) 생산 방식 바꾸자고 하면 "우리는 원래 이렇게 했다"며 저항하고 신임 팀장이라 강하게 못 나감. 지난달 공장장이 "생산성 향상 방안 내라"고 지시해서 "MES 실시간 데이터 입력으로 병목 파악하자"고 제안했더니, 20년차 조장이 "그거 입력하느라 생산 늦어지면 어쩌려고요? 20년 넘게 이 방식으로 문제없었어요"라고 공개 반박. 다른 조장들도 20년차 눈치 보며 침묵. 결국 물러섰는데 공장장한테는 질책, 조장들한테는 "신임이라 현장 몰라" 평가',
+        '야간조에서 문제 생기면 새벽 2-3시에 전화 오는데 현장 상황 모르는 채로 판단해야 하고 조장은 "팀장님이 결정하세요"만 반복. 지난주 새벽 2:30, 야간조장이 "3번 라인 진동 센서 이상인데 멈출까요?" 전화. "진동 수치가 얼마예요?" 물으니 "경고등 깜빡거려요"만. 결국 "일단 멈추고 설비팀 부르세요" 지시했는데 오전에 보니 센서 오작동. 공장장이 "왜 생산 5시간 차질 났냐" 질책. 현장도 못 보면서 새벽에 중대 결정 내려야 하는 공포 반복',
+        '생산 데이터가 MES, 엑셀, 수기 장부에 흩어져 있어 주간 보고서 만들 때 금요일 오후 5시간 소요. 주간조는 MES 입력, 저녁조는 "MES 느리다"며 엑셀, 야간조는 "컴퓨터 귀찮다"며 수기 장부 작성. 금요일 MES 다운받았더니 저녁조 데이터 2일치 빠짐. 전화하니 "엑셀에 있어요, 이따 보낼게요". 야간조는 수기 장부 사진 카톡으로 보냈는데 필기체라 "7,850"인지 "7,350"인지 판독 불가. 3교대 데이터 취합하고 피벗 만드는 데 오후 6시까지. 공장장은 금요일 오전 마감이라 목요일 밤 야근',
+        '설비 고장 예측 안 돼서 갑자기 라인 멈추면 그제서야 설비팀 부르는 사후 대응만 반복. 지난주 2번 라인이 갑자기 멈춤. "모터 과열" 메시지. 설비팀에 전화했더니 "30분 후 갈게요". 결국 1시간 30분 정지로 800장 부족. 공장장이 "왜 사전 점검 안 했어?" 질책했는데, 20년차 조장은 "모터 소리 좀 이상하긴 했는데 돌아가길래 뒀어요. 제 경험상 큰 문제 아니었어요"라고 사후 보고. 조장들의 "경험"과 "감"으로만 관리하다 보니 예측 불가능한 고장 반복',
+        '주니어 14명 교육을 조장들한테 맡기는데 조장마다 가르치는 방식 달라서 주니어들 혼란. 신입 3명에게 웨이퍼 검사법 물었더니 A는 "육안 먼저", B는 "무조건 현미경 전수", C는 "샘플링 10개 중 1개"라고 서로 다른 답변. 조장마다 본인 스타일대로 가르친 거였음. "표준 지침서대로 가르쳐주세요" 했더니 15년차 조장이 "지침서는 이론이고 현장은 달라요. 제 방식이 더 효율적이에요"라는 답변. 표준 교육 자료 만들려 해도 "제 노하우를 왜 문서화하냐" 협조 거부'
+      ],
+      automationNeeds: [
+        '설비 이상 징후 자동 감지 시스템 (AI 예측 정비)',
+        '3교대 생산 데이터 자동 통합 대시보드 (실시간 현황 파악)',
+        '표준 작업 지침서 디지털화 및 교육 자동화'
+      ],
+      workStructure: {
+        level: '반구조화',
+        description: '생산 공정 자체는 표준화되어 있지만, 돌발 상황 대응은 비표준. 조장들이 각자 경험으로 문제 해결. MES 시스템 있지만 실제로는 조장들의 "감"에 의존. 인수인계도 구두로만 하고 기록 안 함. 주간 회의는 있지만 액션 아이템 follow-up 안 됨.'
+      },
+      realTimeExample: '지난주 화요일 새벽 2시, 야간조장(15년차)에게서 전화. "3번 라인 설비 이상 징후 있는데 멈출까요?" 팀장은 현장 상황을 정확히 모르는 상태. "조장님 판단에 맡기겠습니다"라고 했더니 "팀장님이 결정하셔야죠"라고 떠넘김. 결국 라인 멈추기로 했는데 오전에 보니 센서 오작동이었음. 공장장이 "왜 생산 차질 났냐"고 질책.',
+      typicalFireDrills: [
+        '설비 긴급 정지 "1분에 얼마 손해인지 알아?" - 즉시 복구 압박',
+        '품질 이슈 발생 "출하 멈춰, 전수검사해" - 24시간 비상 체제',
+        '안전사고 발생 "즉시 보고하고 재발방지 대책 내일까지" - 밤샘 문서 작성',
+        '공장장 "이번 달 생산량 왜 떨어졌어?" - 긴급 원인 분석'
+      ]
+    },
+    expectedBehavior: {
+      initialAttitude: '중립',
+      concerns: [
+        '제조 현장은 3교대 24시간 돌아가는데, 워크샵에서 배운 걸 어떻게 현장에 적용하지? 야간조까지 교육할 수 없는데',
+        '시니어 조장들이 "우리는 이렇게 해왔다"며 새로운 방식 거부하면? 신임 팀장이라 밀어붙이기 어려움',
+        '워크샵이 사무직 중심이면 제조 현장 특성 반영 안 될 것 같음'
+      ],
+      dropoutRisk: 35,
+      workshopPsychology: {
+        initialAttitude: '중립',
+        hiddenMotivations: [
+          '조장들도 인정할 수밖에 없는 객관적 데이터 기반 의사결정 체계를 만들고 싶음',
+          '3교대 인수인계를 체계화해서 야간 전화 줄이고 싶음',
+          '설비 이상 징후를 미리 파악해서 긴급 정지 상황을 예방하고 싶음',
+          '신임 팀장으로서 현장 조장들한테 신뢰받는 방법을 알고 싶음'
+        ],
+        deepConcerns: [
+          '제조 현장 특성을 모르는 사무직 중심 워크샵이면 안 맞을 것 같음',
+          '3교대 24시간 돌아가는데 새로운 프로세스 교육할 시간이 없음',
+          '조장들이 "팀장님 교육 받고 오시더니 일만 늘리네"라고 할까봐',
+          '디지털 도구보다 현장 경험이 더 중요한 제조업 특성상 효과가 있을지'
+        ],
+        successMetrics: [
+          '야간조 문제를 원격으로 판단할 수 있는 실시간 모니터링',
+          '3교대 인수인계 누락을 없애는 체계',
+          '조장들이 자발적으로 사용하는 설비 점검 시스템',
+          '설비 고장을 사전에 예측하는 방법'
+        ],
+        dropoutRisk: 35,
+        dropoutTriggers: [
+          '생산 라인 장애가 발생하는 경우',
+          '공장장 긴급 호출이 오는 경우',
+          '안전사고가 발생하는 경우',
+          '워크샵 내용이 사무직 중심이어서 제조 현장과 맞지 않는 경우'
+        ]
+      }
+    },
+    personality: {
+      patience: 5,
+      techSavvy: 4,
+      changeResistance: 'high',
+      learningSpeed: 'slow',
+      stressLevel: 8,
+      confidenceLevel: 4
+    }
+  },
+
+  // ==================== SALES (2명) ====================
+  {
+    id: 'P004',
+    name: '정민호',
+    age: 36,
+    company: 'SK이노베이션',
+    department: 'B2B영업팀',
+    role: '팀장',
+    category: 'Sales',
+    leaderProfile: {
+      yearsInRole: 4,
+      previousRole: '시니어 영업 담당자',
+      promotionReason: '핵심 고객사 3곳과 장기 계약 체결하여 안정적 매출 기반 확보. 주니어 영업사원 멘토링으로 팀 역량 향상 주도',
+      leadershipStyle: '코칭형, 주간 파이프라인 리뷰, 데이터 기반 목표 설정',
+      biggestChallenge: '영업 1등 2명이 합쳐서 팀 실적의 40% 차지. 이들은 개인 네트워크로 독립적으로 움직여서 팀장 통제 밖. 주니어 9명은 실적 압박 받으면서도 1등들의 노하우는 못 배움. 월말 실적 부족하면 본부장한테 질책받지만 1등 영업한테 강제할 수도 없는 딜레마.',
+      hiddenStruggles: [
+        '본부장이 월말에 "이번 달 목표 못 채우겠어?" 압박할 때 1등 영업한테 사정하듯 부탁해야 하는 자존심 상함',
+        '1등 영업이 "제 방식대로 할게요"라고 하면 할 말이 없음. 그들 없으면 팀 실적 바닥',
+        '주니어들 교육하려고 해도 1등 영업은 "바쁘다"며 노하우 공유 안 함',
+        '파이프라인 관리 시스템 도입하려 하면 시니어들이 "영업은 시스템이 아니라 관계"라며 반발'
+      ]
+    },
+    team: {
+      size: 15,
+      seniorCount: 6,
+      juniorCount: 9,
+      composition: '팀장 1명 + 영업 담당자 10명 + 영업지원 2명 + 데이터 분석가 2명',
+      digitalMaturity: 'Advanced',
+      maturityDistribution: 'Expert 2명(분석가) + Advanced 3명(시니어 영업) + Intermediate 7명 + Beginner 3명',
+      teamDynamics: '영업 1등(8년차, 12년차)은 개인 네트워크로 독립적으로 움직이며 팀장 지시를 잘 안 따름. 나머지 시니어 4명은 중간 실적으로 "나도 1등처럼 하고 싶다"는 욕구. 주니어 9명은 실적 압박에 시달리면서 1등 영업을 부러워하지만 노하우를 못 배움. 분석가 2명은 데이터는 잘 다루지만 영업 현장 이해 부족.',
+      resistanceFactors: [
+        '1등 영업이 "내 방식대로 할게요. 실적 내는 건 나잖아요"라며 체계 거부',
+        '시니어들은 "CRM 입력하느라 영업할 시간 없다"며 데이터 입력 회피',
+        '주니어들은 "선배들도 안 하는데 왜 우리만?"이라는 불만',
+        '"영업은 관계가 전부인데 시스템으로 어떻게 관리하냐"는 고정관념'
+      ]
+    },
+    work: {
+      mainTasks: [
+        '대기업 및 공공기관 대상 신규 영업',
+        'CRM 기반 고객 관계 관리',
+        '영업 파이프라인 관리 및 예측',
+        '제안서 작성 및 프레젠테이션',
+        '계약 체결 및 사후관리'
+      ],
+      dailyWorkflow: '오전 8:30 출근 → 9시 CRM에서 영업 현황 확인 → 9:30 팀 스탠드업 미팅(15분) → 10-12시 고객 미팅 또는 제안서 작성 → 오후 1-3시 신규 리드 발굴 및 콜드콜 → 3-5시 팀원 1:1 코칭 → 5-6시 일일 실적 정리 및 보고서 작성 → 긴급 고객 대응',
+      weeklyRoutine: '월요일 오전: 주간 영업 전략 회의(2시간, 이번 주 목표 설정 및 우선순위 고객사 선정) + 팀원 15명 개인별 파이프라인 점검 (각 10분, 진행 중인 계약 단계별 리뷰) / 화요일: 1등 영업 2명과 개별 전략 논의 (각 30분, 대형 계약 조율) + 시니어 4명과 고객사별 이슈 논의 (각 20분) / 수요일: 고객사 방문의 날 (주요 고객 2-3곳 직접 방문, 팀원 동행하며 코칭) / 목요일 오전: 제안서 최종 검토 세션 (이번 주 제출할 제안서 3-5건 검토, 각 1시간) / 목요일 오후: 주니어 9명 그룹 교육 (1시간, 영업 스킬, 제안서 작성법, 고객 응대) / 금요일 오전: 주간 실적 집계 (CRM + 팀원 개별 보고 취합, 3-4시간) / 금요일 오후: 영업본부 주간 회의 참석 및 팀 실적 보고 (1시간) + 다음 주 우선순위 고객사 및 전략 수립',
+      collaboration: '팀 내부: CRM과 Slack으로 실시간 영업 현황 공유, 주 2회 대면 회의 | 타 부서: 기술팀과 제품 스펙 협의(주 1회), 재무팀과 계약 조건 검토 | 외부: 고객사와 정기 미팅 및 이메일/화상회의',
+      toolsUsed: ['Salesforce CRM', 'LinkedIn Sales Navigator', 'Zoom', 'PowerPoint', 'Excel', 'DocuSign'],
+      painPoints: [
+        '주니어 9명이 매일 1-2시간씩 LinkedIn에서 수작업으로 리드 발굴하는데 70%는 중복이거나 콜드 리드. 지난주 월요일, 주니어 김 사원이 오전 내내 30개 리드 찾았는데 점심 때 확인하니 22개는 이미 다른 팀원이 접촉했거나 구매 의사 없는 기업. 1등 영업 2명은 "그럴 시간에 기존 고객 관리하는 게 낫다"며 신규 발굴 안 함. 팀 전체 신규 고객 비율은 분기당 5%에 불과한데 본부장은 "왜 신규 고객 안 늘어나냐"고 압박',
+        '제안서 작성에 팀원들 시간의 30%가 소모되고 한 건당 3-4회 수정 반복해서 완성까지 1주일 소요. 지난주 화요일, 대형 고객사 제안 요청이 들어와서 주니어가 3일 동안 40페이지 PPT 만들었더니 팀장이 "고객이 원하는 건 이게 아니야. 다시 해"라고 지시. 결국 팀장이 주말에 직접 만들어서 월요일 제출. 주니어는 "제가 쓸모없나봐요"라며 의욕 상실하고 팀장은 "내가 다 해줘야 하나"라며 지침',
+        '영업 1등 2명(8년차, 12년차)이 연 매출 40억씩 올리지만 노하우가 팀 전체에 공유 안 됨. "어떻게 계약 따냈어요?"라고 물으면 "그냥 관계 좋아서"라는 막연한 답변만 하고 CRM에 고객 정보도 최소한만 입력. 팀장이 "노하우 공유 좀 해주세요"라고 부탁하면 "저도 바쁜데요. 그런 거 문서화할 시간 없어요"라며 거부. 주니어들은 실적 압박에 시달리고 팀 전체 역량은 1등 2명에게만 의존하는 구조',
+        '월말 실적 압박 시즌에 1등 영업 2명한테 사정하듯 부탁해야 하는 상황이 반복되어 팀장 권위 떨어짐. 지난달 말 금요일, 본부장이 "이번 달 목표 10억 부족한데 어떻게 할 거야?"라고 압박했는데 1등 영업(12년차)이 "저 내일 휴가인데요. 제 일정대로 할게요"라며 거절. 팀장은 할 말이 없고 본부장한테 "최선을 다했지만 이번 달은 어렵습니다"라고 보고하고 "팀 관리 제대로 해"라는 질책. 주니어들도 이 상황을 보면서 "1등 선배님들이 팀장보다 파워가 세다"는 인식',
+        '영업 파이프라인 예측이 부정확해서 월말에 항상 긴급 상황 발생. 시니어들이 CRM에 "70% 확률"이라고 낙관적으로 기록해놔서 실제로는 30%도 안 되는 경우 많음. 지난주 팀장이 CRM 숫자만 보고 "이번 달 목표 달성 가능"이라고 판단했다가 막판에 계약 3건이 동시에 유찰되면서 목표 미달. 본부장한테 "왜 예측을 못해?"라는 질문에 "팀원들이 CRM을 정확히 안 써서..."라고 변명하면 "그럼 팀장이 관리해야지"라는 답변'
+      ],
+      automationNeeds: [
+        'AI 기반 리드 스코어링 및 우선순위 추천',
+        '고객사 정보 자동 수집 및 요약',
+        '제안서 템플릿 자동 생성 (고객 맞춤)'
+      ],
+      workStructure: {
+        level: '반구조화',
+        description: '영업 단계는 CRM으로 관리하나, 각 단계별 세부 액션은 팀원 재량. 주간 파이프라인 리뷰는 체계적이나 일일 협업은 비정형적. 베스트 프랙티스 공유 체계 미흡.'
+      },
+      realTimeExample: '지난달 말 금요일 오후 4시, 본부장이 "이번 달 목표 아직 10억 부족한데 어떻게 할 거야?"라고 압박. 급하게 1등 영업(12년차)한테 전화했더니 "저 내일 휴가인데요. 다음 주 월요일에 고객 만나요"라는 대답. "금요일 안에 계약 하나만 더 따줄 수 있을까요?" 사정조로 부탁했더니 "팀장님, 영업이 그렇게 되는 게 아니잖아요"라며 거절. 결국 본부장한테 "최선을 다했지만 이번 달은 어렵습니다"라고 보고하고 질책받음.',
+      typicalFireDrills: [
+        '월말 실적 부족 "이번 달 목표 절대 달성해야 해" - 1등 영업한테 사정하듯 부탁',
+        '대형 고객 컴플레인 "즉시 사과 방문하고 대책 세워" - 주말에 팀장이 직접 출동',
+        '경쟁사 제안 "우리 고객 뺏기면 큰일이야" - 긴급 맞춤 제안서 준비',
+        '본부장 "왜 신규 고객 확보가 안 되냐" - 긴급 영업 전략 보고서 작성'
+      ]
+    },
+    expectedBehavior: {
+      initialAttitude: '중립',
+      concerns: [
+        'B2B 영업은 관계 기반인데 자동화 도입이 고객에게 부정적 인상을 줄까',
+        '팀원 15명 수준이 다양한데 일괄 적용이 가능할지',
+        '워크샵 후 팀에 돌아가서 실행 계획을 세우기가 막막할 것 같음'
+      ],
+      dropoutRisk: 15,
+      workshopPsychology: {
+        initialAttitude: '중립',
+        hiddenMotivations: [
+          '1등 영업도 따라올 수밖에 없는 체계적인 영업 프로세스를 만들고 싶음',
+          '주니어들이 시스템만 따라가도 실적 낼 수 있는 구조를 만들고 싶음',
+          '월말 실적 압박에서 벗어나 안정적으로 목표 달성하는 팀을 만들고 싶음',
+          '1등 영업의 노하우를 팀 전체가 배울 수 있게 하고 싶음'
+        ],
+        deepConcerns: [
+          '워크샵에서 배운 걸 적용하려다 1등 영업한테 "간섭하지 마세요"라는 소리 들을까봐',
+          'B2B 영업 특성상 자동화가 오히려 고객에게 성의 없어 보일까봐',
+          '새로운 시스템 도입하면 시니어들이 집단 반발할까봐',
+          '워크샵 후 실행 계획 세우기가 막막해서 결국 아무것도 못하고 끝날까봐'
+        ],
+        successMetrics: [
+          '1등 영업의 노하우가 체계화되어 주니어도 활용 가능',
+          '월말이 아니어도 실적 예측이 가능한 파이프라인 관리',
+          '제안서 작성 시간 30% 감소로 실제 영업 활동 증가',
+          '신규 리드 발굴 자동화로 영업 효율 향상'
+        ],
+        dropoutRisk: 15,
+        dropoutTriggers: [
+          '대형 고객 긴급 미팅이 잡히는 경우',
+          '월말 실적 압박으로 본부장이 호출하는 경우',
+          '1등 영업이 퇴사 의사를 밝히는 경우',
+          '워크샵 내용이 영업 현장과 동떨어진 이론 중심인 경우'
+        ]
+      }
+    },
+    personality: {
+      patience: 7,
+      techSavvy: 7,
+      changeResistance: 'medium',
+      learningSpeed: 'fast',
+      stressLevel: 7,
+      confidenceLevel: 6
+    }
+  },
+
+  {
+    id: 'P005',
+    name: '최유진',
+    age: 37,
+    company: 'SK네트웍스',
+    department: '리테일영업팀',
+    role: '팀장',
+    category: 'Sales',
+    leaderProfile: {
+      yearsInRole: 6,
+      previousRole: '지역 영업 담당자',
+      promotionReason: '전년 대비 매출 35% 성장 달성하여 팀 내 최고 실적 기록. 신규 고객 개척 프로세스 체계화하여 팀 전체 성과 향상에 기여',
+      leadershipStyle: '현장 중심, 월 1회 전국 담당자 회의, 실적 기반 보상',
+      biggestChallenge: '전국 200개 매장을 15명이 관리하느라 팀장은 현장을 직접 못 가봄. 50대 베테랑 담당자 3명은 "난 30년 이렇게 했어"라며 새로운 방식 거부. 매장 데이터를 전화로 받아서 엑셀 수작업 집계하느라 하루 종일 걸림. 본부장은 "실시간 현황 왜 안 올라와?"라고 재촉.',
+      hiddenStruggles: [
+        '월말이면 "매장 A 재고 떨어졌어요" 전화 폭탄. 팀장이 직접 확인 못하니 담당자 말만 믿고 발주해야 함',
+        '50대 담당자가 "앱 설치? 그거 어떻게 해요?"라고 하면 전화로 30분씩 설명해줘야 함',
+        '15명 중 5명은 카톡도 잘 못 써서 중요한 공지를 전화로 일일이 해야 함',
+        '본부장이 "경쟁사는 실시간 대시보드 쓰는데 우리는?"이라고 하면 할 말이 없음'
+      ]
+    },
+    team: {
+      size: 20,
+      seniorCount: 8,
+      juniorCount: 12,
+      composition: '팀장 1명 + 지역별 영업 담당자 15명 + 영업지원 2명 + 재고관리 2명',
+      digitalMaturity: 'Beginner',
+      maturityDistribution: 'Intermediate 3명(팀장, 지원) + Beginner 17명(현장 영업)',
+      teamDynamics: '15명의 지역 담당자는 각자 독립적으로 움직임. 50대 베테랑 3명은 "내가 제일 잘 안다"는 자부심으로 팀장 지시를 형식적으로만 따름. 30-40대 중간 그룹 7명은 베테랑과 신입 사이에서 눈치. 20대 신입 5명은 디지털은 잘하지만 현장 경험 부족으로 베테랑한테 무시당함. 월 1회 회의 때만 모이고 평소엔 전화/문자로만 소통.',
+      resistanceFactors: [
+        '50대 베테랑 담당자가 "난 30년 이렇게 했어. 앱 같은 거 필요없어"라며 거부',
+        '전국 흩어져 있어서 새로운 시스템 교육이 현실적으로 어려움',
+        '"현장에서 매장 사장님 만나느라 바쁜데 앱 입력할 시간 없다"는 불만',
+        '"스마트폰도 잘 모르는데 새로운 프로그램은 무리"라는 자포자기'
+      ]
+    },
+    work: {
+      mainTasks: [
+        '전국 200개 매장 방문 영업',
+        '재고 현황 확인 및 발주 지원',
+        '프로모션 실행 및 성과 확인',
+        '매장별 매출 데이터 수집 및 보고',
+        '신제품 교육 및 런칭 지원'
+      ],
+      dailyWorkflow: '오전 8:30 출근 → 9시 전날 매장별 매출 속보 확인 (담당자들이 전날 밤 문자로 보낸 숫자들을 Excel에 입력) → 9:30 긴급 재고 요청 전화 받기 시작 ("팀장님 A매장 재고 다 떨어졌어요") → 10-11시 긴급 발주 처리 (재고팀에 전화해서 출고 요청) → 11-12시 담당자 15명에게 "오늘 프로모션 제대로 진행되는지" 확인 전화 (1명당 5분씩) → 점심 후 1-3시 본부장 요청 자료 만들기 (매출 현황 PPT, 전화로 물어본 내용 정리) → 3-4시 베테랑 담당자 3명과 전화 미팅 (현장 이슈 청취) → 4-5시 다음 주 프로모션 계획 메일 발송 및 담당자 확인 전화 → 5-6시 오늘 들어온 매장 문의 정리 → 저녁 7-8시 퇴근 (급한 재고 이슈 있으면 9-10시까지)',
+      weeklyRoutine: '월요일 오전: 주간 매출 목표 설정 및 담당자 15명에게 문자 발송 / 화요일: 상위 5개 매장 실적 점검 전화 (각 담당자와 20분씩) / 수요일 오후: 본부 주간 회의 참석 및 팀 실적 보고 (PPT 발표) / 목요일: 신제품 교육 자료 카톡으로 공유 후 이해 여부 개별 전화 확인 / 금요일: 주간 실적 집계 (15명 담당자가 보낸 Excel 파일 수작업 통합, 오후 3-4시간 소요) + 다음 주 우선순위 매장 선정 / 토요일(월 1회): 전국 담당자 회의 (2시간, Zoom 또는 오프라인)',
+      collaboration: '팀 내부: 15명 담당자와는 전화+문자+카톡으로만 소통 (Slack/이메일 사용 어려워함). 주요 공지는 카톡 단톡방에 올리지만 확인 안 하는 담당자 많아서 개별 전화 필수. 영업지원팀 2명은 재고관리팀과 이메일로 발주 요청. 재고관리팀 2명은 사내 시스템에 입력하지만 실시간 연동 안 돼서 전화로 재확인. 본부장 보고는 팀장이 직접 PPT 작성 (담당자들이 보낸 문자/Excel 내용 취합). 매장 사장님들과는 담당자가 직접 대면 방문하며 소통.',
+      toolsUsed: ['Excel', '사내 재고관리 시스템', '전화', '이메일', 'KakaoTalk'],
+      painPoints: [
+        '전국 흩어진 15명 담당자와 실시간 소통이 안 돼서 문제 대응이 항상 늦음. 지난주 수요일 오전 11시, 본부장이 "경기 북부 지역 이번 주 매출이 왜 20% 떨어졌어?"라고 긴급 질문했는데 담당자한테 전화했더니 "매장 돌아보고 오후에 연락드릴게요"라는 답변. 4시간 후 "경쟁사 프로모션 때문"이라고 보고했지만 그 사이 본부장한테 "확인 중입니다"라고만 말해서 "팀장은 현장 파악도 못하냐"는 질책',
+        '15명 담당자가 매장별 매출 데이터를 전날 밤 문자나 Excel로 보내는데 양식이 제각각이어서 통합 집계하는 데 금요일 오후 3-4시간 소요. A 담당자는 "A매장 100만원, B매장 80만원" 식으로 문자 보내고 B 담당자는 Excel 파일인데 열 이름이 "매출", "판매액", "합계" 등으로 다 다름. 팀장이 하나하나 복사해서 마스터 Excel에 붙여넣고 피벗 테이블 만들어 정리. 본부장은 "금요일 오전까지 주간 리포트 달라"고 하는데 목요일 밤까지 데이터가 안 와서 금요일 새벽 야근 불가피',
+        '50대 베테랑 담당자 3명이 디지털 도구에 익숙하지 않아서 새로운 시스템 도입 시 저항이 엄청남. 작년에 간단한 재고 현황 앱을 도입하려 했는데 베테랑이 "난 30년 종이 장부로 했어. 앱은 안 쓸 거야"라고 거부. 젊은 담당자 5명은 잘 쓰는데 베테랑들이 안 쓰니까 시스템이 이원화돼서 팀장이 두 가지 방식 다 관리. "앱 설치 좀 해주세요"라고 부탁하면 "저 스마트폰도 잘 몰라요. 전화로 보고하면 안 돼요?"라는 답변',
+        '매장 재고 부족 전화가 월말이면 폭탄처럼 쏟아지는데 팀장이 현장을 직접 못 가보니 담당자 말만 믿고 긴급 발주해야 하는 불안감. 지난달 말 금요일, 담당자가 "C매장 재고 급해요, 100개 발주해주세요"라고 전화해서 긴급 요청했는데 월요일에 보니 실제로는 50개면 충분한 상황. 팀장은 현장 상황을 모르니 검증 못하고 그대로 처리. 재고팀에서 "리테일영업팀은 재고 관리 못한다"는 평가받고 본부장한테 "팀원 관리 제대로 해"라는 지적',
+        '50대 베테랑 담당자 3명은 "내가 제일 잘 안다"는 자부심으로 팀장 지시를 형식적으로만 따르고 실제로는 본인 방식대로 일함. 팀장이 "이번 주는 신제품 프로모션 집중하세요"라고 카톡으로 공지했는데 베테랑은 "제 판단으로 하겠습니다"라고 답하고 기존 제품 프로모션 계속 진행. 본부장이 "신제품 실적 왜 안 나와?"라고 물으면 베테랑은 "매장 사장님들이 기존 제품 더 좋아해요"라고 변명. 베테랑이 퇴사하면 200개 매장 중 60개를 관리할 사람이 없어서 강하게 못 나가는데 본부장한테는 "팀장 관리 능력 부족"이라는 평가'
+      ],
+      automationNeeds: [
+        '매장별 실시간 재고/매출 대시보드',
+        '자동 발주 알림 시스템',
+        '프로모션 성과 자동 집계 및 리포팅'
+      ],
+      workStructure: {
+        level: '비구조화',
+        description: '현장 중심이라 프로세스 최소화. 지역별 담당자가 재량껏 운영. 월 1회 회의로 실적 공유하나 일상 업무는 비정형적. 노하우가 개인에게만 축적.'
+      },
+      realTimeExample: '지난주 목요일 오전 10시, 본부장이 "경기 북부 지역 이번 주 매출이 왜 20% 떨어졌어?"라고 긴급 질문. 담당자한테 전화했더니 "잘 모르겠는데요, 매장 돌아보고 오후에 연락드릴게요"라는 답변. 오후 3시에 다시 전화했더니 "매장 사장님들이 경쟁사 프로모션 때문에 우리 제품 재고 안 쌓는대요"라는 보고. 그 사이 5시간 동안 본부장한테 "확인 중입니다"라고만 보고. 실시간 현황 파악이 안 돼서 대응이 항상 늦음.',
+      typicalFireDrills: [
+        '매장 긴급 재고 부족 "당장 발주해" - 주말에도 담당자 통화해서 긴급 처리',
+        '본부장 "이번 주 실적 왜 떨어졌어?" - 15명한테 전화 돌려가며 현황 파악',
+        '프로모션 효과 보고 "내일 아침까지 자료 내" - 밤새 엑셀 수작업 집계',
+        '경쟁사 정보 "즉시 확인하고 대응 방안 내" - 전국 담당자 비상 소집'
+      ]
+    },
+    expectedBehavior: {
+      initialAttitude: '회의적',
+      concerns: [
+        '현장 영업 중심인데 디지털 도구가 오히려 팀원들에게 부담만 될 것 같음',
+        '팀원 대부분이 디지털 미숙인데 내가 배워서 전파하기 어려울 듯',
+        '전국에 흩어진 팀원들을 어떻게 변화시킬지 막막함'
+      ],
+      dropoutRisk: 40,
+      workshopPsychology: {
+        initialAttitude: '회의적',
+        hiddenMotivations: [
+          '매장 데이터를 실시간으로 볼 수 있으면 본부장 질문에 즉시 답할 수 있을 텐데',
+          '전화 돌리는 시간 줄이고 전략적인 영업 기획에 집중하고 싶음',
+          '50대 베테랑도 쉽게 쓸 수 있는 간단한 도구가 있으면 좋겠음',
+          '팀원들한테 "우리도 이제 디지털 시대에 맞게 일하자"고 설득하고 싶음'
+        ],
+        deepConcerns: [
+          '내가 디지털 도구를 잘 이해 못하는데 팀원들한테 어떻게 가르치지?',
+          '50대 베테랑들이 "팀장도 잘 모르면서 우리보고 하래"라고 할까봐',
+          '새로운 시스템 도입했다가 팀원들 반발로 실패하면 팀장 리더십 손상',
+          '워크샵이 IT 기업 중심이면 리테일 영업 현장과 안 맞을 것 같음'
+        ],
+        successMetrics: [
+          '매장별 재고/매출을 스마트폰으로 실시간 확인 가능',
+          '팀원들이 앱으로 간단히 현황 입력하면 자동 집계',
+          '본부장 질문에 5시간 아니라 5분 안에 답변 가능',
+          '베테랑 담당자도 "이거 편하네"라고 인정하는 도구'
+        ],
+        dropoutRisk: 40,
+        dropoutTriggers: [
+          '매장 긴급 상황으로 현장 출동해야 하는 경우',
+          '본부장이 긴급 보고 요청하는 경우',
+          '베테랑 담당자가 집단 반발하는 경우',
+          '워크샵 내용이 너무 어렵거나 현장과 동떨어진 경우'
+        ]
+      }
+    },
+    personality: {
+      patience: 4,
+      techSavvy: 3,
+      changeResistance: 'high',
+      learningSpeed: 'slow',
+      stressLevel: 8,
+      confidenceLevel: 4
+    }
+  },
+
+  // ==================== OPERATIONS (5명) ====================
+  {
+    id: 'P006',
+    name: '윤재현',
+    age: 37,
+    company: 'SK하이닉스',
+    department: '반도체생산팀',
+    role: '팀장',
+    category: 'Operations',
+    leaderProfile: {
+      yearsInRole: 7,
+      previousRole: '공정 엔지니어',
+      promotionReason: '공급망 최적화로 재고 회전율 30% 향상. 데이터 분석 기반 의사결정 도입하여 운영 혁신 주도',
+      leadershipStyle: '안정 중심, 데이터 기반 의사결정, 일일 생산 회의',
+      biggestChallenge: '25명 팀원 중 절반이 디지털 미숙한 현장 인력. 공정별 데이터가 분산되어 통합 현황 파악에 매일 2시간 소요. 불량 원인 분석이 수작업이라 시간 오래 걸려서 생산 지연. 24시간 운영이라 변화 도입 시 리스크가 커서 본부에서 신중하라고 압박.',
+      hiddenStruggles: [
+        '불량률 급증하면 "왜 사전에 못 잡았어?" 질책받는데 데이터 통합이 느려서 실시간 파악 불가',
+        '현장 팀원들이 "시스템보다 내 눈이 더 정확해"라며 디지털 도구 입력 안 함',
+        '엔지니어들한테 불량 분석 맡기는데 수작업이라 결과 나올 때까지 며칠 걸림',
+        '24시간 운영이라 새로운 프로세스 도입하려면 3교대 전부 교육해야 하는데 현실적으로 어려움'
+      ]
+    },
+    team: {
+      size: 25,
+      seniorCount: 10,
+      juniorCount: 15,
+      composition: '팀장 1명 + 공정 엔지니어 5명 + 생산 관리자 10명 + 품질 검사원 7명 + 데이터 분석가 2명',
+      digitalMaturity: 'Intermediate',
+      maturityDistribution: 'Advanced 7명(엔지니어, 분석가) + Intermediate 8명 + Beginner 10명(현장)',
+      teamDynamics: '공정 엔지니어 5명은 데이터 분석에 능숙하지만 현장 관리자들과 소통 부족. 생산 관리자 10명은 현장 경험 풍부하지만 "내 감으로 안다"는 식으로 데이터 입력 거부. 품질 검사원 7명은 불량 발견만 하고 원인 분석은 엔지니어에게 떠넘김. 데이터 분석가 2명은 데이터는 잘 다루지만 생산 현장 이해 부족. 3교대 운영이라 팀 전체가 모이는 날이 거의 없음.',
+      resistanceFactors: [
+        '현장 관리자들이 "데이터 입력하느라 생산 못 본다"며 시스템 입력 회피',
+        '3교대 특성상 "교육받을 시간이 없다"는 현실적 제약',
+        '"지금까지 이 방식으로 문제없었는데 왜 바꾸냐"는 변화 거부',
+        '24시간 운영이라 새로운 시스템 도입 시 리스크가 크다는 우려'
+      ]
+    },
+    work: {
+      mainTasks: [
+        '24시간 생산 라인 운영 및 모니터링',
+        '공정 불량률 분석 및 개선',
+        '설비 가동률 최적화',
+        '일일 생산량 목표 관리',
+        '품질 검사 데이터 수집 및 보고'
+      ],
+      dailyWorkflow: '오전 8시 출근 → 8:30 생산/운영 현황 대시보드 확인 → 9시 현장 순회 및 이슈 체크 → 10시 일일 운영 회의 → 11-12시 KPI 분석 및 개선점 도출 → 오후 1-3시 프로젝트 진행 상황 점검 → 3-4시 타부서 협업 미팅 → 4-6시 보고서 작성 및 내일 계획 수립',
+      weeklyRoutine: '월: 주간 KPI 리뷰 | 화: 생산 계획 회의 | 수: 품질 점검 | 목: 프로세스 개선 회의 | 금: 주간 보고서 작성 및 경영진 보고',
+      collaboration: '팀 내부: ERP와 Slack으로 실시간 운영 현황 공유, 일일 스탠드업 미팅 | 타 부서: 품질팀과 주 2회 협업, 구매팀과 자재 수급 조율 | 외부: 공급업체와 정기 미팅',
+      toolsUsed: ['MES(제조실행시스템)', 'SAP', 'Excel', '공정모니터링 시스템', 'Minitab'],
+      painPoints: [
+        '공정별 데이터가 MES, SAP, Excel, 공정모니터링 시스템 4개에 분산되어 통합 현황 파악에 매일 2시간 소요. 지난주 화요일 오전 10시, 본부장이 "어제 야간 불량률이 갑자기 3% 늘었는데 왜?"라고 긴급 질문했는데 데이터가 4개 시스템에 흩어져 있어서 통합하는 데 2시간 걸림. 점심시간이 되어서야 "3번 공정 온도 설정 오류"라는 원인 파악. 본부장이 "왜 실시간 파악이 안 되냐? 다른 회사는 대시보드로 즉시 본다던데"라고 질책',
+        '불량 원인 분석을 엔지니어 5명이 수작업으로 Minitab 돌려서 하느라 시간 오래 걸림. 월요일 오후 3시, 2번 라인 불량률이 갑자기 5%로 급증했는데 공정 엔지니어한테 "원인 분석 급해요"라고 요청했더니 "데이터 정리부터 해야 해서 내일 아침까지 걸릴 것 같아요"라는 답변. 화요일 오전 11시에야 "압력 설정 범위가 표준에서 벗어났습니다"라는 분석 결과. 그사이 불량품 500개 더 생산하고 본부장한테 "왜 실시간으로 못 잡아? AI 같은 거 안 쓰냐?"고 질책',
+        '현장 생산 관리자 10명 중 50대 3명이 디지털 도구에 익숙하지 않아서 신규 시스템 교육이 어려움. 작년에 MES 모바일 앱을 도입했는데 50대 관리자 3명이 "태블릿 어떻게 써요? 화면이 자꾸 꺼져요"라며 사용 못함. 팀장이 일주일 동안 매일 30분씩 1:1 교육했지만 다음 주에 보니 다시 종이에 기록. 30대 관리자 7명은 앱을 잘 쓰는데 50대 3명이 안 쓰니까 종이 기록과 앱 입력을 둘 다 관리해야 하는 이중 부담'
+      ],
+      automationNeeds: [
+        'AI 기반 설비 이상 징후 예측',
+        '불량 원인 자동 분석 및 개선안 제시',
+        '생산 데이터 실시간 통합 대시보드'
+      ],
+      workStructure: {
+        level: '고도구조화',
+        description: '24시간 교대 근무로 역할 명확. 일일 생산 목표와 절차 문서화. 공정별 체크리스트 존재. 정기 회의와 보고 체계 확립. 단, 데이터 통합은 수작업.'
+      },
+      dailyWorkflow: '오전 8시 출근 → MES, SAP, 공정모니터링 시스템 3개 켜서 야간조 생산 현황 확인 (15분, 화면 3개 번갈아보면서 이상 없는지 체크) → 8:30 데이터 분석가 2명에게 "어제 불량률 추이 분석해줘" 요청 → 9시 현장 순회 (4개 라인 돌아보며 관리자들과 이슈 청취) → 10시 일일 생산 회의 (30분, 공정 엔지니어 5명 + 관리자 10명, 오늘 생산 목표 및 전날 이슈 공유) → 10:30 본부장 일일 보고 준비 (MES에서 생산량 Excel로 정리, SAP에서 자재 투입량 복붙, 공정 시스템에서 가동률 다운로드해서 취합) → 11시 본부장 보고 (생산량, 불량률, 설비 가동률 PPT 5장) → 점심 후 1-2시 품질팀/설비팀과 협업 회의 (불량 원인 논의 또는 설비 점검 계획) → 2-4시 공정 개선 프로젝트 진행 상황 점검 (엔지니어들과 데이터 분석 결과 검토) → 4-5시 긴급 이슈 대응 (불량률 급증하거나 설비 고장 시 즉시 대응) → 5-6시 내일 생산 계획 검토 및 인력 배치 조정 → 6시 퇴근 (단, 야간에 긴급 상황 발생 시 새벽에도 전화 받음)',
+      weeklyRoutine: '월요일 오전: 주간 생산 KPI 리뷰 (1시간, 본부장 주재, 지난주 생산량/불량률/가동률 분석 및 이번 주 목표 설정) / 화요일 오전: 공정 엔지니어 5명과 개별 면담 (각 20분, 진행 중인 분석 프로젝트 점검) / 화요일 오후: 생산 계획 회의 (1시간, 다음 주 생산 물량 및 자재 수급 확인) / 수요일 오전: 품질팀과 불량 원인 분석 회의 (1시간, 이번 주 발생한 주요 불량 패턴 리뷰 및 대책 논의) / 수요일 오후: 현장 안전 라운딩 (2시간, 4개 라인 돌아보며 안전 점검 및 관리자들 격려) / 목요일 오전: 프로세스 개선 회의 (1시간, 공정 최적화 아이디어 논의) / 목요일 오후: 설비팀과 협업 회의 (1시간, 예방 정비 계획 및 설비 이상 징후 공유) / 금요일 오전-오후: 주간 생산 실적 정리 (3-4시간, MES/SAP/공정 시스템에서 데이터 수동 취합, 피벗 테이블 만들어서 본부 보고 자료 작성) / 금요일 오후: 본부 주간 회의 참석 (1시간, 팀 실적 보고 및 다음 주 계획 공유)',
+      realTimeExample: '지난주 화요일 오전 10시, 본부장이 "어제 야간 불량률이 갑자기 3% 늘었는데 왜?"라고 긴급 질문. 야간조 데이터를 확인하려 했더니 MES, 엑셀, 공정 시스템에 분산되어 있음. 데이터 분석가한테 급하게 요청했더니 "통합하려면 2시간 걸려요"라는 답변. 결국 점심시간이 되어서야 "3번 공정 온도 설정 오류"라는 원인 파악. 본부장이 "왜 실시간 파악이 안 되냐"고 질책.',
+      typicalFireDrills: [
+        '불량률 급증 "즉시 원인 파악하고 대책 세워" - 엔지니어 총동원 긴급 분석',
+        '설비 고장 "생산 라인 멈춤, 즉시 복구" - 24시간 비상 체제',
+        '품질 이슈 "출하 중단, 전수 재검사" - 주말 반납 전면 점검',
+        '본부장 "이번 달 생산량 목표 달성 가능?" - 긴급 생산 계획 재조정'
+      ]
+    },
+    expectedBehavior: {
+      initialAttitude: '중립',
+      concerns: [
+        '생산 현장 특성상 워크샵 내용이 우리 업무에 맞을지 불확실',
+        '팀원 25명 중 절반이 디지털 미숙한데 내가 배운걸 어떻게 전달할지',
+        '24시간 운영이라 변화 도입 시 리스크가 커서 신중해야 함'
+      ],
+      dropoutRisk: 25,
+      workshopPsychology: {
+        initialAttitude: '중립',
+        hiddenMotivations: [
+          '분산된 생산 데이터를 실시간으로 통합해서 본부장 질문에 즉시 답하고 싶음',
+          '불량 원인 분석을 자동화해서 며칠이 아니라 몇 시간 안에 해결하고 싶음',
+          '3교대 팀원 전체가 같은 프로세스를 따르도록 체계화하고 싶음',
+          '데이터 기반 의사결정으로 현장 관리자들도 납득할 수 있는 근거를 만들고 싶음'
+        ],
+        deepConcerns: [
+          '24시간 운영 중인데 새로운 시스템 도입하다 생산 차질 나면 책임 문제',
+          '현장 관리자들이 "시스템보다 내 경험이 맞다"며 데이터 입력 안 하면 어쩌지',
+          '3교대 25명을 어떻게 교육하지? 시간도 없고 디지털 미숙한 사람도 많은데',
+          '워크샵 내용이 제조 현장 특성과 맞지 않으면 적용이 어려울 것 같음'
+        ],
+        successMetrics: [
+          '생산 데이터가 실시간으로 통합되어 본부장 질문에 즉시 답변 가능',
+          '불량 원인 분석 시간이 며칠에서 몇 시간으로 단축',
+          'AI 기반 설비 이상 징후 예측으로 사전 예방',
+          '현장 관리자들도 인정하는 데이터 기반 의사결정 체계'
+        ],
+        dropoutRisk: 25,
+        dropoutTriggers: [
+          '생산 라인 장애나 설비 고장 발생하는 경우',
+          '불량률 급증으로 긴급 대응해야 하는 경우',
+          '본부장 긴급 호출이 오는 경우',
+          '워크샵 내용이 제조 현장과 동떨어진 경우'
+        ]
+      }
+    },
+    personality: {
+      patience: 6,
+      techSavvy: 6,
+      changeResistance: 'medium',
+      learningSpeed: 'medium',
+      stressLevel: 7,
+      confidenceLevel: 6
+    }
+  },
+
+  {
+    id: 'P007',
+    name: '강민지',
+    age: 38,
+    company: 'SK에너지',
+    department: '물류관리팀',
+    role: '팀장',
+    category: 'Operations',
+    leaderProfile: {
+      yearsInRole: 3,
+      previousRole: '물류 기획자',
+      promotionReason: '공급망 최적화로 재고 회전율 30% 향상. 데이터 분석 기반 의사결정 도입하여 운영 혁신 주도',
+      leadershipStyle: '효율 중심, 주간 성과 리뷰, 시스템 개선 적극 추진',
+      biggestChallenge: '전국 15개 물류센터 재고 데이터 동기화가 하루 1회라 긴급 상황 대응 늦음. 운송 경로 최적화를 수동 계산하느라 팀원들 야근 잦음. 이미 WMS, TMS, SAP 등 여러 시스템 쓰는데 통합이 안 되어 혼란. 본부장은 "실시간 최적화"를 요구하는데 현재 시스템으로는 한계.',
+      hiddenStruggles: [
+        '긴급 발주 들어오면 15개 센터 재고를 일일이 확인해야 하는데 실시간 데이터가 없어서 전화로 확인',
+        '운송 경로 최적화를 엑셀로 수동 계산하느라 팀원들이 밤 10시까지 야근',
+        '시스템 3개를 번갈아 보면서 일하느라 팀원들이 "어느 시스템이 최신이에요?"라고 물어봄',
+        '본부장이 "물류비 왜 늘었어?"라고 하면 데이터 취합에 며칠 걸려서 답변 늦음'
+      ]
+    },
+    team: {
+      size: 18,
+      seniorCount: 7,
+      juniorCount: 11,
+      composition: '팀장 1명 + 물류 기획자 3명 + 재고 담당자 5명 + 운송 관리자 7명 + 시스템 관리자 2명',
+      digitalMaturity: 'Advanced',
+      maturityDistribution: 'Expert 2명(시스템) + Advanced 6명 + Intermediate 7명 + Beginner 3명',
+      teamDynamics: '시스템 관리자 2명은 기술에 능숙하지만 물류 실무 이해 부족. 물류 기획자 3명은 전략은 잘 세우지만 현장 대응 약함. 재고 담당자 5명은 각자 센터별로 독립적으로 움직여서 전체 최적화 어려움. 운송 관리자 7명은 경험으로 일하지만 데이터 분석 능력 부족. 디지털 성숙도는 높지만 협업 프로세스가 약함.',
+      resistanceFactors: [
+        '시스템이 이미 3개나 되는데 "또 새로운 도구냐"는 피로감',
+        '각 센터별 담당자가 "우리 센터는 특수해서 표준화 어렵다"며 저항',
+        '운송 관리자들이 "내 경험이 AI보다 정확하다"며 자동화 거부',
+        '"시스템 통합은 IT팀 일 아니냐"며 책임 회피'
+      ]
+    },
+    work: {
+      mainTasks: [
+        '전국 15개 물류센터 재고 통합 관리',
+        '운송 스케줄 최적화',
+        '재고 회전율 분석 및 개선',
+        '긴급 발주 대응',
+        '물류 비용 절감 프로젝트'
+      ],
+      dailyWorkflow: '오전 7시 30분 출근 → 8시 15개 물류센터 전날 재고 현황 확인(WMS 시스템, 하루 전 데이터라 실시간 파악 불가) → 8시 30분 긴급 이슈 체크(운송 지연, 재고 오류 등) → 9시 물류 데일리 미팅(30분, 센터장 3명 화상 연결, 재고/운송/긴급발주 현황 공유) → 10시-12시 운송 경로 최적화 검토(팀원들이 엑셀로 계산한 경로 승인, 유류비/배송시간 트레이드오프 판단) → 점심 후 1시-3시 프로젝트 진행(재고 회전율 개선, 물류비 절감 TF 미팅) → 3시-4시 긴급 발주 대응(고객사 요청 오면 15개 센터 전화로 재고 확인) → 4시-5시 본부장 보고 자료 작성(물류비, 재고 회전율 데이터 취합) → 5시-6시 내일 운송 스케줄 최종 확인 → 긴급 상황 없으면 6시 퇴근, 긴급 발주 있으면 밤 10시까지 야근',
+      weeklyRoutine: '월요일 오전: 주간 물류 KPI 리뷰 미팅(1시간, 재고 회전율/운송비/배송 지연율 점검) / 월요일 오후: 15개 센터별 주간 목표 설정 / 화요일: 본부장 주간 보고 및 물류비 절감 방안 논의 / 수요일: 운송 관리자 7명과 그룹 미팅(경로 최적화 사례 공유, 1.5시간) / 목요일: 재고 담당자 5명과 센터별 실사 계획 수립 / 금요일 오전: 시스템 관리자 2명과 WMS/TMS 개선 요청사항 정리 / 금요일 오후: 주간 성과 정리 및 다음 주 긴급 발주 대비 시나리오 점검',
+      collaboration: '팀 내부: ERP와 Slack으로 실시간 운영 현황 공유, 일일 스탠드업 미팅 | 타 부서: 품질팀과 주 2회 협업, 구매팀과 자재 수급 조율 | 외부: 공급업체와 정기 미팅',
+      toolsUsed: ['WMS(창고관리시스템)', 'TMS(운송관리시스템)', 'SAP', 'Excel', 'Tableau'],
+      painPoints: [
+        '15개 물류센터 재고 데이터가 하루 1회만 동기화되어 긴급 상황 대응이 늦음. 지난주 수요일 오후 2시, 대형 고객사에서 "지금 당장 500개 재고 확인해줘"라는 긴급 요청이 왔는데 WMS 시스템은 오전 8시 데이터만 있어서 15개 센터에 일일이 전화해서 확인. 총 3시간 걸려서 답변했는데 고객사는 "경쟁사는 30분 만에 답변 주던데요"라며 불만',
+        '운송 경로 최적화를 운송 관리자 7명이 엑셀로 수동 계산하느라 매일 야근. 지난주 목요일, 고속도로 사고로 서울-부산 경로가 막혀서 대체 경로를 찾아야 했는데 7명이 각자 담당 노선별로 엑셀에서 거리/시간/유류비를 계산. 결국 밤 10시까지 토론 후 경로 확정했는데 다음날 "중부고속도로가 유류비는 더 들지만 시간은 30분 빠르다"는 걸 뒤늦게 발견. 팀원들이 "AI가 계산해주면 좋을 텐데"라며 불만',
+        'WMS, TMS, SAP 세 시스템을 번갈아 보면서 일하느라 팀원들이 혼란스러워함. 재고 담당자 5명은 "WMS에서는 재고 500개인데 SAP에서는 480개라고 나와요. 어느 게 맞아요?"라고 매일 물어봄. 지난주 금요일, 본부장한테 "이번 달 물류비가 12% 증가했습니다"라고 보고했더니 "왜 증가했는지 원인 분석해"라는 지시. 3개 시스템에서 데이터 다운받아서 엑셀로 수동 취합하는 데만 3일 걸림'
+      ],
+      automationNeeds: [
+        '실시간 재고 통합 모니터링',
+        'AI 기반 운송 경로 자동 최적화',
+        '수요 예측 기반 자동 발주 시스템'
+      ],
+      workStructure: {
+        level: '고도구조화',
+        description: '물류센터별, 업무별 역할 명확. WMS/TMS로 프로세스 대부분 시스템화. 주간 성과 리뷰와 월간 개선 회의 정례화. 긴급 대응 프로토콜 문서화.'
+      },
+      realTimeExample: '지난주 금요일 오후 3시, 대형 고객사에서 "월요일 아침까지 긴급 배송 500개 가능?"이라는 요청. 15개 센터 재고를 확인하려 했더니 시스템 동기화가 오전에만 되어서 실시간 현황 파악 불가. 센터별로 전화 돌려서 재고 확인하는 데 2시간 소요. 운송 경로는 7명이 엑셀로 수동 계산하느라 밤 10시까지 야근. 결국 월요일 오전 배송 확정했지만 팀원들 주말 반납.',
+      typicalFireDrills: [
+        '긴급 발주 "지금 당장 재고 확인하고 배송 가능 여부 알려줘" - 15개 센터 전화 돌리기',
+        '운송 지연 "고속도로 사고로 배송 못해, 대체 경로 찾아" - 실시간 경로 재계산',
+        '재고 오류 "시스템이랑 실제 재고 안 맞아" - 긴급 실사',
+        '본부장 "이번 달 물류비 왜 늘었어?" - 데이터 긴급 취합 및 분석'
+      ]
+    },
+    expectedBehavior: {
+      initialAttitude: '중립',
+      concerns: [
+        '이미 여러 시스템 쓰는데 또 새로운 도구 추가하면 팀원들 혼란스러울 듯',
+        '워크샵이 우리 팀 실시간 최적화 니즈를 다룰지 의문',
+        '배운 내용을 실제 물류 시스템에 어떻게 연동할지 기술적으로 어려울 듯'
+      ],
+      dropoutRisk: 15,
+      workshopPsychology: {
+        initialAttitude: '중립',
+        hiddenMotivations: [
+          '15개 센터 재고를 실시간으로 통합해서 긴급 상황에 즉시 대응하고 싶음',
+          '운송 경로 최적화를 AI로 자동화해서 팀원들 야근 줄이고 싶음',
+          'WMS, TMS, SAP 시스템을 하나의 대시보드로 통합하고 싶음',
+          '수요 예측 기반 자동 발주로 재고 효율을 더 높이고 싶음'
+        ],
+        deepConcerns: [
+          '시스템이 이미 3개인데 또 새로운 도구 추가하면 팀원들이 더 혼란스러워할까봐',
+          '워크샵에서 배운 걸 실제 WMS/TMS 시스템에 연동하는 게 기술적으로 가능할지',
+          '시스템 통합하다가 기존 업무 프로세스가 망가지면 어쩌지',
+          '운송 관리자들이 "AI보다 내 경험이 맞다"며 자동화 거부하면 어떡하지'
+        ],
+        successMetrics: [
+          '15개 센터 재고를 실시간 대시보드로 한눈에 파악',
+          '운송 경로 최적화 시간 2시간에서 5분으로 단축',
+          'WMS, TMS, SAP 데이터를 하나의 화면에서 통합 조회',
+          '수요 예측으로 긴급 발주 50% 감소'
+        ],
+        dropoutRisk: 15,
+        dropoutTriggers: [
+          '대형 고객사 긴급 발주가 들어오는 경우',
+          '운송 사고로 긴급 경로 변경해야 하는 경우',
+          '재고 시스템 오류로 긴급 대응해야 하는 경우',
+          '워크샵 내용이 물류 시스템 연동과 동떨어진 경우'
+        ]
+      }
+    },
+    personality: {
+      patience: 7,
+      techSavvy: 8,
+      changeResistance: 'low',
+      learningSpeed: 'fast',
+      stressLevel: 6,
+      confidenceLevel: 7
+    }
+  },
+
+  {
+    id: 'P008',
+    name: '이동훈',
+    age: 38,
+    company: 'SK실트론',
+    department: '품질관리팀',
+    role: '팀장',
+    category: 'Operations',
+    leaderProfile: {
+      yearsInRole: 5,
+      previousRole: '품질 엔지니어',
+      promotionReason: '생산 효율성 개선 프로젝트로 불량률 20% 감소 달성. 크로스펑셔널 협업 능력 인정받아 팀장 승진',
+      leadershipStyle: '품질 제일주의, 데이터 기반 분석, 월간 품질 리뷰',
+      biggestChallenge: '일 5,000개 웨이퍼 검사 데이터 분석을 엔지니어들이 수작업으로 하느라 2-3시간 소요. 불량 패턴 발견이 사후적이라 예방 못함. 고객 클레임 시 과거 데이터 찾느라 며칠 걸림. 본부장은 "AI로 자동화 안 되냐"고 하는데 SAP QM 시스템 연동이 어려움.',
+      hiddenStruggles: [
+        '불량 패턴이 반복되는데 사후에야 파악되어서 "왜 미리 못 잡았어?" 질책받음',
+        '고객 클레임 들어오면 과거 데이터 찾느라 팀원들이 주말 반납해서 미안함',
+        '엔지니어들이 매일 2-3시간씩 데이터 분석하느라 정작 품질 개선 프로젝트는 못함',
+        'AI 도구 도입하고 싶지만 "품질 데이터 보안 문제"로 본부에서 승인 안 나옴'
+      ]
+    },
+    team: {
+      size: 12,
+      seniorCount: 4,
+      juniorCount: 8,
+      composition: '팀장 1명 + 품질 엔지니어 4명 + 검사원 6명 + 데이터 분석가 1명',
+      digitalMaturity: 'Intermediate',
+      maturityDistribution: 'Advanced 5명(엔지니어, 분석가) + Intermediate 4명 + Beginner 3명',
+      teamDynamics: '품질 엔지니어 4명은 데이터 분석에 능숙하지만 매일 반복 작업에 지쳐서 동기 저하. 검사원 6명은 검사는 잘하지만 "내가 왜 데이터 입력까지 해야 해?"라며 불만. 데이터 분석가 1명은 역량은 있지만 혼자서 감당 안 됨. 엔지니어와 검사원 간 소통 부족으로 데이터 품질 문제.',
+      resistanceFactors: [
+        '검사원들이 "검사만 해도 바쁜데 데이터 입력까지?"라며 거부',
+        '엔지니어들이 "AI가 우리 경험보다 정확하겠어?"라며 의심',
+        '"품질 데이터는 민감해서 외부 시스템 연동 안 된다"는 보안 우려',
+        '"기존 SAP QM 시스템으로 충분하다"는 현상 유지 심리'
+      ]
+    },
+    work: {
+      mainTasks: [
+        '웨이퍼 품질 검사 (일 5,000개)',
+        '불량 원인 분석 및 리포트',
+        '품질 KPI 모니터링 (수율, 불량률)',
+        '고객 클레임 대응',
+        '품질 개선 프로젝트 진행'
+      ],
+      dailyWorkflow: '오전 8시 출근 → 검사 장비 SW에서 전날 검사 데이터 다운로드 (10분, CSV 파일 3개) → 8:30 Excel로 데이터 정리 시작 (열 이름 통일, 이상값 제거) → 9시 일일 품질 회의 (30분, 엔지니어 4명 + 검사원 2명, 전날 불량률/주요 이슈 공유) → 9:30 엔지니어들한테 오늘 분석 작업 배정 ("A는 LOT#123 분석, B는 불량률 추이 분석") → 10-12시 현장 순회 (검사 현장 돌아보며 검사원들과 이슈 확인, 불량품 실물 확인) → 점심 후 1-2시 Minitab 분석 결과 검토 (엔지니어들이 돌린 통계 분석 확인, Cpk 지수/파레토 차트 리뷰) → 2-3시 생산팀과 협업 회의 (불량 원인 논의, 공정 파라미터 조정 필요 여부 협의) → 3-4시 고객 클레임 대응 (긴급 요청 들어오면 팀원 3명 동원해서 과거 데이터 탐색) → 4-6시 본부장 보고 자료 작성 (주간 불량률, Cpk, 고객 클레임 현황 PPT) → 6시 퇴근 (고객 클레임 긴급 시 밤까지 야근)',
+      weeklyRoutine: '월요일 오전: 주간 품질 KPI 리뷰 (1시간, 본부장 주재, 지난주 불량률/Cpk/고객 클레임 분석) / 월요일 오후: 엔지니어 4명과 개별 면담 (각 20분, 진행 중인 불량 분석 프로젝트 점검) / 화요일 오전: 생산팀과 협업 회의 (1시간, 공정 파라미터 조정 논의) / 화요일 오후: 검사원 6명 교육 (신규 검사 기준, 장비 사용법) / 수요일: 현장 품질 라운딩 (오전 2시간, 검사 현장 돌아보며 검사원들 격려 및 이슈 청취) / 목요일 오전: 품질 개선 프로젝트 회의 (불량 감소 TF, 데이터 분석 결과 공유) / 목요일 오후: 고객사 품질 미팅 (분기 1회, 품질 이슈 논의) / 금요일 오전-오후: 주간 품질 보고서 작성 (3-4시간, SAP QM/검사 장비 SW/Excel에서 데이터 수동 취합, 불량률 추이/Cpk/파레토 차트 정리) / 금요일 오후: 본부 주간 회의 참석 (1시간, 팀 품질 실적 보고)',
+      collaboration: '팀 내부: ERP와 Slack으로 실시간 운영 현황 공유, 일일 스탠드업 미팅 | 타 부서: 품질팀과 주 2회 협업, 구매팀과 자재 수급 조율 | 외부: 공급업체와 정기 미팅',
+      toolsUsed: ['품질검사 장비 SW', 'Minitab', 'Excel', 'SAP QM', 'PowerPoint'],
+      painPoints: [
+        '일 5,000개 웨이퍼 검사 데이터 분석을 엔지니어 4명이 수작업으로 Minitab 돌려서 하느라 일 2-3시간 소요. 지난주 월요일, 본부장이 "금요일 불량률 추이 분석해서 보고해"라고 지시했는데 엔지니어 A가 "금요일 데이터 5,000건을 정리하고 분석하는 데 오늘 오후까지 걸릴 것 같아요"라는 답변. 오후 5시에야 보고했는데 본부장이 "왜 그렇게 오래 걸려? 다른 팀은 실시간 대시보드로 즉시 본다던데"라고 질책',
+        '불량 패턴 발견이 사후적이라 예방 못하고 이미 불량품이 수백 개 나온 후에야 원인 파악. 지난달 수요일 오후 3시, 3번 공정에서 불량률이 갑자기 5%로 급증했는데 엔지니어한테 "원인 분석 급해요"라고 요청했더니 "과거 3일치 데이터를 분석해봐야 패턴이 보일 것 같아요"라는 답변. 목요일 오전까지 분석한 결과 "화요일부터 온도 설정이 조금씩 벗어나기 시작했네요"라는 분석. 이미 불량품 400개 생산하고 본부장한테 "왜 화요일에 미리 못 잡았어?"라고 질책',
+        '고객 클레임 시 과거 품질 데이터를 SAP QM, 검사 장비 SW, Excel 3개 시스템에서 찾느라 팀원 3명이 오전 내내 소요. 지난주 월요일 오전 11시, 고객사(삼성전자)에서 "LOT#A12345에서 불량 발견했어요. 같은 패턴이 다른 LOT에도 있는지 즉시 확인해주세요"라는 긴급 요청. 3개 시스템에 흩어진 데이터를 찾는 데 오전 내내 소요하고 오후 3시에야 답변. 고객사가 "왜 4시간이나 걸려요?"라며 불만'
+      ],
+      automationNeeds: [
+        'AI 기반 불량 패턴 자동 감지',
+        '검사 데이터 자동 분석 및 리포팅',
+        '품질 이력 통합 데이터베이스'
+      ],
+      workStructure: {
+        level: '고도구조화',
+        description: '검사 절차와 기준 명확히 문서화. 일일 품질 회의와 주간 분석 리포트 정례화. 불량 발생 시 대응 프로토콜 존재. 단, 데이터 분석은 수작업.'
+      },
+      realTimeExample: '지난주 월요일 오전 11시, 고객사에서 "지난달 납품분에서 불량 발견, 같은 패턴인지 확인해줘"라는 긴급 요청. 과거 데이터를 찾으려 했더니 SAP QM, 검사 장비 SW, 엑셀에 분산. 엔지니어 3명이 데이터 취합하는 데 오전 내내 소요. 오후 3시에야 "같은 패턴 맞습니다"라고 답변. 고객사가 "왜 실시간 확인 안 되냐"고 불만.',
+      typicalFireDrills: [
+        '고객 클레임 "즉시 과거 데이터 확인하고 원인 분석해" - 팀원 총동원 데이터 탐색',
+        '불량률 급증 "패턴 분석하고 대책 세워" - 주말 반납 긴급 분석',
+        '신제품 품질 검증 "내일까지 검사 완료" - 야근해서 수작업 분석',
+        '본부장 "이번 달 불량률 왜 높아?" - 데이터 취합 및 원인 분석 보고서'
+      ]
+    },
+    expectedBehavior: {
+      initialAttitude: '중립',
+      concerns: [
+        '품질 데이터가 민감한데 외부 시스템 연동 시 보안 우려',
+        'AI 분석 결과를 팀에서 신뢰할 수 있을지',
+        '워크샵에서 배운 내용을 기존 SAP QM 시스템에 어떻게 통합할지'
+      ],
+      dropoutRisk: 20,
+      workshopPsychology: {
+        initialAttitude: '중립',
+        hiddenMotivations: [
+          '불량 패턴을 AI로 사전에 자동 감지해서 사후 대응이 아닌 예방하고 싶음',
+          '검사 데이터 분석을 자동화해서 엔지니어들이 품질 개선에 집중하게 하고 싶음',
+          '과거 품질 데이터를 통합 DB로 만들어서 고객 클레임 시 즉시 대응하고 싶음',
+          '데이터 기반 품질 관리로 본부장한테 인정받고 싶음'
+        ],
+        deepConcerns: [
+          '품질 데이터는 민감한데 외부 AI 도구 연동 시 보안 문제로 본부 승인 안 날까봐',
+          'AI 분석 결과를 엔지니어들이 신뢰 안 하면 도입해도 소용없음',
+          'SAP QM 시스템에 워크샵 내용 통합하는 게 기술적으로 가능할지',
+          '검사원들이 "데이터 입력 업무 늘어난다"며 반발하면 어쩌지'
+        ],
+        successMetrics: [
+          '불량 패턴 AI 자동 감지로 사전 예방',
+          '검사 데이터 분석 시간 2-3시간에서 10분으로 단축',
+          '과거 품질 데이터 즉시 조회로 고객 클레임 대응 속도 향상',
+          '품질 이력 통합 DB로 데이터 기반 의사결정'
+        ],
+        dropoutRisk: 20,
+        dropoutTriggers: [
+          '고객 클레임으로 긴급 대응해야 하는 경우',
+          '불량률 급증으로 원인 분석 총력전 벌이는 경우',
+          '신제품 품질 검증 긴급 요청 들어오는 경우',
+          '워크샵 내용이 SAP QM 시스템 연동과 동떨어진 경우'
+        ]
+      }
+    },
+    personality: {
+      patience: 6,
+      techSavvy: 6,
+      changeResistance: 'medium',
+      learningSpeed: 'medium',
+      stressLevel: 7,
+      confidenceLevel: 6
+    }
+  },
+
+  {
+    id: 'P009',
+    name: '박수현',
+    age: 38,
+    company: 'SK온',
+    department: '배터리생산팀',
+    role: '팀장',
+    category: 'Operations',
+    leaderProfile: {
+      yearsInRole: 8,
+      previousRole: '공정 관리자',
+      promotionReason: '공급망 최적화로 재고 회전율 30% 향상. 데이터 분석 기반 의사결정 도입하여 운영 혁신 주도',
+      leadershipStyle: '안전 최우선, 현장 소통 중시, 일일 조회',
+      biggestChallenge: '배터리 생산은 안전이 최우선인데 안전 점검을 종이 체크리스트로 해서 누락 위험. 30명 팀원 중 21명이 디지털 미숙. 3교대 운영이라 팀 전체 교육 어려움. 설비 이상 징후를 사전에 못 잡아서 갑작스런 정지 발생. 본부장은 "스마트 팩토리 구축"을 요구하는데 현실은 종이 기록.',
+      hiddenStruggles: [
+        '안전사고 나면 팀장 책임인데 종이 체크리스트 누락돼도 사후에야 알게 됨',
+        '설비 갑자기 멈추면 "왜 사전에 못 잡았어?" 질책받는데 예측 시스템이 없음',
+        '작업자 12명이 디지털 도구 못 써서 새로운 시스템 도입이 현실적으로 어려움',
+        '본부장이 "스마트 팩토리"를 요구하는데 현장은 종이 기록 수준이라 간극이 큼'
+      ]
+    },
+    team: {
+      size: 30,
+      seniorCount: 12,
+      juniorCount: 18,
+      composition: '팀장 1명 + 공정 관리자 8명 + 설비 엔지니어 6명 + 생산 작업자 12명 + 품질 담당 3명',
+      digitalMaturity: 'Beginner',
+      maturityDistribution: 'Intermediate 9명(관리자, 엔지니어) + Beginner 21명',
+      teamDynamics: '공정 관리자 8명은 현장 경험 풍부하지만 디지털 도구에 익숙하지 않음. 설비 엔지니어 6명은 기술은 잘 아는데 생산 일정과 조율 부족. 생산 작업자 12명은 안전 규정은 잘 따르지만 "종이 체크리스트가 편하다"며 디지털 전환 거부. 품질 담당 3명은 검사만 하고 데이터 분석은 안 함. 3교대라 소통 단절.',
+      resistanceFactors: [
+        '작업자들이 "종이 체크리스트가 더 편해요. 태블릿은 어려워요"라며 거부',
+        '3교대 특성상 "교육받을 시간도 없고 새로운 거 배울 여력 없다"',
+        '관리자들이 "지금까지 이 방식으로 문제없었다"며 변화 저항',
+        '"배터리 생산은 안전이 우선인데 새로운 시스템 도입 시 리스크 크다"는 우려'
+      ]
+    },
+    work: {
+      mainTasks: [
+        '배터리 셀 생산 라인 운영',
+        '설비 가동률 관리',
+        '안전 점검 및 사고 예방',
+        '일일 생산 계획 수립 및 실행',
+        '생산 실적 보고'
+      ],
+      dailyWorkflow: '오전 8시 출근 → 8:30 야간조 관리자와 인수인계 (종이 기록 확인, 안전 이슈/설비 이상 청취, 15분) → 9시 현장 안전 라운딩 (4개 라인 돌아보며 작업자 12명 안전장구 착용 확인, 소화기/비상구 점검) → 9:30 일일 생산 조회 (30명 전체 모여서 오늘 생산 목표 공유, 안전 주의사항 강조) → 10-11시 설비 엔지니어 6명과 설비 점검 계획 논의 → 11-12시 MES 시스템에서 전날 생산량 확인 및 Excel 정리 (관리자 8명이 종이로 기록한 숫자와 대조) → 점심 후 1-2시 품질팀과 협업 회의 (불량 이슈 논의) → 2-3시 본부장 보고 자료 작성 (생산량, 안전 점검 현황 PPT) → 3-4시 공정 관리자 8명과 1:1 면담 (각 20분, 현장 애로사항 청취) → 4-5시 내일 생산 계획 및 자재 수급 확인 → 5-6시 야간조로 인수인계 준비 (오늘 이슈 정리, 종이 문서 작성) → 6시 퇴근 (안전사고 발생 시 즉시 복귀)',
+      weeklyRoutine: '월요일 오전: 주간 생산 KPI 리뷰 (1시간, 본부장 주재, 지난주 생산량/가동률/안전사고 여부 점검) / 월요일 오후: 3교대 관리자 8명과 그룹 미팅 (1시간, 이번 주 생산 목표 및 안전 중점사항 공유) / 화요일: 안전팀과 협업 회의 (안전 점검 체크리스트 검토, 개선사항 논의) / 수요일 오전: 설비팀과 예방 정비 계획 수립 / 수요일 오후: 현장 안전 라운딩 (2시간, 4개 라인 전수 점검, 작업자들 격려) / 목요일: 품질팀과 불량 원인 분석 회의 / 금요일 오전-오후: 주간 생산 실적 집계 (3-4시간, 3교대 관리자 8명이 종이로 기록한 데이터를 Excel에 수동 입력, 본부 보고 자료 작성) / 금요일 오후: 본부 주간 회의 참석 및 팀 실적 보고',
+      collaboration: '팀 내부: ERP와 Slack으로 실시간 운영 현황 공유, 일일 스탠드업 미팅 | 타 부서: 품질팀과 주 2회 협업, 구매팀과 자재 수급 조율 | 외부: 공급업체와 정기 미팅',
+      toolsUsed: ['MES', 'Excel', '안전점검 체크리스트(종이)', '사내 보고 시스템'],
+      painPoints: [
+        '생산 작업자 12명이 설비 가동 데이터를 종이에 수기 기록하느라 오류가 많고 실시간 파악 불가. 지난주 목요일 오후 3시, 본부장이 "2번 라인 가동률이 왜 떨어졌어?"라고 긴급 질문했는데 작업자가 아침에 작성한 종이 기록을 확인하러 현장으로 내려감. 종이를 보니 "오전 9시 30분 정지" "오전 10시 재가동"이라고만 적혀 있어서 정확히 몇 분 멈췄는지 계산 불가. 작업자한테 전화했더니 "정확히는 모르겠는데 30분 정도요?"라는 답변. 본부장한테 정확한 데이터를 못 드리고 "약 30분 정지로 추정됩니다"라고 보고',
+        '안전 점검이 종이 체크리스트라 관리가 어렵고 분실 위험 있음. 지난주 수요일 오후 2시, 야간조 관리자가 "안전 점검 체크리스트를 찾을 수가 없어요"라고 전화. 종이 문서라 어디 두었는지 모르고 혹시 안전 점검 누락됐나 확인하려 했더니 기록이 없어서 파악 불가. 본부에 보고해야 하는데 "안전 점검 기록 분실"이라고 말하기 민망. 결국 "다시 점검하겠습니다"라고 하고 야간조에 재점검 요청',
+        '생산 실적 보고서 작성에 주당 5시간 소요되는데 팀장이 직접 해야 해서 팀원들에게 미안함. 매주 금요일 오후, 3교대 관리자 8명이 종이로 기록한 생산량을 팀장이 직접 Excel에 입력하고 주간 집계. 관리자마다 기록 방식이 달라서 (A는 "500개", B는 "0.5K", C는 "500") 통일하는 데 시간 소요. 중간에 숫자 오류 발견하면 관리자한테 전화해서 재확인. 금요일 오후 3-4시간 동안 팀장이 데이터 정리하는 동안 팀원들은 "팀장님이 직접 하셔야 하나요?"라며 미안해함'
+      ],
+      automationNeeds: [
+        '설비 가동 데이터 자동 수집',
+        '디지털 안전 점검 시스템',
+        '생산 실적 자동 집계 및 리포팅'
+      ],
+      workStructure: {
+        level: '반구조화',
+        description: '생산 라인 운영 절차는 명확하나, 데이터 기록은 수기. 안전 점검은 체크리스트 있으나 종이 문서. 일일 조회로 소통하나 디지털 협업 체계 부재.'
+      },
+      realTimeExample: '지난주 수요일 오후 2시, 야간조 관리자가 "안전 점검 체크리스트를 찾을 수가 없어요"라고 전화. 종이 문서라 어디 두었는지 모름. 혹시 안전 점검 누락됐나 확인하려 했더니 기록이 없어서 파악 불가. 본부에 보고해야 하는데 "안전 점검 기록 분실"이라고 말하기 민망. 결국 "다시 점검하겠습니다"라고 하고 야간조에 재점검 요청.',
+      typicalFireDrills: [
+        '안전사고 발생 "즉시 전수 점검하고 재발방지 대책 내일까지" - 밤샘 대응',
+        '설비 긴급 정지 "원인 파악하고 즉시 복구" - 24시간 비상 체제',
+        '생산 실적 부족 "왜 목표 못 채웠어?" - 수기 데이터 긴급 취합',
+        '본부장 "스마트 팩토리 구축 계획 내" - 현실과 동떨어진 계획서 작성'
+      ]
+    },
+    expectedBehavior: {
+      initialAttitude: '걱정',
+      concerns: [
+        '생산 현장에서 디지털 도구 도입하면 팀원들 부담만 늘 것 같음',
+        '팀원 대부분 디지털 미숙한데 내가 설득하기 어려울 듯',
+        '3시간 워크샵으로 현장에 맞는 현실적 해법 찾기 어려울 것 같음'
+      ],
+      dropoutRisk: 45,
+      workshopPsychology: {
+        initialAttitude: '걱정',
+        hiddenMotivations: [
+          '안전 점검을 디지털화해서 종이 문서 분실 위험 없애고 싶음',
+          '설비 가동 데이터를 자동 수집해서 수기 기록 오류 줄이고 싶음',
+          '생산 실적 보고서를 자동화해서 주당 5시간 절약하고 싶음',
+          '작업자들도 쉽게 쓸 수 있는 간단한 디지털 도구가 있으면 좋겠음'
+        ],
+        deepConcerns: [
+          '팀원 21명이 디지털 미숙한데 태블릿 같은 거 줘도 못 쓸 것 같음',
+          '작업자들이 "종이가 편해요"라고 하면 강제할 수도 없고',
+          '3교대라 30명 전부 교육하는 게 현실적으로 불가능',
+          '워크샵이 IT 기업 중심이면 배터리 생산 현장과 안 맞을 것 같음'
+        ],
+        successMetrics: [
+          '안전 점검을 태블릿으로 간단히 체크하면 자동 기록',
+          '설비 가동 데이터가 센서로 자동 수집되어 수기 기록 불필요',
+          '생산 실적이 자동 집계되어 보고서 작성 시간 제로',
+          '작업자들도 "이거 편하네요"라고 인정하는 직관적 도구'
+        ],
+        dropoutRisk: 45,
+        dropoutTriggers: [
+          '안전사고 발생하는 경우',
+          '설비 긴급 정지로 복구 작업해야 하는 경우',
+          '본부장 긴급 호출이 오는 경우',
+          '워크샵 내용이 너무 어렵거나 현장과 동떨어진 경우'
+        ]
+      }
+    },
+    personality: {
+      patience: 4,
+      techSavvy: 3,
+      changeResistance: 'high',
+      learningSpeed: 'slow',
+      stressLevel: 8,
+      confidenceLevel: 3
+    }
+  },
+
+  {
+    id: 'P010',
+    name: '한승민',
+    age: 39,
+    company: 'SK케미칼',
+    department: '생산계획팀',
+    role: '팀장',
+    category: 'Operations',
+    leaderProfile: {
+      yearsInRole: 2,
+      previousRole: '수요 예측 분석가',
+      promotionReason: '생산 효율성 개선 프로젝트로 불량률 20% 감소 달성. 크로스펑셔널 협업 능력 인정받아 팀장 승진',
+      leadershipStyle: '데이터 기반 의사결정, 애자일 방식, 주 2회 스탠드업 미팅',
+      biggestChallenge: '수요 예측 모델이 복잡해서 팀원들과 협업할 때 설명 어려움. 공급망 협업이 이메일/전화라 실시간 대응 못해서 지연 발생. 시나리오 분석을 수동으로 하느라 야근 많음. 팀은 Expert 수준이지만 타 부서(생산, 구매)와 협업 시 디지털 역량 차이로 병목.',
+      hiddenStruggles: [
+        '복잡한 수요 예측 모델을 타 부서에 설명할 때 "알아듣기 어렵다"는 반응',
+        '공급사와 이메일로 소통하느라 긴급 자재 부족 상황에 실시간 대응 못함',
+        '시나리오 100개를 수동으로 돌리느라 팀원들 주말 야근',
+        '내 팀은 Expert인데 생산팀은 Beginner라 협업 시 속도 안 맞음'
+      ]
+    },
+    team: {
+      size: 9,
+      seniorCount: 3,
+      juniorCount: 6,
+      composition: '팀장 1명 + 생산 계획자 4명 + 자재 담당 2명 + 수요 예측 분석가 2명',
+      digitalMaturity: 'Expert',
+      maturityDistribution: 'Expert 2명(분석가) + Advanced 5명 + Intermediate 2명',
+      teamDynamics: '수요 예측 분석가 2명은 Python, AI 모델링 능숙하지만 비즈니스 커뮤니케이션 약함. 생산 계획자 4명은 SAP APO 잘 다루지만 복잡한 알고리즘 이해 부족. 자재 담당 2명은 실무는 잘하지만 데이터 분석 역량 약함. 팀 내부는 협업 잘되지만 타 부서와 역량 차이로 답답함.',
+      resistanceFactors: [
+        '분석가들이 "너무 단순한 프로세스는 우리 수준에 안 맞다"며 거부',
+        '이미 SAP APO, Python, Tableau 다 쓰는데 "또 새로운 도구냐"는 피로감',
+        '"우리 팀 문제가 아니라 생산팀, 구매팀이 디지털 역량이 부족한 게 문제"',
+        '"워크샵이 기초적이면 시간 낭비. 실전 고급 케이스 다뤄야"'
+      ]
+    },
+    work: {
+      mainTasks: [
+        '월간/주간 생산 계획 수립',
+        '수요 예측 및 재고 최적화',
+        '자재 소요량 계산 및 발주',
+        '공급망 협업 (원자재 공급사, 고객사)',
+        '생산 시뮬레이션 및 시나리오 분석'
+      ],
+      dailyWorkflow: '오전 8시 출근 → 8:30 SAP APO에서 전날 생산 실적 확인 → 9시 팀 스탠드업 미팅 (15분, 오늘 우선순위 작업 공유, Slack으로 진행) → 9:30 수요 예측 분석가 2명과 오늘 예측 모델 실행 계획 논의 → 10-11시 Python Jupyter Notebook에서 수요 예측 스크립트 실행 (파라미터 입력하고 결과 대기) → 11-12시 Tableau 대시보드에서 예측 결과 시각화 및 검토 → 점심 후 1-2시 생산팀과 협업 회의 (예측 결과 공유, 생산 계획 조율) → 2-3시 공급사 이메일 확인 및 답변 (자재 수급 이슈 논의) → 3-4시 생산 계획자 4명과 다음 주 계획 수립 (SAP APO에서 자재 가용성 확인) → 4-5시 긴급 시나리오 분석 요청 대응 (본부장 요청 시 Python 스크립트 재실행) → 5-6시 Slack으로 팀원들과 진행사항 공유 및 내일 계획 → 긴급 이슈 없으면 6시 퇴근, 공급사 지연 발생 시 주말 야근',
+      weeklyRoutine: '월요일 오전: 주간 생산 계획 수립 회의 (2시간, 생산팀/구매팀과 협업, 이번 주 생산량 및 자재 수급 계획) / 월요일 오후: 수요 예측 분석가 2명과 이번 주 예측 모델 업데이트 계획 논의 / 화요일 오전: 본부장 주간 보고 (Tableau 대시보드로 수요 예측, 재고 현황, 생산 계획 발표) / 화요일 오후: 공급사와 화상 미팅 (주요 공급사 3-4곳, 자재 수급 일정 확인) / 수요일: 생산 시뮬레이션 및 시나리오 분석 (분석가 2명과 함께 Python으로 다양한 시나리오 테스트) / 목요일 오전: 생산 계획자 4명과 개별 면담 (각 20분, 담당 제품군별 계획 진행 상황 점검) / 목요일 오후: 생산팀/품질팀과 협업 회의 (생산 일정 조율, 품질 이슈 논의) / 금요일 오전-오후: 주간 실적 정리 및 다음 주 계획 수립 (SAP APO/Tableau에서 데이터 추출, 본부 보고 자료 작성, 2-3시간) / 금요일 오후: 팀 회고 (이번 주 잘한 점, 개선할 점 공유, 30분)',
+      collaboration: '팀 내부: ERP와 Slack으로 실시간 운영 현황 공유, 일일 스탠드업 미팅 | 타 부서: 품질팀과 주 2회 협업, 구매팀과 자재 수급 조율 | 외부: 공급업체와 정기 미팅',
+      toolsUsed: ['SAP APO', 'Python', 'Tableau', 'Excel', 'Slack'],
+      painPoints: [
+        '수요 예측 분석가 2명이 Python으로 만든 복잡한 모델을 생산팀/구매팀에 설명할 때 "알아듣기 어렵다"는 반응. 지난주 화요일 생산 계획 회의에서 분석가가 "ARIMA 모델 기반으로 다음 달 수요를 예측한 결과 15% 증가 예상됩니다"라고 설명했는데 생산팀장이 "ARIMA가 뭐예요? 왜 15%인지 이해가 안 가요"라고 반문. 1시간 동안 설명했지만 결국 "그냥 작년 데이터 보고 판단하겠습니다"라며 예측 결과 무시. 팀장은 Expert 수준인데 협업 부서는 Beginner라 속도가 안 맞음',
+        '공급사와 이메일/전화로 소통하느라 긴급 자재 부족 상황에 실시간 대응 못함. 지난주 목요일 오후 4시, 공급사에서 "원자재 공급 지연될 것 같습니다"라는 이메일 보냈는데 팀장이 확인한 건 금요일 오전. 급하게 생산 계획 100개 시나리오를 재계산해야 하는데 Python 스크립트 수동 실행하느라 팀원 2명이 주말 야근. 월요일 오전에야 "대체 계획 A, B, C"를 생산팀에 전달했는데 생산팀장이 "왜 실시간 대응 안 되냐"고 불만',
+        '시나리오 분석을 분석가 2명이 Python 스크립트로 수동 실행하느라 주말 야근 많음. 지난달 말, 본부장이 "다음 분기 수요가 10% 증가하면 어떻게 되는지, 15% 증가하면 어떻게 되는지 시나리오 100개 분석해"라고 지시. 분석가 2명이 Python 스크립트에 파라미터 일일이 입력하고 실행하는 걸 100번 반복. 1개 시나리오당 평균 10분 소요되어 총 16시간 걸림. 결국 주말 내내 야근해서 월요일 아침에 보고. 팀원들이 "AI가 자동으로 돌려주면 좋을 텐데"라며 지침'
+      ],
+      automationNeeds: [
+        'AI 기반 수요 예측 자동화',
+        '공급망 협업 플랫폼',
+        '생산 시나리오 자동 시뮬레이션'
+      ],
+      workStructure: {
+        level: '고도구조화',
+        description: '월간/주간 계획 수립 프로세스 명확. SAP APO로 대부분 시스템화. 주 2회 스탠드업 미팅으로 진행 공유. 역할 분담 명확하고 협업 체계 확립.'
+      },
+      realTimeExample: '지난주 목요일 오후 4시, 공급사에서 "원자재 공급 지연될 것 같습니다"라는 이메일. 이메일을 본 건 금요일 오전. 급하게 생산 계획 100개 시나리오를 재계산해야 하는데 Python 스크립트 수동 실행하느라 팀원 2명이 주말 야근. 월요일 오전에야 "대체 계획 A, B, C"를 생산팀에 전달. 생산팀장이 "왜 실시간 대응 안 되냐"고 불만.',
+      typicalFireDrills: [
+        '공급사 지연 "즉시 대체 계획 세워" - 100개 시나리오 수동 계산, 주말 야근',
+        '수요 급증 "긴급 증산 가능한지 확인해" - 자재, 생산 여력 긴급 분석',
+        '고객사 납기 변경 "일정 당겨줄 수 있어?" - 전체 생산 계획 재조정',
+        '본부장 "다음 분기 계획 발표 준비" - 데이터 시각화 및 시나리오 분석'
+      ]
+    },
+    expectedBehavior: {
+      initialAttitude: '중립',
+      concerns: [
+        'Expert 수준이라 워크샵 내용이 너무 기초적이지 않을까',
+        '우리 팀 복잡한 협업 시나리오를 단순한 프로세스로 표현하기 어려울 듯',
+        '실제 문제 해결보다 개념 설명에 그치면 시간 낭비일 수 있음'
+      ],
+      dropoutRisk: 5,
+      workshopPsychology: {
+        initialAttitude: '중립',
+        hiddenMotivations: [
+          '공급망 협업을 이메일이 아닌 실시간 플랫폼으로 전환하고 싶음',
+          '시나리오 분석을 AI로 자동화해서 팀원들 주말 야근 없애고 싶음',
+          '복잡한 수요 예측 모델을 타 부서도 이해할 수 있게 시각화하고 싶음',
+          '타 부서와 디지털 역량 차이를 극복하는 협업 방법을 배우고 싶음'
+        ],
+        deepConcerns: [
+          '워크샵이 기초 수준이면 우리 팀한테 도움 안 될 것 같음',
+          '복잡한 생산 계획 시나리오를 단순한 프로세스로 표현하기 어려울 듯',
+          '실전 문제 해결보다 개념 설명에 그치면 시간 낭비',
+          '생산팀, 구매팀이 디지털 역량 부족한 게 진짜 문제인데 워크샵으로 해결될까'
+        ],
+        successMetrics: [
+          '공급사와 실시간 협업 플랫폼으로 이메일 지연 제로',
+          'AI 시나리오 자동 분석으로 100개 계산 시간 2일에서 1시간으로 단축',
+          '수요 예측 모델을 타 부서도 이해할 수 있게 시각화',
+          '타 부서와 디지털 역량 차이를 극복하는 효과적 협업 체계'
+        ],
+        dropoutRisk: 5,
+        dropoutTriggers: [
+          '공급사 긴급 지연으로 생산 계획 재조정해야 하는 경우',
+          '고객사 납기 변경으로 전체 일정 재계산해야 하는 경우',
+          '본부장 긴급 보고 요청이 오는 경우',
+          '워크샵 내용이 너무 기초적이거나 실전과 동떨어진 경우'
+        ]
+      }
+    },
+    personality: {
+      patience: 9,
+      techSavvy: 9,
+      changeResistance: 'low',
+      learningSpeed: 'fast',
+      stressLevel: 5,
+      confidenceLevel: 8
+    }
+  },
+
+  // ==================== R&D (5명) ====================
+  {
+    id: 'P011',
+    name: '신하늘',
+    age: 39,
+    company: 'SK바이오팜',
+    department: '신약개발팀',
+    role: '팀장',
+    category: 'R&D',
+    leaderProfile: {
+      yearsInRole: 4,
+      previousRole: '연구원',
+      promotionReason: '연구 프로세스 표준화로 개발 기간 25% 단축. 외부 기관과의 협업 프로젝트 성공적으로 리드',
+      leadershipStyle: '자율성 존중, 주간 연구 세미나, 논문 중심 성과 평가',
+      biggestChallenge: '실험 데이터가 팀원들 로컬에 분산되어 협업 시 찾기 어려움. 문헌 조사에 팀원들이 많은 시간 소비. 연구 프로젝트 진행 상황을 팀 전체가 파악하기 어려움. Expert 수준 팀이지만 데이터 관리가 비체계적이라 시간 낭비.',
+      hiddenStruggles: [
+        '연구원들이 각자 로컬에 데이터 저장해서 필요할 때 "그거 어디 있죠?" 물어야 함',
+        '문헌 조사로 주당 10시간씩 소비하는데 중복 조사도 많음',
+        '프로젝트 진행 상황을 팀장이 일일이 물어봐야 파악됨',
+        'Expert 팀인데 데이터 관리가 체계적이지 못해서 비효율 발생'
+      ]
+    },
+    team: {
+      size: 7,
+      seniorCount: 2,
+      juniorCount: 5,
+      composition: '팀장 1명 + 연구원 5명 + 임상 코디네이터 1명',
+      digitalMaturity: 'Expert',
+      maturityDistribution: 'Expert 3명 + Advanced 4명',
+      teamDynamics: '연구원 5명은 각자 전문 분야에서 자율적으로 연구. Expert 수준이라 기술 역량 높지만 협업 프로세스는 약함. 임상 코디네이터 1명은 연구팀과 임상팀 중간에서 조율하느라 바쁨. 팀원들이 자율성 중시해서 관리보다는 기술 논의 선호.',
+      resistanceFactors: [
+        'Expert 팀이라 "우리는 이미 잘하고 있다" 는 자부심',
+        '"프로세스가 창의성을 제약한다"는 우려',
+        '연구 업무 특성상 "너무 정형화하면 혁신이 죽는다"',
+        '"지금도 충분히 빠르게 진행 중"이라는 인식'
+      ]
+    },
+    work: {
+      mainTasks: [
+        '신약 후보물질 발굴 및 검증',
+        '실험 설계 및 수행',
+        '실험 데이터 분석 및 논문 작성',
+        '임상시험 준비 및 진행',
+        '연구 프로젝트 관리'
+      ],
+      dailyWorkflow: '오전 9시 출근 → 9:30 연구 진행 상황 확인 → 10시 팀 기술 미팅 → 11-12시 실험/연구 활동 모니터링 → 오후 1-3시 데이터 분석 및 문서 작성 → 3-4시 외부 기관 협업 → 4-5시 팀원 기술 지도 → 5-6시 연구 일지 정리 및 계획 수립',
+      weeklyRoutine: '월: 연구 진행 상황 공유 | 화: 기술 세미나 | 수: 실험 계획 검토 | 목: 외부 협력 회의 | 금: 주간 연구 성과 정리',
+      collaboration: '팀 내부: LIMS와 Teams으로 연구 데이터 공유, 주 2회 기술 회의 | 타 부서: 생산팀과 기술 이전 협의, QA팀과 검증 프로세스 | 외부: 연구기관 및 대학과 공동연구',
+      toolsUsed: ['Lab Management System', 'GraphPad Prism', 'Python', 'R', 'EndNote', 'Slack'],
+      painPoints: [
+        '실험 데이터가 연구원 5명의 로컬 PC에 분산되어 협업 시 찾기 어렵고 외부 기관 요청 시 지체. 지난주 목요일 오후 3시, 외부 임상 기관에서 "6개월 전 실험 데이터 확인 필요"라는 요청이 왔는데 담당 연구원에게 물으니 "제 로컬 PC에 있는데 지금 외근 중이에요"라는 답변. 결국 저녁에 돌아와서 데이터 전송했는데 외부 기관이 "데이터 관리가 체계적이지 않네요"라고 지적. 팀장도 "중앙 저장소가 필요한데"라고 생각하지만 연구원들이 "제 PC가 편해요"라며 변화 거부',
+        '문헌 조사에 연구원들이 주당 평균 10시간씩 소비하는데 중복 조사도 많고 효율 낮음. 신약 후보물질 연구를 시작할 때마다 연구원들이 PubMed, Google Scholar에서 관련 논문 100-200편씩 검색하고 일일이 읽어야 함. 지난달 새 프로젝트 시작 시, 연구원 A와 B가 각자 문헌 조사하다가 나중에 보니 50편 정도가 중복. 팀장이 "AI로 논문 요약하면 좋을 텐데"라고 제안했지만 연구원들이 "직접 읽어야 뉘앙스를 알 수 있어요"라며 소극적',
+        '연구 프로젝트 진행 상황을 팀장이 각 연구원에게 일일이 물어봐야 하는데 시간 많이 소요되고 전체 그림 파악 어려움. 매주 금요일 오후, 본부장 주간 보고 준비하려면 연구원 5명에게 "이번 주 진행 상황 알려줘"라고 일일이 Slack 메시지 보내고 각자 답변 취합. 연구원 C가 "실험 3개 완료했고 1개 진행 중"이라고 하면 정확히 어떤 실험인지, 진행률이 몇 %인지는 직접 물어봐야 앎. 결국 주간 보고 준비에 금요일 오후 3시간 소요'
+      ],
+      automationNeeds: [
+        '실험 데이터 통합 관리 시스템',
+        'AI 기반 문헌 요약 및 인사이트 추출',
+        '연구 프로젝트 자동 진행 리포팅'
+      ],
+      workStructure: {
+        level: '반구조화',
+        description: '연구 주제별 담당자는 있으나 실험 방법은 연구원 재량. 주간 세미나로 진행 공유하나 일상 협업은 비정형적. 데이터 관리 규칙 미흡.'
+      },
+      realTimeExample: '지난주 목요일 오후 3시, 외부 임상 기관에서 "이전 실험 데이터 확인 필요"라는 요청. 담당 연구원에게 물으니 "제 로컬 PC에 있는데 지금 외근 중이에요"라는 답변. 결국 저녁에 돌아와서 데이터 전송. 외부 기관이 "데이터 관리가 체계적이지 않네요"라고 지적.',
+      typicalFireDrills: [
+        '외부 기관 데이터 요청 "즉시 전달해" - 로컬 PC 찾느라 시간 지체',
+        '임상시험 준비 "데이터 정리 필요" - 팀원들에게 일일이 수집 요청',
+        '논문 제출 마감 "실험 데이터 정리해서 보내" - 형식 불일치로 재작업',
+        '연구 프로젝트 보고 "진행 상황 업데이트" - 팀장이 각자에게 물어서 취합'
+      ]
+    },
+    expectedBehavior: {
+      initialAttitude: '중립',
+      concerns: [
+        'Expert 수준에서 프로세스가 너무 선형적이고 예측 가능하지 않을까',
+        '연구 업무의 창의성과 빠른 의사결정을 프레임워크가 제약할까 걱정',
+        '실제 도구 연동보다 개념 설명에 그치면 우리 팀에 도움 안될 듯'
+      ],
+      dropoutRisk: 5,
+      workshopPsychology: {
+        initialAttitude: '중립',
+        hiddenMotivations: [
+          '실험 데이터를 통합 관리해서 팀원 로컬 PC 찾는 시간 없애고 싶음',
+          '문헌 조사를 AI로 자동화해서 주당 10시간 절약하고 싶음',
+          '연구 프로젝트 진행 상황을 실시간 대시보드로 파악하고 싶음',
+          'Expert 팀에 맞는 고급 자동화 도구를 도입하고 싶음'
+        ],
+        deepConcerns: [
+          '워크샵이 Expert 수준에 맞지 않는 기초적 내용이면 시간 낭비',
+          '프로세스 정형화가 연구 창의성을 제약할까 걱정',
+          '실제 도구 연동보다 개념 설명에 그치면 적용이 어려움',
+          '팀원들이 "우리는 이미 잘하고 있다"며 변화 거부할까'
+        ],
+        successMetrics: [
+          '실험 데이터 중앙 저장소로 로컬 PC 찾는 시간 제로',
+          'AI 문헌 요약으로 조사 시간 주당 10시간에서 2시간으로 단축',
+          '연구 프로젝트 대시보드로 진행 상황 실시간 파악',
+          'Expert 팀 수준에 맞는 고급 자동화 체계 구축'
+        ],
+        dropoutRisk: 5,
+        dropoutTriggers: [
+          '외부 임상 기관 긴급 요청이 오는 경우',
+          '논문 제출 마감이 임박한 경우',
+          '연구 프로젝트 보고 준비해야 하는 경우',
+          '워크샵 내용이 Expert 수준과 맞지 않는 경우'
+        ]
+      }
+    },
+    personality: {
+      patience: 8,
+      techSavvy: 9,
+      changeResistance: 'low',
+      learningSpeed: 'fast',
+      stressLevel: 4,
+      confidenceLevel: 8
+    }
+  },
+
+  {
+    id: 'P012',
+    name: '오현우',
+    age: 40,
+    company: 'SK하이닉스',
+    department: '반도체설계팀',
+    role: '팀장',
+    category: 'R&D',
+    leaderProfile: {
+      yearsInRole: 6,
+      previousRole: '설계 엔지니어',
+      promotionReason: '연구 프로세스 표준화로 개발 기간 25% 단축. 외부 기관과의 협업 프로젝트 성공적으로 리드',
+      leadershipStyle: '기술 중심, 코드 리뷰 문화, 주간 기술 공유',
+      biggestChallenge: '설계 검증 시뮬레이션이 오래 걸려 팀원들이 주당 20시간씩 대기. 설계 변경 이력 추적이 수동이라 혼란. 타 팀과 협업 문서가 분산되어 찾기 어려움. Expert 팀이지만 시뮬레이션 대기 시간으로 생산성 저하.',
+      hiddenStruggles: [
+        '시뮬레이션 대기로 팀원들이 주당 20시간 낭비하는데 해결 방법 모름',
+        '설계 변경 사항을 수동으로 추적하느라 버전 충돌 자주 발생',
+        '타 팀 협업 문서가 이메일, Confluence, 공유 폴더에 분산되어 찾기 어려움',
+        'Expert 팀인데 시뮬레이션 병목으로 효율이 떨어짐'
+      ]
+    },
+    team: {
+      size: 12,
+      seniorCount: 4,
+      juniorCount: 8,
+      composition: '팀장 1명 + 설계 엔지니어 8명 + 검증 엔지니어 3명',
+      digitalMaturity: 'Expert',
+      maturityDistribution: 'Expert 9명 + Advanced 3명',
+      teamDynamics: '설계 엔지니어 8명은 각자 회로 모듈을 독립적으로 설계. Expert 수준이라 기술 토론은 활발하지만 협업 문서는 분산. 검증 엔지니어 3명은 시뮬레이션 병목으로 설계팀과 갈등. Git으로 코드 관리는 체계적이지만 문서 관리는 약함.',
+      resistanceFactors: [
+        'Expert 팀이라 "우리는 이미 체계적으로 관리하고 있다"는 인식',
+        '"시뮬레이션은 하드웨어 문제인데 프로세스로 어떻게 해결하냐"',
+        '이미 Git, JIRA 쓰는데 "또 새로운 도구냐"는 피로감',
+        '"설계는 창의성인데 프로세스가 제약한다"'
+      ]
+    },
+    work: {
+      mainTasks: [
+        '반도체 회로 설계',
+        '설계 검증 및 시뮬레이션',
+        'IP(지적재산권) 관리',
+        '설계 문서화 및 리뷰',
+        '공정 엔지니어와 협업'
+      ],
+      dailyWorkflow: '오전 9시 출근 → 9:30 연구 진행 상황 확인 → 10시 팀 기술 미팅 → 11-12시 실험/연구 활동 모니터링 → 오후 1-3시 데이터 분석 및 문서 작성 → 3-4시 외부 기관 협업 → 4-5시 팀원 기술 지도 → 5-6시 연구 일지 정리 및 계획 수립',
+      weeklyRoutine: '월: 연구 진행 상황 공유 | 화: 기술 세미나 | 수: 실험 계획 검토 | 목: 외부 협력 회의 | 금: 주간 연구 성과 정리',
+      collaboration: '팀 내부: LIMS와 Teams으로 연구 데이터 공유, 주 2회 기술 회의 | 타 부서: 생산팀과 기술 이전 협의, QA팀과 검증 프로세스 | 외부: 연구기관 및 대학과 공동연구',
+      toolsUsed: ['CAD 툴(Cadence, Synopsys)', 'Git', 'JIRA', 'Confluence', 'Python', 'Slack'],
+      painPoints: [
+        '설계 검증 시뮬레이션이 오래 걸려서 설계 엔지니어 8명이 주당 평균 20시간씩 대기하며 낭비. 검증 엔지니어 3명이 시뮬레이션 서버 8대를 수동으로 관리하는데 우선순위 조정이 수작업이라 병목 발생. 지난주 화요일 오전 11시, 설계 엔지니어가 "시뮬레이션 결과 언제 나와요?"라고 문의했더니 검증팀이 "대기 중인 작업이 5개라 오후 5시쯤"이라는 답변. 결국 그날 작업 못하고 하루 대기하고 본부장이 "왜 이렇게 느리냐"고 질책',
+        '설계 변경 이력 추적이 Git으로는 코드만 관리되고 설계 문서는 수동이라 팀원들 혼란. 설계 엔지니어 A가 회로 모듈 수정하면서 설계 문서도 업데이트했는데 엔지니어 B는 이전 버전 문서 보고 작업해서 충돌 발생. 지난주 목요일, "누가 먼저 수정했어?"라며 2시간 동안 버전 추적하느라 시간 낭비. 팀장이 "설계 문서도 Git으로 관리하자"고 제안했지만 엔지니어들이 "문서는 Word/PPT가 편해요"라며 소극적',
+        '공정팀/생산팀과 협업 문서가 이메일, Confluence, Teams에 분산되어 찾기 어려움. 공정 엔지니어가 "지난달 설계 리뷰 결과 어디 있어요?"라고 물으면 팀원들이 Confluence 검색, 이메일 뒤지기, Teams 채팅 스크롤하며 30분씩 소비. 지난주 금요일, 본부장 보고 준비하려고 최근 3개월 협업 문서 찾는데 오후 2시간 소요. 팀장도 "문서 통합 플랫폼 필요한데"라고 생각하지만 우선순위가 밀림'
+      ],
+      automationNeeds: [
+        'AI 기반 설계 최적화 자동화',
+        '설계 변경 이력 자동 추적 시스템',
+        '협업 문서 통합 플랫폼'
+      ],
+      workStructure: {
+        level: '고도구조화',
+        description: '설계 프로세스와 검증 절차 명확히 문서화. Git으로 버전 관리, JIRA로 태스크 관리. 주간 기술 공유와 코드 리뷰 정례화. 협업 체계 확립.'
+      },
+      realTimeExample: '지난주 화요일 오전 11시, 설계 엔지니어가 "시뮬레이션 결과 언제 나와요?"라고 문의. 검증팀이 "대기 중인 작업이 5개라 오후 5시쯤"이라는 답변. 결국 그날 작업 못하고 하루 대기. 본부장이 "왜 이렇게 느리냐"고 질책.',
+      typicalFireDrills: [
+        '시뮬레이션 병목 "작업이 멈췄어" - 우선순위 재조정하느라 혼란',
+        '설계 변경 충돌 "누가 먼저 수정했어?" - 수동 버전 추적으로 시간 낭비',
+        '타 팀 협업 문서 찾기 "어디에 있죠?" - 이메일, Confluence 뒤지기',
+        '본부 보고 "설계 진행 현황 업데이트" - 팀원들에게 일일이 확인'
+      ]
+    },
+    expectedBehavior: {
+      initialAttitude: '중립',
+      concerns: [
+        'Expert 관점에서 구체적인 디지털 도구 연동이 안보이면 기대 낮음',
+        '비정형적 R&D 업무를 어떻게 표준화할 것인지 의문',
+        '미션 작성이 너무 선형적이고 템플릿화되어 있으면 우리 팀에 안 맞음'
+      ],
+      dropoutRisk: 5,
+      workshopPsychology: {
+        initialAttitude: '중립',
+        hiddenMotivations: [
+          '시뮬레이션 우선순위를 AI로 자동화해서 대기 시간 20시간에서 5시간으로 단축하고 싶음',
+          '설계 변경 이력을 자동 추적해서 버전 충돌 제로로 만들고 싶음',
+          '타 팀 협업 문서를 한 곳에 통합해서 검색 가능하게 하고 싶음',
+          'Expert 팀 수준에 맞는 고급 최적화 도구 도입하고 싶음'
+        ],
+        deepConcerns: [
+          '워크샵이 Expert 수준과 맞지 않으면 시간 낭비',
+          '시뮬레이션 병목은 하드웨어 문제인데 프로세스로 해결될까',
+          '이미 Git, JIRA 쓰는데 또 새로운 도구 추가하면 오버헤드',
+          '팀원들이 "우리는 이미 체계적"이라며 변화 거부할까'
+        ],
+        successMetrics: [
+          'AI 시뮬레이션 스케줄링으로 대기 시간 75% 감소',
+          '설계 변경 이력 자동 추적으로 버전 충돌 제로',
+          '협업 문서 통합 플랫폼으로 검색 시간 제로',
+          'Expert 팀 수준의 설계 최적화 자동화'
+        ],
+        dropoutRisk: 5,
+        dropoutTriggers: [
+          '설계 마감으로 긴급 작업해야 하는 경우',
+          '시뮬레이션 병목으로 팀 전체 작업 지연되는 경우',
+          '본부 보고 준비해야 하는 경우',
+          '워크샵 내용이 Expert 수준과 맞지 않는 경우'
+        ]
+      }
+    },
+    personality: {
+      patience: 8,
+      techSavvy: 10,
+      changeResistance: 'low',
+      learningSpeed: 'fast',
+      stressLevel: 5,
+      confidenceLevel: 9
+    }
+  },
+
+  {
+    id: 'P013',
+    name: '임하린',
+    age: 40,
+    company: 'SK C&C',
+    department: 'AI연구팀',
+    role: '팀장',
+    category: 'R&D',
+    leaderProfile: {
+      yearsInRole: 2,
+      previousRole: 'AI 연구원',
+      promotionReason: '연구 프로세스 표준화로 개발 기간 25% 단축. 외부 기관과의 협업 프로젝트 성공적으로 리드',
+      leadershipStyle: '빠른 실험, 실패 허용, 주 2회 페이퍼 리뷰',
+      biggestChallenge: '실험 트래킹을 팀원들이 제각각 하느라 "지난달 실험 중 정확도 92% 나온 게 어떤 조건이었지?" 물으면 못 찾음. 데이터셋 버전 관리가 안 돼서 재현성 문제. 연구-프로덕션 전환이 복잡해서 팀원 스트레스',
+      hiddenStruggles: [
+        '팀원이 "이 실험 누가 했었는데 어디 갔죠?"라고 물으면 Slack 검색해도 못 찾는 답답함',
+        '같은 모델을 3명이 각자 다른 방식으로 실험해서 결과 비교가 불가능한 혼란',
+        '프로덕션 팀이 "이 모델 어떻게 배포해요?"라고 물으면 설명하기 어려운 기술 간극',
+        '논문 쓸 때 "이 실험 정확히 어떤 데이터셋으로 했지?" 찾느라 일주일 소요'
+      ]
+    },
+    team: {
+      size: 5,
+      seniorCount: 2,
+      juniorCount: 3,
+      composition: '팀장 1명 + AI 연구원 4명',
+      digitalMaturity: 'Expert',
+      maturityDistribution: 'Expert 5명',
+      teamDynamics: '모두 Expert 수준이라 자율성 높고 각자 독립적으로 연구. 주 2회 페이퍼 리뷰로 지식 공유하지만 실험 프로세스는 통일 안 됨. PyTorch vs TensorFlow 선호도가 달라서 코드 공유 어려움. 연구 속도는 빠르지만 협업 체계는 약함. MLflow 도입했지만 "내 방식이 더 편해"라며 일부만 사용.',
+      resistanceFactors: [
+        'Expert들이 "이미 잘하고 있는데 왜 프로세스를 통일하냐"는 자율성 고수',
+        '"표준화하면 혁신이 줄어든다"는 연구자 특유의 반발',
+        '"MLOps 도구 배우는 시간에 논문 한 편 더 쓰겠다"는 우선순위 차이',
+        '개인 실험 노트북이 편한데 "중앙 플랫폼 왜 써야 하냐"는 저항'
+      ]
+    },
+    work: {
+      mainTasks: [
+        '딥러닝 모델 연구 및 개발',
+        '대규모 데이터셋 구축 및 전처리',
+        '모델 성능 실험 및 평가',
+        '연구 논문 작성 및 발표',
+        '프로덕션 모델 배포 지원'
+      ],
+      dailyWorkflow: '오전 9시 출근 → 9:30 연구 진행 상황 확인 → 10시 팀 기술 미팅 → 11-12시 실험/연구 활동 모니터링 → 오후 1-3시 데이터 분석 및 문서 작성 → 3-4시 외부 기관 협업 → 4-5시 팀원 기술 지도 → 5-6시 연구 일지 정리 및 계획 수립',
+      weeklyRoutine: '월: 연구 진행 상황 공유 | 화: 기술 세미나 | 수: 실험 계획 검토 | 목: 외부 협력 회의 | 금: 주간 연구 성과 정리',
+      collaboration: '팀 내부: LIMS와 Teams으로 연구 데이터 공유, 주 2회 기술 회의 | 타 부서: 생산팀과 기술 이전 협의, QA팀과 검증 프로세스 | 외부: 연구기관 및 대학과 공동연구',
+      toolsUsed: ['PyTorch', 'TensorFlow', 'Kubernetes', 'MLflow', 'Weights & Biases', 'GitHub', 'Notion'],
+      painPoints: [
+        '실험 트래킹을 연구원 8명이 각자 로컬 Jupyter Notebook에 수동 기록하느라 실험 비교가 어렵고 재현 불가. 지난주 목요일, 주니어 연구원이 "작년 6월 NLP 모델 정확도 89% 나왔던 거 하이퍼파라미터 뭐였죠?"라고 질문했는데 Slack과 GitHub을 뒤져도 기록을 못 찾음. 시니어 연구원에게 물으니 "제가 했는데 로컬 노트북에 있어요. 근데 그 노트북 포맷해서..."라는 답변. 똑같은 실험을 다시 돌리는 데 이틀 소요하고 팀장은 "실험 트래킹 시스템 필요한데"라고 한숨',
+        '데이터셋 버전 관리가 안 되어서 논문 리뷰어가 "재현이 안 되는데요?"라고 할 때 대응 어려움. 논문에 "ImageNet 데이터셋 사용"이라고 적었는데 정확히 어느 버전인지, 전처리는 어떻게 했는지 기록이 없음. 지난달 리뷰어가 "정확도가 논문이랑 다른데요"라고 지적했을 때, 팀원들이 주말 반나절 동안 과거 데이터셋 찾아서 재현하느라 고생. 팀장이 "데이터셋 버전도 Git처럼 관리해야 하는데"라고 생각하지만 방법을 모름',
+        '연구 코드를 프로덕션 환경으로 전환하는 데 일주일씩 걸려서 팀원들 스트레스받고 프로덕션 팀과 갈등. 연구원이 PyTorch로 개발한 모델을 프로덕션 팀에 전달하면 "환경 설정이 안 맞아요", "라이브러리 버전이 달라요"라는 피드백. 지난주 금요일, 프로덕션 팀이 "이 모델 왜 안 돌아가요?"라고 긴급 연락했는데 환경 차이 디버깅하느라 주말 반납. 팀장이 "MLOps 파이프라인 만들면 원클릭으로 배포 가능한데"라고 생각하지만 팀원들이 "그거 배우는 시간에 논문 쓰겠다"며 우선순위 차이'
+      ],
+      automationNeeds: [
+        '실험 자동 트래킹 및 비교 시스템',
+        '데이터셋 버전 관리 자동화',
+        'MLOps 파이프라인 구축'
+      ],
+      workStructure: {
+        level: '반구조화',
+        description: '연구 주제는 자율적으로 선정. GitHub로 코드 관리하나 실험 프로세스는 비정형적. 주 2회 페이퍼 리뷰로 지식 공유. MLflow 도입했으나 정착 미흡.'
+      },
+      realTimeExample: '지난주 목요일 오후 3시, 주니어 연구원이 "팀장님, 작년 6월에 했던 NLP 모델 정확도 89% 나왔던 거 기억나세요? 그때 하이퍼파라미터 세팅 뭐였죠?"라고 질문. 팀장이 Slack과 GitHub을 뒤져봤지만 해당 실험 기록을 못 찾음. 결국 시니어 연구원에게 물어봤더니 "그거 제가 했는데 로컬 노트북에 있어요. 근데 그 노트북 포맷해서..."라는 답변. 똑같은 실험을 다시 돌리는 데 이틀 소요.',
+      typicalFireDrills: [
+        '프로덕션 팀 "이 모델 왜 안 돌아가요?" - 환경 차이 긴급 디버깅',
+        '논문 리뷰어 "재현이 안 되는데요?" - 실험 조건 찾느라 주말 반납',
+        'CEO "이 모델 정확도 몇 %야?" - 각자 다른 답변 나와서 긴급 회의',
+        '데이터셋 라이선스 문제 발견 - 사용한 모든 실험 찾아내는 비상 작업'
+      ]
+    },
+    expectedBehavior: {
+      initialAttitude: '중립',
+      concerns: [
+        '전략 업무(장기 기획, 비정형 분석)와의 연결고리가 보이지 않으면 무용',
+        '우리 팀이 이걸 언제 어떻게 써야 하는가가 명확하지 않으면 의미 없음',
+        '워크샵이 일반적인 업무 관리에 치중하면 AI 연구팀 특성에 안 맞음'
+      ],
+      dropoutRisk: 5,
+      workshopPsychology: {
+        initialAttitude: '중립',
+        hiddenMotivations: [
+          '실험 재현성을 100% 보장하는 자동 트래킹 시스템을 만들고 싶음',
+          '팀원들이 자발적으로 사용하는 MLOps 파이프라인을 구축하고 싶음',
+          '연구-프로덕션 전환을 원클릭으로 만들어서 팀원 스트레스 줄이고 싶음',
+          'Expert 수준 팀에게도 설득력 있는 프로세스 개선 방법을 알고 싶음'
+        ],
+        deepConcerns: [
+          '워크샵이 Expert 수준과 맞지 않고 일반적인 업무 관리에 치중하면 시간 낭비',
+          '연구자 자율성을 침해하는 "통제"로 오해받으면 팀원 반발',
+          '"프로세스 표준화"가 창의적 연구를 방해한다는 저항 예상',
+          '이미 PyTorch, MLflow, Kubernetes 다 쓰는데 "또 새로운 도구냐"는 피로감'
+        ],
+        successMetrics: [
+          '모든 실험이 자동으로 트래킹되어 언제든 재현 가능',
+          '데이터셋 버전이 자동 관리되어 논문 작성 시 즉시 확인 가능',
+          '연구 코드를 프로덕션 배포하는 시간을 일주일에서 하루로 단축',
+          'Expert 팀원들이 "이거 편한데요"라며 자발적으로 사용하는 시스템'
+        ]
+      }
+    },
+    personality: {
+      patience: 9,
+      techSavvy: 10,
+      changeResistance: 'low',
+      learningSpeed: 'fast',
+      stressLevel: 4,
+      confidenceLevel: 9
+    }
+  },
+
+  {
+    id: 'P014',
+    name: '류소영',
+    age: 41,
+    company: 'SK이노베이션',
+    department: '배터리기술연구팀',
+    role: '팀장',
+    category: 'R&D',
+    leaderProfile: {
+      yearsInRole: 1.2,
+      previousRole: '재료 연구원 (8년 경력)',
+      promotionReason: '리튬메탈 음극재 신소재 개발로 특허 5건 출원, 에너지밀도 15% 향상 성과로 승진',
+      leadershipStyle: '안정적 연구 관리, 월간 연구 리뷰, 특허 중시. 하지만 팀원들의 연구 속도와 방향 조율에 어려움 느낌.',
+      biggestChallenge: '시니어 3명이 각자 독립적으로 실험하는데 누가 어떤 데이터 갖고 있는지 물어봐야 알 수 있음. 로컬 PC에 흩어져 있어서 협업 시 찾기 어렵고, 특허 출원 시 과거 데이터 찾느라 일주일씩 소요',
+      hiddenStruggles: [
+        '주니어가 "이 실험 누가 했었는데"라고 물으면 시니어 3명에게 일일이 물어봐야 하는 비효율',
+        '월간 연구 리뷰 자료 만들 때 팀원들한테 데이터 달라고 요청해서 취합하는 데 주말 반나절 소요',
+        '"최종_최종_진짜최종.pptx" 같은 파일이 쌓여서 어느 게 최신인지 혼란',
+        '같은 실험을 주니어가 반복하는데 과거 데이터 검색이 안 돼서 중복 실험하는 낭비'
+      ]
+    },
+    team: {
+      size: 8,
+      seniorCount: 3,
+      juniorCount: 5,
+      composition: '팀장 1명 + 시니어 재료 연구원 3명(박사급, 10-15년차) + 주니어 공정 연구원 2명(석사급, 3-4년차) + 주니어 분석 연구원 3명(석사급, 2-5년차)',
+      digitalMaturity: 'Advanced',
+      maturityDistribution: 'Advanced 6명(시니어 3명 + 주니어 3명) + Intermediate 2명(주니어 공정 연구원)',
+      teamDynamics: '시니어 3명(박사급)이 각자 독립적으로 재료 연구하며 로컬 PC에 데이터 보관. 주니어들은 시니어에게 배우지만 과거 실험 데이터에 접근 못함. SharePoint 있지만 실제로는 각자 로컬 관리. 월간 연구 리뷰에서만 진행 공유하고 실시간 협업 약함. 특허 5건 출원할 정도로 연구 성과는 좋지만 데이터 공유 문화 부족.',
+      resistanceFactors: [
+        '시니어 박사급 연구원들이 "내 데이터는 내가 관리한다"는 독립성 고수',
+        '"SharePoint에 올리는 게 번거롭고 로컬이 더 빠르다"는 편의성 선호',
+        '"실험 데이터를 공유하면 경쟁에서 밀린다"는 암묵적 불안감',
+        'Advanced 수준인데 "기본적인 파일 관리 교육은 필요 없다"는 자존심'
+      ]
+    },
+    work: {
+      mainTasks: [
+        '차세대 배터리 재료 연구 (리튬메탈, 전고체 전해질)',
+        '전기화학 실험 및 분석 (사이클 수명, 출력 특성 평가)',
+        '배터리 성능 테스트 (셀 제작 후 충방전 실험, 주 평균 20건)',
+        '특허 출원 및 기술 문서 작성 (월 평균 1-2건 특허 출원)',
+        '생산팀과 기술 이관 협업 (파일럿 양산 프로세스 검증)'
+      ],
+      dailyWorkflow: '오전 8시 출근 → 전날 실험 데이터 확인 (셀 사이클 테스트 결과, 전기화학 분석 데이터) → 9시 팀 미팅 (20분, 각자 실험 진행 상황 공유) → 9:30-12시 실험실에서 재료 합성, 셀 조립, 측정 장비 세팅 (시니어들은 자율적으로, 주니어들은 수시로 질문) → 점심 후 1-3시 실험 데이터 분석 (Origin으로 그래프 그리고 Excel로 정리) → 3-5시 팀장이 주니어들 실험 결과 리뷰 및 다음 실험 방향 논의 → 5-6시 특허 초안 작성 또는 생산팀과 화상 미팅 → 저녁 7시 퇴근 (단, 긴급 실험 이슈 시 8-9시까지)',
+      weeklyRoutine: '월요일 오전: 주간 실험 계획 회의(1시간, 재료별 목표 설정) / 화요일: 시니어 연구원들과 특허 전략 논의 / 수요일 오후: 연구소 전체 세미나 참석 (최신 배터리 기술 동향) / 목요일: 주니어들 실험 노트 검토 및 피드백 / 금요일: 월간 연구 리뷰 준비 (PPT 작성, 진행률 점검)',
+      collaboration: '팀 내에서는 SharePoint에 실험 계획과 결과를 기록하지만 실제로는 각자 로컬 PC에 원본 데이터 보관. 주간 미팅에서 구두로 진행 공유. 생산팀과는 이메일로 기술 이관 논의. 외부 대학 연구실과 공동 연구 시 PPT와 이메일로 데이터 주고받음. 특허팀과는 월 1회 대면 미팅.',
+      toolsUsed: ['실험 장비 SW(Gamry, Biologic)', 'Origin', 'Excel', 'PowerPoint', 'SharePoint', '이메일', 'Zoom'],
+      painPoints: [
+        '시니어 연구원 3명이 각자 로컬 PC에 실험 데이터를 독립적으로 보관해서 협업 시 찾기 어려움. 주니어가 "리튬메탈 음극재 사이클 수명 실험 누가 했었는데"라고 물으면 팀장이 시니어 3명에게 일일이 Slack으로 물어봐야 함. 지난주 화요일, 생산팀에서 "작년 3월 실험 조건 알려주세요"라고 요청했는데 담당 시니어가 외근 중이라 저녁에야 답변. 외부 대학 공동 연구팀이 "데이터 관리가 체계적이지 않네요"라고 지적',
+        '주니어 5명이 같은 유형 실험을 매번 시니어한테 물어봐야 해서 비효율적이고 중복 실험 많음. 과거 실험 데이터 검색이 안 되어서 주니어가 "이 조건으로 실험 해본 적 있나요?"라고 물으면 시니어가 "있을 거 같은데 찾아봐야 알겠네"라는 답변. 지난달 주니어 2명이 같은 전해질 조성 실험을 각자 반복하다가 나중에 알게 됨. 팀장이 "과거 실험 히스토리 공유 시스템 만들자"고 제안했지만 시니어들이 "급하지 않다"며 우선순위 밀림',
+        '특허 출원 시 과거 6개월간 실험 데이터를 찾는 데 일주일 소요되고 팀장이 주말 반납해서 정리. 지난주 금요일, 특허팀에서 "다음 주 화요일까지 리튬메탈 음극재 실험 데이터 정리해서 보내주세요"라는 요청. 시니어 3명에게 "지난 6개월간 리튬메탈 관련 실험 데이터 주세요"라고 했더니 각자 로컬 PC를 뒤지며 "이건 C드라이브에, 저건 외장하드에"라는 답변. 데이터 모으는 데 이틀 걸리고 주말에 팀장이 혼자 Excel로 정리해서 특허팀 제출 마감 간신히 맞춤'
+      ],
+      automationNeeds: [
+        '실험 데이터 중앙 저장소 (조건별, 날짜별 검색 가능)',
+        '데이터 분석 자동화 툴 (그래프 자동 생성, 트렌드 분석)',
+        '연구 히스토리 검색 시스템 (과거 실험 조건과 결과를 빠르게 찾기)'
+      ],
+      workStructure: {
+        level: '반구조화',
+        description: '재료/공정/분석별 담당은 명확하나 협업 프로세스 비정형적. 월간 연구 리뷰로 진행 공유. 실험 데이터 관리 규칙 있으나 준수 미흡. 시니어들은 독립적으로 연구하고 주니어들은 팀장에게 수시 보고.'
+      },
+      realTimeExample: '지난주 금요일 오후 4시, 특허팀에서 "다음 주 화요일까지 리튬메탈 음극재 실험 데이터 정리해서 보내주세요"라는 요청. 팀장이 시니어 3명에게 "지난 6개월간 리튬메탈 관련 실험 데이터 주세요"라고 했더니, 각자 로컬 PC를 뒤지며 "이건 C드라이브에, 저건 외장하드에"라는 답변. 데이터를 모으는 데만 이틀 걸렸고, 결국 주말에 팀장이 혼자 Excel로 정리. 특허팀 제출 마감을 간신히 맞춤.',
+      typicalFireDrills: [
+        '특허팀 "다음 주까지 데이터 정리해서 제출" - 주말 반납해서 데이터 취합',
+        '생산팀 "이 재료 양산 가능해?" - 과거 실험 조건 찾느라 긴급 회의',
+        'CEO "이 배터리 성능 몇 %야?" - 각자 다른 데이터 들고 와서 불일치',
+        '주니어 "같은 실험 했는데 결과 다른데요?" - 과거 조건 못 찾아서 재실험'
+      ]
+    },
+    expectedBehavior: {
+      initialAttitude: '중립',
+      concerns: [
+        'Advanced 수준에서 구체적 개선점 도출보다 개념 설명이면 실망',
+        '8명 팀원들 실제 업무 중인데 배운 내용 적용할 시간이 있을지',
+        '자체 미션/비전 명확한데 일반적인 미션 작성 과정은 불필요할 듯',
+        '시니어 연구원들이 "데이터 관리 시스템 만들자"고 해도 "지금도 잘 하고 있는데 왜 바꾸냐"며 반발할까봐 걱정',
+        '특허 출원이 급한데 워크샵에서 배운 내용을 언제 적용하지'
+      ],
+      dropoutRisk: 10,
+      workshopPsychology: {
+        initialAttitude: '중립',
+        hiddenMotivations: [
+          '실험 데이터를 조건별, 날짜별로 즉시 검색할 수 있는 중앙 저장소를 만들고 싶음',
+          '특허 출원 시 과거 데이터 찾는 시간을 일주일에서 하루로 단축하고 싶음',
+          '주니어들이 중복 실험하지 않도록 과거 실험 히스토리를 공유하고 싶음',
+          '시니어 박사급 연구원들도 인정할 수밖에 없는 효율적 협업 시스템을 알고 싶음'
+        ],
+        deepConcerns: [
+          'Advanced 수준인데 기본적인 파일 관리 교육 수준이면 실망',
+          '시니어들이 "내 데이터는 내가 관리한다"며 독립성 고수하면 어떻게 설득할지',
+          '"데이터 공유 시스템"이 연구 자율성을 침해한다고 오해받을까봐',
+          '특허 출원, 생산팀 협업 등 급한 일이 많은데 워크샵 후 적용할 시간 없을 듯'
+        ],
+        successMetrics: [
+          '실험 데이터가 조건별, 날짜별로 중앙 저장소에 자동 저장되어 즉시 검색 가능',
+          '특허 출원 시 필요한 데이터를 하루 만에 찾아서 정리 가능',
+          '주니어들이 과거 실험 조건을 검색해서 중복 실험 안 하게 됨',
+          '시니어 박사급 연구원들이 "이거 편하네요"라며 자발적으로 사용'
+        ]
+      }
+    },
+    personality: {
+      patience: 7,
+      techSavvy: 8,
+      changeResistance: 'low',
+      learningSpeed: 'fast',
+      stressLevel: 6,
+      confidenceLevel: 7
+    }
+  },
+
+  {
+    id: 'P015',
+    name: '조민석',
+    age: 41,
+    company: 'SK바이오사이언스',
+    department: '백신연구팀',
+    role: '팀장',
+    category: 'R&D',
+    leaderProfile: {
+      yearsInRole: 7,
+      previousRole: '바이러스 연구원',
+      promotionReason: '연구 프로세스 표준화로 개발 기간 25% 단축. 외부 기관과의 협업 프로젝트 성공적으로 리드',
+      leadershipStyle: '규제 준수 중시, 주간 진행 회의, 문서화 강조',
+      biggestChallenge: '임상 데이터가 여러 병원에서 여러 형식으로 들어와서 통합 관리 어려움. 규제 문서 작성을 수작업으로 하느라 팀원들 야근 많음. 연구 진행 상황을 실시간 파악 못해서 일정 지연 많음',
+      hiddenStruggles: [
+        '서울대병원, 삼성병원, 아산병원에서 각자 다른 Excel 포맷으로 임상 데이터 보내면 통합하는 데 일주일 소요',
+        'FDA, EMA 규제 문서 양식이 조금씩 달라서 팀원들이 밤샘하며 수작업으로 작성',
+        '10명 팀원이 각자 진행하는 연구를 주간 회의 때만 알 수 있어서 병목 지점 놓침',
+        '7년차 팀장인데 아직도 규제 문서 검토에 주말을 쓰는 현실이 답답함'
+      ]
+    },
+    team: {
+      size: 10,
+      seniorCount: 4,
+      juniorCount: 6,
+      composition: '팀장 1명 + 바이러스 연구원 4명 + 임상 연구원 3명 + 데이터 분석가 2명',
+      digitalMaturity: 'Intermediate',
+      maturityDistribution: 'Advanced 5명(연구원, 분석가) + Intermediate 3명 + Beginner 2명',
+      teamDynamics: 'Advanced 5명(바이러스 연구원, 데이터 분석가)은 LIMS, SAS 능숙하지만 Beginner 2명(임상 연구원)은 Excel만 사용. 임상 연구 특성상 규제 준수가 최우선이라 새로운 도구 도입 시 검증 과정 필수. 주간 진행 회의로 정보 공유하지만 실시간 협업은 약함. 문서화 문화는 강하지만 수작업 비중 높아서 야근 잦음.',
+      resistanceFactors: [
+        '규제 준수가 최우선이라 "새로운 도구가 FDA/EMA 기준 만족하냐"는 검증 요구',
+        'Beginner 2명이 "Excel도 어려운데 새로운 시스템은 더 어렵다"는 불안감',
+        '"임상시험은 검증된 방법만 써야 한다"는 보수적 연구 문화',
+        '이미 LIMS, SAS 쓰는데 "또 배워야 하냐"는 Advanced 팀원들의 피로감'
+      ]
+    },
+    work: {
+      mainTasks: [
+        '백신 후보물질 개발',
+        '전임상/임상 시험 설계 및 진행',
+        '임상 데이터 분석',
+        '규제 기관 제출 문서 작성',
+        '연구 프로젝트 관리'
+      ],
+      dailyWorkflow: '오전 9시 출근 → 9:30 연구 진행 상황 확인 → 10시 팀 기술 미팅 → 11-12시 실험/연구 활동 모니터링 → 오후 1-3시 데이터 분석 및 문서 작성 → 3-4시 외부 기관 협업 → 4-5시 팀원 기술 지도 → 5-6시 연구 일지 정리 및 계획 수립',
+      weeklyRoutine: '월: 연구 진행 상황 공유 | 화: 기술 세미나 | 수: 실험 계획 검토 | 목: 외부 협력 회의 | 금: 주간 연구 성과 정리',
+      collaboration: '팀 내부: LIMS와 Teams으로 연구 데이터 공유, 주 2회 기술 회의 | 타 부서: 생산팀과 기술 이전 협의, QA팀과 검증 프로세스 | 외부: 연구기관 및 대학과 공동연구',
+      toolsUsed: ['LIMS(실험실정보관리)', 'SAS', 'Excel', 'PowerPoint', 'SharePoint'],
+      painPoints: [
+        '서울대병원, 삼성병원, 아산병원에서 각자 다른 Excel 포맷으로 임상 데이터를 보내서 통합하는 데 임상 연구원 3명이 일주일 소요. 지난주 화요일, 규제팀에서 "다음 주 금요일까지 FDA 제출용 임상 데이터 정리해주세요"라는 요청. 3명이 각각 다른 포맷으로 받은 데이터를 수작업으로 통합하는 데 3일 소요하고 데이터 분석가 2명이 SAS로 통계 분석. 팀장이 주말에 FDA 양식에 맞춰 문서 작성해서 마감 간신히 맞춤. 팀원들이 "임상 데이터 자동 통합 플랫폼 있으면 좋을 텐데"라며 지침',
+        'FDA, EMA 규제 문서 양식이 조금씩 달라서 팀원 4명이 수작업으로 작성하느라 야근 많음. FDA는 100페이지 분량, EMA는 150페이지 분량인데 임상 데이터는 같은데 양식만 다름. 지난달 규제 문서 제출 마감 전날, 팀원 4명이 밤 12시까지 문서 작성하고 팀장이 새벽 2시까지 최종 검토. 다음날 아침 출근해서 이메일 제출. 팀원들이 "규제 문서 템플릿 자동 생성 시스템 없을까요?"라고 물어보지만 팀장도 방법을 모름',
+        '연구 진행 상황을 팀장이 10명 연구원에게 일일이 물어봐야 하는데 시간 소요되고 전체 그림 파악 어려움. 매주 금요일 CEO 보고 준비하려면 "백신 개발 진행률 몇 %야?"라는 질문에 답하기 위해 각 연구원한테 "이번 주 진행 상황 알려줘"라고 Slack으로 물어봐야 함. 연구원 A는 "동물 실험 80% 완료", B는 "데이터 분석 중", C는 "논문 작성 중"이라고 하는데 전체 프로젝트에서 병목이 어디인지 파악 어려움. CEO가 "지연 예상 지점이 어디냐"고 물으면 답변 못함'
+      ],
+      automationNeeds: [
+        '임상 데이터 통합 플랫폼',
+        '규제 문서 자동 생성 시스템',
+        '프로젝트 진행 대시보드'
+      ],
+      workStructure: {
+        level: '고도구조화',
+        description: '임상시험 프로토콜과 규제 문서 작성 절차 명확. 주간 진행 회의와 월간 마일스톤 리뷰 정례화. LIMS로 데이터 관리하나 통합 부족.'
+      },
+      realTimeExample: '지난주 화요일 오후 2시, 규제팀에서 "다음 주 금요일까지 FDA 제출용 임상 데이터 정리해주세요"라는 요청. 팀장이 임상 연구원 3명에게 "서울대병원, 삼성병원, 아산병원 데이터 취합해서 통합 파일 만들어주세요"라고 지시. 3명이 각각 다른 Excel 포맷으로 받은 데이터를 수작업으로 통합하는 데 3일 소요. 데이터 분석가 2명이 SAS로 통계 분석하고, 팀장이 주말에 FDA 양식에 맞춰 문서 작성. 마감을 간신히 맞춤.',
+      typicalFireDrills: [
+        'FDA "이 데이터 재제출하세요" - 병원별 데이터 다시 취합하며 주말 비상',
+        '임상시험 중 이상반응 발생 "즉시 보고서 제출" - 밤샘 문서 작성',
+        'CEO "백신 개발 진행률 몇 %야?" - 각 연구원한테 물어봐야 알 수 있음',
+        '병원 "데이터 포맷 바꿔서 다시 보낼게요" - 기존 통합 작업 무용지물'
+      ]
+    },
+    expectedBehavior: {
+      initialAttitude: '중립',
+      concerns: [
+        '임상 연구는 규제가 엄격한데 워크샵에서 제안하는 도구가 컴플라이언스 이슈 있을까',
+        '팀원 수준 차이 있는데 내가 배운 내용을 어떻게 각 수준에 맞게 전달할지',
+        '3시간으로 복잡한 임상 연구 프로세스를 다룰 수 있을지 의문'
+      ],
+      dropoutRisk: 20,
+      workshopPsychology: {
+        initialAttitude: '중립',
+        hiddenMotivations: [
+          '여러 병원에서 오는 임상 데이터를 자동 통합하는 플랫폼을 만들고 싶음',
+          '규제 문서를 템플릿 기반으로 자동 생성해서 야근을 줄이고 싶음',
+          '연구 진행 상황을 실시간 대시보드로 보면서 병목 지점을 미리 파악하고 싶음',
+          'Beginner 2명도 쉽게 쓸 수 있는 시스템을 알고 싶음'
+        ],
+        deepConcerns: [
+          '워크샵에서 제안하는 도구가 FDA/EMA 규제 기준을 만족하는지 검증 필요',
+          'Beginner 2명이 "너무 어렵다"며 따라오지 못하면 팀 분열 우려',
+          '"임상시험은 검증된 방법만"이라는 보수적 문화에서 새로운 시도 거부 예상',
+          '7년차 팀장인데 아직도 기본적인 업무 관리 교육 받는 게 자존심 상할 듯'
+        ],
+        successMetrics: [
+          '병원별 임상 데이터가 자동 통합되어 3일 작업이 3시간으로 단축',
+          'FDA/EMA 규제 문서가 템플릿 기반으로 자동 생성되어 야근 없음',
+          '연구 진행률을 실시간 대시보드로 보면서 지연 전에 조치 가능',
+          'Beginner 2명이 "이거 쉬운데요"라며 자발적으로 사용'
+        ]
+      }
+    },
+    personality: {
+      patience: 6,
+      techSavvy: 6,
+      changeResistance: 'medium',
+      learningSpeed: 'medium',
+      stressLevel: 7,
+      confidenceLevel: 6
+    }
+  },
+
+  // ==================== HR (5명) ====================
+  {
+    id: 'P016',
+    name: '정수민',
+    age: 41,
+    company: 'SK하이닉스',
+    department: '인재개발팀',
+    role: '팀장',
+    category: 'HR',
+    leaderProfile: {
+      yearsInRole: 4,
+      previousRole: '교육 프로그램 기획자',
+      promotionReason: '성과 관리 시스템 혁신으로 평가 공정성 향상. 팀원 이직률 50% 감소시켜 조직 안정성 기여',
+      leadershipStyle: '학습 문화 조성, 데이터 기반 교육 효과 측정, 월간 교육 리뷰',
+      biggestChallenge: '교육 효과를 정량화해서 경영진에게 증명해야 하는데, 설문조사만으로는 한계가 있어 실제 성과 개선과의 연결고리를 찾기 어려움',
+      hiddenStruggles: [
+        '교육 프로그램에 수백만원 예산 쓰는데 "이게 회사에 얼마나 도움 되나요?" 질문에 명확히 답 못할 때의 불안감',
+        '부서별로 교육 요구사항이 다 다른데 6명 팀으로 모두 만족시키기 어려워서 우선순위 정하기 힘듦',
+        '교육 이수율은 높은데 현장 적용률은 낮다는 피드백을 들을 때 무력감',
+        '외부 강사 섭외할 때마다 예산 협상과 품질 검증에 시간 쏟는 게 비효율적이라고 느낌'
+      ]
+    },
+    team: {
+      size: 6,
+      seniorCount: 2,
+      juniorCount: 4,
+      composition: '팀장 1명 + 교육 기획자 3명 + 강사 1명 + 교육 운영 담당 1명',
+      digitalMaturity: 'Advanced',
+      maturityDistribution: 'Advanced 4명 + Intermediate 2명',
+      teamDynamics: 'Advanced 4명은 LMS, Zoom, Google Forms 능숙하지만 교육 효과 측정은 설문조사에만 의존. 교육 기획자 3명이 각자 부서별 맞춤 프로그램 운영하는데 통합 관리 안 됨. 강사 1명은 현장 교육에 집중, 운영 담당 1명은 수작업 집계에 시간 쏟음. 월간 교육 리뷰로 진행 공유하지만 실시간 협업은 약함.',
+      resistanceFactors: [
+        'Advanced 수준인데 "우리가 뭘 더 배워야 하냐"는 자부심',
+        '"교육 효과는 정량화할 수 없다"는 전통적 인식',
+        '"설문조사로도 충분한데 왜 복잡한 시스템 필요하냐"는 저항',
+        '부서별 맞춤 교육이 중요한데 "표준화하면 효과 떨어진다"는 우려'
+      ]
+    },
+    work: {
+      mainTasks: [
+        '직무별 교육 프로그램 기획 및 운영',
+        '신입/경력 온보딩 프로그램 설계',
+        '리더십 교육 및 코칭',
+        '교육 효과 측정 및 분석',
+        '외부 강사 및 교육 기관 협업'
+      ],
+      toolsUsed: ['LMS(학습관리시스템)', 'Zoom', 'Google Forms', 'Excel', 'PowerPoint', 'Slack'],
+      dailyWorkflow: '오전 9시 출근 → LMS 시스템에서 전날 교육 신청/이수 현황 확인 (5분) → 9:30 팀 데일리 미팅 (15분, 오늘 진행할 교육 프로그램 점검, 강사 섭외 현황 공유) → 10-12시 교육 프로그램 기획 작업 (신입 온보딩 커리큘럼 업데이트, 리더십 교육 강사 섭외 이메일, 외부 교육기관 견적 비교) → 점심 후 1-2시 부서장들과 전화/이메일로 교육 니즈 수집 ("이번 분기 어떤 교육 필요하세요?") → 2-4시 교육 프로그램 운영 (Zoom으로 진행되는 온라인 교육 모니터링하거나 오프라인 교육 현장 방문해서 만족도 체크) → 4-5시 교육 만족도 설문 결과 Excel로 정리 및 분석 → 5-6시 다음날 교육 준비 (강사에게 자료 요청, 교육생 명단 최종 확인, Zoom 링크 발송) → 저녁 6-7시 퇴근 (급한 교육 이슈 있으면 8시까지)',
+      weeklyRoutine: '월요일 오전: 주간 교육 일정 브리핑 (1시간, 이번 주 진행할 교육 5-7개 최종 점검, 강사/교육생 확정 여부 확인) / 화요일: 신입사원 온보딩 교육 진행 (월 2회, 3시간) 또는 리더십 교육 현장 참관 / 수요일 오후: HR 본부 전체 회의 (1시간, 교육 이수율 보고, 예산 사용 현황 공유) / 목요일: 외부 교육기관 미팅 (2-3곳 순환 방문, 신규 프로그램 소개 듣고 검토) 또는 부서별 교육 담당자와 1:1 미팅 / 금요일: 주간 교육 결과 정리 (이수율, 만족도 집계해서 경영진 보고용 PPT 작성, 2-3시간 소요) + 다음 주 교육 최종 확정',
+      collaboration: '팀 내부: Slack으로 교육 일정 및 현황 공유, LMS로 교육생 이수 현황 추적, 주간 교육 리뷰 회의 | 타 부서: 각 부서장과 교육 니즈 협의 (이메일/전화), HR 기획팀과 예산 조율, 평가팀과 교육 효과 데이터 연계 논의 | 외부: 외부 강사 및 교육기관과 이메일/미팅으로 커리큘럼 협의, 계약 조건 검토',
+      painPoints: [
+        '교육 신청/이수 현황을 LMS에서 Excel로 다운받아서 부서별, 직급별로 피벗 테이블 만들어 집계하는데 매주 금요일 오후 3시간 소요. 특히 교육 이수율이 70% 미만인 부서를 찾아서 부서장에게 독려 메일 보내야 하는데, 이 작업만 1시간. 경영진 보고용 PPT 만들 때 그래프 그리고 색 맞추는 데 추가로 1시간. LMS 시스템에서 자동으로 대시보드가 나오면 좋겠는데 현재는 수작업 불가피',
+        '교육 효과 측정이 설문조사 5점 척도("만족도 4.2점")에만 의존해서 실제 업무 성과 개선과 연결이 안 됨. 경영진이 "교육 예산 3억 썼는데 실제 ROI가 뭐냐"고 물으면 답변 못함. 교육 이수자의 업무 성과를 추적하려면 HR 평가 시스템에서 데이터를 일일이 찾아서 교육 이수자 명단과 수동으로 매칭해야 하는데, 이 작업을 해본 적이 없어서 어디서부터 시작할지 막막함. 예를 들어 "리더십 교육 받은 팀장 10명의 팀원 만족도가 평균 3.8점에서 4.1점으로 올랐다"는 식의 데이터를 만들고 싶은데 방법을 모름',
+        '부서별 교육 요구사항 파악이 이메일로만 되어 체계적 관리 어려움. 매 분기 초에 부서장 15명에게 "이번 분기 필요한 교육 알려주세요" 이메일 보내면, 답장이 제각각 오는 시기도 다르고(어떤 부서는 1주일 후, 어떤 부서는 3주 후), 내용도 "엑셀 교육", "리더십", "AI 활용" 같이 추상적이어서 구체적으로 뭘 원하는지 다시 전화해서 물어봐야 함. 이메일 쓰레드가 길어지면 누가 뭐라고 했는지 찾기 어려워서 별도로 Excel에 정리하는데, 이것도 시간 낭비. 체계적으로 니즈를 수집하고 우선순위 정하는 시스템이 없어서 목소리 큰 부서장 요청부터 처리하게 되는 것도 문제'
+      ],
+      automationNeeds: [
+        '교육 신청 및 이수 자동 트래킹',
+        '교육 효과 분석 대시보드',
+        '부서별 교육 니즈 수집 및 분석 시스템'
+      ],
+      workStructure: {
+        level: '반구조화',
+        description: '교육 프로그램 기획 프로세스는 있으나 부서별 커스터마이징이 많음. 월간 교육 리뷰로 진행 공유. LMS 있으나 수동 운영 많음.'
+      },
+      realTimeExample: '지난주 목요일 오후 3시, 경영진이 "리더십 교육 투자한 게 얼마나 효과 있었어요?"라고 질문. 팀장이 "설문조사 결과 만족도 4.2점입니다"라고 답했더니, "그래서 실제 업무 성과가 얼마나 개선됐나요?"라는 추가 질문. 교육 이수자들의 실제 성과 데이터와 연결하려면 HR 시스템, 평가 데이터를 일일이 취합해야 해서 "일주일 뒤에 보고드리겠습니다"라고 답변. 결국 주말에 Excel로 수작업 분석.',
+      typicalFireDrills: [
+        '경영진 "교육 예산 왜 이렇게 많이 썼어?" - 효과 증명 자료 긴급 준비',
+        '부서장 "우리 팀 맞춤 교육 다음 주까지 만들어줘" - 기존 계획 다 틀어짐',
+        '외부 강사 급작스런 취소 - 대체 강사 긴급 섭외 및 일정 재조율',
+        '교육 이수율 저조 "왜 안 듣냐" - 부서별 독려 및 일정 조정하느라 야근'
+      ]
+    },
+    expectedBehavior: {
+      initialAttitude: '기대함',
+      concerns: [
+        'Advanced 수준인데 워크샵에서 실제 적용 가능한 구체적 솔루션 나올까',
+        '6명 소규모 팀이라 워크샵 사례가 대규모 조직 중심이면 안 맞을 듯',
+        '교육 효과 측정 같은 비정형 업무를 어떻게 자동화할 수 있을지'
+      ],
+      dropoutRisk: 5,
+      workshopPsychology: {
+        initialAttitude: '기대함',
+        hiddenMotivations: [
+          '교육 효과를 정량화해서 경영진에게 ROI를 증명하고 싶음',
+          '교육 이수자의 실제 성과 개선을 자동으로 추적하는 시스템을 만들고 싶음',
+          '부서별 교육 니즈를 체계적으로 수집하고 우선순위를 정하는 방법을 알고 싶음',
+          '교육 예산을 더 확보하기 위한 데이터 기반 근거를 만들고 싶음'
+        ],
+        deepConcerns: [
+          'Advanced 수준인데 기본적인 교육 운영 수준이면 실망',
+          '"교육 효과는 정량화할 수 없다"는 팀원들의 전통적 인식을 어떻게 바꿀지',
+          '부서별 맞춤 교육과 표준화 사이의 균형을 어떻게 잡을지',
+          '6명 소규모 팀이 새로운 시스템 도입 후 유지보수 부담 감당할 수 있을지'
+        ],
+        successMetrics: [
+          '교육 효과가 실제 업무 성과 개선과 자동 연결되어 즉시 확인 가능',
+          '교육 예산 대비 ROI를 경영진에게 데이터로 즉시 제시 가능',
+          '부서별 교육 니즈가 자동 수집되어 우선순위 결정이 객관적으로 됨',
+          '교육 신청/이수 현황을 수작업 없이 실시간 대시보드로 확인'
+        ]
+      }
+    },
+    personality: {
+      patience: 8,
+      techSavvy: 8,
+      changeResistance: 'low',
+      learningSpeed: 'fast',
+      stressLevel: 5,
+      confidenceLevel: 8
+    }
+  },
+
+  {
+    id: 'P017',
+    name: '최영호',
+    age: 42,
+    company: 'SK텔레콤',
+    department: '인사기획팀',
+    role: '팀장',
+    category: 'HR',
+    leaderProfile: {
+      yearsInRole: 6,
+      previousRole: '인사 담당자',
+      promotionReason: '전사 디지털 전환 교육 프로그램 설계 및 실행으로 직원 만족도 85% 달성. 채용 프로세스 개선으로 우수 인재 확보',
+      leadershipStyle: '공정성 중시, 프로세스 준수, 주간 케이스 리뷰',
+      biggestChallenge: '채용 진행 현황을 부서별로 일일이 확인하는 데 주당 10시간 소요. 평가 데이터 집계가 Excel 수작업이라 오류 많고 시간 오래 걸림. 인사 관련 문의가 이메일/전화로 쏟아져서 팀원들 업무 집중 어려움',
+      hiddenStruggles: [
+        '부서장 10명에게 "채용 진행 어떻게 되나요?" 전화로 일일이 확인하는 비효율',
+        '평가 시즌에 Excel 수식 오류로 직원 평가가 잘못 나와서 재계산하는 악몽',
+        '같은 질문("연차 며칠 남았나요?", "급여 명세서 어디서 보나요?")을 하루 10번씩 답하는 반복',
+        '6년차 팀장인데 아직도 수작업 집계에 주말 쓰는 게 자존심 상함'
+      ]
+    },
+    team: {
+      size: 10,
+      seniorCount: 4,
+      juniorCount: 6,
+      composition: '팀장 1명 + 채용 담당 3명 + 평가 담당 2명 + 보상 담당 2명 + 인사 시스템 담당 2명',
+      digitalMaturity: 'Intermediate',
+      maturityDistribution: 'Advanced 3명(시스템 담당) + Intermediate 5명 + Beginner 2명',
+      teamDynamics: 'Advanced 3명(시스템 담당)은 SAP HR 능숙하지만 Beginner 2명(채용 담당)은 Excel도 버거워함. 채용/평가/보상 담당이 각자 분리되어 일하는데 서로 데이터 공유 안 됨. 평가 시즌에 평가 담당 2명에게 업무 몰려서 다른 팀원들이 도와주려 해도 프로세스 몰라서 못 도움. 주간 케이스 리뷰로 공유하지만 실시간 협업은 약함.',
+      resistanceFactors: [
+        'Beginner 2명이 "Excel도 어려운데 새로운 시스템은 더 어렵다"는 불안감',
+        '채용/평가/보상 담당이 "우리 업무는 특수해서 표준화 안 된다"는 독립성 고수',
+        '"인사는 사람 일인데 시스템으로 할 수 있냐"는 전통적 인식',
+        'SAP HR도 제대로 못 쓰는데 "또 배워야 하냐"는 학습 피로감'
+      ]
+    },
+    work: {
+      mainTasks: [
+        '연간 채용 계획 수립 및 실행',
+        '인사 평가 제도 운영',
+        '보상 체계 설계 및 관리',
+        '인사 데이터 분석 및 보고',
+        '인사 시스템 운영 및 개선'
+      ],
+      dailyWorkflow: '오전 9시 출근 → SAP HR에서 전날 채용/평가/인사 이슈 확인 (10분) → 9:30 팀 데일리 미팅 (20분, 채용 담당 3명 진행상황, 평가 담당 2명 이슈 공유) → 10-11시 부서장들과 채용 진행 현황 전화 확인 (10개 부서 순환, 1부서당 5분) → 11-12시 면접 참관 또는 면접관 교육 → 점심 후 1-2시 직원 문의 응대 (이메일 20건, 전화 5-7통, "연차 몇 일 남았어요?", "급여 명세서 어디 있어요?" 등 반복 질문) → 2-4시 인사 정책 수립 및 문서 작업 (취업규칙 개정, 평가 제도 개선안 작성, 경영진 보고서 작성) → 4-5시 채용 담당 3명 업무 지도 (이력서 검토 방법, 면접 질문 가이드) → 5-6시 일일 채용/평가 현황 정리 (Excel에 수기 입력) → 저녁 7-8시 퇴근 (평가 시즌엔 9-10시까지)',
+      weeklyRoutine: '월요일 오전: 주간 채용 계획 회의 (1시간, 이번 주 면접 일정 확정, 부서별 채용 진행률 점검) / 화요일: 채용 담당 3명과 1:1 미팅 (각 20분, 채용 이슈 상담, 헤드헌터 커뮤니케이션 가이드) / 수요일 오후: HR 본부 주간 회의 (1시간, 채용 현황 보고, 평가 제도 논의, 인건비 검토) / 목요일: 평가 담당 2명과 평가 제도 운영 회의 (1시간, 평가 시즌 준비, 평가 데이터 집계 방법 점검) / 금요일: 주간 채용/평가 현황 정리 (부서별 채용 진행률, 평가 참여율 Excel 집계해서 경영진 보고용 PPT 작성, 오후 2-3시간 소요) + 다음 주 우선순위 채용 부서 선정',
+      collaboration: '팀 내부: SAP HR로 채용/평가 데이터 공유하지만 실제로는 Excel로 별도 관리. Slack으로 긴급 이슈 공유, 주간 케이스 리뷰로 문제 해결 방법 논의. 채용/평가/보상 담당이 독립적으로 일해서 팀장이 중간 조율. 타 부서: 10개 부서장과 전화/이메일로 채용 진행 현황 확인, 인력 계획 협의. 재무팀과 인건비 예산 검토 (분기별). 경영진에게 월별 인사 현황 보고 (PPT 발표). 외부: 헤드헌터 5-7곳과 채용 협력 (이메일/전화 커뮤니케이션), 채용 플랫폼(사람인, 잡코리아) 운영.',
+      toolsUsed: ['SAP HR', 'Excel', 'PowerPoint', '채용 플랫폼(사람인, 잡코리아)', '이메일'],
+      painPoints: [
+        '채용 진행 현황을 부서별로 일일이 전화로 확인하는 데 주당 10시간 소요. 매주 월요일부터 금요일까지 10개 부서장에게 "채용 어떻게 되나요?"라고 전화하면, 어떤 부서장은 "이력서 검토 중이에요", 어떤 부서장은 "면접 일정 조율 중", 어떤 부서장은 "아직 공고도 안 올렸는데요?"라는 제각각 답변. 이걸 Excel에 수기로 정리하는 데 매일 1시간씩 소요. 급하게 경영진이 "A부서 채용 현황 보고해"라고 하면 다시 전화해서 확인하고 PPT 만드는 데 2-3시간. 채용 진행률을 실시간으로 못 보니 "왜 이 부서는 3개월째 못 뽑았어?"라는 질문에 즉답 못하고 "확인해보겠습니다"라고 답하는 게 반복',
+        '평가 시즌(연 2회)에 평가 데이터 집계가 Excel 수작업이라 오류 많고 시간 오래 걸림. 전 직원 500명의 평가 점수를 부서별, 직급별로 집계하는데, 평가 담당 2명이 SAP HR에서 데이터 다운받아서 Excel에 피벗 테이블 만들고 상대평가 등급 산출. 지난 평가 시즌, Excel 수식 오류로 한 직원의 평가 등급이 A에서 B로 잘못 나와서, 직원이 "제 평가 이상해요"라고 HR팀에 항의. 평가 담당이 전체 데이터 재확인하느라 주말 출근해서 재계산했는데, 다른 직원 2명도 오류 발견. 결국 월요일 경영진 회의에서 "평가 데이터 신뢰성 문제"라고 지적받고 재발방지 대책 보고서 작성. 6년차 팀장인데 수작업 집계로 이런 오류 발생하는 게 자존심 상함',
+        '직원들의 인사 관련 문의가 이메일/전화로 쏟아져서 팀원들이 실제 기획 업무에 집중 못함. 하루 평균 이메일 20건, 전화 5-7통이 오는데, 80%는 "연차 몇 일 남았어요?", "급여 명세서 어디서 보나요?", "건강보험료 왜 올랐어요?" 같은 반복 질문. 채용 담당 3명은 "전화 받느라 이력서 검토 못했어요"라고 하고, 평가 담당 2명은 "메일 답변하느라 평가 제도 개선안 작성 못했어요"라고 함. 팀장도 하루 10번씩 같은 질문 답하느라 정책 수립 시간 부족. FAQ 게시판 만들어놨는데 직원들이 안 보고 바로 전화. "FAQ 보세요"라고 하면 "거기 복잡해서 못 찾겠어요"라는 답변. 결국 팀원들은 단순 반복 업무에 시간 쏟고, 정작 채용/평가 제도 혁신 같은 전략적 업무는 밀림',
+        '채용 담당 3명 중 2명이 Beginner 수준이라 Excel도 버거워하는데, 채용 데이터 정리를 제대로 못함. 예를 들어 "이번 달 채용 현황 정리해주세요"라고 지시하면, A 담당자는 Excel에 "지원자 50명, 서류합격 10명"이라고 단순 숫자만 입력하고, B 담당자는 "지원자 명단"을 PDF로 저장해서 보냄. 양식이 통일 안 돼서 팀장이 다시 정리해야 함. "Excel 템플릿 드릴 테니까 이거 따라서 입력하세요"라고 가이드 줘도, 다음에 또 다른 방식으로 정리. Beginner 2명은 "Excel 수식은 못 쓰겠어요. 그냥 손으로 계산할게요"라고 해서, 팀장이 최종 검토 시 오류 발견하고 다시 수정 지시. 결국 팀장이 직접 정리하는 게 빠르다고 판단해서 채용 담당에게 "이력서만 검토하고 나머지는 제가 할게요"라고 함. 채용 담당은 역량 성장 기회 못 얻고, 팀장은 업무 과부하'
+      ],
+      automationNeeds: [
+        '채용 프로세스 자동 트래킹 대시보드',
+        '평가 데이터 자동 집계 및 분석',
+        '인사 챗봇(FAQ 자동 응답)'
+      ],
+      workStructure: {
+        level: '고도구조화',
+        description: '인사 프로세스(채용/평가/보상) 명확히 정의. SAP HR로 대부분 시스템화. 주간 케이스 리뷰로 이슈 공유. 규정 준수 철저.'
+      },
+      realTimeExample: '지난주 금요일 오후 4시, 경영진이 "이번 분기 채용 현황 보고해줘"라고 긴급 요청. 팀장이 채용 담당 3명에게 "각자 담당 부서 채용 현황 정리해주세요"라고 지시. 3명이 각각 Excel 파일을 만들어서 이메일로 보냈는데, 양식이 다 달라서 통합하는 데 2시간 소요. 그 사이 경영진이 "아직이야?"라고 재촉. 급하게 PPT 만들어서 보고했는데, 숫자 하나가 틀려서 다음 날 정정 보고.',
+      typicalFireDrills: [
+        '경영진 "채용 현황 지금 당장 보고" - 부서별 데이터 긴급 취합',
+        '평가 시즌 "Excel 수식 오류로 평가 잘못됨" - 전체 재계산하며 밤샘',
+        '직원 "급여 잘못 나왔어요" - 원인 찾느라 급여 담당과 긴급 회의',
+        '노조 "이 정책 문제 있다" - 과거 데이터 찾아서 근거 제시하느라 주말 비상'
+      ]
+    },
+    expectedBehavior: {
+      initialAttitude: '중립',
+      concerns: [
+        'Intermediate 수준에서 디지털 전환이 현실적으로 가능할까',
+        '인사는 민감 정보 많은데 자동화 도구 도입 시 보안 이슈 걱정',
+        '10명 팀에서 수준 차이 있는데 내가 배운 내용 전파 어려울 듯'
+      ],
+      dropoutRisk: 15,
+      workshopPsychology: {
+        initialAttitude: '중립',
+        hiddenMotivations: [
+          '채용 진행 현황을 부서별로 자동 추적해서 주당 10시간을 절약하고 싶음',
+          '평가 데이터를 자동 집계해서 Excel 수식 오류를 없애고 싶음',
+          '인사 FAQ 챗봇을 만들어서 반복 질문 대응 시간을 줄이고 싶음',
+          'Beginner 2명도 쉽게 쓸 수 있는 시스템을 알고 싶음'
+        ],
+        deepConcerns: [
+          'Intermediate 수준에서 복잡한 자동화가 현실적으로 가능할지',
+          'Beginner 2명이 "너무 어렵다"며 따라오지 못하면 팀 분열 우려',
+          '"인사는 사람 일인데 시스템으로 할 수 있냐"는 전통적 인식 극복 어려움',
+          '민감한 개인정보 다루는데 자동화 도구 도입 시 보안 검증 부담'
+        ],
+        successMetrics: [
+          '채용 진행 현황이 자동 대시보드로 실시간 확인되어 부서별 전화 불필요',
+          '평가 데이터가 자동 집계되어 Excel 수식 오류 제로',
+          'FAQ 챗봇이 반복 질문의 80%를 자동 응답해서 팀원 집중 시간 확보',
+          'Beginner 2명이 "이거 쉬운데요"라며 자발적으로 사용'
+        ]
+      }
+    },
+    personality: {
+      patience: 7,
+      techSavvy: 6,
+      changeResistance: 'medium',
+      learningSpeed: 'medium',
+      stressLevel: 6,
+      confidenceLevel: 6
+    }
+  },
+
+  {
+    id: 'P018',
+    name: '박지원',
+    age: 42,
+    company: 'SK이노베이션',
+    department: '노사협력팀',
+    role: '팀장',
+    category: 'HR',
+    leaderProfile: {
+      yearsInRole: 8,
+      previousRole: '노무 담당자',
+      promotionReason: '성과 관리 시스템 혁신으로 평가 공정성 향상. 팀원 이직률 50% 감소시켜 조직 안정성 기여',
+      leadershipStyle: '소통 중심, 현장 경청, 이슈 대응 중시',
+      biggestChallenge: '직원 고충 접수가 이메일/전화/방문으로 분산되어 체계적 관리 안 됨. 안전보건 점검 기록이 종이 문서라 분실 위험 있고 통계 내기 어려움. 복리후생 신청 현황을 Excel로 관리해서 실시간 파악 불가',
+      hiddenStruggles: [
+        '직원이 "지난달 신청한 고충처리 어떻게 됐나요?" 물으면 종이 문서 뒤져서 찾는 민망함',
+        '안전보건 점검표를 종이로 받아서 보관하는데 분실되면 증거 없어서 불안',
+        '복리후생 신청이 Excel로 흩어져 있어서 "누가 뭘 신청했지?" 찾는 데 시간 소요',
+        '8년차 팀장인데 아직도 종이 문서와 Excel에 의존하는 게 뒤처진 느낌'
+      ]
+    },
+    team: {
+      size: 5,
+      seniorCount: 2,
+      juniorCount: 3,
+      composition: '팀장 1명 + 노무 담당 2명 + 안전보건 담당 1명 + 복리후생 담당 1명',
+      digitalMaturity: 'Beginner',
+      maturityDistribution: 'Intermediate 2명 + Beginner 3명',
+      teamDynamics: 'Intermediate 2명(노무 담당)은 Excel, Word 기본 사용 가능하지만 Beginner 3명(안전보건, 복리후생 담당)은 종이 문서와 전화에 의존. 노사협력 특성상 현장 소통이 중요해서 디지털 도구보다 대면/전화 선호. 주간 HR 회의로 이슈 공유하지만 각자 업무 영역이 달라서 협업 거의 없음. 체계적 문서 관리보다 즉시 대응 문화.',
+      resistanceFactors: [
+        'Beginner 3명이 "Excel도 어려운데 시스템은 더 못 쓴다"는 기술 불안',
+        '"노사 문제는 사람 만나서 해결하는 건데 시스템이 무슨 소용이냐"는 현장 중심 사고',
+        '"종이 문서가 더 익숙하고 빠르다"는 기존 방식 고수',
+        '"디지털 시스템 배우느라 현장 가는 시간 줄면 본질 놓친다"는 우려'
+      ]
+    },
+    work: {
+      mainTasks: [
+        '노사 협의회 운영',
+        '근로조건 협상 및 관리',
+        '직원 고충 처리',
+        '안전보건 관리',
+        '복리후생 제도 운영'
+      ],
+      dailyWorkflow: '오전 9시 출근 → 전날 접수된 직원 고충 건 확인 (이메일 5-7건, 전화 메모 2-3건, 방문 접수 1-2건) → 9:30 팀 미팅 (15분, 오늘 고충 처리 우선순위 결정, 노조 이슈 공유) → 10-11시 현장 순회 (생산 현장, 사무실 라운딩하며 직원들과 대면 소통, "불편한 거 없으세요?" 비공식 면담) → 11-12시 직원 고충 상담 (사무실 방문 직원 또는 전화 상담, "팀장이 야근 강요해요", "동료와 갈등 있어요" 등 청취) → 점심 후 1-2시 고충 처리 진행 상황 확인 (담당자에게 전화해서 "지난주 신청 건 어떻게 됐나요?" 확인, 종이 문서 뒤져서 찾기) → 2-3시 안전보건 점검표 검토 (현장에서 종이로 받아온 점검표 보관, Word로 요약 정리) → 3-4시 노조 대표 미팅 또는 전화 통화 (노사 이슈 논의, 근로조건 협상 준비) → 4-5시 복리후생 신청 처리 (직원이 이메일로 보낸 신청서 Excel에 수기 입력, 승인 여부 회신) → 5-6시 일일 이슈 정리 및 대응 계획 (Word 문서로 일지 작성) → 저녁 7시 퇴근 (긴급 고충 발생 시 8-9시까지)',
+      weeklyRoutine: '월요일 오전: 주간 노사 이슈 브리핑 (1시간, 이번 주 노사협의회 안건 점검, 고충 처리 현황 공유) / 화요일: 현장 안전보건 점검 (2-3시간, 생산 현장 돌며 안전 라운딩, 점검표 종이로 작성) / 수요일 오후: HR 본부 주간 회의 (1시간, 노사 이슈 보고, 고충 처리 통계 공유) / 목요일: 노사협의회 또는 노조 간담회 (격주 1회, 2시간) / 금요일: 주간 고충 처리 현황 정리 (Excel로 고충 건수 집계, 종이 문서 보관함에 정리, 경영진 보고용 요약 작성)',
+      collaboration: '팀 내부: 5명이 소규모라 대부분 구두 소통. 고충 처리는 담당자별로 종이 파일로 보관. 주간 미팅으로 이슈 공유하지만 실시간 협업 약함. 타 부서: 생산팀/운영팀과 현장 안전 이슈 전화/대면 소통. 부서장들과 직원 고충 관련 협의 (전화/이메일). 경영진에게 월별 노사 현황 보고 (Word 보고서). 외부: 노동청, 안전보건공단과 규정 확인 및 감사 대응 (이메일/공문). 노조와는 대면 미팅 위주 (주 1-2회).',
+      toolsUsed: ['Excel', 'Word', '이메일', '전화', '종이 문서'],
+      painPoints: [
+        '직원 고충 접수가 이메일/전화/방문으로 분산되어 체계적 관리 안 됨. 지난주 화요일 오전 11시, 현장 직원이 "지난달 신청한 고충처리 어떻게 됐나요?"라고 질문했는데 담당자가 "종이로 받았는데 어디 갔더라..."라며 30분 동안 서류철 뒤짐. 처리 진행 상황이 기록되지 않아서 "확인해보고 연락드리겠습니다"라고 답변할 수밖에 없었고, 직원은 불만족스러운 표정으로 돌아감. 팀장은 "이래서 안 되는데..."라는 무력감',
+        '안전보건 점검 기록이 종이 문서라 분실 위험 있고 통계 내기 어려움. 지난 분기, 안전보건 점검표 일부가 분실돼서 노동청 감사에서 "점검 안 한 거 아니냐"는 질문에 "했는데 서류를 못 찾겠습니다"라고 답변할 수밖에 없어서 회사 평판 손상. 노조가 "안전사고 왜 또 발생했어?"라고 물으면 과거 점검 기록 찾아보느라 즉답 불가하고 "확인해보고 답변드리겠습니다"라고 답변. 종이 문서 20-30장을 일일이 Excel에 수기 입력해서 통계 내는 데 하루 종일 걸림',
+        '복리후생 신청 현황을 Excel로 관리해서 실시간 파악 불가. Excel 파일이 개인 PC에만 저장돼 있어서 담당자가 휴가 가면 다른 사람이 현황 파악 못함. 경영진이 "이번 달 복리후생 예산 얼마나 썼어?"라고 물으면 담당자한테 전화해서 "Excel 열어서 합계 좀 알려주세요"라고 부탁하는데, 담당자가 외근 중이면 "돌아와서 확인해드리겠습니다"라고 답변. 실시간 현황 파악 안 돼서 예산 초과 위험 있는데도 사후에야 알게 됨',
+        '노사 이슈가 터지면 과거 협의 기록 찾느라 비상. 지난달 노조가 "야근수당 계산 방식 문제 있다"고 제기했는데, 팀장이 "예전에 이 건으로 합의했던 게 있는데..."라고 기억은 나는데 Word 문서 10-20개를 일일이 열어봐도 못 찾음. 결국 "확인 후 답변드리겠습니다"라고 하고 이틀 동안 과거 문서 뒤졌는데 노조는 "HR팀이 기록 관리도 제대로 안 하냐"며 불신. 8년차 팀장인데 종이 문서와 Word 파일로만 관리하는 게 뒤처진 느낌'
+      ],
+      automationNeeds: [
+        '고충 처리 시스템(접수/진행/완료)',
+        '안전보건 디지털 점검 시스템',
+        '복리후생 신청 및 관리 플랫폼'
+      ],
+      workStructure: {
+        level: '비구조화',
+        description: '이슈별 대응이라 정형화된 프로세스 없음. 직원 소통이 비정형적. 문서 관리 체계 미흡.'
+      },
+      realTimeExample: '지난주 화요일 오전 11시, 현장 직원이 팀장 사무실에 직접 찾아와서 "지난달에 신청한 고충처리 어떻게 됐나요?"라고 질문. 팀장이 담당자에게 전화했더니 "종이로 받았는데 어디 갔더라..."라는 답변. 30분 동안 서류철 뒤져서 찾았는데, 처리 진행 상황이 기록되지 않아서 "확인해보고 연락드리겠습니다"라고 답변. 직원은 불만족스러운 표정으로 돌아가고, 팀장은 "이래서 안 되는데..."라는 무력감.',
+      typicalFireDrills: [
+        '노조 "이 안전사고 왜 또 발생했어?" - 과거 점검 기록 찾느라 비상',
+        '직원 "고충처리 신청한 지 한 달인데 답 없어요" - 처리 현황 못 찾아 사과',
+        '경영진 "복리후생 예산 얼마나 썼어?" - Excel 흩어진 데이터 긴급 취합',
+        '안전보건 감사 "점검 기록 제출하세요" - 종이 문서 찾느라 주말 비상'
+      ]
+    },
+    expectedBehavior: {
+      initialAttitude: '걱정',
+      concerns: [
+        'Beginner 수준에서 디지털 도구 사용 자체가 부담스러움',
+        '현장 중심 업무인데 시스템화하면 오히려 직원들과 거리감 생길까',
+        '5명 소규모 팀이 디지털 전환에 투자할 시간과 예산 있을지'
+      ],
+      dropoutRisk: 50,
+      workshopPsychology: {
+        initialAttitude: '걱정',
+        hiddenMotivations: [
+          '고충 처리를 접수부터 완료까지 추적할 수 있는 시스템을 만들고 싶음',
+          '안전보건 점검 기록을 디지털화해서 분실 위험 없애고 통계 내기 쉽게 하고 싶음',
+          '복리후생 신청 현황을 실시간으로 파악하고 싶음',
+          'Beginner 3명도 쉽게 쓸 수 있는 간단한 시스템을 알고 싶음'
+        ],
+        deepConcerns: [
+          'Beginner 수준에서 디지털 시스템 사용 자체가 부담되어 팀원들 거부 예상',
+          '"노사는 얼굴 보고 해결하는 건데 시스템이 무슨 소용"이라는 현장 문화',
+          '5명 소규모 팀이 새로운 시스템 배우느라 현장 가는 시간 줄면 본질 놓칠 듯',
+          '워크샵이 IT/디지털 중심이면 우리 팀과 맞지 않아서 중도 포기할 수도'
+        ],
+        successMetrics: [
+          '고충 처리가 시스템으로 접수되어 진행 상황 즉시 확인 가능',
+          '안전보건 점검이 모바일로 입력되어 종이 문서 분실 위험 제로',
+          '복리후생 신청이 자동 집계되어 실시간 현황 파악 가능',
+          'Beginner 3명이 "종이보다 이게 더 쉬운데요"라며 자발적으로 사용'
+        ],
+        dropoutTriggers: [
+          '워크샵이 IT/디지털 전문 용어로 가득해서 이해 못하는 경우',
+          '현장 긴급 이슈(안전사고, 노조 분쟁) 발생하는 경우',
+          '팀원들이 "너무 어렵다"며 거부하면 팀장 혼자 적용 못하는 경우',
+          '워크샵 내용이 사무직 중심이어서 현장 노사 업무와 맞지 않는 경우'
+        ]
+      }
+    },
+    personality: {
+      patience: 5,
+      techSavvy: 4,
+      changeResistance: 'high',
+      learningSpeed: 'slow',
+      stressLevel: 8,
+      confidenceLevel: 3
+    }
+  },
+
+  {
+    id: 'P019',
+    name: '강민서',
+    age: 43,
+    company: 'SK네트웍스',
+    department: '조직문화팀',
+    role: '팀장',
+    category: 'HR',
+    leaderProfile: {
+      yearsInRole: 3,
+      previousRole: '조직문화 기획자',
+      promotionReason: '전사 디지털 전환 교육 프로그램 설계 및 실행으로 직원 만족도 85% 달성. 채용 프로세스 개선으로 우수 인재 확보',
+      leadershipStyle: '창의적 기획, 직원 참여 중시, 월간 문화 이벤트',
+      biggestChallenge: '직원 만족도 조사 결과를 수작업으로 분석해서 인사이트 도출이 늦음. 사내 소통 채널이 여러 곳에 분산되어 통합 관리 어려움. 문화 프로그램 참여율 데이터가 부서별로 흩어져 있어 집계 어려움',
+      hiddenStruggles: [
+        '만족도 조사 Excel 다운받아서 피벗 테이블 만들고 그래프 그리는 데 이틀 소요',
+        'Slack, 이메일, 게시판에 올라온 직원 의견을 일일이 취합해서 정리하는 비효율',
+        '문화 프로그램 참여율을 부서별로 물어봐야 알 수 있어서 전체 효과 파악 어려움',
+        '4명 소규모 팀이라 자동화 도입하고 싶은데 유지보수 부담 감당할 수 있을지 불안'
+      ]
+    },
+    team: {
+      size: 4,
+      seniorCount: 1,
+      juniorCount: 3,
+      composition: '팀장 1명 + 문화 기획자 2명 + 커뮤니케이션 담당 1명',
+      digitalMaturity: 'Advanced',
+      maturityDistribution: 'Advanced 3명 + Intermediate 1명',
+      teamDynamics: 'Advanced 3명은 Slack, Notion, Google Workspace, Canva 능숙하게 사용하고 창의적 기획 강점. Intermediate 1명(커뮤니케이션 담당)은 도구는 쓰지만 데이터 분석은 약함. 소규모 팀이라 서로 협업 긴밀하지만 각자 담당 프로그램에 집중해서 전체 데이터 통합 관리는 미흡. 월간 문화 이벤트로 리듬 있게 운영하지만 효과 측정은 정성적.',
+      resistanceFactors: [
+        'Advanced 수준인데 "우리는 창의성이 중요하지 시스템이 중요한 게 아니다"는 자부심',
+        '"조직문화는 정량화할 수 없는데 데이터 분석이 무슨 의미냐"는 인식',
+        '"이미 Slack, Notion, Canva 다 쓰는데 또 새로운 도구냐"는 피로감',
+        '4명 소규모 팀이 자동화 시스템 도입 후 유지보수 부담 감당 못할까 우려'
+      ]
+    },
+    work: {
+      mainTasks: [
+        '조직문화 프로그램 기획 및 실행',
+        '사내 소통 채널 운영',
+        '직원 만족도 조사 및 분석',
+        '워라밸 제도 설계 및 운영',
+        '사내 이벤트 및 행사 기획'
+      ],
+      dailyWorkflow: '오전 9시 출근 → Slack/사내 게시판에 올라온 직원 의견/피드백 확인 (10분) → 9:30 팀 데일리 미팅 (15분, 이번 주 문화 프로그램 진행 상황, 직원 반응 공유) → 10-12시 조직문화 프로그램 기획 (월간 이벤트 기획안 작성, 워라밸 제도 개선안 논의, Canva로 홍보 이미지 제작) → 점심 후 1-2시 직원 의견 수렴 (Slack DM 또는 이메일로 온 직원 의견 읽고 응답, "회사 생활 어때요?" 비공식 인터뷰) → 2-3시 문화 프로그램 운영 (사내 Instagram 콘텐츠 업로드, 동호회 활동 지원, 이벤트 참여자 명단 정리) → 3-4시 만족도 조사 결과 분석 (SurveyMonkey에서 응답 다운받아 Excel로 정리) → 4-5시 부서장 미팅 (문화 프로그램 협조 요청, "우리 팀 참여율 높여주세요" 부탁) → 5-6시 다음 주 문화 이벤트 준비 (Notion에 일정 정리, 협력사에 견적 요청) → 저녁 6-7시 퇴근 (이벤트 준비 기간엔 8시까지)',
+      weeklyRoutine: '월요일 오전: 주간 문화 프로그램 브리핑 (1시간, 이번 주 이벤트 최종 점검, 참여율 목표 설정) / 화요일: 사내 소통 채널 모니터링 (Slack, 게시판, Instagram 댓글 확인 및 응답, 직원 의견 수집) / 수요일 오후: HR 본부 주간 회의 (1시간, 조직문화 프로그램 성과 보고, 직원 만족도 공유) / 목요일: 월간 이벤트 기획 및 실행 (예: 사내 동호회 활동, 워라밸 데이, 직원 생일 파티 등) / 금요일: 주간 프로그램 성과 정리 (참여율, 만족도 Excel/Notion에 정리, SurveyMonkey 결과 분석해서 경영진 보고용 PPT 작성, 오후 2-3시간 소요)',
+      collaboration: '팀 내부: Slack, Notion으로 실시간 협업. 문화 기획자 2명은 각자 프로그램 담당하고 주간 리뷰로 공유. 커뮤니케이션 담당 1명은 사내 채널 운영. 소규모 팀이라 긴밀하지만 데이터 통합 관리 미흡. 타 부서: 각 부서장과 문화 프로그램 참여 독려 협의 (이메일/Slack). HR 기획팀과 예산 조율. 경영진에게 월별 조직문화 성과 보고 (PPT 발표). 외부: 이벤트 협력사(케이터링, 공연 대행사 등)와 이메일/전화 커뮤니케이션. 조직문화 컨설팅 업체와 벤치마킹.',
+      toolsUsed: ['Slack', 'Google Workspace', 'SurveyMonkey', 'Canva', 'Notion', 'Instagram'],
+      painPoints: [
+        '직원 만족도 조사 결과를 SurveyMonkey에서 Excel로 다운받아 수작업으로 분석하느라 인사이트 도출이 이틀씩 걸림. 지난주 금요일 오후 2시, 경영진이 "이번 분기 조직문화 프로그램 효과 보고해줘"라고 긴급 요청했는데, SurveyMonkey 결과 다운받아서 피벗 테이블 만들고 Slack/이메일/게시판에 올라온 직원 의견 일일이 복사해서 정리하는 데 이틀 소요. PPT 만들어 보고했는데 경영진이 "그래서 ROI가 얼마야?"라는 질문에 답 못함. "만족도 4.2점"은 좋은데 "실제 이직률 감소", "생산성 향상" 같은 정량적 지표와 연결 못함',
+        '사내 소통 채널이 Slack, 이메일, 게시판, Instagram 등 여러 곳에 분산되어 직원 의견을 통합 관리하기 어려움. Notion 페이지가 "Slack 의견", "이메일 의견", "게시판 의견"으로 따로따로 있어서 전체 직원 의견 트렌드를 한눈에 보기 어려움. 경영진이 "요즘 직원들이 뭘 원해?"라고 물으면, Notion 페이지 3개 다 열어서 스크롤하면서 "음... Slack엔 워라밸 얘기 많고, 이메일엔 복리후생 건의 많고, 게시판엔 사내 카페 개선 요청 많네요"라고 답변. 통합 대시보드 없어서 실시간 트렌드 파악 어려움',
+        '문화 프로그램 참여율 데이터가 부서별로 흩어져 있어서 집계 어렵고 참여 독려도 수작업. 부서별 참여율을 알려면 부서장 10명한테 일일이 전화해서 "귀 부서 직원 몇 명 참여했나요?"라고 물어봐야 하는데 금요일 오후 2시간 소요. 어떤 부서는 "잘 모르겠는데요, 직원들한테 물어보고 연락드릴게요"라고 해서 답변이 늦음. 경영진이 "어느 부서 참여율 왜 낮아?"라고 물으면 즉답 못하고 "확인해보겠습니다"라고 답변. 참여율 낮은 부서에 독려 메일 보내는 것도 수작업이라 시간 소요',
+        '조직문화 프로그램 효과를 정량화하지 못해서 경영진에게 ROI 증명 어려움. 예산 3억 쓰면서 "이벤트 만족도 4.2점", "참여율 70%" 같은 정성적 지표만 보고하면 경영진이 "그래서 회사에 실제로 얼마나 도움 됐어? 이직률은 줄었어? 생산성은 올랐어?"라고 질문. HR 기획팀한테 "이직률 데이터 좀 주세요"라고 부탁하면 "왜 필요하세요?"라고 물어보고, "조직문화 효과 측정하려고요"라고 답하면 "그건 저희 KPI가 아니라 협조 어려워요"라는 답변. 결국 조직문화 프로그램 예산 삭감 위험'
+      ],
+      automationNeeds: [
+        '만족도 조사 자동 분석 및 시각화',
+        '통합 커뮤니케이션 대시보드',
+        '프로그램 참여 자동 트래킹'
+      ],
+      workStructure: {
+        level: '반구조화',
+        description: '기획 프로세스는 있으나 창의성 중시로 유연. 월간 문화 이벤트로 리듬 있음. Slack/Notion 활용하나 체계적 관리 부족.'
+      },
+      realTimeExample: '지난주 금요일 오후 2시, 경영진이 "이번 분기 조직문화 프로그램 효과 보고해줘"라고 긴급 요청. 팀장이 SurveyMonkey에서 만족도 조사 결과 다운받아서 Excel로 피벗 테이블 만들고, Slack/이메일/게시판에 올라온 직원 의견 일일이 복사해서 정리하고, 부서별 참여율을 전화로 물어봐서 취합. 이틀 동안 작업해서 PPT 만들어 보고했는데, 경영진이 "그래서 ROI가 얼마야?"라는 질문에 답 못함.',
+      typicalFireDrills: [
+        '경영진 "문화 프로그램 효과 ROI 보고" - 정량화 못해서 설득력 부족',
+        '직원 "만족도 조사 결과 언제 나와요?" - 수작업 분석 늦어서 불만',
+        '부서장 "우리 팀 참여율 왜 낮아?" - 부서별 데이터 없어서 즉답 불가',
+        '이벤트 마감 직전 신청자 급증 - 실시간 집계 안 돼서 초과 접수'
+      ]
+    },
+    expectedBehavior: {
+      initialAttitude: '기대함',
+      concerns: [
+        'Advanced 수준에서 실제 적용 가능한 구체적 툴 추천 나올까',
+        '조직문화는 정량화하기 어려운데 데이터 분석이 실효성 있을지',
+        '4명 소규모 팀이라 자동화 도입 후 유지보수 누가 할지'
+      ],
+      dropoutRisk: 10,
+      workshopPsychology: {
+        initialAttitude: '기대함',
+        hiddenMotivations: [
+          '만족도 조사 결과를 자동 분석해서 인사이트 도출 시간을 이틀에서 2시간으로 단축하고 싶음',
+          'Slack/이메일/게시판에 흩어진 직원 의견을 통합 대시보드로 한눈에 보고 싶음',
+          '문화 프로그램 참여율을 부서별로 자동 집계해서 실시간 효과 파악하고 싶음',
+          '조직문화 프로그램 ROI를 경영진에게 데이터로 증명하고 싶음'
+        ],
+        deepConcerns: [
+          'Advanced 수준인데 기본적인 데이터 관리 수준이면 실망',
+          '"조직문화는 정량화할 수 없다"는 팀원들의 인식을 어떻게 바꿀지',
+          '이미 Slack, Notion, Canva 쓰는데 "또 새로운 도구"라는 피로감',
+          '4명 소규모 팀이 자동화 시스템 유지보수 부담 감당할 수 있을지'
+        ],
+        successMetrics: [
+          '만족도 조사가 자동 분석되어 인사이트가 2시간 만에 도출',
+          '직원 의견이 통합 대시보드로 실시간 확인되어 일일이 취합 불필요',
+          '프로그램 참여율이 부서별로 자동 집계되어 즉시 파악 가능',
+          '조직문화 프로그램 ROI를 경영진에게 데이터로 제시 가능'
+        ]
+      }
+    },
+    personality: {
+      patience: 9,
+      techSavvy: 9,
+      changeResistance: 'low',
+      learningSpeed: 'fast',
+      stressLevel: 4,
+      confidenceLevel: 8
+    }
+  },
+
+  {
+    id: 'P020',
+    name: '윤상혁',
+    age: 43,
+    company: 'SK E&S',
+    department: '보상복지팀',
+    role: '팀장',
+    category: 'HR',
+    leaderProfile: {
+      yearsInRole: 5,
+      previousRole: '보상 담당자',
+      promotionReason: '성과 관리 시스템 혁신으로 평가 공정성 향상. 팀원 이직률 50% 감소시켜 조직 안정성 기여',
+      leadershipStyle: '공정성과 투명성, 데이터 기반 의사결정, 분기별 시장 조사',
+      biggestChallenge: '시장 조사 데이터를 수작업으로 비교 분석해서 분기당 20시간 소요. 급여 계산 시 예외 사항 처리를 수동으로 해서 실수 위험. 복리후생 만족도를 체계적으로 측정 못해서 개선 방향 불명확',
+      hiddenStruggles: [
+        '시장 조사 리포트 3개 회사 자료를 Excel에 복붙해서 비교하는 데 주말 소요',
+        '급여 계산 시 "육아휴직 복귀자 급여 어떻게 계산하지?" 예외 처리할 때마다 불안',
+        '복리후생 만족도를 물어보면 "그냥 괜찮아요"라는 답변만 들어서 개선점 못 찾음',
+        '5년차 팀장인데 수작업 비교 분석에 시간 쏟는 게 비효율적이라고 느낌'
+      ]
+    },
+    team: {
+      size: 7,
+      seniorCount: 2,
+      juniorCount: 5,
+      composition: '팀장 1명 + 보상 설계 담당 2명 + 급여 담당 2명 + 복리후생 담당 2명',
+      digitalMaturity: 'Intermediate',
+      maturityDistribution: 'Advanced 2명 + Intermediate 3명 + Beginner 2명',
+      teamDynamics: 'Advanced 2명(보상 설계 담당)은 SAP HR, Excel 고급 기능 능숙하지만 Beginner 2명(복리후생 담당)은 기본 입력만 가능. 급여 담당 2명(Intermediate)은 급여 계산 시스템 쓰지만 예외 처리는 수동. 보상/급여/복리후생 담당이 각자 분리되어 일하는데 서로 데이터 공유 안 됨. 분기별 시장 조사로 정보 공유하지만 실시간 협업 약함.',
+      resistanceFactors: [
+        'Beginner 2명이 "급여는 민감한 정보라 시스템화 위험하다"는 보수적 사고',
+        '"예외 처리는 사람 판단이 필요한데 자동화 불가능"이라는 인식',
+        'SAP HR도 복잡한데 "또 새로운 도구 배우기 싫다"는 학습 피로감',
+        '"시장 조사는 경험으로 판단하는 건데 시스템이 뭘 알겠냐"는 자율성 고수'
+      ]
+    },
+    work: {
+      mainTasks: [
+        '연봉 체계 설계 및 시장 조사',
+        '월급여 계산 및 지급',
+        '복리후생 제도 운영',
+        '인건비 예산 관리',
+        '보상 데이터 분석 및 보고'
+      ],
+      dailyWorkflow: '오전 9시 출근 → SAP HR에서 전날 급여 문의 사항 확인 (5-7건, "급여 왜 적게 나왔어요?", "4대보험료 계산 맞나요?" 등) → 9:30 팀 데일리 미팅 (20분, 급여 담당 2명 이슈 공유, 보상 설계 담당 2명 시장 조사 진행 상황) → 10-11시 급여 예외 처리 (육아휴직 복귀자, 중도 입퇴사자 등 수동 계산) → 11-12시 직원 급여 문의 응대 (전화/이메일로 "제 급여 명세서 확인 부탁드려요", "수당 계산 방법 알려주세요" 등) → 점심 후 1-2시 시장 조사 리포트 검토 (3개 컨설팅사 PDF 리포트 읽고 Excel에 데이터 입력) → 2-4시 보상 체계 분석 (직급별, 부서별 급여 수준 비교, Excel 피벗 테이블 작성) → 4-5시 복리후생 담당 2명 업무 지도 (복리후생 신청 처리 방법, 예산 관리) → 5-6시 일일 급여 이슈 정리 및 다음 달 급여 준비 (SAP HR에서 데이터 확인, Excel로 예외 사항 메모) → 저녁 7-8시 퇴근 (급여 마감 주간엔 9-10시까지)',
+      weeklyRoutine: '월요일 오전: 주간 보상 계획 회의 (1시간, 이번 주 급여 마감 일정 점검, 예외 처리 건 공유) / 화요일: 급여 담당 2명과 1:1 미팅 (각 20분, 급여 계산 이슈 상담, 예외 처리 방법 가이드) / 수요일 오후: HR 본부 주간 회의 (1시간, 급여 현황 보고, 인건비 예산 검토) / 목요일: 보상 설계 담당 2명과 시장 조사 분석 회의 (1시간, 3개 컨설팅사 리포트 비교, 연봉 인상률 논의) / 금요일: 주간 보상 데이터 정리 (급여 예외 처리 현황, 시장 조사 비교 분석 Excel 작업해서 경영진 보고용 PPT 작성, 오후 3-4시간 소요) + 복리후생 예산 사용 현황 점검',
+      collaboration: '팀 내부: SAP HR로 급여 데이터 공유하지만 예외 처리는 Excel로 별도 관리. Slack으로 긴급 이슈 공유, 주간 보상 회의로 문제 해결 방법 논의. 급여/보상 설계/복리후생 담당이 독립적으로 일해서 팀장이 중간 조율. 타 부서: 재무팀과 인건비 예산 조율 (분기별), 각 부서장과 연봉 협상 지원. 경영진에게 월별 보상 현황 보고 (PPT 발표). 외부: 보상 컨설팅사 3곳(머서, 타워스왓슨, 윌리스타워스왓슨)과 시장 조사 협력 (분기별), 복리후생 협력사(보험사, 건강검진 업체 등)와 계약 관리.',
+      toolsUsed: ['SAP HR', 'Excel', 'PowerPoint', '급여 계산 시스템', '시장 조사 리포트'],
+      painPoints: [
+        '시장 조사 데이터를 3개 컨설팅사 리포트에서 수작업으로 비교 분석하는 데 분기당 20시간 소요. 지난주 목요일 오전 10시, 경영진이 "우리 회사 급여 수준이 시장 대비 어떤가요?"라고 질문했는데 보상 설계 담당 2명이 PDF 리포트를 다운받아서 Excel에 수작업으로 입력하고 비교하는 데 이틀 소요. "영업 직군 과장급 시장 평균은 6,500만원인데 우리는 6,200만원이네요" 같은 식으로 일일이 비교하고 결국 주말에 PPT 만들어서 보고',
+        '급여 계산 시 예외 사항 (육아휴직 복귀, 중도 입퇴사, 휴직자 복귀 등) 처리를 수동으로 해서 실수 위험 크고 시간 오래 걸림. 지난 급여 마감 주, 육아휴직 복귀자 A씨 급여를 계산하다가 "복귀 일자"를 잘못 입력해서 급여가 과다 지급됨. A씨가 "급여가 이상하게 많이 나왔어요"라고 전화했는데 확인해보니 Excel 수식 오류로 다음 달 급여에서 차감 처리하느라 사과하고 재계산. 이런 실수가 연 3-4회 발생하는데 직원들 불만 쌓이고 급여 담당은 "실수 안 할까봐" 스트레스',
+        '복리후생 만족도를 체계적으로 측정하지 못해서 개선 방향 불명확하고 예산 배분도 경험에만 의존. 복리후생 항목이 10개 있는데 "직원들이 뭘 제일 만족하고 뭘 개선 원하는지" 세부 데이터 없음. 경영진이 "복리후생 예산 5억인데 효율적으로 쓰고 있어?"라고 물으면 "작년과 동일하게 배분했습니다"라고 답변하는데, "데이터 기반으로 우선순위 정했어?"라는 추가 질문에 답 못함. "건강검진 예산 늘려달라"는 직원 의견이 게시판에 올라와도 "예산 여유 없어요"라고 답변하는데 실제로는 다른 항목 예산 줄이면 가능할 수도 있지만 판단 근거 없음',
+        '보상/급여/복리후생 담당이 각자 분리되어 데이터 공유 안 돼서 팀 전체 인사이트 도출 어려움. "급여 수준은 시장 대비 낮은데 복리후생은 좋은가?"라는 질문에 답하려면 보상/급여/복리후생 담당한테 각각 Excel 받아서 팀장이 직접 통합하는 데 주말 이틀 소요. 경영진한테 "우리 회사 Total Reward가 시장 대비 경쟁력 있나요?"라는 질문 받으면 즉답 못하고 "일주일 뒤에 분석 보고드리겠습니다"라고 답변. 5년차 팀장인데 팀 데이터 통합도 못하는 게 자존심 상함'
+      ],
+      automationNeeds: [
+        '시장 조사 데이터 자동 비교 분석',
+        '급여 예외 처리 자동화',
+        '복리후생 만족도 정기 조사 시스템'
+      ],
+      workStructure: {
+        level: '고도구조화',
+        description: '보상 프로세스와 급여 계산 절차 명확. SAP HR로 시스템화. 분기별 시장 조사 정례화. 예산 관리 엄격.'
+      },
+      realTimeExample: '지난주 목요일 오전 10시, 경영진이 "우리 회사 급여 수준이 시장 대비 어떤가요?"라고 질문. 팀장이 보상 설계 담당 2명에게 "3개 컨설팅사 시장 조사 리포트 비교 분석해주세요"라고 지시. 2명이 각각 PDF 리포트를 다운받아서 Excel에 수작업으로 입력하고 비교하는 데 이틀 소요. 급여 담당이 "육아휴직 복귀자 급여 예외 처리 어떻게 하죠?" 물어봤는데, 과거 사례 찾아서 수동 계산. 결국 주말에 PPT 만들어서 보고.',
+      typicalFireDrills: [
+        '경영진 "시장 대비 급여 수준 보고" - 시장 조사 데이터 긴급 비교 분석',
+        '직원 "급여 계산 잘못됐어요" - 예외 처리 오류 찾느라 긴급 회의',
+        '노조 "복리후생 왜 안 늘리냐" - 만족도 데이터 없어서 근거 제시 못함',
+        '예산팀 "인건비 왜 초과했어?" - 급여 예외 사항 일일이 찾아서 설명'
+      ]
+    },
+    expectedBehavior: {
+      initialAttitude: '중립',
+      concerns: [
+        'Intermediate 수준에서 복잡한 보상 데이터 분석 자동화가 가능할까',
+        '급여는 민감 정보라 자동화 도입 시 보안과 정확성 검증 필요',
+        '7명 팀에서 수준 차이 있는데 디지털 전환 어떻게 추진할지'
+      ],
+      dropoutRisk: 20,
+      workshopPsychology: {
+        initialAttitude: '중립',
+        hiddenMotivations: [
+          '시장 조사 데이터를 자동 비교 분석해서 분기당 20시간을 5시간으로 단축하고 싶음',
+          '급여 예외 처리를 룰 기반으로 자동화해서 실수 위험 제거하고 싶음',
+          '복리후생 만족도를 정기적으로 측정해서 개선 방향을 데이터로 찾고 싶음',
+          'Beginner 2명도 쉽게 쓸 수 있는 시스템을 알고 싶음'
+        ],
+        deepConcerns: [
+          'Intermediate 수준에서 복잡한 보상 데이터 자동화가 현실적으로 가능할지',
+          '급여는 민감 정보라 자동화 도구 도입 시 보안 검증과 정확성 보장 부담',
+          'Beginner 2명이 "너무 어렵다"며 따라오지 못하면 팀 분열 우려',
+          '"급여 예외 처리는 사람 판단이 필요한데 자동화 안 된다"는 팀원 저항'
+        ],
+        successMetrics: [
+          '시장 조사 데이터가 자동 비교 분석되어 분기당 20시간이 5시간으로 단축',
+          '급여 예외 처리가 룰 기반으로 자동화되어 실수 제로',
+          '복리후생 만족도가 분기별로 자동 조사되어 개선 방향 명확',
+          'Beginner 2명이 "이거 쉬운데요"라며 자발적으로 사용'
+        ]
+      }
+    },
+    personality: {
+      patience: 7,
+      techSavvy: 6,
+      changeResistance: 'medium',
+      learningSpeed: 'medium',
+      stressLevel: 6,
+      confidenceLevel: 6
+    }
+  },
+
+  // ==================== Finance (5명) ====================
+  // ==================== Finance (5명) ====================
+  {
+    id: 'P021',
+    name: '김태준',
+    age: 38,
+    company: 'SK하이닉스',
+    department: '재무기획팀',
+    role: '팀장',
+    category: 'Finance',
+    leaderProfile: {
+      yearsInRole: 1.3,
+      previousRole: '재무 분석 시니어 매니저 (7년 경력)',
+      promotionReason: '반도체 투자 수익성 분석 모델 개발로 300억 투자 의사결정 지원, 월 결산 자동화로 마감 기간 3일 단축 달성하여 승진',
+      leadershipStyle: '숫자와 논리로 설득하는 스타일. 정확성을 최우선으로 하지만, 경영진의 급한 요청과 팀의 일정 사이에서 균형 잡기 어려워함.',
+      biggestChallenge: '전임 팀장이 20년 경력의 베테랑이었는데, CFO가 자꾸 "예전 김 팀장은 이렇게 했는데"라고 비교하는 것',
+      hiddenStruggles: [
+        'CFO 보고 때마다 "이 숫자 맞아?"라고 재확인하면 자신감이 흔들리고 팀원들 앞에서 권위가 떨어지는 느낌',
+        '시니어 회계사(15년차)가 "IFRS 기준이 바뀐 거 아시죠?"라고 물어볼 때 모르면서도 아는 척해야 하는 압박',
+        '타 부서에서 "재무팀은 일만 늦춘다"는 소리를 들어도 팀원들 야근시키기 미안해서 혼자 주말 출근',
+        'ERP 시스템 오류로 데이터가 틀렸는데 이미 경영진 보고가 끝난 후 발견했을 때의 공포감'
+      ]
+    },
+    team: {
+      size: 8,
+      seniorCount: 3,
+      juniorCount: 5,
+      composition: '팀장 1명 + 시니어 재무 분석가 2명(15년차, 10년차) + 시니어 회계 담당 1명(12년차) + 주니어 예산 담당 2명(3-4년차) + 주니어 자금 담당 2명(2-3년차) + 주니어 데이터 분석 1명(1년차)',
+      digitalMaturity: 'Advanced',
+      maturityDistribution: '시니어 2명(Expert - Python/SQL 능통) + 시니어 1명(Advanced) + 주니어 3명(Intermediate) + 주니어 2명(Beginner)',
+      teamDynamics: '15년차 시니어는 "차기 팀장감"이라 은근히 팀장 결정에 도전. 10년차는 이직 준비 중이라 소극적. 주니어들은 시니어들 눈치 보느라 팀장에게 직접 질문 못함. 1년차는 실수 연발로 팀 분위기 긴장.',
+      resistanceFactors: [
+        '시니어들의 "재무는 정확성이 생명인데 새로운 시도는 위험해"라는 보수적 태도',
+        '감사 지적 두려움으로 "전례대로 하자"는 관성',
+        'Python 같은 새 도구에 대한 "Excel이면 충분한데 왜?"라는 거부감',
+        '타 부서와 협업 시스템 도입에 "우리가 왜 맞춰줘야 해?"라는 반발'
+      ]
+    },
+    work: {
+      mainTasks: [
+        '월/분기/연간 재무제표 작성 및 결산 (월말 마감 D+5일 내 완료 필수)',
+        '반도체 사업부별 투자 수익성 분석 및 신규 투자 타당성 검토 (분기당 10-15건)',
+        '예산 편성 및 집행 모니터링 (전사 1.2조 예산 관리)',
+        '외부 감사 대응 및 공시 자료 작성',
+        'CFO 직속 특명 프로젝트 (M&A 검토, 원가 절감 TF 등)'
+      ],
+      dailyWorkflow: '오전 7시 반 출근 → 전일 환율/금리 체크 및 자금 포지션 확인 → 8시 Bloomberg에서 시장 동향 파악 → 9시 팀 모닝 브리핑 (각자 당일 마감 업무 공유) → 오전 중 시니어들과 결산 이슈 논의, 주니어들은 전표 입력 및 검증 → 점심 후 1-3시 타 부서 예산 문의 응대 (하루 평균 5-7건 전화/메일) → 3시 CFO 보고 자료 작성 시작 → 5시 팀원들 작업 검토 및 피드백 → 저녁 7-9시 보고서 최종 마무리 (월말은 11시까지)',
+      weeklyRoutine: '월요일: 주간 자금 계획 수립 및 CFO 보고 / 화요일: 투자심의위원회 자료 준비 / 수요일: 사업부별 예산 집행 현황 점검 / 목요일: 외부 감사인 대응 또는 공시 자료 작성 / 금요일: 주간 재무 이슈 정리 및 차주 계획',
+      collaboration: 'SAP ERP로 전표 처리하지만 실제 분석은 Excel 의존. 팀 내 소통은 이메일 + 카톡. 타 부서와는 예산 포털 시스템 있지만 활용도 낮아 전화/이메일이 주. CFO 보고는 PPT로 작성 후 대면 보고. 감사법인과는 이메일 + 수시 대면 미팅.',
+      toolsUsed: ['SAP FI/CO', 'Excel', 'PowerPoint', 'Bloomberg Terminal', 'Python(일부)', 'SQL', 'Teams', '예산 포털 시스템'],
+      painPoints: [
+        '월말 결산 때 각 부서에서 늦게 제출하는 데이터 때문에 마감 지연, 팀 전체가 밤 11시까지 대기',
+        'CFO가 갑자기 "작년 대비 분석 자료 30분 내로"라고 요청하면 모든 업무 중단하고 대응',
+        '시니어 분석가들이 Python 쓰는데 나머지는 Excel만 써서 데이터 통합 시 형식 맞추느라 시간 낭비',
+        '투자 타당성 검토 시 사업부가 낙관적 전망만 제시해서 리스크 시나리오 분석을 재무팀이 추가로 해야 함',
+        '감사 지적 사항이 나올까봐 전년도 방식 그대로 하다 보니 업무 개선이 안 됨'
+      ],
+      automationNeeds: [
+        '부서별 결산 데이터 자동 수집 및 검증 시스템',
+        'CFO 정기 보고서 자동 생성 (데이터 입력하면 PPT 자동 완성)',
+        '투자 타당성 분석 시뮬레이션 자동화',
+        '예산 대비 실적 실시간 모니터링 대시보드'
+      ],
+      workStructure: {
+        level: '고도구조화',
+        description: '회계 기준과 결산 프로세스는 명확히 정의됨. SAP로 대부분 전산화. 하지만 분석과 보고서 작성은 수작업 의존. 감사 대응으로 문서화는 철저하나 혁신은 제한적.'
+      },
+      realTimeExample: '지난달 말 결산 D+3일, 오후 6시에 생산팀에서 "재고 자산 평가 방법 변경 필요"라고 통보. 이미 재무제표 초안을 CFO께 보고한 상태. 시니어는 "규정상 안 된다"고 하고, 생산팀은 "CFO 지시"라고 압박. 결국 팀장이 밤새 영향도 분석하고 새벽 3시에 수정안 작성. 다음날 CFO 보고 때 "왜 이제야?"라는 질책.',
+      typicalFireDrills: [
+        'CFO "10분 내로 올라와" - 갑작스런 호출에 준비 없이 보고',
+        '감사인 "이 계정과목 증빙 추가 필요" - 마감 직전 추가 요구',
+        '사업부 "예산 추가 필요, 오늘 중 결재 요청" - 긴급 예산 변경',
+        'CEO "작년 대비 수익성이 왜 떨어졌나?" - 즉석 분석 요구'
+      ]
+    },
+    workshopPsychology: {
+      initialAttitude: '중립',
+      hiddenMotivations: [
+        'CFO에게 "혁신적인 재무 팀장"으로 인정받고 싶음',
+        '시니어들보다 뭔가 앞서가는 모습을 보여주고 싶음',
+        '월말 결산 지옥에서 벗어날 수 있는 방법을 찾고 싶음',
+        '다른 회사 재무팀은 어떻게 일하는지 벤치마킹하고 싶음'
+      ],
+      deepConcerns: [
+        '재무는 보수적인 부서인데 너무 혁신적으로 보이면 "위험한 팀장"으로 낙인찍힐까봐',
+        '워크샵 내용이 대기업 재무팀 현실과 동떨어진 스타트업 방식일까봐',
+        '새로운 도구 도입했다가 감사 지적 받으면 책임질 자신 없음',
+        '시니어들이 "팀장님 교육 받고 오더니 일만 늘리네"라고 뒷담화할까봐'
+      ],
+      successMetrics: [
+        '월말 결산 기간을 단 하루라도 단축할 수 있는 방법',
+        'CFO 보고 자료 만드는 시간을 절반으로 줄이는 방법',
+        '시니어와 주니어 간 스킬 갭을 해결하는 방법',
+        '감사 지적 없이 프로세스를 개선하는 방법'
+      ],
+      dropoutRisk: 10,
+      dropoutTriggers: [
+        '월말/분기말/연말 결산 기간과 겹치는 경우',
+        'CFO 긴급 호출이 오는 경우',
+        '감사인 미팅이 갑자기 잡히는 경우',
+        '내용이 너무 IT 기술적이어서 재무와 연결이 안 되는 경우'
+      ]
+    },
+    expectedBehavior: {
+      initialAttitude: '중립',
+      concerns: [
+        'Advanced 수준에서 이미 많이 자동화했는데 워크샵이 도움될까',
+        '재무는 정확성이 생명인데 새 도구 도입 시 검증 과정 복잡할 듯',
+        '팀원들 수준 차이 있는데 하나의 솔루션으로 해결 가능할지'
+      ],
+      dropoutRisk: 10
+    },
+    personality: {
+      patience: 8,
+      techSavvy: 9,
+      changeResistance: 'low',
+      learningSpeed: 'fast',
+      stressLevel: 9,
+      confidenceLevel: 6
+    }
+  },
+  {
+    id: 'P022',
+    name: '이현주',
+    age: 39,
+    company: 'SK텔레콤',
+    department: '회계팀',
+    role: '팀장',
+    category: 'Finance',
+    leaderProfile: {
+      yearsInRole: 0.8,
+      previousRole: '회계 파트장 (9년 경력)',
+      promotionReason: 'K-IFRS 도입 프로젝트 리드하여 성공적 전환, 회계 감사 클린 오피니언 3년 연속 달성으로 승진',
+      leadershipStyle: '원칙과 정확성을 중시하되 팀원들의 워라밸도 배려하려 노력. 하지만 마감 압박과 팀원 복지 사이에서 늘 고민.',
+      biggestChallenge: '12명 대규모 팀 운영 경험 부족, 특히 본인보다 나이 많은 시니어 과장 2명과의 어색한 관계',
+      hiddenStruggles: [
+        '나이 많은 과장들이 "현주씨가 팀장이 됐네"라며 반말하다가 고치는 걸 볼 때마다 불편함',
+        '전표 하나 틀리면 큰일나는 회계 업무 특성상 실수한 팀원을 야단쳐야 하는데 상처받을까봐 제대로 못함',
+        '여성 팀장이라 더 완벽해야 한다는 압박감에 남들보다 2시간 일찍 출근',
+        '임신 계획이 있는데 신임 팀장이 바로 육아휴직 가면 어떻게 보일까 고민'
+      ]
+    },
+    team: {
+      size: 12,
+      seniorCount: 4,
+      juniorCount: 8,
+      composition: '팀장 1명 + 시니어 결산 담당 과장 2명(13년차, 11년차) + 시니어 세무 담당 2명(9년차, 7년차) + 주니어 일반회계 담당 4명(2-4년차) + 주니어 채권채무 담당 3명(1-3년차) + 신입 1명',
+      digitalMaturity: 'Intermediate',
+      maturityDistribution: '시니어 1명(Advanced) + 시니어 3명(Intermediate) + 주니어 6명(Intermediate) + 주니어 2명(Beginner)',
+      teamDynamics: '13년차 남성 과장은 여성 팀장을 은근히 무시하는 태도. 11년차 과장은 곧 승진 심사라 눈치 보며 일함. 주니어들은 여성 팀장이라 편하게 다가오지만 가끔 너무 사적인 상담 요청. 신입은 실수 연발로 시니어들이 "요즘 애들은..."이라며 한숨.',
+      resistanceFactors: [
+        '시니어들의 "회계는 실수하면 감옥 간다"는 극도의 보수성',
+        '전임 남성 팀장과 계속 비교하는 분위기',
+        '새로운 시스템 도입에 "배우기 귀찮다"는 중견 직원들',
+        '세무 당국 세무조사 두려움으로 "전례 따르기"만 고집'
+      ]
+    },
+    work: {
+      mainTasks: [
+        '월/분기/반기/연간 결산 및 재무제표 작성 (상장사 공시 기준 준수)',
+        '외부 회계 감사 대응 (연간 감사, 분기 검토)',
+        '세무 신고 및 세무 조사 대응 (법인세, 부가세, 원천세 등)',
+        '내부 회계 관리 제도 운영 및 평가',
+        '각 사업부 회계 이슈 컨설팅 및 지원'
+      ],
+      dailyWorkflow: '오전 7시 출근 → 전일 전표 검토 및 승인 → 8시 반 각종 회계 뉴스 및 세법 개정사항 체크 → 9시 팀 아침 회의(10분, 당일 우선순위 공유) → 오전 중 시니어들과 결산 이슈 논의, 주니어들 전표 작성 지도 → 점심 후 1-3시 타 부서 회계 문의 응대(하루 평균 10건) → 3-5시 감사법인 또는 세무 당국 대응 → 5-7시 보고서 작성 및 검토 → 퇴근 전 내일 업무 준비 (결산 기간은 밤 10-11시)',
+      weeklyRoutine: '월요일: 주간 회계 이슈 점검 및 공시 일정 확인 / 화요일: 세무 신고 준비 및 검토 / 수요일: CFO 정례 보고(월 2회) / 목요일: 외부 감사인 대응 또는 내부 감사 / 금요일: 주간 결산 마감 및 차주 준비, 팀원 개별 면담(월 1회)',
+      collaboration: '팀 내는 SAP 메신저와 이메일 중심. 결산 시즌에는 거의 붙어서 작업. 타 부서와는 회계 처리 가이드라인 이메일로 전달하지만 지켜지지 않아 매번 전화 설명. 감사법인과는 이메일 + 대면 미팅 + 감사 시즌 상주. 세무 당국과는 전자 신고 시스템 + 필요시 방문.',
+      toolsUsed: ['SAP FI', 'Excel', 'PowerPoint', '국세청 홈택스', '금감원 DART', '더존 세무 프로그램', 'Teams'],
+      painPoints: [
+        '매월 결산 마감일(D+5)에 각 부서가 자료 늦게 제출해서 팀 전체가 밤샘 작업',
+        '회계 기준과 세법이 자주 바뀌는데 팀원 교육할 시간이 없어 각자 알아서 공부',
+        '감사인이 계속 추가 자료 요청하는데 "작년에도 준 자료"를 또 달라고 해서 비효율',
+        '주니어들이 만든 전표를 시니어가 일일이 검토하는데 단순 실수가 많아 시간 낭비',
+        'Excel로 만든 결산 체크리스트가 200개 항목이나 되는데 수작업으로 체크'
+      ],
+      automationNeeds: [
+        '전표 자동 검증 시스템 (계정과목, 금액, 거래처 등 자동 체크)',
+        '결산 체크리스트 자동화 및 진행 현황 대시보드',
+        '감사 자료 요청 대응 자동화 (작년 자료 자동 업데이트)',
+        '세법 개정사항 자동 알림 및 영향도 분석'
+      ],
+      workStructure: {
+        level: '고도구조화',
+        description: '회계 기준(K-IFRS)과 세법에 따른 엄격한 프로세스. 내부 통제 시스템으로 이중 삼중 검증. 모든 것이 문서화되고 감사 받음. 하지만 그만큼 경직되어 있고 개선 여지 없이 반복 작업 많음.'
+      },
+      realTimeExample: '지난 분기 결산 마감 D+4, 오후 8시. 감사인이 "매출 인식 기준 변경 필요"라고 통보. 이미 전표 5,000건 입력 완료 상태. 시니어들은 "다시 다 뒤집어야 해?"라며 패닉. 팀장은 CFO에게 마감 연장 요청했지만 "상장사 공시 기한은 못 바꾼다" 거절. 결국 12명 전원이 새벽 4시까지 작업. 다음날 9시 공시는 성공했지만 팀원 2명이 번아웃으로 병가.',
+      typicalFireDrills: [
+        '국세청 "세무조사 사전 통지" - 3년치 자료를 일주일 내 준비',
+        '감사인 "중요한 회계 오류 발견" - 재무제표 전체 수정',
+        'CFO "이익 목표 미달, 회계적으로 해결책 찾아라" - 윤리적 딜레마',
+        '금융감독원 "회계 감리 대상 선정" - 전사 비상'
+      ]
+    },
+    workshopPsychology: {
+      initialAttitude: '중립',
+      hiddenMotivations: [
+        '여성 팀장으로서 "능력 있다"는 인정을 받고 싶음',
+        '팀원들 야근 줄여서 "좋은 팀장"이라는 평가 받고 싶음',
+        '시니어 과장들도 인정할 만한 혁신 성과를 만들고 싶음',
+        '다른 회사는 결산을 어떻게 효율화했는지 배우고 싶음'
+      ],
+      deepConcerns: [
+        '회계팀 특성상 실수는 절대 용납 안 되는데 새로운 시도가 리스크가 될까봐',
+        '워크샵 참석도 "일 제대로 안 하고 교육이나 받는다"고 보일까봐',
+        '혁신 시도했다가 감사 지적 받으면 팀장 자격 없다고 보일까봐',
+        '나이 많은 시니어들이 "젊은 여자 팀장이라 현실을 모른다"고 수군댈까봐'
+      ],
+      successMetrics: [
+        '결산 기간을 단 하루라도 단축하는 구체적 방법',
+        '팀원들 실수를 사전에 방지하는 시스템',
+        '감사인 대응 시간을 줄이는 방법',
+        '팀원들이 자발적으로 따를 만한 혁신 아이디어'
+      ],
+      dropoutRisk: 25,
+      dropoutTriggers: [
+        '결산 마감 주간과 겹치는 경우',
+        '감사인 방문 일정과 겹치는 경우',
+        '세무 신고 기한이 임박한 경우',
+        '강사가 회계 실무를 모르고 일반론만 얘기하는 경우'
+      ]
+    },
+    expectedBehavior: {
+      initialAttitude: '중립',
+      concerns: [
+        'Intermediate 수준이라 너무 고급 내용은 따라가기 어려울 듯',
+        '회계는 법규 준수가 핵심인데 자동화가 오히려 리스크 아닐까',
+        '12명 대규모 팀 변화 관리가 쉽지 않을 것 같음'
+      ],
+      dropoutRisk: 25
+    },
+    personality: {
+      patience: 6,
+      techSavvy: 6,
+      changeResistance: 'medium',
+      learningSpeed: 'medium',
+      stressLevel: 8,
+      confidenceLevel: 5
+    }
+  },
+  {
+    id: 'P023',
+    name: '박성우',
+    age: 36,
+    company: 'SK이노베이션',
+    department: '자금팀',
+    role: '팀장',
+    category: 'Finance',
+    leaderProfile: {
+      yearsInRole: 0.6,
+      previousRole: '자금 파트 리더 (6년 경력)',
+      promotionReason: '환율 헤지 전략으로 연간 200억 환차익 실현, 금융 비용 15% 절감하여 최연소 팀장 승진',
+      leadershipStyle: '리스크 관리와 수익 극대화 사이에서 균형 추구. 시장 변동성에 민감하게 반응하나 팀원들에게 불안감 전달 않으려 노력.',
+      biggestChallenge: '매일 오전 CEO에게 자금 현황 보고하는 압박감과 실시간 환율 변동에 따른 즉각 대응 스트레스',
+      hiddenStruggles: [
+        '환율이 급변할 때마다 "어제 왜 안 했냐"는 경영진 질책이 두려워 매일 새벽 2시에도 글로벌 시장 체크',
+        '5명 소규모 팀이라 한 명만 휴가 가도 업무 마비되는데 팀원들 휴가 독려해야 하는 딜레마',
+        '본인이 내린 헤지 결정이 손실로 이어질 때마다 "팀장 자격이 있나" 자책',
+        '타 부서에서 "자금팀은 돈만 굴리는 부서"라고 무시하는 시선이 속상함'
+      ]
+    },
+    team: {
+      size: 5,
+      seniorCount: 2,
+      juniorCount: 3,
+      composition: '팀장 1명 + 시니어 외환 담당 1명(8년차) + 시니어 자금 조달 담당 1명(7년차) + 주니어 자금 운용 담당 2명(2-3년차) + 주니어 리포팅 담당 1명(1년차)',
+      digitalMaturity: 'Advanced',
+      maturityDistribution: '시니어 2명(Expert - Bloomberg/Reuters 능통) + 주니어 2명(Advanced) + 주니어 1명(Intermediate)',
+      teamDynamics: '소수 정예로 긴밀하지만 업무 강도가 높아 항상 팽팽한 긴장감. 시니어 외환 담당자는 딜링룸 10년 경력으로 팀장보다 시장 경험 많음. 주니어들은 금융 전문성 부족으로 단순 리포팅 업무만 담당. 실시간 대응 필요해 점심도 따로 먹는 살벌한 분위기.',
+      resistanceFactors: [
+        '실시간 시장 대응 때문에 "새로운 걸 배울 시간이 없다"는 핑계',
+        '금융 시장은 변수가 많아서 "자동화는 위험하다"는 선입견',
+        '소규모 팀이라 "우리끼리 잘 통하는데 왜 바꾸냐"는 안주',
+        '타 부서와 다른 특수성을 강조하며 "우리는 달라"라는 고립'
+      ]
+    },
+    work: {
+      mainTasks: [
+        '일일 자금 포지션 관리 및 유동성 확보 (일평균 5,000억원 규모)',
+        '환율/금리 리스크 헤지 전략 수립 및 실행 (월 평균 20건 헤지 거래)',
+        '단기/장기 자금 조달 (회사채 발행, 은행 차입 등 연간 2조원)',
+        'Cash Pooling 시스템 운영 (국내외 30개 계열사)',
+        'CEO 직보 - 일일 자금 현황 및 시장 동향 (매일 오전 8시)'
+      ],
+      dailyWorkflow: '오전 6시 반 출근 → Bloomberg/Reuters에서 밤새 시장 동향 체크 → 7시 전일 포지션 정리 및 당일 자금 계획 수립 → 8시 CEO 보고(화상) → 9시 은행 딜러들과 통화하며 시장 정보 수집 → 10-12시 헤지 거래 실행 및 모니터링 → 점심은 책상에서 김밥으로 때우며 시장 주시 → 오후 1-3시 자금 조달/운용 실행 → 3-5시 계열사 자금 요청 대응 → 5-6시 일일 결과 정리 및 내일 계획 → 퇴근 후에도 뉴욕 시장 오픈 체크',
+      weeklyRoutine: '월요일: 주간 자금 계획 수립 및 CFO 보고 / 화요일: 은행 RM들과 정례 미팅 / 수요일: 환리스크 위원회 참석 / 목요일: 계열사 자금 담당자 회의 / 금요일: 주간 성과 분석 및 차주 전략 수립',
+      collaboration: '팀 내는 Bloomberg 메신저로 실시간 소통. 시장 급변 시 음성으로 즉각 대응. 은행들과는 전화 + Reuters Dealing + 이메일. 계열사와는 Cash Pooling 시스템이 있지만 실제로는 전화 요청이 대부분. CEO/CFO 보고는 화상회의 시스템.',
+      toolsUsed: ['Bloomberg Terminal', 'Reuters Eikon', 'SAP Treasury', 'Excel', 'Python(일부)', 'Cash Pooling System', 'Teams'],
+      painPoints: [
+        '매일 오전 8시 CEO 보고 준비로 새벽 출근이 일상화, 워라밸 최악',
+        '실시간 환율 변동을 24시간 모니터링해야 하는데 5명이서 교대 불가능',
+        '각 은행별 금리 조건을 Excel로 수작업 비교하느라 최적 조달 시점 놓침',
+        '계열사들이 Cash Pooling 시스템 안 쓰고 급하게 전화로 자금 요청',
+        '헤지 성과를 설명하기 어려워 경영진은 늘 "왜 손실이냐"고만 질책'
+      ],
+      automationNeeds: [
+        '환율/금리 자동 알림 시스템 (설정 범위 이탈 시 즉시 알림)',
+        '은행별 금리 조건 실시간 비교 대시보드',
+        'CEO 보고 자료 자동 생성 (데이터 입력하면 보고서 완성)',
+        '헤지 시뮬레이션 및 성과 분석 자동화'
+      ],
+      workStructure: {
+        level: '고도구조화',
+        description: '자금 관리 프로세스와 리스크 한도는 명확히 정의. Bloomberg/Reuters로 실시간 모니터링. 하지만 의사결정은 순간적 판단에 의존. 시장 변동성 때문에 계획보다는 대응 위주.'
+      },
+      realTimeExample: '지난주 목요일 오후 3시, 美 FOMC 깜짝 금리 인상으로 원/달러 환율 20원 급등. CEO가 즉시 호출 "왜 헤지 안 했나?" 질책. 시니어 외환 담당자는 "예상 밖이었다"고 변명. 팀장은 즉시 50억 달러 헤지 실행 결정했으나 이미 환율 손실 100억 발생. 다음날 아침 회의에서 CFO가 "자금팀장 역량이 의심된다"고 공개 비판. 팀 전체 사기 저하.',
+      typicalFireDrills: [
+        'CEO "달러가 왜 이렇게 올랐나? 즉시 설명하라" - 새벽 3시 호출',
+        '계열사 "내일까지 500억 긴급 필요" - 자금 계획 전면 수정',
+        '주거래 은행 "신용등급 조정으로 금리 인상" - 긴급 차입선 변경',
+        '환율 급변동으로 헤지 포지션 마진콜 - 추가 담보 긴급 조달'
+      ]
+    },
+    workshopPsychology: {
+      initialAttitude: '중립',
+      hiddenMotivations: [
+        'CEO 보고 부담을 덜 수 있는 자동화 방법을 찾고 싶음',
+        '24시간 시장 모니터링 스트레스에서 벗어나고 싶음',
+        '자금팀의 전문성을 인정받을 수 있는 가시적 성과를 만들고 싶음',
+        '5명 소규모 팀도 효율적으로 운영하는 노하우를 배우고 싶음'
+      ],
+      deepConcerns: [
+        '실시간 시장 대응 업무라 3시간 자리 비우는 것도 불안함',
+        '자금 운용은 특수 영역인데 일반적인 업무 개선 방법이 맞을까',
+        'CEO가 "쓸데없는 교육 받지 말고 시장이나 봐라"고 할까봐',
+        '워크샵에서 배운 걸 적용하다가 손실 나면 책임질 자신 없음'
+      ],
+      successMetrics: [
+        'CEO 보고 준비 시간을 30분이라도 단축하는 방법',
+        '환율/금리 모니터링을 자동화해서 새벽 출근 안 하는 방법',
+        '5명 팀원이 번아웃 없이 지속 가능하게 일하는 방법',
+        '헤지 성과를 경영진이 이해하기 쉽게 설명하는 방법'
+      ],
+      dropoutRisk: 15,
+      dropoutTriggers: [
+        '환율/금리 급변동으로 시장 대응이 필요한 경우',
+        'CEO 긴급 호출이 오는 경우',
+        '은행 RM과의 중요 미팅이 잡힌 경우',
+        '워크샵 내용이 제조업 중심이어서 금융과 동떨어진 경우'
+      ]
+    },
+    expectedBehavior: {
+      initialAttitude: '중립',
+      concerns: [
+        'Advanced 수준이지만 금융 특화 자동화는 어려울 것',
+        '실시간 의사결정이 중요한데 프로세스 정형화가 맞을까',
+        '5명 소규모 팀이라 대규모 변화는 현실적이지 않을 듯'
+      ],
+      dropoutRisk: 15
+    },
+    personality: {
+      patience: 8,
+      techSavvy: 9,
+      changeResistance: 'low',
+      learningSpeed: 'fast',
+      stressLevel: 10,
+      confidenceLevel: 6
+    }
+  },
+
+  {
+    id: 'P024',
+    name: '정은비',
+    age: 41,
+    company: 'SK네트웍스',
+    department: '원가관리팀',
+    role: '팀장',
+    category: 'Finance',
+    leaderProfile: {
+      yearsInRole: 1.2,
+      previousRole: '원가 분석 시니어 (8년 경력)',
+      promotionReason: '반도체 사업부 원가 절감 프로젝트에서 연간 47억원 절감 달성, BOM(자재명세서) 표준화로 원가 산정 오류율 68% 감소시켜 승진',
+      leadershipStyle: '정확한 데이터 기반 의사결정. 원가 절감을 최우선 가치로 두지만, 생산/구매 부서와의 협업 조율이 어려워 답답함을 느낌.',
+      biggestChallenge: '생산/구매 부서가 원가팀을 "감시자"로 인식해 데이터 공유를 꺼리고, 원가 절감 제안을 "현장을 모른다"며 무시하는 것',
+      hiddenStruggles: [
+        '경영진은 "원가 더 줄여라"만 하고, 현장은 "품질 떨어진다"고 저항하는 샌드위치 신세',
+        '원가 절감 성과를 냈는데도 "원가팀이 한 게 뭐냐, 현장이 노력한 거지"라는 평가에 속상함',
+        '복잡한 원가 구조를 경영진에게 설명해도 "결론만 말해"라고 해서 전문성 인정 못 받는 느낌',
+        '타 부서 회의에서 "원가팀 때문에 일만 늘어난다"는 뒷담화를 듣고도 모른 척해야 하는 서러움'
+      ]
+    },
+    team: {
+      size: 6,
+      seniorCount: 3,
+      juniorCount: 3,
+      composition: '팀장 1명 + 시니어 원가 분석가 2명(9년차, 6년차) + 시니어 원가 기획 담당 1명(7년차) + 주니어 원가 집계 담당 2명(2-3년차) + 주니어 데이터 관리 담당 1명(1년차)',
+      digitalMaturity: 'Intermediate',
+      maturityDistribution: '시니어 2명(Advanced) + 시니어 1명(Intermediate) + 주니어 3명(Intermediate~Beginner)',
+      teamDynamics: '시니어 분석가 2명은 각자 전문 영역(자재비, 가공비)이 달라 서로 간섭 안 함. 원가 기획 담당은 곧 이직 예정이라 소극적. 주니어들은 단순 데이터 입력 업무만 해서 성장 기회 부족으로 불만. 팀 전체가 타 부서에 "원가 깎는 나쁜 팀"으로 인식되어 고립감 느낌.',
+      resistanceFactors: [
+        '생산팀의 "원가만 생각하면 품질은 어떻게 하냐"는 반발',
+        '구매팀의 "납기가 우선이지 원가는 나중 문제"라는 무시',
+        '원가 시스템(SAP CO) 변경에 "배우기 어렵다"는 거부감',
+        '타 부서와 데이터 공유에 "우리 부서 약점 잡으려는 거냐"는 경계심'
+      ]
+    },
+    work: {
+      mainTasks: [
+        '반도체/디스플레이/배터리 3개 사업부 제품별 원가 계산 및 월간 분석 (월평균 120개 제품)',
+        '사업부별 원가 절감 과제 발굴 및 실행 관리 (분기당 15-20개 과제)',
+        '표준 원가 설정 및 실제 원가와의 차이 분석 (월 1회 경영진 보고)',
+        '생산/구매/품질 부서에 원가 개선 컨설팅 제공',
+        'BOM(자재명세서) 정확성 검증 및 원가 시뮬레이션'
+      ],
+      dailyWorkflow: '오전 8시 반 출근 → 전날 생산 실적 데이터 확인(SAP CO) → 9시 원가 차이 발생 항목 체크(자재비, 노무비, 경비) → 10시 시니어들과 원가 이슈 논의(30분) → 오전 중 생산/구매 부서에서 원가 문의 전화 5-7건 응대 → 점심 후 1시부터 주니어들이 입력한 원가 데이터 검증 및 피드백 → 오후 3시쯤 원가 절감 과제 진행 상황 체크(이메일로 각 부서에 독촉) → 오후 4-6시 Excel로 월간 원가 분석 보고서 작성 → 퇴근 전 내일 경영진 보고 자료 최종 점검',
+      weeklyRoutine: '월요일 오전: 주간 원가 이슈 회의(1시간, 시니어들과 함께) / 화요일: 생산팀 회의 참석해서 원가 관점 의견 제시 / 수요일 오후: 구매팀과 자재비 절감 방안 협의 / 목요일: 사업부별 원가 절감 과제 점검 회의(각 1시간씩 3건) / 금요일: 월간 원가 분석 보고서 작성 및 경영진 보고 준비',
+      collaboration: '팀 내에서는 이메일과 SAP CO 메모 기능으로 소통. 생산/구매 부서와는 전화와 이메일이 주요 수단. 원가 절감 과제는 Excel 파일을 이메일로 주고받으며 관리. 사업부 회의 참석 시 PowerPoint 자료 준비. 데이터 공유는 공용 폴더에 Excel 파일 저장.',
+      toolsUsed: ['SAP CO', 'Excel', 'PowerPoint', 'Access', '이메일', '전화'],
+      painPoints: [
+        '제품별 원가 데이터를 SAP CO, 생산 실적 시스템, 구매 시스템에서 수작업으로 취합해서 주당 15시간 소요',
+        '원가 차이 발생하면 원인 분석을 수동으로 해야 해서 근본 원인 파악이 늦음',
+        '생산 부서에 원가 개선 제안을 이메일로만 전달하는데 실행 여부 추적이 안 됨',
+        '주니어들이 원가 데이터 입력할 때 실수가 많은데 일일이 검증하느라 시간 부족',
+        '월간 보고서 작성할 때 경영진이 원하는 인사이트를 뽑아내기 어려움'
+      ],
+      automationNeeds: [
+        '여러 시스템 원가 데이터를 자동 통합하는 대시보드',
+        '원가 차이 원인 자동 분석 (자재/노무/경비별 기여도 계산)',
+        '원가 개선 과제 관리 시스템 (부서별 실행 현황 추적)',
+        '원가 시뮬레이션 자동화 (What-if 분석)'
+      ],
+      workStructure: {
+        level: '고도구조화',
+        description: '원가 계산 프로세스는 명확히 정의되어 있고 SAP CO로 시스템화됨. 월간 원가 분석 회의가 정례화되어 있고 표준 원가 체계가 확립됨. 하지만 원가 데이터 통합과 분석은 수작업 의존도가 높음.'
+      },
+      realTimeExample: '지난달 경영진 회의에서 CEO가 "경쟁사 대비 원가가 왜 15% 높냐?"고 질문. 팀장이 복잡한 원가 구조를 설명하려 했지만 "핵심만 말해"라고 제지. 결국 "3개월 내 10% 절감하겠다"고 약속. 생산팀에 절감 방안 요청했더니 "원가팀이 현장도 모르면서 무리한 요구한다"고 거부. 구매팀은 "단가 인하하면 품질 문제 생긴다"고 반대. 혼자서 절감 방안 만들어 제출했지만 실행은 요원한 상태.',
+      typicalFireDrills: [
+        'CEO "원가가 왜 올랐나? 30분 내 설명하라" - 긴급 분석',
+        '생산팀 "원가 계산 틀렸다, 재계산하라" - 데이터 전면 검증',
+        '구매팀 "원자재 가격 급등, 판가 인상 필요" - 영향도 분석',
+        '품질 클레임 발생 "원가 절감 때문이다" - 원인 분석 및 해명'
+      ]
+    },
+    workshopPsychology: {
+      initialAttitude: '중립',
+      hiddenMotivations: [
+        '타 부서와 협업할 수 있는 실질적인 방법을 찾고 싶음',
+        '원가 데이터 통합 자동화로 분석에 집중하고 싶음',
+        '경영진에게 원가의 중요성을 각인시킬 수 있는 스토리텔링 배우고 싶음',
+        '원가팀의 부정적 이미지를 개선할 수 있는 방법을 찾고 싶음'
+      ],
+      deepConcerns: [
+        '원가는 민감한 정보인데 자동화하면 보안 문제 생길까봐',
+        '워크샵이 일반적인 내용이어서 원가 관리 특수성을 반영 못할까봐',
+        '6명 소규모 팀이 큰 변화를 주도하기엔 영향력이 부족한데',
+        '새로운 시도했다가 원가 계산 오류 나면 큰일날까봐'
+      ],
+      successMetrics: [
+        '타 부서가 자발적으로 원가 절감에 참여하게 만드는 방법',
+        '원가 데이터 통합을 자동화해서 분석 시간 확보',
+        '경영진 보고 시간을 절반으로 줄이는 방법',
+        '팀원들이 단순 작업 대신 부가가치 업무 하는 방법'
+      ],
+      dropoutRisk: 30,
+      dropoutTriggers: [
+        '월말 원가 마감 기간과 겹치는 경우',
+        '경영진 긴급 원가 분석 요청이 오는 경우',
+        '생산/구매팀과의 갈등이 심화되는 경우',
+        '워크샵이 원가와 무관한 내용인 경우'
+      ]
+    },
+    expectedBehavior: {
+      initialAttitude: '중립',
+      concerns: [
+        'Intermediate 수준이라 너무 고급 자동화는 어려울 듯',
+        '원가는 정확성이 생명인데 새 도구 도입이 리스크일 수 있음',
+        '타 부서와의 갈등을 기술로 해결할 수 있을까'
+      ],
+      dropoutRisk: 30
+    },
+    personality: {
+      patience: 6,
+      techSavvy: 6,
+      changeResistance: 'medium',
+      learningSpeed: 'medium',
+      stressLevel: 7,
+      confidenceLevel: 5
+    }
+  },
+
+  {
+    id: 'P025',
+    name: '한지훈',
+    age: 38,
+    company: 'SK E&S',
+    department: '경영관리팀',
+    role: '팀장',
+    category: 'Finance',
+    leaderProfile: {
+      yearsInRole: 1.0,
+      previousRole: '경영 분석 시니어 (7년 경력)',
+      promotionReason: '신재생에너지 사업 수익성 분석 모델 개발로 투자 의사결정 속도 40% 단축, CFO 특별 보고에서 데이터 기반 전략 제안 능력 인정받아 승진',
+      leadershipStyle: '전략적 사고와 데이터 기반 의사결정 중시. 월간 경영 리뷰에서 경영진에게 인사이트 전달하는 것을 중요하게 여기지만, IR 담당과 사업기획팀 간 업무 조율에 어려움.',
+      biggestChallenge: '매월 이사회 보고 자료 70-80페이지를 3일 만에 만들어야 하는데, 각 사업부에서 데이터 늦게 주고 경영진은 계속 수정 요구하는 압박',
+      hiddenStruggles: [
+        'CFO가 "네가 만든 자료로 이사회 설득 못하면 책임져"라고 압박할 때마다 부담감에 불면증',
+        '시니어 분석가 2명이 Python으로 복잡한 분석하는데 본인은 이해 못해도 아는 척해야 하는 상황',
+        'IR 담당이 "경영관리팀은 숫자만 안다"며 무시하는 태도에 자존심 상함',
+        '주말마다 경영진 특명으로 전략 분석하느라 가족과 시간 못 보내는 죄책감'
+      ]
+    },
+    team: {
+      size: 7,
+      seniorCount: 4,
+      juniorCount: 3,
+      composition: '팀장 1명 + 시니어 경영 분석가 2명(10년차, 8년차) + 시니어 사업 기획 담당 1명(9년차) + 시니어 IR 담당 1명(6년차) + 주니어 사업 기획 담당 1명(3년차) + 주니어 데이터 분석 담당 2명(1-2년차)',
+      digitalMaturity: 'Advanced',
+      maturityDistribution: '시니어 2명(Expert, Python/Tableau 능통) + 시니어 2명(Advanced) + 주니어 3명(Intermediate)',
+      teamDynamics: '10년차 시니어 분석가는 데이터 분석 실력은 뛰어나지만 보고서 작성을 "하급 업무"라며 기피. 8년차는 차기 팀장 노리며 팀장 실수 기다림. IR 담당은 별도 라인으로 CEO 직보하며 독립적. 주니어들은 Python 못해서 시니어들 분석 결과만 PowerPoint로 옮기는 단순 작업.',
+      resistanceFactors: [
+        'Python 잘하는 시니어들의 "Excel은 구시대 유물"이라는 우월감',
+        'IR 담당의 "투자자 대응이 우선"이라며 팀 업무 비협조',
+        '사업부의 "경영관리는 숫자 놀이만 한다"는 편견으로 데이터 늦게 제공',
+        '경영진의 "분석은 그만하고 결론만"이라는 태도로 전문성 무시'
+      ]
+    },
+    work: {
+      mainTasks: [
+        '월간/분기별 경영 실적 분석 및 이사회 보고 자료 작성 (매월 70-80페이지 분량)',
+        '신재생에너지/LNG/수소 사업부별 수익성 분석 및 KPI 모니터링',
+        '투자자 관계(IR) 자료 준비 및 애널리스트 미팅 지원 (분기당 3-4회)',
+        '중장기 사업 계획 수립 지원 (연간 사업계획, 3개년 전략)',
+        '경영진 긴급 요청 분석 (경쟁사 분석, M&A 타당성 검토 등)'
+      ],
+      dailyWorkflow: '오전 8시 반 출근 → Bloomberg에서 전일 에너지 시장 동향 체크 → 9시 Tableau 대시보드로 전일 사업부별 실적 확인 → 10시 시니어 분석가들과 데일리 이슈 공유(30분) → 오전 중 주니어들이 작성한 분석 리포트 검토 및 피드백 → 점심 후 1시부터 경영진 요청 분석 작업(예: CFO가 요청한 경쟁사 수익성 비교) → 오후 3시쯤 IR 담당과 분기 실적 자료 협의 → 오후 4-6시 월간 경영 보고서 작성(SAP BW에서 데이터 추출 후 Excel/PowerPoint 정리) → 퇴근 전 내일 이사회 보고 최종 리허설',
+      weeklyRoutine: '월요일 오전: 주간 경영 이슈 회의(1시간, 전 팀원 참석) / 화요일: 사업부별 실적 리뷰 회의(각 사업부 1시간씩) / 수요일 오후: CFO 주간 보고(30분) 및 경영진 요청 사항 논의 / 목요일: 시니어들과 1:1 면담(각 30분, 분석 품질 피드백) / 금요일: 주니어들 그룹 멘토링(1시간, 분석 방법론 교육) 및 다음주 분석 계획 수립',
+      collaboration: '팀 내에서는 Slack으로 실시간 소통하고 Notion에 분석 프로젝트별 진행 상황 기록. 사업부와는 이메일+월 1회 정기 미팅. IR 담당은 별도 팀이라 협업 시 이메일로만 데이터 주고받음. 경영진 보고는 PowerPoint로 작성 후 이메일 제출. Python 코드는 GitHub에서 공유하지만 시니어 2명만 활용.',
+      toolsUsed: ['SAP BW', 'Excel', 'PowerPoint', 'Tableau', 'Python', 'Bloomberg', 'Slack', 'Notion', 'GitHub'],
+      painPoints: [
+        '월간 경영 보고서 작성이 반복 작업인데 SAP BW에서 데이터 추출 → Excel 가공 → PowerPoint 작성을 매번 수동으로 해서 주당 12시간 소요',
+        'KPI 데이터가 사업부별로 분산되어 있어서 통합 모니터링 어려움',
+        'IR 자료 준비 시 최신 재무 데이터를 여러 곳에서 수집해야 해서 시간 많이 걸림',
+        '경영진 긴급 요청이 들어오면 기존 계획 다 미루고 우선 처리해야 함',
+        '시니어 분석가 2명은 Python 잘 쓰는데 나머지 팀원은 Excel만 써서 협업 어려움'
+      ],
+      automationNeeds: [
+        '월간 경영 보고서 자동 생성 (SAP BW 데이터 → PowerPoint 템플릿 자동 채우기)',
+        'KPI 통합 대시보드 (실시간 업데이트, 사업부별 드릴다운 가능)',
+        'IR 데이터 자동 업데이트 (재무/사업 데이터 자동 취합 및 표준 형식 변환)',
+        'Python-Excel 브릿지 도구 (팀원 간 분석 결과 공유 원활화)'
+      ],
+      workStructure: {
+        level: '고도구조화',
+        description: '경영 분석 프로세스는 명확히 체계화되어 있고 SAP BW/Tableau로 고급 분석 수행. 월간 경영 리뷰와 사업부별 실적 점검 회의가 정례화됨. 시니어 2명은 Python으로 고급 분석하지만 나머지는 Excel 중심.'
+      },
+      realTimeExample: '지난주 수요일 오후 4시, CFO가 "내일 이사회인데 경쟁사 대비 수익성 분석 추가해"라고 지시. 이미 70페이지 보고서 완성한 상태. 시니어 분석가는 "Python으로 3시간이면 된다"고 했지만 결과를 PowerPoint로 옮기는데 추가 3시간. IR 담당은 "그런 분석은 투자자가 관심 없다"며 비협조. 팀장이 밤 12시까지 작업해서 겨우 완성. 다음날 이사회에서 해당 페이지는 1분도 안 봄.',
+      typicalFireDrills: [
+        'CEO "우리가 업계 몇 위야? 내일까지 벤치마킹 자료" - 밤샘 분석',
+        'CFO "이 숫자 틀렸다, 전체 다시 계산해" - 보고서 전면 수정',
+        'IR "내일 애널리스트 미팅, 실적 자료 급히 필요" - 긴급 자료 작성',
+        '사업부 "전략 수정했으니 KPI도 바꿔달라" - 지표 재설계'
+      ]
+    },
+    workshopPsychology: {
+      initialAttitude: '중립',
+      hiddenMotivations: [
+        '반복되는 보고서 작성 지옥에서 벗어나고 싶음',
+        'Python 못해도 팀장으로서 리더십 발휘할 수 있는 방법 찾고 싶음',
+        '사업부와 IR 사이에서 조율하는 스킬을 배우고 싶음',
+        '경영진에게 전문성 인정받을 수 있는 보고 방법 알고 싶음'
+      ],
+      deepConcerns: [
+        'Advanced 팀인데 워크샵 내용이 너무 기초적이면 시간 낭비',
+        '시니어들이 "우리가 더 잘 아는데"라며 무시할까봐',
+        '경영진이 "쓸데없는 교육 받지 말고 분석이나 제대로 해"라고 할까봐',
+        '새로운 시도했다가 이사회 보고 실수하면 큰일날까봐'
+      ],
+      successMetrics: [
+        '월간 보고서 작성 시간을 절반으로 줄이는 방법',
+        'Python과 Excel 사용자 간 협업 개선 방법',
+        '경영진이 원하는 인사이트를 빠르게 도출하는 방법',
+        '사업부 데이터를 제때 받을 수 있는 협상 방법'
+      ],
+      dropoutRisk: 10,
+      dropoutTriggers: [
+        '이사회 준비 기간과 겹치는 경우',
+        'CFO 긴급 호출이 오는 경우',
+        'IR 관련 긴급 이슈가 발생하는 경우',
+        '내용이 너무 기초적이어서 도움 안 되는 경우'
+      ]
+    },
+    expectedBehavior: {
+      initialAttitude: '중립',
+      concerns: [
+        'Advanced 수준에서 더 배울 게 있을까',
+        '이미 Python/Tableau 쓰는데 추가 자동화가 필요할까',
+        '7명 팀의 스킬 갭을 어떻게 해결할 수 있을까'
+      ],
+      dropoutRisk: 10
+    },
+    personality: {
+      patience: 9,
+      techSavvy: 9,
+      changeResistance: 'low',
+      learningSpeed: 'fast',
+      stressLevel: 8,
+      confidenceLevel: 6
+    }
+  },  // ==================== IT (P026-P030) ====================
+  {
+    id: 'P026',
+    name: '김도현',
+    age: 36,
+    company: 'SK텔레콤',
+    department: 'IT기획팀',
+    role: '팀장',
+    category: 'IT',
+    leaderProfile: {
+      yearsInRole: 0.6,
+      previousRole: 'IT 프로젝트 매니저 (6년 경력)',
+      promotionReason: '5G 네트워크 관리 시스템 구축 프로젝트를 예산 내 2개월 조기 완료, 애자일 방법론 도입으로 개발 생산성 30% 향상시켜 최연소 팀장 승진',
+      leadershipStyle: '기술 트렌드를 빠르게 캐치하고 도입하려 하지만, 레거시 시스템과 보수적인 조직 문화 사이에서 균형 잡기 어려워함.',
+      biggestChallenge: '경영진은 "디지털 혁신"을 외치지만 예산은 작년 대비 동결, 현업은 "시스템 바꾸지 마라"고 저항하는 이중고',
+      hiddenStruggles: [
+        'CTO가 "왜 AWS 비용이 이렇게 많이 나오냐"고 질책할 때마다 클라우드 전환 결정을 후회',
+        '10년 경력 시니어 개발자가 "애자일은 개발자 착취"라며 은근히 반발하는 걸 통제 못함',
+        '현업 부서장들이 "IT가 뭘 아냐"며 무시하는 태도에 자존심 상하지만 참아야 함',
+        '매일 새로운 기술 나오는데 공부할 시간 없어서 뒤처지는 것 같은 불안감'
+      ]
+    },
+    team: {
+      size: 8,
+      seniorCount: 3,
+      juniorCount: 5,
+      composition: '팀장 1명 + 시니어 IT 기획자 2명(10년차, 8년차) + 시니어 비즈니스 분석가 1명(7년차) + 주니어 프로젝트 매니저 2명(3-4년차) + 주니어 IT 기획자 2명(1-2년차) + 계약직 컨설턴트 1명',
+      digitalMaturity: 'Expert',
+      maturityDistribution: '시니어 3명(Expert) + 주니어 3명(Advanced) + 주니어 2명(Intermediate)',
+      teamDynamics: '10년차 시니어는 "옛날이 좋았다"며 새로운 시도에 회의적. 8년차는 이직 준비 중이라 프로젝트에 소극적. 비즈니스 분석가는 현업 출신이라 IT팀을 "기술만 아는 집단"으로 폄하. 주니어들은 최신 기술 배우고 싶어하지만 레거시 유지보수만 시켜서 불만.',
+      resistanceFactors: [
+        '시니어들의 "검증된 기술만 써야 한다"는 보수적 태도',
+        '현업의 "IT는 지원 부서"라는 인식으로 주도권 안 줌',
+        '경영진의 "ROI 증명해"라는 압박에 혁신 프로젝트 추진 어려움',
+        '보안팀의 "새로운 건 다 위험하다"는 과도한 통제'
+      ]
+    },
+    work: {
+      mainTasks: [
+        'IT 중장기 로드맵 수립 및 연간 IT 예산 계획 (연 500억 규모)',
+        '디지털 전환 프로젝트 기획 및 PMO (동시 진행 프로젝트 5-7개)',
+        '레거시 시스템 현대화 추진 (10년 이상 된 시스템 20개)',
+        '현업 부서 IT 요구사항 분석 및 우선순위 조정',
+        '외부 벤더 관리 및 계약 협상 (연간 계약 규모 200억)'
+      ],
+      dailyWorkflow: '오전 8시 반 출근 → Jira에서 프로젝트 진행 현황 체크 → 9시 데일리 스크럼(15분, 각 PM별 이슈 공유) → 10시 현업 부서와 요구사항 회의 → 11시 벤더 미팅 또는 기술 검토 → 점심 후 1-3시 프로젝트 이슈 대응 및 의사결정 → 3-4시 CTO 보고 자료 작성 → 4-6시 팀원 1:1 면담 또는 기술 스터디 → 퇴근 후 집에서 Udemy로 새로운 기술 공부',
+      weeklyRoutine: '월요일: 주간 프로젝트 현황 리뷰(2시간) / 화요일: 아키텍처 위원회 참석 / 수요일: CTO 주간 보고 및 현업 부서장 회의 / 목요일: 벤더 정례 미팅 및 계약 검토 / 금요일: 스프린트 회고 및 차주 계획',
+      collaboration: 'Jira로 프로젝트 관리, Confluence로 문서화, Slack으로 실시간 소통. 현업과는 ServiceNow로 요청 접수하지만 실제로는 전화/이메일이 대부분. 벤더와는 주 1회 정례 미팅 + 수시 이메일. CTO 보고는 PowerPoint로 작성 후 대면 보고.',
+      toolsUsed: ['Jira', 'Confluence', 'Slack', 'ServiceNow', 'Miro', 'Figma', 'AWS Console', 'GitHub', 'PowerPoint'],
+      painPoints: [
+        '현업 요구사항이 계속 바뀌는데 "IT가 융통성 없다"고 불평만 함',
+        '5개 프로젝트가 동시에 진행되는데 리소스 부족으로 품질 이슈 빈발',
+        '레거시 시스템 유지보수에 예산 70% 소진, 혁신 프로젝트 예산 부족',
+        '벤더 의존도가 높은데 벤더는 "추가 비용" 요구만 반복',
+        'CTO는 "왜 이렇게 오래 걸리냐"만 묻고 기술적 복잡도는 이해 안 함'
+      ],
+      automationNeeds: [
+        '프로젝트 상태 자동 리포팅 (Jira 데이터 → 경영진 보고서)',
+        '현업 요구사항 자동 분류 및 우선순위 제안',
+        'IT 예산 집행 현황 실시간 모니터링',
+        '벤더 성과 자동 평가 시스템'
+      ],
+      workStructure: {
+        level: '고도구조화',
+        description: '애자일/스크럼 방법론 확립. Jira/Confluence로 체계적 관리. 주간 스프린트와 월간 릴리즈 계획. 아키텍처 가버넌스와 보안 검토 프로세스 명확. 하지만 현업 요구사항 변경에는 애자일이라는 명목으로 수동적 대응.'
+      },
+      realTimeExample: '지난달 ERP 업그레이드 프로젝트 D-7일. 테스트 중 치명적 버그 발견. 벤더는 "원래 계약에 없던 요구사항"이라며 추가 비용 요구. 현업은 "일정 못 미루면 결산 못한다"고 압박. CTO는 "왜 사전에 못 잡았냐"고 질책. 결국 팀장이 주말 내내 직접 코드 분석해서 임시 해결책 제시. 팀원들과 48시간 연속 작업으로 겨우 오픈. 하지만 현업은 "IT가 준비 부족"이라고 평가.',
+      typicalFireDrills: [
+        'CEO "경쟁사는 이런 기능 있던데 우리는?" - 긴급 벤치마킹',
+        '보안 사고 발생 "즉시 원인 파악하고 대책 마련" - 비상 대응',
+        '시스템 장애 "30분 내 복구 안 되면 큰일" - 전팀 투입',
+        'CTO "이 프로젝트 다음주까지 완료해" - 일정 대폭 단축'
+      ]
+    },
+    workshopPsychology: {
+      initialAttitude: '중립',
+      hiddenMotivations: [
+        'IT팀의 전략적 가치를 경영진에게 인정받고 싶음',
+        '현업과 IT 간의 갈등을 해결할 수 있는 방법 찾고 싶음',
+        '레거시 시스템 현대화 예산을 확보할 수 있는 논리 개발하고 싶음',
+        '다른 회사 IT팀장들과 네트워킹해서 고민 공유하고 싶음'
+      ],
+      deepConcerns: [
+        'Expert 수준 팀인데 워크샵 내용이 너무 비IT적이면 도움 안 될 듯',
+        'IT는 이미 애자일인데 또 프로세스 개선하라고 하면 피곤',
+        '3시간 자리 비우면 프로젝트 이슈 터질까봐 불안',
+        '시니어들이 "또 쓸데없는 교육"이라고 시니컬하게 볼까봐'
+      ],
+      successMetrics: [
+        '현업과 IT 간 협업을 개선하는 구체적 방법론',
+        '레거시 현대화 ROI를 경영진에게 설득하는 방법',
+        '적은 예산으로 혁신 프로젝트 추진하는 노하우',
+        '벤더 의존도를 줄이면서 품질 유지하는 방법'
+      ],
+      dropoutRisk: 5,
+      dropoutTriggers: [
+        '시스템 장애나 보안 사고가 발생하는 경우',
+        'CTO 긴급 호출이 오는 경우',
+        '프로젝트 Go-Live 일정과 겹치는 경우',
+        '내용이 IT와 무관한 일반 관리론인 경우'
+      ]
+    },
+    expectedBehavior: {
+      initialAttitude: '중립',
+      concerns: [
+        'Expert 수준에서 더 배울 게 있을까',
+        'IT는 이미 최신 도구 다 쓰는데 추가로 뭘 할까',
+        '현업과의 갈등을 기술로 해결할 수 있을까'
+      ],
+      dropoutRisk: 5
+    },
+    personality: {
+      patience: 9,
+      techSavvy: 10,
+      changeResistance: 'low',
+      learningSpeed: 'fast',
+      stressLevel: 7,
+      confidenceLevel: 7
+    }
+  },
+
+  {
+    id: 'P027',
+    name: '이서연',
+    age: 38,
+    company: 'SK하이닉스',
+    department: 'IT운영팀',
+    role: '팀장',
+    category: 'IT',
+    leaderProfile: {
+      yearsInRole: 0.8,
+      previousRole: '시니어 시스템 엔지니어 (8년 경력)',
+      promotionReason: '24/7 무중단 시스템 운영 체계 구축으로 가용성 99.99% 달성, 클라우드 마이그레이션으로 인프라 비용 30% 절감하여 승진',
+      leadershipStyle: '안정성과 효율성을 최우선으로 하되, 새로운 기술 도입에도 적극적. 하지만 15명 대규모 팀 관리와 3교대 근무 조율에 어려움.',
+      biggestChallenge: '반도체 공장은 1분 다운타임이 수십억 손실인데, 노후 장비 교체 예산은 계속 삭감되는 모순적 상황',
+      hiddenStruggles: [
+        '새벽 3시 장애 콜 받고 출근했는데 "대응이 늦다"고 질책받을 때의 억울함',
+        '팀원 15명 중 3명이 번아웃으로 휴직 중인데 충원은 안 되고 업무는 늘어나는 압박',
+        '여성 IT 팀장이라 "기술을 제대로 아냐"는 편견 어린 시선과 싸워야 함',
+        '최신 기술 도입하고 싶지만 "검증 안 된 기술은 위험"이라는 반대에 좌절'
+      ]
+    },
+    team: {
+      size: 15,
+      seniorCount: 6,
+      juniorCount: 9,
+      composition: '팀장 1명 + 시니어 인프라 엔지니어 3명(10-15년차) + 시니어 DB 관리자 2명(8-10년차) + 시니어 네트워크 엔지니어 1명(12년차) + 주니어 시스템 운영자 6명(2-5년차) + 주니어 모니터링 담당 3명(1-3년차)',
+      digitalMaturity: 'Expert',
+      maturityDistribution: '시니어 6명(Expert) + 주니어 6명(Advanced) + 주니어 3명(Intermediate)',
+      teamDynamics: '15년차 시니어는 "여자가 IT 운영을 뭘 아냐"며 은근히 무시. 3교대 근무자들 간 정보 공유 안 되어 같은 장애 반복. DB 관리자들은 "우리가 제일 중요"하다며 타 파트 무시. 주니어들은 야간 근무와 장애 대응으로 지쳐서 이직 준비.',
+      resistanceFactors: [
+        '시니어들의 "15년 경험으로 하던 대로가 최고"라는 고집',
+        '3교대 근무자들의 "교육 받을 시간이 없다"는 현실적 제약',
+        '경영진의 "무중단이 최우선, 새로운 시도는 리스크"라는 압박',
+        '현업의 "1분만 멈춰도 큰일, 절대 건드리지 마"라는 공포'
+      ]
+    },
+    work: {
+      mainTasks: [
+        '반도체 생산 시스템 24/7 운영 (서버 500대, DB 50개)',
+        '시스템 모니터링 및 장애 대응 (월평균 장애 15건)',
+        '인프라 용량 관리 및 증설 계획',
+        '보안 패치 및 시스템 업그레이드 (분기 1회 정기 작업)',
+        '재해 복구(DR) 시스템 운영 및 모의 훈련'
+      ],
+      dailyWorkflow: '오전 7시 반 출근 → 야간조 인수인계(장애 현황, 작업 내역) → 8시 모니터링 대시보드 전체 점검 → 9시 팀 모닝 브리핑(긴급도별 이슈 분류) → 10-12시 정기 점검 및 성능 튜닝 → 점심 후 1-3시 변경 작업 또는 패치 적용 → 3시 교대조 인수인계 준비 → 4-5시 벤더 미팅 또는 용량 계획 → 5-7시 일일 보고서 작성 및 야간 작업 계획 → 집에서도 모니터링 앱으로 수시 확인',
+      weeklyRoutine: '월요일: 주간 장애 리뷰 및 개선 대책 수립 / 화요일: 용량 관리 회의 / 수요일: 보안 패치 검토 및 테스트 / 목요일: DR 훈련 또는 백업 점검 / 금요일: 주말 작업 계획 및 당직 일정 조정',
+      collaboration: 'PagerDuty로 장애 알림, Slack으로 실시간 소통. 3교대 간 인수인계는 구두+엑셀. 현업과는 ServiceNow로 요청 접수하지만 급한 건 다 전화. 벤더와는 장애 시 핫라인. 경영진 보고는 일일 메일 + 주간 대면.',
+      toolsUsed: ['Zabbix', 'Grafana', 'PagerDuty', 'Ansible', 'Kubernetes', 'ServiceNow', 'Slack', 'Oracle EM', 'VMware vCenter'],
+      painPoints: [
+        '3교대 근무자 간 정보 단절로 같은 장애 반복 대응',
+        '장애 원인 분석을 수동으로 해서 RCA 리포트 작성에 하루 걸림',
+        '노후 장비 30%가 EOS(End of Service)인데 교체 예산 없음',
+        '야간 장애 시 전문가 부재로 임시조치만 하고 근본 해결 못함',
+        '15명 팀원 스케줄 관리가 엑셀인데 휴가/교육/당직 겹쳐서 혼란'
+      ],
+      automationNeeds: [
+        '장애 패턴 분석 및 예측 시스템 (AIOps)',
+        '3교대 인수인계 자동화 및 지식 공유 플랫폼',
+        'RCA(Root Cause Analysis) 자동 생성',
+        '팀원 스케줄 자동 최적화 (공정한 당직 배정)'
+      ],
+      workStructure: {
+        level: '고도구조화',
+        description: '운영 프로세스와 장애 대응 절차 명확히 문서화. 모니터링 임계치와 에스컬레이션 체계 확립. 변경 관리와 릴리즈 프로세스 엄격. 하지만 3교대 특성상 정보 공유와 지식 전달은 취약.'
+      },
+      realTimeExample: '지난주 일요일 새벽 2시, 핵심 DB 서버 디스크 풀 발생. 당직자(2년차)가 임시로 로그 삭제했지만 월요일 오전 같은 문제 재발. 15년차 시니어가 "왜 제대로 못했냐"고 질책. 알고 보니 3개월 전에도 같은 장애였는데 인수인계 안 됨. 팀장이 RCA 작성하느라 하루 종일 걸렸고, 경영진은 "운영팀 뭐하냐"고 질타. 팀원들은 "맨날 우리만 혼난다"며 사기 저하.',
+      typicalFireDrills: [
+        '생산 라인 멈춤 "즉시 복구하라, 1분에 10억 손실" - 초비상',
+        '보안 취약점 발견 "24시간 내 전체 패치 완료" - 밤샘 작업',
+        'CEO "왜 시스템이 느리냐" - 전방위 성능 점검',
+        'DR 훈련 실패 "실제 재해 시 어쩔 거냐" - 시스템 재설계'
+      ]
+    },
+    workshopPsychology: {
+      initialAttitude: '회의적',
+      hiddenMotivations: [
+        '3교대 근무와 장애 대응 스트레스를 줄일 방법을 찾고 싶음',
+        '여성 IT 팀장으로서 기술 리더십을 인정받고 싶음',
+        '팀원들의 번아웃을 막고 work-life balance를 지켜주고 싶음',
+        '노후 인프라 교체 예산을 확보할 설득 논리를 개발하고 싶음'
+      ],
+      deepConcerns: [
+        'Expert 팀이 이미 최신 도구 다 쓰는데 워크샵이 뭘 더 줄까',
+        '3시간 자리 비우면 장애 터질까봐 불안',
+        '15명 대규모 팀에 적용하기엔 너무 일반적인 내용일 듯',
+        '운영은 혁신보다 안정이 우선인데 쓸데없는 변화 강요할까봐'
+      ],
+      successMetrics: [
+        '장애 대응 시간을 30% 단축하는 구체적 방법',
+        '3교대 팀의 지식 공유를 활성화하는 방법',
+        '팀원 번아웃을 예방하는 운영 체계',
+        '경영진에게 인프라 투자 필요성을 설득하는 방법'
+      ],
+      dropoutRisk: 5,
+      dropoutTriggers: [
+        '크리티컬 시스템 장애가 발생하는 경우',
+        '보안 사고나 침해 시도가 감지되는 경우',
+        '정기 작업 일정과 겹치는 경우',
+        '내용이 개발 중심이어서 운영과 맞지 않는 경우'
+      ]
+    },
+    expectedBehavior: {
+      initialAttitude: '회의적',
+      concerns: [
+        'Expert 수준이지만 운영 특성상 혁신보다 안정이 우선',
+        '3교대 근무로 교육 참여 자체가 어려움',
+        '15명 대규모 팀 변화 관리가 현실적으로 어려울 듯'
+      ],
+      dropoutRisk: 5
+    },
+    personality: {
+      patience: 7,
+      techSavvy: 10,
+      changeResistance: 'low',
+      learningSpeed: 'fast',
+      stressLevel: 9,
+      confidenceLevel: 6
+    }
+  },
+
+  {
+    id: 'P028',
+    name: '박준영',
+    age: 39,
+    company: 'SK이노베이션',
+    department: '정보보안팀',
+    role: '팀장',
+    category: 'IT',
+    leaderProfile: {
+      yearsInRole: 0.7,
+      previousRole: '보안 관제 파트장 (7년 경력)',
+      promotionReason: '랜섬웨어 공격 성공적 방어로 500억 피해 예방, 제로 트러스트 보안 체계 도입 주도하여 CISO 특별 승진',
+      leadershipStyle: '위험 제로를 추구하는 완벽주의자. 보안 사고 예방에는 탁월하지만 지나친 통제로 타 부서와 마찰.',
+      biggestChallenge: '개발팀/현업은 "보안팀이 일 못하게 막는다"고 불평하고, 경영진은 "편의성도 중요하다"며 보안 완화 압박하는 딜레마',
+      hiddenStruggles: [
+        '보안 사고 하나만 터져도 팀장 경력 끝인다는 압박감에 매일 악몽',
+        '팀원 6명으로 전사 5,000명 보안 관리하는 것이 물리적으로 불가능한데 인원 충원 안 됨',
+        '개발팀이 "보안팀은 No만 한다"고 뒷담화하는 걸 알지만 원칙은 지켜야 하는 외로움',
+        'CISO가 "100% 방어"를 요구하지만 예산은 작년 대비 20% 삭감된 현실'
+      ]
+    },
+    team: {
+      size: 6,
+      seniorCount: 2,
+      juniorCount: 4,
+      composition: '팀장 1명 + 시니어 보안 엔지니어 2명(9년차, 7년차) + 주니어 보안 관제 요원 2명(3년차, 2년차) + 주니어 보안 정책 담당 1명(2년차) + 주니어 모의 해킹 담당 1명(1년차)',
+      digitalMaturity: 'Expert',
+      maturityDistribution: '시니어 2명(Expert) + 주니어 3명(Advanced) + 주니어 1명(Intermediate)',
+      teamDynamics: '소수정예 특공대 같은 분위기지만 과로에 지쳐 있음. 시니어 2명은 기술력은 뛰어나지만 "우리만 고생한다"며 냉소적. 주니어들은 24/7 보안 관제로 번아웃 직전. 타 부서에서 "보안팀은 사내 경찰"이라며 기피하는 분위기로 팀 전체가 고립감 느낌.',
+      resistanceFactors: [
+        '현업의 "보안은 번거롭기만 하다"는 부정적 인식',
+        'CISO의 "실수는 용납 안 된다"는 무한 책임론',
+        '개발팀의 "보안이 개발 속도를 늦춘다"는 불만',
+        '경영진의 "보안에 돈 쓰면 뭐가 좋아지냐"는 ROI 압박'
+      ]
+    },
+    work: {
+      mainTasks: [
+        '24/7 보안 관제 센터 운영 (일 평균 위협 탐지 3,000건)',
+        '보안 정책 수립 및 전사 교육 (분기별 전 직원 대상)',
+        '침투 테스트 및 모의 해킹 (월 1회)',
+        '보안 솔루션 운영 (방화벽, IPS, DLP, SIEM 등 15종)',
+        '보안 사고 대응 및 포렌식 (월평균 5건)'
+      ],
+      dailyWorkflow: '오전 7시 출근 → 밤새 보안 이벤트 로그 분석 → 8시 글로벌 위협 인텔리전스 브리핑 → 9시 관제팀 교대 및 인수인계 → 10-12시 보안 정책 위반 사항 점검 및 대응 → 점심 후 1-3시 현업 부서 보안 요청 사항 검토 (대부분 거절) → 3-4시 보안 솔루션 성능 모니터링 → 4-5시 CISO 보고 자료 작성 → 5-7시 취약점 분석 및 패치 계획 → 퇴근 후에도 보안 알람 앱 확인',
+      weeklyRoutine: '월요일: 주간 위협 분석 및 대응 전략 수립 / 화요일: 보안 정책 위원회 참석 (각 부서 반발 대응) / 수요일: 침투 테스트 결과 리뷰 / 목요일: CISO 주간 보고 / 금요일: 보안 교육 콘텐츠 개발 및 인시던트 리뷰',
+      collaboration: 'SIEM으로 로그 통합 분석, Slack으로 긴급 대응. 현업과는 보안 요청 포털이 있지만 대부분 전화로 "한 번만 예외"를 요구. 개발팀과는 늘 대립 (보안 vs 편의성). CISO 보고는 대면 + 서면. 외부 보안 업체와는 위협 정보 공유.',
+      toolsUsed: ['SIEM(Splunk)', 'SOAR', 'FireEye', 'CrowdStrike', 'Fortinet', 'DLP', 'Tenable', 'Metasploit', 'Wireshark'],
+      painPoints: [
+        '하루 3,000건 보안 이벤트를 6명이 분석하는 것이 물리적으로 불가능',
+        '개발팀이 보안 검토 없이 시스템 오픈하고 나중에 문제 되면 보안팀 책임',
+        'CEO가 "보안 때문에 불편하다"고 하면 CISO가 "융통성 있게 하라"고 압박',
+        '랜섬웨어, 공급망 공격 등 새로운 위협은 늘어나는데 예산은 삭감',
+        '보안 교육해도 직원들은 "또 그 얘기"라며 무시, 피싱 메일 클릭률 30%'
+      ],
+      automationNeeds: [
+        'AI 기반 위협 자동 탐지 및 대응 (SOAR 고도화)',
+        '보안 정책 예외 요청 자동 위험도 평가',
+        '보안 교육 효과성 자동 측정 및 맞춤 교육',
+        '취약점 자동 스캔 및 패치 영향도 분석'
+      ],
+      workStructure: {
+        level: '고도구조화',
+        description: '보안 프레임워크(ISO 27001, NIST)에 따른 체계적 운영. 24/7 관제 체계와 인시던트 대응 프로세스 확립. 모든 보안 이벤트 로깅 및 분석. 하지만 인력 부족으로 많은 부분 수동 대응.'
+      },
+      realTimeExample: '지난주 금요일 오후 4시, 마케팅팀에서 "월요일 신제품 발표 사이트 오픈하는데 보안 점검 좀"이라고 요청. 점검해보니 SQL 인젝션 취약점 10개 발견. "수정하면 일정 못 맞춘다"며 "일단 오픈하고 나중에 수정"하자고 함. 거부하자 CMO가 CISO에게 "보안팀이 사업을 방해한다"고 컴플레인. CISO는 "융통성 있게 대응하라"고 지시. 결국 임시 보안 조치만 하고 오픈. 주말 내내 모니터링하느라 못 쉼.',
+      typicalFireDrills: [
+        '랜섬웨어 감염 의심 "전사 네트워크 즉시 차단" - 비상 대응',
+        '개인정보 유출 제보 "24시간 내 원인 파악" - 포렌식 총동원',
+        'CEO 피싱 메일 클릭 "흔적 없이 처리하라" - 극비 작업',
+        '금융감독원 보안 실사 "일주일 내 모든 문서 준비" - 전팀 야근'
+      ]
+    },
+    workshopPsychology: {
+      initialAttitude: '회의적',
+      hiddenMotivations: [
+        '보안팀의 필요성을 경영진에게 각인시킬 방법을 찾고 싶음',
+        '개발팀/현업과 대립하지 않고 협업할 수 있는 방법을 배우고 싶음',
+        '6명으로 전사 보안을 효율적으로 관리하는 노하우를 얻고 싶음',
+        '보안 사고 없이 편의성도 제공하는 균형점을 찾고 싶음'
+      ],
+      deepConcerns: [
+        'Expert 팀이 이미 최고 수준 보안 도구 쓰는데 일반 워크샵이 도움될까',
+        '보안은 특수 영역인데 일반 업무 개선과는 맞지 않을 듯',
+        '3시간 자리 비우는 동안 보안 사고 터지면 어떡하나',
+        '워크샵 내용이 "보안 규제 완화"로 이어질까봐 걱정'
+      ],
+      successMetrics: [
+        '보안 이벤트 분석 시간을 50% 단축하는 방법',
+        '현업과 Win-Win할 수 있는 보안 정책 수립 방법',
+        '경영진에게 보안 ROI를 설명하는 방법',
+        '팀원 번아웃 없이 24/7 관제 유지하는 방법'
+      ],
+      dropoutRisk: 10,
+      dropoutTriggers: [
+        '보안 사고나 침해 시도가 감지되는 경우',
+        'CISO 긴급 호출이 오는 경우',
+        '외부 감사나 실사 일정과 겹치는 경우',
+        '워크샵이 보안과 무관한 일반론인 경우'
+      ]
+    },
+    expectedBehavior: {
+      initialAttitude: '회의적',
+      concerns: [
+        'Expert 수준이지만 보안은 예외가 많아 일반화 어려움',
+        '보안은 100% 방어가 목표인데 효율화가 맞을까',
+        '6명 소규모 팀이라 대규모 변화는 비현실적'
+      ],
+      dropoutRisk: 10
+    },
+    personality: {
+      patience: 8,
+      techSavvy: 10,
+      changeResistance: 'low',
+      learningSpeed: 'fast',
+      stressLevel: 10,
+      confidenceLevel: 7
+    }
+  },  {
+    id: 'P029',
+    name: '최승현',
+    age: 35,
+    company: 'SK네트웍스',
+    department: '애플리케이션개발팀',
+    role: '팀장',
+    category: 'IT',
+    leaderProfile: {
+      yearsInRole: 1.0,
+      previousRole: '시니어 개발자 (8년 경력)',
+      promotionReason: '사내 ERP 현대화 프로젝트를 3개월 앞당겨 완료하고 레거시 코드 리팩토링으로 시스템 응답속도 40% 개선, 기술 리더십과 프로젝트 관리 능력 인정받아 승진',
+      leadershipStyle: '코드 리뷰와 기술 토론을 중시하는 스타일. 개발자 출신이라 기술 판단은 빠르지만 팀원 간 업무 분배와 비즈니스 부서와의 협상에는 아직 미숙함.',
+      biggestChallenge: '12년차 시니어 개발자가 레거시 시스템 구축한 장본인인데 "왜 바꾸냐"며 저항하고, 비즈니스 부서는 계속 요구사항 바꾸는 난관',
+      hiddenStruggles: [
+        '코드 리뷰에서 시니어한테 "이런 것도 몰라?"라는 무시당하는 듯한 느낌',
+        'CTO가 "개발자 출신이라 관리는 서툴지?"라고 의심의 눈초리로 보는 압박',
+        '주니어들이 퇴근 후 "팀장님은 코딩만 하고 우리는 언제 성장하냐"는 불만을 SNS에 올린 걸 봤지만 모른 척',
+        '아내가 "맨날 코딩만 하고 가족은 뒷전"이라고 불평하는데 팀장 역할과 개발 둘 다 놓을 수 없는 딜레마'
+      ]
+    },
+    team: {
+      size: 10,
+      seniorCount: 6,
+      juniorCount: 4,
+      composition: '팀장 1명 + 시니어 백엔드 개발자 2명(10년차, 12년차) + 시니어 프론트엔드 개발자 2명(7년차, 9년차) + 시니어 QA 엔지니어 2명(8년차, 6년차) + 주니어 풀스택 개발자 2명(2-3년차) + 주니어 QA 엔지니어 2명(1-2년차)',
+      digitalMaturity: 'Expert',
+      maturityDistribution: '시니어 6명(Expert) + 주니어 2명(Advanced) + 주니어 2명(Intermediate)',
+      teamDynamics: '12년차 시니어는 레거시 코드의 "수호자"를 자처하며 변화 거부. 10년차는 "나도 곧 팀장감"이라며 은근히 도전. 프론트엔드와 백엔드가 "누가 더 중요한가"로 신경전. 주니어들은 단순 버그 수정만 시켜서 "성장이 없다"며 이직 사이트 검색.',
+      resistanceFactors: [
+        '시니어들의 "10년 넘게 잘 돌아가는데 왜 바꾸냐"는 저항',
+        '비즈니스 부서의 "개발팀은 우리 요구사항만 들으면 돼"라는 갑질',
+        'QA팀의 "테스트 시간 더 필요"와 개발팀의 "빨리 배포해야 해" 충돌',
+        'CTO의 "왜 이렇게 개발이 오래 걸리냐"는 압박'
+      ]
+    },
+    work: {
+      mainTasks: [
+        '사내 애플리케이션 개발 (주문관리, 재고관리, 물류추적 시스템 등 5개 주요 시스템 운영)',
+        '10년 이상 된 레거시 Java 코드를 Node.js + React로 단계별 현대화 (월 평균 2개 모듈 전환)',
+        'REST API 및 GraphQL 엔드포인트 설계 및 개발',
+        'GitHub Actions + Jenkins로 CI/CD 파이프라인 운영 및 개선',
+        '코드 리뷰 및 품질 관리 (주 3회 코드 리뷰 세션, SonarQube로 코드 품질 측정)'
+      ],
+      dailyWorkflow: '오전 9시 출근 후 Slack 메시지 확인 및 긴급 이슈 대응 → 9시 30분 데일리 스탠드업 미팅(15분) → 10시-12시 코드 리뷰 및 PR 승인, 기술 설계 검토 → 점심 후 1-3시 비즈니스 부서 미팅 또는 요구사항 조율 → 3-5시 개발 업무(주로 복잡한 설계나 레거시 코드 분석) → 5-6시 팀원 질문 답변 및 장애 대응 → 야근 시 6-8시 리팩토링 우선순위 검토 및 다음날 스프린트 계획',
+      weeklyRoutine: '월요일 오전: 스프린트 계획 회의(1시간 30분), 비즈니스 부서 요구사항 백로그 리뷰 / 화요일: 오후 2시간 시니어 개발자들과 기술 아키텍처 토론 / 수요일 오전: 주간 진행상황 보고를 위한 자료 준비 및 CTO 보고 / 목요일: 스프린트 리뷰 및 회고(2시간), QA팀과 배포 계획 조율 / 금요일: 주니어 개발자 코드 리뷰 집중 시간(3시간), 다음주 우선순위 최종 확정',
+      collaboration: '팀 내에서는 Slack으로 실시간 소통하고 코드 관련 논의는 GitHub PR 코멘트로 진행. 스프린트는 Jira로 관리하며 매일 스탠드업에서 진행상황 공유. 비즈니스 부서(영업/물류/구매팀)와는 주 2회 정기 미팅하고 요구사항은 Confluence에 문서화. QA팀과는 Slack 채널에서 테스트 케이스 협의하고 배포 전 체크리스트를 Google Sheets로 공유.',
+      toolsUsed: ['GitHub', 'Jenkins', 'Docker', 'Kubernetes', 'JIRA', 'Slack', 'Figma', 'SonarQube', 'Confluence', 'Google Sheets', 'Postman', 'IntelliJ IDEA', 'VS Code'],
+      painPoints: [
+        '시니어 백엔드 개발자(12년차)가 본인보다 연차가 높고 레거시 시스템을 구축한 장본인이라 리팩토링 방향에 이견이 있을 때 설득하기 어려움',
+        '비즈니스 부서 요구사항 변경이 주 평균 3-4건 발생하는데 우선순위를 정하지 못해 개발 일정이 계속 밀림',
+        '레거시 코드 리팩토링 우선순위를 기술 부채 정도, 비즈니스 영향도, 개발 난이도를 고려해서 정해야 하는데 데이터 없이 주먹구구로 결정',
+        'QA 시간이 부족해서 배포 후 버그 발견이 많고 핫픽스로 야근하는 경우 빈번',
+        '주니어 개발자 4명이 같은 유형 작업(API 개발)을 반복하는데 코딩 컨벤션과 에러 처리 방식이 제각각'
+      ],
+      automationNeeds: [
+        '요구사항 변경 시 영향받는 코드 범위와 예상 공수를 자동으로 분석해주는 도구',
+        '레거시 코드 복잡도를 자동 분석하고 리팩토링 우선순위를 ROI 기준으로 제안',
+        '테스트 자동화 확대 (Unit Test, Integration Test 커버리지 80% 목표)',
+        'API 개발 표준 템플릿과 자동 검증 도구'
+      ],
+      workStructure: {
+        level: '고도구조화',
+        description: '애자일 스크럼 확립(2주 스프린트). GitHub + Jenkins로 CI/CD 자동화. 주 2회 스프린트 리뷰 및 회고. PR 기반 코드 리뷰 의무화(2명 이상 승인 필수). Jira로 백로그 관리하고 Confluence에 기술 문서 작성. SonarQube로 코드 품질 자동 측정.'
+      },
+      realTimeExample: '지난주 목요일 오후 3시, 영업팀에서 "내일 고객 데모가 있는데 신규 기능 추가 필요"라고 긴급 요청. 이미 스프린트 막바지라 여유 인력 없음. 12년차 시니어는 "무리한 요구는 거절해야 한다"고 하고, CTO는 "고객이 중요하니 맞춰줘야지"라고 압박. 결국 팀장이 직접 밤새 개발해서 기능 구현. 다음날 데모는 성공했지만 주말에 버그 10개 발견되어 주말 내내 핫픽스. 팀원들은 "팀장님이 혼자 다 하신다"며 사기 저하.',
+      typicalFireDrills: [
+        '프로덕션 장애 "즉시 롤백하고 원인 파악" - 전팀원 비상 대응',
+        '고객 데모 직전 "이 기능 꼭 필요하다" - 밤샘 개발',
+        'CTO "경쟁사는 이런 기능 있는데 우리는?" - 긴급 기능 개발',
+        '보안팀 "취약점 발견, 24시간 내 패치" - 주말 특근'
+      ]
+    },
+    workshopPsychology: {
+      initialAttitude: '중립',
+      hiddenMotivations: [
+        '시니어 개발자들도 인정할 만한 팀 관리 역량을 갖추고 싶음',
+        '비즈니스 부서와 대등하게 협상할 수 있는 스킬을 배우고 싶음',
+        '개발과 관리 사이에서 균형 잡는 방법을 알고 싶음',
+        '주니어들에게 성장 기회를 주면서도 품질 유지하는 방법을 찾고 싶음'
+      ],
+      deepConcerns: [
+        'Expert 개발팀이라 이미 자동화 잘하는데 워크샵이 뭘 더 줄까',
+        '개발 업무는 창의성이 중요한데 프로세스 정형화가 오히려 제약일 수 있음',
+        '3시간 자리 비우면 긴급 이슈 대응 못할까봐',
+        '워크샵 내용이 개발과 무관한 일반 관리론이면 시간 낭비'
+      ],
+      successMetrics: [
+        '요구사항 변경을 체계적으로 관리하는 방법',
+        '시니어와 주니어 간 스킬 갭을 줄이는 방법',
+        '레거시 현대화와 신규 개발 우선순위 정하는 방법',
+        '개발 속도와 품질 사이에서 균형 잡는 방법'
+      ],
+      dropoutRisk: 5,
+      dropoutTriggers: [
+        '프로덕션 장애가 발생하는 경우',
+        'CTO 긴급 호출이 오는 경우',
+        '중요 배포 일정과 겹치는 경우',
+        '내용이 비개발 직군 중심인 경우'
+      ]
+    },
+    expectedBehavior: {
+      initialAttitude: '중립',
+      concerns: [
+        'Expert 수준에서 더 배울 게 있을까',
+        '이미 GitHub/Jenkins 등 최신 도구 다 쓰는데',
+        '10명 팀의 시니어-주니어 갈등을 어떻게 해결할까'
+      ],
+      dropoutRisk: 5
+    },
+    personality: {
+      patience: 9,
+      techSavvy: 10,
+      changeResistance: 'low',
+      learningSpeed: 'fast',
+      stressLevel: 8,
+      confidenceLevel: 7
+    }
+  },
+
+  {
+    id: 'P030',
+    name: '강유진',
+    age: 40,
+    company: 'SK E&S',
+    department: 'IT지원팀',
+    role: '팀장',
+    category: 'IT',
+    leaderProfile: {
+      yearsInRole: 0.6,
+      previousRole: 'IT 헬프데스크 시니어 (6년 경력)',
+      promotionReason: 'ServiceNow 도입으로 IT 서비스 요청 처리 시간 50% 단축, 사용자 만족도 90% 달성하여 팀장 승진',
+      leadershipStyle: '고객 서비스 마인드로 친절하게 대응하지만, 무리한 요구도 거절 못해 팀원들 업무 과중되는 문제.',
+      biggestChallenge: '전사 5,000명이 IT 지원 요청하는데 팀원은 8명뿐. "컴퓨터 켜는 법"부터 "AI 도입"까지 모든 걸 IT지원팀에 요구',
+      hiddenStruggles: [
+        '임원들이 "내 노트북 느린데 바로 와서 봐달라"고 호출하면 모든 업무 중단하고 달려가야 하는 서러움',
+        'IT 예산의 90%가 인프라/개발에 가고 IT지원팀은 "비용 센터"로 취급받는 현실',
+        '팀원들이 "전화기 수리하는 사람" 취급받는 걸 보면서도 위로할 말이 없는 무력감',
+        '다른 IT팀은 재택근무 하는데 우리는 "현장 지원" 때문에 매일 출근해야 하는 박탈감'
+      ]
+    },
+    team: {
+      size: 8,
+      seniorCount: 3,
+      juniorCount: 5,
+      composition: '팀장 1명 + 시니어 IT 지원 엔지니어 2명(8년차, 6년차) + 시니어 자산 관리 담당 1명(7년차) + 주니어 헬프데스크 요원 3명(1-3년차) + 주니어 PC 관리 담당 1명(2년차) + 계약직 1명',
+      digitalMaturity: 'Advanced',
+      maturityDistribution: '시니어 3명(Advanced) + 주니어 3명(Intermediate) + 주니어 2명(Beginner)',
+      teamDynamics: '시니어들은 "IT지원은 승진도 안 되고 미래도 없다"며 냉소적. 주니어들은 단순 반복 업무(비밀번호 리셋, PC 세팅)에 지쳐 "이직이 답"이라고 생각. 계약직은 정규직 전환 안 될 거 알고 최소한만 일함. 전체적으로 "우리는 IT계의 막노동"이라는 자조적 분위기.',
+      resistanceFactors: [
+        '경영진의 "IT지원은 당연한 서비스"라는 인식으로 감사 표현 없음',
+        '다른 IT팀의 "우리는 개발/인프라고 너희는 서비스직"이라는 차별',
+        '사용자들의 "IT지원팀은 만능"이라며 업무 외 요구 (개인 폰 수리 등)',
+        '예산 삭감 시 "IT지원은 아웃소싱하면 되지"라는 위협'
+      ]
+    },
+    work: {
+      mainTasks: [
+        '전사 IT 헬프데스크 운영 (일 평균 요청 200건)',
+        'PC/노트북/모바일 기기 지급 및 관리 (5,000대)',
+        '소프트웨어 라이선스 관리 및 배포',
+        'MS365, Zoom 등 협업 도구 관리 및 교육',
+        'IT 자산 관리 및 폐기 (연간 교체 주기 관리)'
+      ],
+      dailyWorkflow: '오전 7시 반 출근 (임원 출근 전 준비) → ServiceNow에서 밤새 들어온 요청 확인 → 8시 우선순위 분류 (임원 > 긴급 > 일반) → 9시 팀 브리핑 후 현장 출동 시작 → 10-12시 각 층 순회하며 PC 문제 해결 → 점심은 당번제 (헬프데스크는 무중단) → 오후 1-3시 신규 직원 PC 세팅 및 교육 → 3-5시 소프트웨어 설치 요청 처리 → 5-6시 일일 리포트 작성 → 퇴근 후에도 임원 긴급 콜 대기',
+      weeklyRoutine: '월요일: 주말 동안 쌓인 요청 처리 (보통 300건) / 화요일: IT 자산 실사 및 교체 계획 / 수요일: 사용자 교육 (Office 365, 보안 등) / 목요일: 벤더 미팅 (PC, SW 구매) / 금요일: 주간 서비스 리포트 및 차주 계획',
+      collaboration: 'ServiceNow로 티켓 관리하지만 임원들은 직접 전화. Slack은 있지만 "전화가 빠르다"며 전화 선호. 다른 IT팀과는 티켓 에스컬레이션으로만 소통. 사용자 교육은 대면 선호 (온라인 교육 참석률 10%). 벤더와는 이메일+전화.',
+      toolsUsed: ['ServiceNow', 'MS365 Admin', 'Active Directory', 'SCCM', 'TeamViewer', 'Slack', 'Excel(자산관리)'],
+      painPoints: [
+        '하루 200건 요청 중 50%가 "비밀번호 리셋" 같은 단순 반복 작업',
+        'CEO가 "내 이메일 안 열린다"고 하면 모든 업무 중단하고 대응',
+        'IT 자산 관리가 Excel이라 "이 노트북 누구 거?"를 찾는데 30분',
+        '사용자들이 ServiceNow 안 쓰고 직접 찾아와서 "급한데 좀 봐달라"',
+        '"프린터 안 된다" "와이파이 느리다" 같은 IT 팀 업무 아닌 것도 다 떠넘김'
+      ],
+      automationNeeds: [
+        '비밀번호 리셋 셀프서비스 포털',
+        'FAQ 챗봇 (단순 문의 자동 응답)',
+        'IT 자산 자동 추적 시스템 (위치, 사용자, 상태)',
+        'SW 자동 배포 및 라이선스 관리'
+      ],
+      workStructure: {
+        level: '고도구조화',
+        description: 'ITIL 프레임워크에 따른 서비스 관리. ServiceNow로 티켓 관리 체계화. SLA 정의 (긴급 2시간, 일반 8시간). 하지만 임원 요청은 모든 프로세스 무시하고 즉시 대응.'
+      },
+      realTimeExample: '지난주 수요일 오후 2시, CEO 비서실에서 "대표님 노트북 화면이 안 켜진다"고 긴급 콜. 모든 팀원이 현장 출동 중이라 팀장이 직접 달려감. 가보니 화면 밝기가 최소로 되어 있던 것. 5초 만에 해결했지만 CEO는 "IT가 뭐하는지 모르겠다"고 핀잔. 돌아오니 일반 사용자 요청 50건이 밀려 있고 "IT지원팀은 임원만 챙긴다"는 불만 메일. 그날 팀 전체 밤 9시까지 야근.',
+      typicalFireDrills: [
+        'CEO "내 메일이 안 보인다" - 모든 업무 중단하고 대응',
+        '전사 화상회의 5분 전 "Zoom이 안 된다" - 초스피드 해결',
+        '랜섬웨어 감염 의심 "모든 PC 즉시 점검" - 24시간 비상',
+        '신입 사원 100명 일괄 입사 "내일까지 PC 세팅" - 밤샘 작업'
+      ]
+    },
+    workshopPsychology: {
+      initialAttitude: '기대함',
+      hiddenMotivations: [
+        'IT지원팀도 전략적 가치가 있다는 걸 증명하고 싶음',
+        '단순 반복 업무를 자동화해서 팀원들 번아웃 막고 싶음',
+        '임원들에게 휘둘리지 않고 체계적으로 일하는 방법 배우고 싶음',
+        'IT지원팀 이미지를 개선해서 팀원들 자존감 회복시키고 싶음'
+      ],
+      deepConcerns: [
+        '워크샵 내용이 개발/인프라 중심이면 IT지원과 맞지 않을 듯',
+        '3시간 자리 비우면 임원 요청 대응 못해서 문제될까봐',
+        'Advanced 팀이지만 실제로는 단순 업무라 고급 내용 이해 못할까봐',
+        '다른 팀장들이 "IT지원팀이 여기 왜 왔어?"라고 무시할까봐'
+      ],
+      successMetrics: [
+        '단순 반복 요청을 50% 자동화하는 방법',
+        '임원 요청과 일반 요청의 균형 잡는 방법',
+        'IT지원팀의 가치를 정량화해서 보여주는 방법',
+        '팀원들의 커리어 성장 경로 만드는 방법'
+      ],
+      dropoutRisk: 10,
+      dropoutTriggers: [
+        'CEO나 임원 긴급 IT 지원 요청이 오는 경우',
+        '대규모 PC 교체나 SW 배포 일정과 겹치는 경우',
+        '전사 시스템 장애로 헬프데스크 폭주하는 경우',
+        '워크샵이 너무 기술적이어서 따라가기 어려운 경우'
+      ]
+    },
+    expectedBehavior: {
+      initialAttitude: '기대함',
+      concerns: [
+        'Advanced 수준이지만 업무 특성상 단순 반복이 많음',
+        'IT지원팀 특수성을 반영한 내용이 있을까',
+        '8명 팀원의 사기 진작 방법이 필요함'
+      ],
+      dropoutRisk: 10
+    },
+    personality: {
+      patience: 9,
+      techSavvy: 8,
+      changeResistance: 'low',
+      learningSpeed: 'fast',
+      stressLevel: 8,
+      confidenceLevel: 6
+    }
+  }];
+
+// Export functions
+export function getPersonaById(id: string): Persona | undefined {
+  return PERSONAS_V3.find(p => p.id === id);
+}
+
+export function getPersonasByCategory(category: Persona['category']): Persona[] {
+  return PERSONAS_V3.filter(p => p.category === category);
+}
+
+export function analyzePersonasV3() {
+  const analysis = {
+    total: PERSONAS_V3.length,
+    byCategory: {} as Record<string, number>,
+    byDigitalMaturity: {} as Record<string, number>,
+    byWorkStructure: {} as Record<string, number>,
+    byTeamSize: {
+      small: 0, // 1-10명
+      medium: 0, // 11-20명
+      large: 0 // 21명+
+    },
+    avgDropoutRisk: 0,
+    highRiskPersonas: [] as string[],
+  };
+
+  PERSONAS_V3.forEach(persona => {
+    // 카테고리별
+    analysis.byCategory[persona.category] = (analysis.byCategory[persona.category] || 0) + 1;
+
+    // 디지털 성숙도별
+    analysis.byDigitalMaturity[persona.team.digitalMaturity] =
+      (analysis.byDigitalMaturity[persona.team.digitalMaturity] || 0) + 1;
+
+    // 업무 구조화별
+    analysis.byWorkStructure[persona.work.workStructure.level] =
+      (analysis.byWorkStructure[persona.work.workStructure.level] || 0) + 1;
+
+    // 팀 규모별
+    if (persona.team.size <= 10) analysis.byTeamSize.small++;
+    else if (persona.team.size <= 20) analysis.byTeamSize.medium++;
+    else analysis.byTeamSize.large++;
+
+    // 드롭아웃 리스크
+    analysis.avgDropoutRisk += persona.expectedBehavior.dropoutRisk;
+    if (persona.expectedBehavior.dropoutRisk > 30) {
+      analysis.highRiskPersonas.push(`${persona.name} (${persona.department})`);
+    }
+  });
+
+  analysis.avgDropoutRisk = Math.round(analysis.avgDropoutRisk / PERSONAS_V3.length);
+
+  return analysis;
+}
+
+// CLI 실행
+if (require.main === module) {
+  console.log('👥 페르소나 V3 로드 완료');
+  console.log(`총 ${PERSONAS_V3.length}명 정의됨\n`);
+
+  const analysis = analyzePersonasV3();
+  console.log('📊 분석 결과:');
+  console.log('- 카테고리별:', analysis.byCategory);
+  console.log('- 디지털 성숙도별:', analysis.byDigitalMaturity);
+  console.log('- 업무 구조화별:', analysis.byWorkStructure);
+  console.log('- 팀 규모별:', analysis.byTeamSize);
+  console.log(`- 평균 드롭아웃 리스크: ${analysis.avgDropoutRisk}%`);
+  console.log(`- 고위험 페르소나: ${analysis.highRiskPersonas.length}명`);
+}
