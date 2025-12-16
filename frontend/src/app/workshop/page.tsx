@@ -2380,7 +2380,7 @@ if __name__ == "__main__":
                           ...prev,
                           teamSize: Number(teamSizeInput) || 0,
                           teamFormation: teamFormationInput,
-                          teamComposition: teamCompositionInput
+                          teamComposition: teamFreeOpinionInput // Use free opinion as composition since there is no separate input
                         }));
                         setCurrentStep(4);
                       }}
@@ -3232,8 +3232,18 @@ if __name__ == "__main__":
               workshopId={workshop.id || 'temp-workshop-id'}
               domains={workshop.domains}
               onNext={(tasks) => {
+                // Auto-select high potential tasks
+                const highPotentialTasks = tasks
+                  .filter(t => t.automationPotential === 'High')
+                  .map(t => t.id);
+                
                 // @ts-ignore - ExtractedTask is compatible with Task
-                setWorkshop(prev => ({ ...prev, tasks, manualInput }));
+                setWorkshop(prev => ({ 
+                  ...prev, 
+                  tasks, 
+                  manualInput,
+                  selectedTaskIds: highPotentialTasks 
+                }));
                 setCurrentStep(8);
               }}
               onBack={() => setCurrentStep(6)}
@@ -3538,7 +3548,9 @@ if __name__ == "__main__":
           customer: customerInput,
           teamSize: Number(teamSizeInput),
           teamFormation: teamFormationInput,
-          teamComposition: teamCompositionInput,
+          teamFormation: teamFormationInput,
+          teamComposition: workshop.teamComposition || teamFreeOpinionInput, // Use saved workshop data or current input
+          teamCharacteristics: teamCharacteristics,
           teamCharacteristics: teamCharacteristics,
           teamFreeOpinion: teamFreeOpinionInput,
           constraints: constraintCheckboxes,
