@@ -31,6 +31,7 @@ interface Workshop {
   selectedTaskIds: string[];
   mission?: string;
   teamSize?: number;
+  teamFormation?: string;
   teamComposition?: string;
   constraints?: string[];
   controllableIssues?: string;
@@ -129,10 +130,10 @@ const WORKSHOP_STEPS = [
   { id: 2, displayId: '2', title: '미션 작성', description: '팀의 미션과 가치 정의', icon: '🎯', section: '팀 업무 재정의하기' },
   { id: 3, displayId: '3', title: '팀 상황 확인', description: '팀 구성 및 제약사항 파악', icon: '👥', section: '팀 업무 재정의하기' },
   { id: 4, displayId: '4', title: '줄일 일 vs 강화할 일', description: 'Work Re-design 방향 설정', icon: '🧭', section: '팀 업무 재정의하기' },
-  { id: 5, displayId: '5', title: '업무영역 정의', description: '담당 업무 영역 설정', icon: '📋', section: '일을 쪼개고 구조화하기' },
-  { id: 6, displayId: '6', title: '업무 정보 입력', description: '문서 업로드 또는 직접 입력', icon: '📁', section: '일을 쪼개고 구조화하기' },
-  { id: 7, displayId: '7', title: '업무 추출 결과', description: '추출된 업무 확인 및 편집', icon: '📝', section: '일을 쪼개고 구조화하기' },
-  { id: 8, displayId: '8', title: '워크샵 요약', description: '입력한 정보 종합 확인', icon: '📊', section: '일을 쪼개고 구조화하기' },
+  { id: 5, displayId: '5', title: '업무영역 정의', description: '담당 업무 영역 설정', icon: '📋', section: 'Task 구조화' },
+  { id: 6, displayId: '6', title: '업무 정보 입력', description: '문서 업로드 또는 직접 입력', icon: '📁', section: 'Task 구조화' },
+  { id: 7, displayId: '7', title: '업무 추출 결과', description: '추출된 업무 확인 및 편집', icon: '📝', section: 'Task 구조화' },
+  { id: 8, displayId: '8', title: '워크샵 요약', description: '입력한 정보 종합 확인', icon: '📊', section: 'Task 구조화' },
   { id: 9, displayId: '9', title: 'AI 자동화 교육', description: 'LLM 이해 및 역할 전략', icon: '🎓', section: 'AI 협업 구조 설계하기' },
   { id: 10, displayId: '10', title: 'AI 컨설팅', description: 'AI와 대화하며 솔루션 설계', icon: '💬', section: 'AI 협업 구조 설계하기' },
   { id: 11, displayId: '11', title: '워크플로우 설계', description: '자동화 워크플로우 상세 설계', icon: '🔧', section: 'AI 협업 구조 설계하기' },
@@ -497,7 +498,7 @@ export default function WorkshopPage() {
   // Step 2 & 3 form data
   const [missionInput, setMissionInput] = useState<string>('');
   const [customerInput, setCustomerInput] = useState<string>('');
-  const [teamSizeInput, setTeamSizeInput] = useState<number>(0);
+  const [teamSizeInput, setTeamSizeInput] = useState<string>('');
   const [teamFormationInput, setTeamFormationInput] = useState<string>('');
   const [teamCompositionInput, setTeamCompositionInput] = useState<string>('');
   const [teamCharacteristics, setTeamCharacteristics] = useState<string[]>([]);
@@ -505,6 +506,45 @@ export default function WorkshopPage() {
   const [controllableIssuesInput, setControllableIssuesInput] = useState<string>('');
   const [teamFreeOpinionInput, setTeamFreeOpinionInput] = useState<string>('');
   const [constraintCheckboxes, setConstraintCheckboxes] = useState<string[]>([]);
+
+  // LocalStorage Persistence
+  useEffect(() => {
+    const saved = localStorage.getItem('workshop_state');
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        setWorkshop(parsed);
+        
+        // Restore form inputs from saved workshop state
+        if (parsed.teamSize) setTeamSizeInput(String(parsed.teamSize));
+        if (parsed.teamFormation) setTeamFormationInput(parsed.teamFormation);
+        if (parsed.teamComposition) setTeamCompositionInput(parsed.teamComposition);
+        if (parsed.mission) setMissionInput(parsed.mission);
+        // Add other fields as needed
+      } catch (e) {
+        console.error('Failed to load workshop state', e);
+      }
+    }
+  }, []);
+
+  useEffect(() => {
+    if (workshop.id || workshop.teamSize || workshop.mission) { // Only save if there is some data
+      localStorage.setItem('workshop_state', JSON.stringify(workshop));
+    }
+  }, [workshop]);
+
+  // Sync teamSizeInput from workshop.teamSize if available
+  useEffect(() => {
+    if (workshop.teamSize && workshop.teamSize > 0 && !teamSizeInput) {
+      setTeamSizeInput(String(workshop.teamSize));
+    }
+    if (workshop.teamFormation && !teamFormationInput) {
+      setTeamFormationInput(workshop.teamFormation);
+    }
+    if (workshop.teamComposition && !teamCompositionInput) {
+      setTeamCompositionInput(workshop.teamComposition);
+    }
+  }, [workshop.teamSize, workshop.teamComposition]);
 
   // 제약조건 체크박스 토글 함수
   const toggleConstraint = (constraint: string) => {
@@ -1753,8 +1793,8 @@ if __name__ == "__main__":
                               <span className="text-xl">🧩</span>
                             </div>
                             <div>
-                              <p className="text-[11px] font-bold text-amber-600 uppercase tracking-wider">Phase 2</p>
-                              <p className="text-base font-bold text-slate-800">Task 분해</p>
+                              <p className="text-[11px] font-bold text-amber-600 uppercase tracking-wider">Task 분해하기</p>
+                              <p className="text-base font-bold text-slate-800">업무 구조화</p>
                             </div>
                           </div>
                           <p className="text-sm text-slate-500 leading-relaxed pl-[52px]">
@@ -2104,8 +2144,8 @@ if __name__ == "__main__":
                           <div className="text-xs text-blue-700 font-semibold mb-1 uppercase">팀원 수</div>
                           <input
                             type="number"
-                            value={teamSizeInput || ''}
-                            onChange={(e) => setTeamSizeInput(Number(e.target.value))}
+                            value={teamSizeInput}
+                            onChange={(e) => setTeamSizeInput(e.target.value)}
                             placeholder="5명"
                             className="w-full bg-transparent text-2xl font-bold text-blue-900 border-none outline-none placeholder:text-blue-400/50"
                           />
@@ -2338,7 +2378,8 @@ if __name__ == "__main__":
                       onClick={() => {
                         setWorkshop(prev => ({
                           ...prev,
-                          teamSize: teamSizeInput,
+                          teamSize: Number(teamSizeInput) || 0,
+                          teamFormation: teamFormationInput,
                           teamComposition: teamCompositionInput
                         }));
                         setCurrentStep(4);
@@ -2404,7 +2445,10 @@ if __name__ == "__main__":
                       <div className="flex items-center gap-2">
                         <p className="text-xs font-semibold text-purple-600">🏢 팀 상황</p>
                         <p className="text-sm text-slate-700">
-                          {teamSizeInput > 0 ? `${teamSizeInput}명` : <span className="text-slate-400 italic">미입력</span>}
+                          {(Number(teamSizeInput) || workshop.teamSize || 0) > 0 ? 
+                            `${Number(teamSizeInput) || workshop.teamSize}명` : 
+                            <span className="text-slate-400 italic">미입력</span>
+                          }
                           {teamFormationInput && <span className="text-slate-500"> · {teamFormationInput}</span>}
                         </p>
                       </div>
@@ -2579,7 +2623,7 @@ if __name__ == "__main__":
                   <div className="text-center mb-12">
                     <div className="mb-4">
                       <span className="text-sm font-semibold text-amber-600 bg-amber-50 px-4 py-2 rounded-full">
-                        🧩 일을 쪼개고 구조화하기
+                        🧩 Task 구조화
                       </span>
                     </div>
                     <div className="inline-flex items-center gap-2 px-3 py-1 bg-white/80 backdrop-blur-sm border border-amber-200/50 rounded-full mb-6">
@@ -2795,18 +2839,138 @@ if __name__ == "__main__":
                   <div className="text-center mb-12">
                     <div className="mb-4">
                       <span className="text-sm font-semibold text-amber-600 bg-amber-50 px-4 py-2 rounded-full">
-                        🧩 일을 쪼개고 구조화하기
+                        🧩 Task 구조화
                       </span>
                     </div>
                     <div className="inline-flex items-center gap-2 px-3 py-1 bg-white/80 backdrop-blur-sm border border-amber-200/50 rounded-full mb-6">
                       <span className="text-xs font-medium text-amber-700 uppercase tracking-wide">Step 6</span>
                     </div>
                     <h2 className="text-4xl md:text-5xl font-black text-slate-900 mb-4 tracking-tight">
-                      업무 정보 입력
+                      Work를 Task로 분해하기
                     </h2>
                     <p className="text-lg text-slate-600 max-w-2xl mx-auto">
-                      문서를 업로드하거나 직접 작성하여 업무 내용을 입력해주세요
+                      AI가 이해할 수 있도록 업무(Work)를 구체적인 행동(Task) 단위로 쪼개주세요
                     </p>
+                  </div>
+
+                  {/* Work vs Task Explanation */}
+                  <div className="bg-white rounded-3xl p-8 shadow-xl border border-slate-200 mb-10 overflow-hidden relative">
+                    <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-blue-500 via-indigo-500 to-amber-500"></div>
+                    
+                    <div className="text-center mb-8">
+                      <h3 className="text-2xl font-bold text-slate-900 mb-3">
+                        왜 <span className="text-amber-600">Task</span> 단위로 쪼개야 할까요?
+                      </h3>
+                      <p className="text-slate-600">
+                        AI는 Job(Work)이 아니라 <span className="font-bold text-slate-900">Task에 작동</span>합니다.<br/>
+                        Task를 중심으로 AI를 접목시킬 수 있고, 그것이 Work를 바꿀 수 있습니다.
+                      </p>
+                    </div>
+
+                    <div className="grid md:grid-cols-2 gap-8 mb-8">
+                      {/* Work Definition */}
+                      <div className="bg-slate-50 rounded-2xl p-6 border border-slate-200">
+                        <div className="flex items-center gap-3 mb-4">
+                          <span className="px-3 py-1 bg-blue-100 text-blue-700 rounded-lg font-bold text-sm">JOB</span>
+                          <h4 className="text-xl font-bold text-slate-800">Work (업무 영역)</h4>
+                        </div>
+                        <ul className="space-y-2 mb-6 text-sm text-slate-600">
+                          <li className="flex items-start gap-2">
+                            <span className="text-blue-500 mt-1">•</span>
+                            <span>단위 조직이 수행하는 업무 영역</span>
+                          </li>
+                          <li className="flex items-start gap-2">
+                            <span className="text-blue-500 mt-1">•</span>
+                            <span>목적과 결과(Outcome)가 명확한 업무 묶음</span>
+                          </li>
+                          <li className="flex items-start gap-2">
+                            <span className="text-blue-500 mt-1">•</span>
+                            <span>여러 Task의 집합</span>
+                          </li>
+                        </ul>
+                        <div className="bg-white rounded-xl p-4 border border-slate-200">
+                          <p className="text-xs font-bold text-slate-500 uppercase mb-2">예시</p>
+                          <div className="space-y-2 text-sm">
+                            <div className="flex gap-2">
+                              <span className="font-semibold text-slate-700 w-12">기획</span>
+                              <span className="text-slate-500">시장 리서치 / 전략수립 / 보고서 작성</span>
+                            </div>
+                            <div className="flex gap-2">
+                              <span className="font-semibold text-slate-700 w-12">영업</span>
+                              <span className="text-slate-500">고객 발굴 / 제안 / 계약 / 유지관리</span>
+                            </div>
+                            <div className="flex gap-2">
+                              <span className="font-semibold text-slate-700 w-12">HR</span>
+                              <span className="text-slate-500">채용 / 평가 / 보상 / 교육</span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Task Definition */}
+                      <div className="bg-amber-50 rounded-2xl p-6 border border-amber-200 relative overflow-hidden">
+                        <div className="absolute top-0 right-0 p-4 opacity-10">
+                          <svg className="w-32 h-32 text-amber-500" fill="currentColor" viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>
+                        </div>
+                        <div className="flex items-center gap-3 mb-4 relative z-10">
+                          <span className="px-3 py-1 bg-amber-100 text-amber-700 rounded-lg font-bold text-sm">ACTIVITY</span>
+                          <h4 className="text-xl font-bold text-slate-800">Task (실행 단위)</h4>
+                        </div>
+                        <ul className="space-y-2 mb-6 text-sm text-slate-700 relative z-10">
+                          <li className="flex items-start gap-2">
+                            <span className="text-amber-500 mt-1">•</span>
+                            <span className="font-medium">Work를 구성하는 실행 단위(Activity)</span>
+                          </li>
+                          <li className="flex items-start gap-2">
+                            <span className="text-amber-500 mt-1">•</span>
+                            <span>Output이 명확한 가장 작은 단위</span>
+                          </li>
+                          <li className="flex items-start gap-2">
+                            <span className="text-amber-500 mt-1">•</span>
+                            <span>시간·단계·성과가 측정 가능한 단위</span>
+                          </li>
+                        </ul>
+                        <div className="bg-white/80 backdrop-blur-sm rounded-xl p-4 border border-amber-200 relative z-10">
+                          <p className="text-xs font-bold text-amber-600 uppercase mb-2">예시: 시장 및 경쟁사 리서치</p>
+                          <div className="grid grid-cols-2 gap-2 text-sm">
+                            <div className="flex items-center gap-1.5">
+                              <span className="w-1.5 h-1.5 bg-amber-400 rounded-full"></span>
+                              <span>산업 데이터 수집</span>
+                            </div>
+                            <div className="flex items-center gap-1.5">
+                              <span className="w-1.5 h-1.5 bg-amber-400 rounded-full"></span>
+                              <span>경쟁사 사례 정리</span>
+                            </div>
+                            <div className="flex items-center gap-1.5">
+                              <span className="w-1.5 h-1.5 bg-amber-400 rounded-full"></span>
+                              <span>주요 기사 스크랩</span>
+                            </div>
+                            <div className="flex items-center gap-1.5">
+                              <span className="w-1.5 h-1.5 bg-amber-400 rounded-full"></span>
+                              <span>데이터 정제</span>
+                            </div>
+                            <div className="flex items-center gap-1.5">
+                              <span className="w-1.5 h-1.5 bg-amber-400 rounded-full"></span>
+                              <span>그래프·표 정리</span>
+                            </div>
+                            <div className="flex items-center gap-1.5">
+                              <span className="w-1.5 h-1.5 bg-amber-400 rounded-full"></span>
+                              <span>리서치 요약</span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="bg-slate-900 text-white rounded-xl p-6 text-center">
+                      <p className="text-lg font-medium">
+                        Task는 실제로 사람이 <span className="text-amber-400 font-bold">'행동'</span>하는 단위이며, 
+                        AI는 <span className="text-amber-400 font-bold">Task 단위</span>에서 적용 가능합니다.
+                      </p>
+                      <p className="text-slate-400 text-sm mt-2">
+                        생산성은 Task 단위에서 발생하며, Task 기반 설계만이 "Human-AI 최적화"를 가능하게 합니다.
+                      </p>
+                    </div>
                   </div>
 
                   {error && (
@@ -2815,6 +2979,151 @@ if __name__ == "__main__":
                     </div>
                   )}
 
+                  {/* Direct Input Section */}
+                  <div className="bg-white rounded-3xl p-8 shadow-lg border border-slate-200 mb-8">
+                    <div className="flex items-start gap-4 mb-6">
+                      <div className="w-12 h-12 rounded-xl bg-indigo-100 flex items-center justify-center text-2xl">
+                        ✍️
+                      </div>
+                      <div>
+                        <h3 className="text-2xl font-bold text-slate-900 mb-2">업무 영역별 Task 쪼개기</h3>
+                        <p className="text-slate-600">작성이 어려우면 하단의 팁을 참고하세요!</p>
+                      </div>
+                    </div>
+
+                    <div className="space-y-4">
+                      {workshop.domains.filter(d => d.trim()).map((domain, index) => (
+                        <div key={index} className="bg-slate-50 border border-slate-200 rounded-2xl p-4">
+                          <label className="block text-base font-semibold text-slate-800 mb-2 flex items-center gap-2">
+                            <span className="w-6 h-6 bg-gradient-to-br from-indigo-500 to-purple-500 text-white rounded-full flex items-center justify-center text-sm">
+                              {index + 1}
+                            </span>
+                            {domain}
+                          </label>
+                          <textarea
+                            value={manualTaskInput[domain] || ''}
+                            onChange={(e) => setManualTaskInput(prev => ({
+                              ...prev,
+                              [domain]: e.target.value
+                            }))}
+                            placeholder={`${domain} 영역의 업무를 작성해주세요...
+예시:
+- 매일 오전 9시 고객 문의 메일 확인 및 답변 (30분 소요)
+- 주간 매출 데이터 수집 및 보고서 작성 (매주 월요일, 2시간 소요)
+- 월간 재고 현황 파악 및 발주 처리 (매월 말, 3시간 소요)`}
+                            className="w-full h-40 px-4 py-3 bg-white border-2 border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-400/50 focus:border-indigo-400 transition-all resize-none text-sm"
+                          />
+                        </div>
+                      ))}
+                      <p className="text-sm text-slate-600 px-2">
+                        * 업무별로 한 줄씩 작성하면 AI가 더 정확하게 분석합니다
+                      </p>
+                    </div>
+                  </div>
+
+
+
+                  {/* Guide Section */}
+                  <div className="bg-gradient-to-br from-slate-50 to-indigo-50/50 rounded-3xl p-8 mb-8 border border-slate-200">
+                    <div className="flex items-start gap-4 mb-6">
+                      <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center text-2xl shadow-sm">
+                        💡
+                      </div>
+                      <div>
+                        <h4 className="text-xl font-bold text-slate-900 mb-2">Task 쪼개기 가이드</h4>
+                        <p className="text-slate-600 text-sm">AI가 일을 잘할 수 있도록 Task를 구체적으로 정의해보세요</p>
+                      </div>
+                    </div>
+
+                    <div className="grid md:grid-cols-2 gap-6">
+                      {/* Tip 1 */}
+                      <div className="bg-white rounded-2xl p-6 border border-slate-200/60 shadow-sm hover:shadow-md transition-shadow">
+                        <div className="flex items-start gap-3 mb-3">
+                          <span className="text-2xl">🗣️</span>
+                          <h5 className="font-bold text-slate-900 text-base">Tip 1. 명사 업무 → 동사 행동</h5>
+                        </div>
+                        <div className="space-y-3 text-sm">
+                          <p className="text-slate-600">
+                            "기획/관리" 같은 업무 영역(Work)을 Task로 착각하지 마세요.
+                          </p>
+                          <div className="bg-red-50 p-3 rounded-lg text-xs">
+                            <span className="font-bold text-red-600 block mb-1">❌ 나쁜 예 (명사)</span>
+                            리서치하기, 보고서 작성, 커뮤니케이션
+                          </div>
+                          <div className="bg-blue-50 p-3 rounded-lg text-xs">
+                            <span className="font-bold text-blue-600 block mb-1">⭕️ 좋은 예 (행동)</span>
+                            자료원 5개 선정, 기사 30개 수집, 핵심 인사이트 3줄 요약
+                          </div>
+                          <p className="text-indigo-600 font-medium text-xs border-t border-slate-100 pt-2 mt-2">
+                            Check: "이걸 '누가' '무엇을' '어떻게' 했는지 한 문장으로 말할 수 있나요?"
+                          </p>
+                        </div>
+                      </div>
+
+                      {/* Tip 2 */}
+                      <div className="bg-white rounded-2xl p-6 border border-slate-200/60 shadow-sm hover:shadow-md transition-shadow">
+                        <div className="flex items-start gap-3 mb-3">
+                          <span className="text-2xl">🏁</span>
+                          <h5 className="font-bold text-slate-900 text-base">Tip 2. 완료 기준(DoD) 먼저 쓰기</h5>
+                        </div>
+                        <div className="space-y-3 text-sm">
+                          <p className="text-slate-600">
+                            끝(완료 상태)이 불명확하면 분해가 막힙니다. Output이 딱 떨어져야 합니다.
+                          </p>
+                          <div className="bg-slate-50 p-3 rounded-lg text-xs">
+                            <span className="font-bold text-slate-700 block mb-1">📝 예시: 시장 리서치 완료 기준</span>
+                            • 핵심 경쟁사 5개 비교표(가격/기능) 완성<br/>
+                            • 의사결정용 1페이지 요약(권고안 3개)
+                          </div>
+                          <p className="text-indigo-600 font-medium text-xs border-t border-slate-100 pt-2 mt-2">
+                            Check: "완료했는지 제3자가 10초 안에 판단할 수 있나요?"
+                          </p>
+                        </div>
+                      </div>
+
+                      {/* Tip 3 */}
+                      <div className="bg-white rounded-2xl p-6 border border-slate-200/60 shadow-sm hover:shadow-md transition-shadow">
+                        <div className="flex items-start gap-3 mb-3">
+                          <span className="text-2xl">⏱️</span>
+                          <h5 className="font-bold text-slate-900 text-base">Tip 3. '2시간 규칙' 지키기</h5>
+                        </div>
+                        <div className="space-y-3 text-sm">
+                          <p className="text-slate-600">
+                            과대/과소 분해를 방지하세요. <span className="font-bold">2시간~1일 단위</span>가 가장 적절합니다.
+                          </p>
+                          <ul className="list-disc pl-4 space-y-1 text-slate-500 text-xs">
+                            <li>2시간 이상 걸림 → 하위 Task가 더 있다는 신호</li>
+                            <li>10분 미만 → "작업 묶음"으로 합쳐야 함</li>
+                          </ul>
+                          <p className="text-indigo-600 font-medium text-xs border-t border-slate-100 pt-2 mt-2">
+                            Check: "이 Task는 평균적으로 2시간~1일 내 끝나는가?"
+                          </p>
+                        </div>
+                      </div>
+
+                      {/* Tip 4 */}
+                      <div className="bg-white rounded-2xl p-6 border border-slate-200/60 shadow-sm hover:shadow-md transition-shadow">
+                        <div className="flex items-start gap-3 mb-3">
+                          <span className="text-2xl">🚧</span>
+                          <h5 className="font-bold text-slate-900 text-base">Tip 4. 의존관계/예외 분리하기</h5>
+                        </div>
+                        <div className="space-y-3 text-sm">
+                          <p className="text-slate-600">
+                            대기/승인/정보부족 같은 "흐름 끊김"을 본 업무와 섞지 말고 분리하세요.
+                          </p>
+                          <div className="bg-amber-50 p-3 rounded-lg text-xs">
+                            <span className="font-bold text-amber-700 block mb-1">⚠️ 흐름 끊김 Task 예시</span>
+                            • 대상자 DB 최신화 요청/회신 대기<br/>
+                            • 법무/홍보 검토 요청 및 반영
+                          </div>
+                          <p className="text-indigo-600 font-medium text-xs border-t border-slate-100 pt-2 mt-2">
+                            Check: "내가 바로 시작 가능한가? 누군가를 기다려야 하나?"
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
                   {/* File Upload Section */}
                   <div className="bg-white rounded-3xl p-8 shadow-lg border border-slate-200 mb-8">
                     <div className="flex items-start gap-4 mb-6">
@@ -2822,8 +3131,8 @@ if __name__ == "__main__":
                         📄
                       </div>
                       <div>
-                        <h3 className="text-2xl font-bold text-slate-900 mb-2">문서 업로드</h3>
-                        <p className="text-slate-600">업무 매뉴얼, 프로세스 문서 등을 업로드하여 자동으로 분석합니다</p>
+                        <h3 className="text-2xl font-bold text-slate-900 mb-2">문서 업로드 (선택)</h3>
+                        <p className="text-slate-600">관련 업무 내용 파일이 있으면 업로드해주세요. AI가 Task 쪼개기를 도와드릴게요!</p>
                       </div>
                     </div>
 
@@ -2872,107 +3181,6 @@ if __name__ == "__main__":
                         ))}
                       </div>
                     )}
-                  </div>
-
-                  {/* Direct Input Section */}
-                  <div className="bg-white rounded-3xl p-8 shadow-lg border border-slate-200 mb-8">
-                    <div className="flex items-start gap-4 mb-6">
-                      <div className="w-12 h-12 rounded-xl bg-indigo-100 flex items-center justify-center text-2xl">
-                        ✍️
-                      </div>
-                      <div>
-                        <h3 className="text-2xl font-bold text-slate-900 mb-2">업무 영역별 직접 작성</h3>
-                        <p className="text-slate-600">각 업무 영역별로 업무 내용을 직접 입력합니다</p>
-                      </div>
-                    </div>
-
-                    <div className="space-y-4">
-                      {workshop.domains.filter(d => d.trim()).map((domain, index) => (
-                        <div key={index} className="bg-slate-50 border border-slate-200 rounded-2xl p-4">
-                          <label className="block text-base font-semibold text-slate-800 mb-2 flex items-center gap-2">
-                            <span className="w-6 h-6 bg-gradient-to-br from-indigo-500 to-purple-500 text-white rounded-full flex items-center justify-center text-sm">
-                              {index + 1}
-                            </span>
-                            {domain}
-                          </label>
-                          <textarea
-                            value={manualTaskInput[domain] || ''}
-                            onChange={(e) => setManualTaskInput(prev => ({
-                              ...prev,
-                              [domain]: e.target.value
-                            }))}
-                            placeholder={`${domain} 영역의 업무를 작성해주세요...
-예시:
-- 매일 오전 9시 고객 문의 메일 확인 및 답변 (30분 소요)
-- 주간 매출 데이터 수집 및 보고서 작성 (매주 월요일, 2시간 소요)
-- 월간 재고 현황 파악 및 발주 처리 (매월 말, 3시간 소요)`}
-                            className="w-full h-40 px-4 py-3 bg-white border-2 border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-400/50 focus:border-indigo-400 transition-all resize-none text-sm"
-                          />
-                        </div>
-                      ))}
-                      <p className="text-sm text-slate-600 px-2">
-                        * 업무별로 한 줄씩 작성하면 AI가 더 정확하게 분석합니다
-                      </p>
-                    </div>
-                  </div>
-
-                  {/* Guide Section */}
-                  <div className="bg-gradient-to-br from-slate-50 to-pink-50/50 rounded-3xl p-8 mb-8 border border-slate-200">
-                    <div className="flex items-start gap-4 mb-6">
-                      <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center text-2xl shadow-sm">
-                        💡
-                      </div>
-                      <div>
-                        <h4 className="text-xl font-bold text-slate-900 mb-2">업무 내용 작성 가이드</h4>
-                        <p className="text-slate-600 text-sm">어떤 내용을 작성하면 좋을까요?</p>
-                      </div>
-                    </div>
-
-                    <div className="grid md:grid-cols-2 gap-4">
-                      <div className="bg-white rounded-2xl p-6 border border-slate-200/60 shadow-sm">
-                        <div className="flex items-start gap-3 mb-3">
-                          <span className="text-2xl">📝</span>
-                          <h5 className="font-bold text-slate-900 text-base">구체적인 업무 프로세스</h5>
-                        </div>
-                        <p className="text-sm text-slate-600 leading-relaxed">
-                          "어떻게" 일하는지 단계별로<br />
-                          작성하면 AI가 더 정확하게 분석합니다
-                        </p>
-                      </div>
-
-                      <div className="bg-white rounded-2xl p-6 border border-slate-200/60 shadow-sm">
-                        <div className="flex items-start gap-3 mb-3">
-                          <span className="text-2xl">🔄</span>
-                          <h5 className="font-bold text-slate-900 text-base">반복 작업 위주로</h5>
-                        </div>
-                        <p className="text-sm text-slate-600 leading-relaxed">
-                          정기적으로 하는 업무,<br />
-                          패턴이 있는 업무를 우선 작성
-                        </p>
-                      </div>
-
-                      <div className="bg-white rounded-2xl p-6 border border-slate-200/60 shadow-sm">
-                        <div className="flex items-start gap-3 mb-3">
-                          <span className="text-2xl">⏱️</span>
-                          <h5 className="font-bold text-slate-900 text-base">시간이 많이 드는 업무</h5>
-                        </div>
-                        <p className="text-sm text-slate-600 leading-relaxed">
-                          하루에 1시간 이상 소요되는<br />
-                          업무부터 작성하세요
-                        </p>
-                      </div>
-
-                      <div className="bg-white rounded-2xl p-6 border border-slate-200/60 shadow-sm">
-                        <div className="flex items-start gap-3 mb-3">
-                          <span className="text-2xl">🎯</span>
-                          <h5 className="font-bold text-slate-900 text-base">개선하고 싶은 업무</h5>
-                        </div>
-                        <p className="text-sm text-slate-600 leading-relaxed">
-                          비효율적이거나 자동화하고 싶은<br />
-                          업무를 포함하세요
-                        </p>
-                      </div>
-                    </div>
                   </div>
 
                   {/* Navigation Buttons */}
@@ -3028,17 +3236,39 @@ if __name__ == "__main__":
                 setWorkshop(prev => ({ ...prev, tasks, manualInput }));
                 setCurrentStep(8);
               }}
+              onBack={() => setCurrentStep(6)}
               manualInput={manualInput}
+              initialTasks={extractedWorkItems.map(item => ({
+                id: item.id,
+                title: item.title,
+                description: item.description,
+                domain: item.domain,
+                estimatedStatus: 'Planned',
+                frequency: (item.frequency.charAt(0).toUpperCase() + item.frequency.slice(1)) as any,
+                automationPotential: (item.complexity === 'high' ? 'High' : item.complexity === 'medium' ? 'Medium' : 'Low') as any,
+                source: 'uploaded'
+              }))}
             />
           )}
 
           {/* Step 8: 워크샵 요약 (기존 Step 7) */}
           {currentStep === 8 && (
-            <Step7Summary
-              workshop={workshop}
-              onNext={() => setShowPhaseSummary(2)}
-              onBack={() => setCurrentStep(7)}
-            />
+            <div ref={workflowAnalysisRef}>
+              <Step7Summary
+                workshop={workshop}
+                onNext={() => setShowPhaseSummary(2)}
+                onBack={() => setCurrentStep(7)}
+              />
+              <div className="flex justify-center mt-4 pb-8">
+                <button
+                  onClick={saveWorkflowAnalysisImage}
+                  className="flex items-center gap-2 px-6 py-3 bg-white border border-slate-300 rounded-xl hover:bg-slate-50 text-slate-700 font-medium transition-all shadow-sm"
+                >
+                  <span className="text-xl">📸</span>
+                  이미지로 저장하기
+                </button>
+              </div>
+            </div>
           )}
 
           {/* Step 9: AI 자동화 교육 (기존 Step 8) */}
@@ -3303,10 +3533,10 @@ if __name__ == "__main__":
             setCurrentStep(9);
           }
         }}
-        phase1Data={showPhaseSummary === 1 ? {
+        phase1Data={showPhaseSummary ? {
           mission: missionInput,
           customer: customerInput,
-          teamSize: teamSizeInput,
+          teamSize: Number(teamSizeInput),
           teamFormation: teamFormationInput,
           teamComposition: teamCompositionInput,
           teamCharacteristics: teamCharacteristics,
@@ -3321,6 +3551,12 @@ if __name__ == "__main__":
           uploadedFiles: uploadedFiles.map(f => f.file.name),
           tasks: workshop.tasks,
           selectedTaskIds: workshop.selectedTaskIds,
+          recommendations: [
+            { category: 'should', title: '주간 보고서 자동화', description: '데이터 취합 및 포맷팅 시간을 80% 단축할 수 있습니다.', reason: '반복적이고 규칙적인 업무', priority: 'high' },
+            { category: 'should', title: '고객 문의 분류', description: '단순 문의는 챗봇으로, 중요 문의는 담당자에게 자동 배정합니다.', reason: '높은 빈도와 패턴화 가능', priority: 'high' },
+            { category: 'could', title: '회의록 요약 및 공유', description: '음성 인식 및 요약으로 회의 후 정리를 간소화합니다.', reason: '시간 소모가 큼', priority: 'medium' },
+            { category: 'could', title: '일정 조율 자동화', description: '팀원 간 일정 확인 및 미팅 수립을 자동화합니다.', reason: '커뮤니케이션 비용 절감', priority: 'medium' }
+          ]
         } : undefined}
       />
     </div>

@@ -116,14 +116,14 @@ export default function Step7Summary({ workshop, onNext, onBack }: Step7SummaryP
           <div className="text-center mb-12">
             <div className="mb-4">
               <span className="text-sm font-semibold text-emerald-600 bg-emerald-50 px-4 py-2 rounded-full">
-                📊 우리 팀 일 분석하기
+                Session 2 요약
               </span>
             </div>
             <div className="inline-flex items-center gap-2 px-3 py-1 bg-white/80 backdrop-blur-sm border border-indigo-200/50 rounded-full mb-6">
-              <span className="text-xs font-medium text-indigo-700 uppercase tracking-wide">Step 7</span>
+              <span className="text-xs font-medium text-indigo-700 uppercase tracking-wide">Step 8</span>
             </div>
             <h2 className="text-4xl md:text-5xl font-black text-slate-900 mb-4 tracking-tight">
-              워크샵 요약 및 AI 추천
+              Session 2 Summary
             </h2>
             <p className="text-lg text-slate-600 max-w-2xl mx-auto">
               지금까지 작성한 내용을 한눈에 확인하고, AI가 추천하는 업무를 검토하세요
@@ -139,39 +139,134 @@ export default function Step7Summary({ workshop, onNext, onBack }: Step7SummaryP
             </div>
 
             {/* Mission과 팀 상황을 2열로 */}
+            {/* Mission과 팀 상황을 2열로 - PhaseSummary 디자인 적용 */}
             <div className="grid md:grid-cols-2 gap-6 mb-6">
-              {/* Mission/가치 */}
-              <div className="bg-white rounded-2xl p-6 shadow-md border border-slate-200 hover:shadow-lg transition-shadow">
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-purple-600 to-indigo-600 flex items-center justify-center text-white text-lg shadow-sm flex-shrink-0">
-                    🎯
+              {/* Mission & Customer Value */}
+              <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl p-6 border border-blue-200">
+                <h3 className="text-lg font-bold text-blue-900 mb-4 flex items-center gap-2">
+                  <span className="w-8 h-8 rounded-lg bg-blue-600 text-white flex items-center justify-center text-sm">1</span>
+                  미션 & 고객 가치
+                </h3>
+                <div className="space-y-4">
+                  <div>
+                    <p className="text-sm font-semibold text-blue-700 mb-1">우리 팀의 미션</p>
+                    <p className="text-slate-800 bg-white rounded-lg p-3 border border-blue-100">
+                      {workshop.mission || '(입력 없음)'}
+                    </p>
                   </div>
-                  <h4 className="text-lg font-bold text-slate-900">미션 / 가치</h4>
                 </div>
-                <p className="text-slate-700 leading-relaxed pl-13">
-                  {workshop.mission || <span className="text-slate-400 italic">입력되지 않음</span>}
-                </p>
               </div>
 
-              {/* 팀 상황 */}
-              <div className="bg-white rounded-2xl p-6 shadow-md border border-slate-200 hover:shadow-lg transition-shadow">
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-blue-600 to-cyan-600 flex items-center justify-center text-white text-lg shadow-sm flex-shrink-0">
-                    👥
+              {/* Team Status */}
+              <div className="bg-gradient-to-br from-purple-50 to-violet-50 rounded-2xl p-6 border border-purple-200">
+                <h3 className="text-lg font-bold text-purple-900 mb-4 flex items-center gap-2">
+                  <span className="w-8 h-8 rounded-lg bg-purple-600 text-white flex items-center justify-center text-sm">2</span>
+                  팀 현황
+                </h3>
+                <div className="grid grid-cols-2 gap-4 mb-4">
+                  <div className="bg-white rounded-lg p-3 border border-purple-100">
+                    <p className="text-sm font-semibold text-purple-700 mb-1">팀 규모</p>
+                    <p className="text-2xl font-bold text-purple-900">{workshop.teamSize || 0}명</p>
                   </div>
-                  <h4 className="text-lg font-bold text-slate-900">팀 상황</h4>
+                  <div className="bg-white rounded-lg p-3 border border-purple-100">
+                    <p className="text-sm font-semibold text-purple-700 mb-1">구성</p>
+                    <p className="text-slate-800">{workshop.teamComposition || '(입력 없음)'}</p>
+                  </div>
                 </div>
-                <div className="space-y-2 pl-13">
-                  <div className="flex items-center gap-2">
-                    <span className="text-sm font-medium text-slate-500">규모:</span>
-                    <span className="text-slate-900 font-semibold">{workshop.teamSize || 0}명</span>
-                  </div>
-                  {workshop.teamComposition && (
-                    <div>
-                      <span className="text-sm font-medium text-slate-500 block mb-1">구성:</span>
-                      <p className="text-sm text-slate-700">{workshop.teamComposition}</p>
-                    </div>
-                  )}
+              </div>
+            </div>
+
+            {/* Task Breaking Principles & Tips */}
+            <div className="bg-gradient-to-br from-teal-50 to-emerald-50 rounded-2xl p-6 border border-teal-200 mb-6">
+              <h3 className="text-lg font-bold text-teal-900 mb-4 flex items-center gap-2">
+                <span className="w-8 h-8 rounded-lg bg-teal-600 text-white flex items-center justify-center text-sm">3</span>
+                Task 쪼개기 원칙 & Tip
+              </h3>
+              <div className="grid md:grid-cols-2 gap-4">
+                <div className="bg-white rounded-lg p-4 border border-teal-100">
+                  <h4 className="font-bold text-teal-800 mb-2 flex items-center gap-2">
+                    <span className="text-lg">✨</span> 명사 업무 → 동사 행동
+                  </h4>
+                  <p className="text-sm text-slate-600">
+                    '보고서 작성' (X) → '주간 판매 데이터를 분석하여 보고서 초안 작성' (O)
+                    <br />구체적인 행동으로 기술하세요.
+                  </p>
+                </div>
+                <div className="bg-white rounded-lg p-4 border border-teal-100">
+                  <h4 className="font-bold text-teal-800 mb-2 flex items-center gap-2">
+                    <span className="text-lg">🏁</span> 완료 기준(DoD) 먼저
+                  </h4>
+                  <p className="text-sm text-slate-600">
+                    '어디까지 하면 끝인가?'를 먼저 정의하세요.
+                    <br />완료 기준이 명확해야 Task가 종료됩니다.
+                  </p>
+                </div>
+                <div className="bg-white rounded-lg p-4 border border-teal-100">
+                  <h4 className="font-bold text-teal-800 mb-2 flex items-center gap-2">
+                    <span className="text-lg">⏱️</span> 2시간 규칙
+                  </h4>
+                  <p className="text-sm text-slate-600">
+                    하나의 Task는 2시간 내에 완료 가능해야 합니다.
+                    <br />너무 길다면 더 작게 쪼개세요.
+                  </p>
+                </div>
+                <div className="bg-white rounded-lg p-4 border border-teal-100">
+                  <h4 className="font-bold text-teal-800 mb-2 flex items-center gap-2">
+                    <span className="text-lg">🔗</span> 의존관계/예외 분리
+                  </h4>
+                  <p className="text-sm text-slate-600">
+                    다른 사람의 승인이 필요하거나 예외적인 상황은
+                    <br />별도의 Task로 분리하세요.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Kanban Summary Visualization */}
+            <div className="bg-gradient-to-br from-slate-50 to-gray-50 rounded-2xl p-6 border border-slate-200 mb-6">
+              <h3 className="text-lg font-bold text-slate-900 mb-4 flex items-center gap-2">
+                <span className="w-8 h-8 rounded-lg bg-slate-600 text-white flex items-center justify-center text-sm">4</span>
+                업무 분류 현황 (Kanban)
+              </h3>
+              <div className="overflow-x-auto pb-2">
+                <div className="flex gap-4 min-w-max">
+                  {workshop.domains.filter(d => d.trim()).map((domain, idx) => {
+                    const domainTasks = workshop.tasks?.filter(t => t.domain === domain) || [];
+                    return (
+                      <div key={idx} className="w-64 bg-slate-100 rounded-xl p-3 flex-shrink-0 border border-slate-200">
+                        <div className="font-bold text-slate-700 mb-3 flex justify-between items-center">
+                          <span>{domain}</span>
+                          <span className="bg-slate-200 text-slate-600 text-xs px-2 py-0.5 rounded-full">{domainTasks.length}</span>
+                        </div>
+                        <div className="space-y-2">
+                          {domainTasks.length > 0 ? (
+                            domainTasks.map((task, tIdx) => (
+                              <div key={tIdx} className="bg-white p-2.5 rounded-lg shadow-sm border border-slate-200 text-sm">
+                                <p className="font-medium text-slate-800 mb-1 line-clamp-2">{task.title}</p>
+                                <div className="flex gap-1 flex-wrap">
+                                  <span className="text-[10px] px-1.5 py-0.5 bg-blue-50 text-blue-600 rounded border border-blue-100">
+                                    {task.frequency}
+                                  </span>
+                                  <span className={`text-[10px] px-1.5 py-0.5 rounded border ${
+                                    task.automationPotential === 'High' ? 'bg-green-50 text-green-600 border-green-100' :
+                                    task.automationPotential === 'Medium' ? 'bg-yellow-50 text-yellow-600 border-yellow-100' :
+                                    'bg-red-50 text-red-600 border-red-100'
+                                  }`}>
+                                    {task.automationPotential === 'High' ? '자동화 높음' :
+                                     task.automationPotential === 'Medium' ? '자동화 중간' : '자동화 낮음'}
+                                  </span>
+                                </div>
+                              </div>
+                            ))
+                          ) : (
+                            <div className="text-center py-4 text-slate-400 text-xs italic">
+                              업무 없음
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
             </div>

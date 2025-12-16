@@ -8,10 +8,10 @@
 
 export const API_CONFIG = {
   // REST API Base URL
-  baseURL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001',
+  baseURL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000',
 
   // WebSocket URL
-  wsURL: process.env.NEXT_PUBLIC_WS_URL || 'ws://localhost:3001',
+  wsURL: process.env.NEXT_PUBLIC_WS_URL || 'ws://localhost:4000',
 
   // API Endpoints
   endpoints: {

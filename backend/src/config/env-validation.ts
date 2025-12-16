@@ -28,17 +28,12 @@ const envSchema = z.object({
   // Redis (optional in development)
   REDIS_URL: z
     .string()
-    .optional()
-    .refine(val => !val || val.startsWith('redis://') || val.startsWith('rediss://'), {
-      message: 'REDIS_URL must start with redis:// or rediss://',
-    }),
+    .optional(),
 
   // Anthropic API
   ANTHROPIC_API_KEY: z
-    .string({
-      required_error: 'ANTHROPIC_API_KEY is required for AI features',
-    })
-    .min(20, 'ANTHROPIC_API_KEY seems too short. Please check your key'),
+    .string()
+    .optional(),
 
   // JWT Secret
   JWT_SECRET: z

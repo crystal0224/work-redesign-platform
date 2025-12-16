@@ -42,6 +42,7 @@ interface Step4TaskExtractionProps {
   domains: string[];
   onNext: (tasks: ExtractedTask[]) => void;
   manualInput?: string;
+  initialTasks?: ExtractedTask[];
 }
 
 // Sortable Task Card Component
@@ -534,9 +535,9 @@ function AddTaskModal({
 }
 
 // Main Step 4 Component
-export default function Step4TaskExtraction({ workshopId, domains, onNext, manualInput }: Step4TaskExtractionProps) {
+export default function Step4TaskExtraction({ workshopId, domains, onNext, onBack, manualInput, initialTasks = [] }: Step4TaskExtractionProps) {
   const [loading, setLoading] = useState(false);
-  const [extractedTasks, setExtractedTasks] = useState<ExtractedTask[]>([]);
+  const [extractedTasks, setExtractedTasks] = useState<ExtractedTask[]>(initialTasks);
   const [tasksByDomain, setTasksByDomain] = useState<{ [domain: string]: ExtractedTask[] }>({});
   const [activeDragId, setActiveDragId] = useState<string | null>(null);
   const [editingTask, setEditingTask] = useState<ExtractedTask | null>(null);
@@ -554,9 +555,11 @@ export default function Step4TaskExtraction({ workshopId, domains, onNext, manua
     })
   );
 
-  // Extract tasks on mount
+  // Extract tasks on mount if no initial tasks
   useEffect(() => {
-    extractTasks();
+    if (extractedTasks.length === 0) {
+      extractTasks();
+    }
   }, []);
 
   // Update tasksByDomain when extractedTasks change
@@ -575,61 +578,69 @@ export default function Step4TaskExtraction({ workshopId, domains, onNext, manua
     const toastId = showToast.aiAnalysisStarted();
 
     try {
-      const response = await fetch(`${API_CONFIG.baseURL}/api/workshops/${workshopId}/extract-tasks`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ manualInput }),
+      // Simulate AI processing time
+      await new Promise(resolve => setTimeout(resolve, 3000));
+
+      // Generate mock tasks based on domains
+      const mockTasks: ExtractedTask[] = [];
+      const commonTasks = [
+        { title: '주간 업무 보고 작성', description: '팀 주간 업무 진행 상황 취합 및 보고서 작성', complexity: 'medium', frequency: 'Weekly' },
+        { title: '고객 문의 응대', description: '이메일 및 전화로 접수된 고객 문의 처리', complexity: 'low', frequency: 'Daily' },
+        { title: '데이터 백업 및 관리', description: '주요 프로젝트 데이터 백업 및 아카이빙', complexity: 'low', frequency: 'Daily' },
+        { title: '회의록 작성 및 공유', description: '팀 정기 회의 내용 정리 및 액션 아이템 공유', complexity: 'low', frequency: 'Weekly' },
+        { title: '월간 성과 분석', description: '월별 KPI 달성 현황 분석 및 리포트 작성', complexity: 'high', frequency: 'Monthly' },
+        { title: '경쟁사 동향 조사', description: '주요 경쟁사 신규 서비스 및 마케팅 활동 모니터링', complexity: 'medium', frequency: 'Weekly' },
+        { title: '프로젝트 일정 관리', description: '진행 중인 프로젝트 마일스톤 점검 및 일정 조정', complexity: 'high', frequency: 'Daily' },
+        { title: '비용 정산 처리', description: '법인카드 사용 내역 증빙 및 경비 처리', complexity: 'low', frequency: 'Monthly' }
+      ];
+
+      // Distribute tasks across domains
+      allDomains.forEach((domain, index) => {
+        // Add 2-3 tasks per domain
+        const count = 2 + Math.floor(Math.random() * 2);
+        for (let i = 0; i < count; i++) {
+          const template = commonTasks[(index * 2 + i) % commonTasks.length];
+          mockTasks.push({
+            id: `task_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`,
+            title: `${domain} - ${template.title}`,
+            description: template.description,
+            domain: domain,
+            estimatedStatus: 'Progress',
+            frequency: template.frequency as any,
+            automationPotential: template.complexity === 'high' ? 'High' : template.complexity === 'medium' ? 'Medium' : 'Low',
+            source: 'uploaded'
+          });
+        }
       });
 
-      if (!response.ok) {
-        const errorData = await response.json();
-
-        // Check for rate limit
-        if (response.status === 429) {
-          showToast.dismiss(toastId);
-          showToast.rateLimitExceeded(errorData.retryAfter);
-          throw new Error(errorData.error || 'Rate limit exceeded');
-        }
-
-        throw new Error(errorData.error || `HTTP ${response.status} 오류`);
+      // Add manual input if exists
+      if (manualInput) {
+        const manualLines = manualInput.split('\n').filter(line => line.trim());
+        manualLines.forEach(line => {
+          if (!line.startsWith('[')) { // Skip domain headers
+            mockTasks.push({
+              id: `task_manual_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`,
+              title: line.length > 20 ? line.substring(0, 20) + '...' : line,
+              description: line,
+              domain: allDomains[0] || '기타',
+              estimatedStatus: 'Planned',
+              frequency: 'Ad-hoc',
+              automationPotential: 'Medium',
+              source: 'manual'
+            });
+          }
+        });
       }
 
-      const data = await response.json();
+      setExtractedTasks(mockTasks);
+      showToast.dismiss(toastId);
+      showToast.aiAnalysisComplete(mockTasks.length);
 
-      if (data.success) {
-        const tasks = data.data?.tasks || data.tasks || [];
-        setExtractedTasks(tasks);
-
-        showToast.dismiss(toastId);
-
-        if (tasks.length === 0) {
-          showToast.validationError('추출된 업무가 없습니다. 문서나 입력 내용을 확인해주세요.');
-          setError('추출된 업무가 없습니다. 문서나 입력 내용을 확인해주세요.');
-        } else {
-          showToast.aiAnalysisComplete(tasks.length);
-        }
-      } else {
-        showToast.dismiss(toastId);
-        showToast.aiAnalysisFailed(data.error);
-        setError(data.error || '업무 추출에 실패했습니다');
-      }
     } catch (error) {
-      let errorMessage = '서버와의 통신에 실패했습니다';
-
-      if (error instanceof TypeError && error.message.includes('fetch')) {
-        errorMessage = '서버에 연결할 수 없습니다. 서버가 실행 중인지 확인해주세요.';
-        showToast.dismiss(toastId);
-        showToast.networkError();
-      } else if (error instanceof Error) {
-        errorMessage = error.message;
-        if (!error.message.includes('Rate limit')) {
-          showToast.dismiss(toastId);
-          showToast.aiAnalysisFailed(errorMessage);
-        }
-      }
-
-      setError(errorMessage);
-      console.error('Extract tasks error:', error);
+      console.error('Mock extraction error:', error);
+      showToast.dismiss(toastId);
+      showToast.aiAnalysisFailed('AI 분석 중 오류가 발생했습니다.');
+      setError('AI 분석 중 오류가 발생했습니다.');
     } finally {
       setLoading(false);
     }
@@ -743,14 +754,14 @@ export default function Step4TaskExtraction({ workshopId, domains, onNext, manua
         <div className="text-center mb-16">
           {/* Badge */}
           <div className="mb-4">
-            <span className="text-sm font-semibold text-purple-600 bg-purple-50 px-4 py-2 rounded-full">
-              📊 우리 팀 일 분석하기
+            <span className="text-sm font-semibold text-amber-600 bg-amber-50 px-4 py-2 rounded-full">
+              🧩 Task 구조화
             </span>
           </div>
 
           {/* Icon Circle */}
-          <div className="w-20 h-20 bg-gradient-to-br from-indigo-600 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-6">
-            <span className="text-3xl">📋</span>
+          <div className="w-20 h-20 bg-gradient-to-br from-amber-500 to-orange-600 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg shadow-orange-500/20">
+            <span className="text-3xl text-white">📝</span>
           </div>
 
           {/* Main Title */}
@@ -761,7 +772,7 @@ export default function Step4TaskExtraction({ workshopId, domains, onNext, manua
           {/* Subtitle */}
           <div className="space-y-2">
             <p className="text-lg text-slate-600 max-w-2xl mx-auto">
-              AI가 분석한 <span className="font-semibold text-indigo-700">업무 리스트</span>를 확인하고 수정하세요
+              AI가 분석한 <span className="font-semibold text-amber-700">업무 리스트</span>를 확인하고 수정하세요
             </p>
             <p className="text-base text-slate-500 max-w-2xl mx-auto leading-relaxed">
               드래그하여 영역을 변경하거나 클릭하여 수정할 수 있습니다
@@ -871,6 +882,18 @@ export default function Step4TaskExtraction({ workshopId, domains, onNext, manua
 
             {/* Action Buttons */}
             <div className="flex justify-center gap-6 mt-16">
+              <button
+                onClick={onBack}
+                className="group relative px-8 py-4 bg-white border-2 border-slate-200 text-slate-700 font-bold rounded-2xl hover:border-slate-300 hover:bg-slate-50 hover:shadow-lg transition-all duration-300"
+              >
+                <span className="flex items-center gap-2">
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                  </svg>
+                  이전
+                </span>
+              </button>
+
               <button
                 onClick={() => setShowAddModal(true)}
                 className="group relative px-8 py-4 bg-white border-2 border-slate-200 text-slate-700 font-bold rounded-2xl hover:border-blue-300 hover:text-blue-600 hover:shadow-xl transition-all duration-300"

@@ -1,10 +1,17 @@
-import { Router } from 'express';
+import { Router, Request, Response } from 'express';
 import { getPrismaClient } from '@/config/database';
 import ResponseUtil from '@/utils/response';
 import { asyncHandler } from '@/middleware/errorHandler';
 import { authenticate, requireSessionAccess } from '@/middleware';
 import { fileUploadRateLimiter } from '@/middleware/aiRateLimit';
 import logger from '@/utils/logger';
+import { 
+  workshopUpload, 
+  handleUploadError, 
+  validateUploadedFiles, 
+  logUploadMetrics, 
+  cleanupUploadedFiles 
+} from '../middleware/workshopUpload';
 
 const router = Router();
 const prisma = getPrismaClient();
@@ -83,25 +90,69 @@ router.get('/',
  *       201:
  *         description: File uploaded successfully
  */
-router.post('/upload',
-  fileUploadRateLimiter,
+
+router.post(
+  '/upload',
   authenticate,
-  asyncHandler(async (req, res) => {
-    // File upload handling would be done via multer middleware
-    // This is a placeholder for the route structure
+  workshopUpload.array('files'),
+  handleUploadError,
+  validateUploadedFiles,
+  logUploadMetrics,
+  async (req: Request, res: Response) => {
+    try {
+      const files = req.files as Express.Multer.File[];
+      const { workshopId } = req.body;
+      const user = (req as any).user;
 
-    const { sessionId } = req.body;
+      if (!files || files.length === 0) {
+        return res.status(400).json({
+          success: false,
+          error: '업로드된 파일이 없습니다'
+        });
+      }
 
-    if (!sessionId) {
-      return ResponseUtil.error(res, 'Session ID is required');
+      logger.info(`📥 Processing ${files.length} uploaded files for workshop ${workshopId}`);
+
+      const fileIds: string[] = [];
+
+      // Save file metadata to database
+      for (const file of files) {
+        const fileUpload = await prisma.fileUpload.create({
+          data: {
+            filename: file.filename, // This should be mapped to fileName in schema? No, schema has fileName
+            fileName: file.filename,
+            originalName: file.originalname,
+            mimeType: file.mimetype,
+            size: file.size,
+            s3Url: `file://${file.path}`, // Store local path in s3Url
+            sessionId: workshopId || null,
+            uploadedBy: user ? user.id : 'demo-user', // Fallback for demo
+          }
+        });
+        fileIds.push(fileUpload.id);
+        logger.info(`💾 Saved file metadata: ${fileUpload.id}`);
+      }
+
+      res.status(200).json({
+        success: true,
+        message: `${files.length}개 파일 업로드 성공`,
+        fileIds: fileIds
+      });
+
+    } catch (error) {
+      logger.error('File upload processing error:', error);
+      
+      // Cleanup files if DB save fails
+      if (req.files) {
+        await cleanupUploadedFiles(req.files as Express.Multer.File[]);
+      }
+
+      res.status(500).json({
+        success: false,
+        error: '파일 처리 중 오류가 발생했습니다'
+      });
     }
-
-    // In production, file would be uploaded to S3 or similar
-    // For now, return success response
-    logger.info(`File upload initiated for session: ${sessionId} by ${req.user?.email}`);
-
-    return ResponseUtil.created(res, { message: 'File upload endpoint ready' }, 'File upload endpoint configured');
-  })
+  }
 );
 
 /**
