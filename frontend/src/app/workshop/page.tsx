@@ -8,6 +8,7 @@ import Step6WorkflowDesign from '@/components/workshop/Step6WorkflowDesign';
 import Step7Summary from '@/components/workshop/Step7Summary';
 import Step8WorkflowEducation from '@/components/workshop/Step8WorkflowEducation';
 import Step9AIConsultant from '@/components/workshop/Step9AIConsultant';
+import PhaseSummary from '@/components/workshop/PhaseSummary';
 import { API_CONFIG } from '@/config/api';
 
 // 이미지 생성을 위한 동적 import
@@ -497,9 +498,46 @@ export default function WorkshopPage() {
   const [missionInput, setMissionInput] = useState<string>('');
   const [customerInput, setCustomerInput] = useState<string>('');
   const [teamSizeInput, setTeamSizeInput] = useState<number>(0);
+  const [teamFormationInput, setTeamFormationInput] = useState<string>('');
   const [teamCompositionInput, setTeamCompositionInput] = useState<string>('');
+  const [teamCharacteristics, setTeamCharacteristics] = useState<string[]>([]);
   const [constraintsInput, setConstraintsInput] = useState<string[]>(['']);
   const [controllableIssuesInput, setControllableIssuesInput] = useState<string>('');
+  const [teamFreeOpinionInput, setTeamFreeOpinionInput] = useState<string>('');
+  const [constraintCheckboxes, setConstraintCheckboxes] = useState<string[]>([]);
+
+  // 제약조건 체크박스 토글 함수
+  const toggleConstraint = (constraint: string) => {
+    setConstraintCheckboxes(prev =>
+      prev.includes(constraint)
+        ? prev.filter(c => c !== constraint)
+        : [...prev, constraint]
+    );
+  };
+
+  // Step 4 form data - 줄일 일 vs 강화할 일
+  const [reduceWorkInput, setReduceWorkInput] = useState({
+    repetitive: '',
+    waiting: '',
+    rework: '',
+    unnecessary: ''
+  });
+  const [enhanceWorkInput, setEnhanceWorkInput] = useState({
+    strategy: '',
+    collaboration: '',
+    quality: '',
+    proactive: ''
+  });
+
+  // 팀 특성 체크박스 토글 함수
+  const toggleCharacteristic = (characteristic: string) => {
+    setTeamCharacteristics(prev =>
+      prev.includes(characteristic)
+        ? prev.filter(c => c !== characteristic)
+        : [...prev, characteristic]
+    );
+  };
+
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [analysisProgress, setAnalysisProgress] = useState(0);
@@ -508,6 +546,9 @@ export default function WorkshopPage() {
   const [socket, setSocket] = useState<Socket | null>(null);
   const [generatingSolutions, setGeneratingSolutions] = useState(false);
   const [automationSolutions, setAutomationSolutions] = useState<any[]>([]);
+
+  // Phase Summary 모달 상태
+  const [showPhaseSummary, setShowPhaseSummary] = useState<1 | 2 | null>(null);
 
   // 개발 모드: 모든 단계 자동 채우기
   const fillDevData = async () => {
@@ -1634,11 +1675,11 @@ if __name__ == "__main__":
               <div className="flex flex-col min-h-[calc(100vh-120px)]">
 
                 {/* Hero Area */}
-                <div className="flex items-center justify-center px-6 pt-20 pb-8">
+                <div className="flex items-center justify-center px-6 pt-12 pb-10">
                   <div className="w-full max-w-3xl mx-auto text-center">
 
                     {/* Badge - 작고 절제된 */}
-                    <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-indigo-50 border border-indigo-100 rounded-full mb-10">
+                    <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-indigo-50 border border-indigo-100 rounded-full mb-8">
                       <span className="text-sm">🤖</span>
                       <span className="text-xs font-semibold text-indigo-600 tracking-wide">AI 협업 설계 워크샵</span>
                     </div>
@@ -1670,83 +1711,99 @@ if __name__ == "__main__":
                 </div>
 
                 {/* Divider */}
-                <div className="flex justify-center pt-4 pb-6">
+                <div className="flex justify-center py-6">
                   <div className="w-20 h-0.5 bg-gradient-to-r from-indigo-200 via-purple-300 to-indigo-200 rounded-full"></div>
                 </div>
 
                 {/* Bottom Section - 오늘의 여정 */}
-                <div className="px-6 pb-8">
-                  <div className="max-w-4xl mx-auto">
-                    <div className="bg-white rounded-2xl border border-slate-200/60 shadow-sm overflow-hidden">
+                <div className="px-6 pb-6">
+                  <div className="max-w-6xl mx-auto">
+                    <div className="bg-white rounded-2xl border border-slate-200/60 shadow-lg overflow-hidden">
                       {/* Header */}
-                      <div className="px-6 py-4 border-b border-slate-100 flex items-center justify-between">
+                      <div className="px-8 py-5 border-b border-slate-100 flex items-center justify-between">
                         <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider">오늘의 여정</p>
-                        <p className="text-xs text-slate-400">AI 업무 재설계의 프로세스와 기준을 이해합니다</p>
+                        <p className="text-base font-semibold text-slate-700">
+                          AI <span className="text-indigo-600">Work Re-design</span>의 프로세스와 기준을 이해합니다
+                        </p>
                       </div>
 
                       {/* Process Steps */}
                       <div className="grid md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-slate-100">
                         {/* Phase 1 */}
-                        <div className="p-5 hover:bg-slate-50/50 transition-colors">
-                          <div className="flex items-center gap-3 mb-2">
-                            <div className="w-7 h-7 rounded-lg bg-teal-50 flex items-center justify-center">
-                              <span className="text-sm">🧭</span>
+                        <div className="p-6 hover:bg-slate-50/50 transition-colors">
+                          <div className="flex items-center gap-3 mb-4">
+                            <div className="w-10 h-10 rounded-xl bg-teal-50 flex items-center justify-center">
+                              <span className="text-xl">🧭</span>
                             </div>
                             <div>
-                              <p className="text-[10px] font-bold text-teal-600 uppercase tracking-wider">Phase 1</p>
-                              <p className="text-sm font-bold text-slate-800">팀 업무 재정의</p>
+                              <p className="text-[11px] font-bold text-teal-600 uppercase tracking-wider">Phase 1</p>
+                              <p className="text-base font-bold text-slate-800">팀 업무 재정의</p>
                             </div>
                           </div>
-                          <p className="text-xs text-slate-500 leading-relaxed pl-10">미션, 줄일 일, 강화할 일</p>
+                          <p className="text-sm text-slate-500 leading-relaxed pl-[52px]">
+                            우리 팀의 미션과 고객 가치를 정의하고,<br />
+                            줄여야 할 일과 강화해야 할 일을 구분합니다
+                          </p>
                         </div>
 
                         {/* Phase 2 */}
-                        <div className="p-5 hover:bg-slate-50/50 transition-colors">
-                          <div className="flex items-center gap-3 mb-2">
-                            <div className="w-7 h-7 rounded-lg bg-amber-50 flex items-center justify-center">
-                              <span className="text-sm">🧩</span>
+                        <div className="p-6 hover:bg-slate-50/50 transition-colors">
+                          <div className="flex items-center gap-3 mb-4">
+                            <div className="w-10 h-10 rounded-xl bg-amber-50 flex items-center justify-center">
+                              <span className="text-xl">🧩</span>
                             </div>
                             <div>
-                              <p className="text-[10px] font-bold text-amber-600 uppercase tracking-wider">Phase 2</p>
-                              <p className="text-sm font-bold text-slate-800">Task 분해</p>
+                              <p className="text-[11px] font-bold text-amber-600 uppercase tracking-wider">Phase 2</p>
+                              <p className="text-base font-bold text-slate-800">Task 분해</p>
                             </div>
                           </div>
-                          <p className="text-xs text-slate-500 leading-relaxed pl-10">업무 리스트업, 자동화 후보 선별</p>
+                          <p className="text-sm text-slate-500 leading-relaxed pl-[52px]">
+                            우리 팀의 업무를 세부 Task로 분해하고,<br />
+                            자동화 가능한 후보 업무를 선별합니다
+                          </p>
                         </div>
 
                         {/* Phase 3 */}
-                        <div className="p-5 hover:bg-slate-50/50 transition-colors">
-                          <div className="flex items-center gap-3 mb-2">
-                            <div className="w-7 h-7 rounded-lg bg-indigo-50 flex items-center justify-center">
-                              <span className="text-sm">🤖</span>
+                        <div className="p-6 hover:bg-slate-50/50 transition-colors">
+                          <div className="flex items-center gap-3 mb-4">
+                            <div className="w-10 h-10 rounded-xl bg-indigo-50 flex items-center justify-center">
+                              <span className="text-xl">🤖</span>
                             </div>
                             <div>
-                              <p className="text-[10px] font-bold text-indigo-600 uppercase tracking-wider">Phase 3</p>
-                              <p className="text-sm font-bold text-slate-800">AI 협업 설계</p>
+                              <p className="text-[11px] font-bold text-indigo-600 uppercase tracking-wider">Phase 3</p>
+                              <p className="text-base font-bold text-slate-800">AI 협업 설계</p>
                             </div>
                           </div>
-                          <p className="text-xs text-slate-500 leading-relaxed pl-10">역할 분담, 워크플로우 설계</p>
+                          <p className="text-sm text-slate-500 leading-relaxed pl-[52px]">
+                            사람과 AI의 역할을 명확히 분담하고,<br />
+                            실제 적용할 워크플로우를 설계합니다
+                          </p>
                         </div>
                       </div>
 
-                      {/* 최종 산출물 */}
-                      <div className="px-6 py-4 bg-slate-50/80 border-t border-slate-100">
-                        <div className="flex items-center justify-center gap-8">
-                          <div className="flex items-center gap-2">
-                            <span className="w-6 h-6 rounded bg-blue-100 flex items-center justify-center text-xs">📄</span>
-                            <span className="text-xs font-medium text-slate-600">팀 업무 분석 리포트</span>
+                      {/* 최종 산출물 - OUTPUT */}
+                      <div className="px-8 py-5 bg-gradient-to-r from-indigo-50/80 via-purple-50/60 to-indigo-50/80 border-t border-indigo-100">
+                        <div className="flex items-center justify-center gap-3 mb-3">
+                          <div className="h-px w-10 bg-gradient-to-r from-transparent to-indigo-300"></div>
+                          <span className="text-xs font-bold text-indigo-500 uppercase tracking-wider">Output</span>
+                          <div className="h-px w-10 bg-gradient-to-l from-transparent to-indigo-300"></div>
+                        </div>
+                        <div className="flex items-center justify-center gap-10">
+                          <div className="flex items-center gap-3">
+                            <span className="w-8 h-8 rounded-lg bg-blue-100 flex items-center justify-center text-base">📄</span>
+                            <span className="text-sm font-medium text-slate-700">팀 업무 분석 리포트</span>
                           </div>
-                          <span className="text-slate-300">+</span>
-                          <div className="flex items-center gap-2">
-                            <span className="w-6 h-6 rounded bg-purple-100 flex items-center justify-center text-xs">🔧</span>
-                            <span className="text-xs font-medium text-slate-600">AI 워크플로우 설계서</span>
+                          <span className="text-indigo-300 text-lg">+</span>
+                          <div className="flex items-center gap-3">
+                            <span className="w-8 h-8 rounded-lg bg-purple-100 flex items-center justify-center text-base">🔧</span>
+                            <span className="text-sm font-medium text-slate-700">AI 워크플로우 설계서</span>
                           </div>
                         </div>
                       </div>
                     </div>
 
                     {/* CTA Button */}
-                    <div className="text-center mt-8">
+                    <div className="text-center mt-6 pb-4">
                       <button
                         type="button"
                         onPointerDown={() => setCurrentStep(2)}
@@ -1807,8 +1864,7 @@ if __name__ == "__main__":
                         </div>
                         <div className="flex-1">
                           <h3 className="text-2xl font-bold text-slate-900 mb-3 leading-tight">
-                            우리 팀이 올해 무엇을 어떻게 하면<br />
-                            <span className="text-blue-600">잘했다</span>라고 평가할 수 있을까요?
+                            우리 팀이 올해 무엇을 어떻게 하면 <span className="text-blue-600">잘했다</span>라고 평가할 수 있을까요?
                           </h3>
                           <p className="text-slate-600 text-sm mb-4">
                             팀의 성공 기준과 목표를 구체적으로 작성해주세요
@@ -1889,8 +1945,7 @@ if __name__ == "__main__":
                         </div>
                         <div className="flex-1">
                           <h3 className="text-2xl font-bold text-slate-900 mb-3 leading-tight">
-                            우리 업무의 고객은 누구이고<br />
-                            어떤 <span className="text-indigo-600">가치</span>를 만들어내야 할까요?
+                            우리 업무의 고객은 누구이고 어떤 <span className="text-indigo-600">가치</span>를 만들어내야 할까요?
                           </h3>
                           <p className="text-slate-600 text-sm mb-4">
                             내부/외부 고객과 제공하는 핵심 가치를 명확히 해주세요
@@ -2059,6 +2114,8 @@ if __name__ == "__main__":
                           <div className="text-xs text-indigo-700 font-semibold mb-1 uppercase">팀 결성 시기</div>
                           <input
                             type="text"
+                            value={teamFormationInput}
+                            onChange={(e) => setTeamFormationInput(e.target.value)}
                             placeholder="2년 전"
                             className="w-full bg-transparent text-2xl font-bold text-indigo-900 border-none outline-none placeholder:text-indigo-400/50"
                           />
@@ -2074,26 +2131,18 @@ if __name__ == "__main__":
                           <div>
                             <h5 className="text-xs font-semibold text-slate-500 uppercase mb-2">💪 역량 & 전문성</h5>
                             <div className="flex flex-wrap gap-2">
-                              <label className="inline-flex items-center px-3 py-2 bg-white border-2 border-slate-200 rounded-lg cursor-pointer hover:border-green-300 transition-all">
-                                <input type="checkbox" className="w-4 h-4 text-green-600 rounded focus:ring-green-500 focus:ring-2" />
-                                <span className="ml-2 text-sm text-slate-700">전문성이 높음</span>
-                              </label>
-                              <label className="inline-flex items-center px-3 py-2 bg-white border-2 border-slate-200 rounded-lg cursor-pointer hover:border-green-300 transition-all">
-                                <input type="checkbox" className="w-4 h-4 text-green-600 rounded focus:ring-green-500 focus:ring-2" />
-                                <span className="ml-2 text-sm text-slate-700">멀티 플레이어 많음</span>
-                              </label>
-                              <label className="inline-flex items-center px-3 py-2 bg-white border-2 border-slate-200 rounded-lg cursor-pointer hover:border-green-300 transition-all">
-                                <input type="checkbox" className="w-4 h-4 text-green-600 rounded focus:ring-green-500 focus:ring-2" />
-                                <span className="ml-2 text-sm text-slate-700">학습 의지 높음</span>
-                              </label>
-                              <label className="inline-flex items-center px-3 py-2 bg-white border-2 border-slate-200 rounded-lg cursor-pointer hover:border-red-300 transition-all">
-                                <input type="checkbox" className="w-4 h-4 text-red-600 rounded focus:ring-red-500 focus:ring-2" />
-                                <span className="ml-2 text-sm text-slate-700">전문성 부족</span>
-                              </label>
-                              <label className="inline-flex items-center px-3 py-2 bg-white border-2 border-slate-200 rounded-lg cursor-pointer hover:border-red-300 transition-all">
-                                <input type="checkbox" className="w-4 h-4 text-red-600 rounded focus:ring-red-500 focus:ring-2" />
-                                <span className="ml-2 text-sm text-slate-700">역량 편차 큼</span>
-                              </label>
+                              {['전문성이 높음', '멀티 플레이어 많음', '학습 의지 높음'].map(item => (
+                                <label key={item} className={`inline-flex items-center px-3 py-2 bg-white border-2 rounded-lg cursor-pointer transition-all ${teamCharacteristics.includes(item) ? 'border-green-400 bg-green-50' : 'border-slate-200 hover:border-green-300'}`}>
+                                  <input type="checkbox" checked={teamCharacteristics.includes(item)} onChange={() => toggleCharacteristic(item)} className="w-4 h-4 text-green-600 rounded focus:ring-green-500 focus:ring-2" />
+                                  <span className="ml-2 text-sm text-slate-700">{item}</span>
+                                </label>
+                              ))}
+                              {['전문성 부족', '역량 편차 큼'].map(item => (
+                                <label key={item} className={`inline-flex items-center px-3 py-2 bg-white border-2 rounded-lg cursor-pointer transition-all ${teamCharacteristics.includes(item) ? 'border-red-400 bg-red-50' : 'border-slate-200 hover:border-red-300'}`}>
+                                  <input type="checkbox" checked={teamCharacteristics.includes(item)} onChange={() => toggleCharacteristic(item)} className="w-4 h-4 text-red-600 rounded focus:ring-red-500 focus:ring-2" />
+                                  <span className="ml-2 text-sm text-slate-700">{item}</span>
+                                </label>
+                              ))}
                             </div>
                           </div>
 
@@ -2101,22 +2150,12 @@ if __name__ == "__main__":
                           <div>
                             <h5 className="text-xs font-semibold text-slate-500 uppercase mb-2">👥 경력 구성</h5>
                             <div className="flex flex-wrap gap-2">
-                              <label className="inline-flex items-center px-3 py-2 bg-white border-2 border-slate-200 rounded-lg cursor-pointer hover:border-blue-300 transition-all">
-                                <input type="checkbox" className="w-4 h-4 text-blue-600 rounded focus:ring-blue-500 focus:ring-2" />
-                                <span className="ml-2 text-sm text-slate-700">시니어 중심</span>
-                              </label>
-                              <label className="inline-flex items-center px-3 py-2 bg-white border-2 border-slate-200 rounded-lg cursor-pointer hover:border-blue-300 transition-all">
-                                <input type="checkbox" className="w-4 h-4 text-blue-600 rounded focus:ring-blue-500 focus:ring-2" />
-                                <span className="ml-2 text-sm text-slate-700">주니어 중심</span>
-                              </label>
-                              <label className="inline-flex items-center px-3 py-2 bg-white border-2 border-slate-200 rounded-lg cursor-pointer hover:border-blue-300 transition-all">
-                                <input type="checkbox" className="w-4 h-4 text-blue-600 rounded focus:ring-blue-500 focus:ring-2" />
-                                <span className="ml-2 text-sm text-slate-700">경력 골고루 분포</span>
-                              </label>
-                              <label className="inline-flex items-center px-3 py-2 bg-white border-2 border-slate-200 rounded-lg cursor-pointer hover:border-blue-300 transition-all">
-                                <input type="checkbox" className="w-4 h-4 text-blue-600 rounded focus:ring-blue-500 focus:ring-2" />
-                                <span className="ml-2 text-sm text-slate-700">다양성이 있음</span>
-                              </label>
+                              {['시니어 중심', '주니어 중심', '경력 골고루 분포', '다양성이 있음'].map(item => (
+                                <label key={item} className={`inline-flex items-center px-3 py-2 bg-white border-2 rounded-lg cursor-pointer transition-all ${teamCharacteristics.includes(item) ? 'border-blue-400 bg-blue-50' : 'border-slate-200 hover:border-blue-300'}`}>
+                                  <input type="checkbox" checked={teamCharacteristics.includes(item)} onChange={() => toggleCharacteristic(item)} className="w-4 h-4 text-blue-600 rounded focus:ring-blue-500 focus:ring-2" />
+                                  <span className="ml-2 text-sm text-slate-700">{item}</span>
+                                </label>
+                              ))}
                             </div>
                           </div>
 
@@ -2124,30 +2163,18 @@ if __name__ == "__main__":
                           <div>
                             <h5 className="text-xs font-semibold text-slate-500 uppercase mb-2">🤝 협업 & 소통</h5>
                             <div className="flex flex-wrap gap-2">
-                              <label className="inline-flex items-center px-3 py-2 bg-white border-2 border-slate-200 rounded-lg cursor-pointer hover:border-green-300 transition-all">
-                                <input type="checkbox" className="w-4 h-4 text-green-600 rounded focus:ring-green-500 focus:ring-2" />
-                                <span className="ml-2 text-sm text-slate-700">협업 경험 많음</span>
-                              </label>
-                              <label className="inline-flex items-center px-3 py-2 bg-white border-2 border-slate-200 rounded-lg cursor-pointer hover:border-green-300 transition-all">
-                                <input type="checkbox" className="w-4 h-4 text-green-600 rounded focus:ring-green-500 focus:ring-2" />
-                                <span className="ml-2 text-sm text-slate-700">소통이 활발함</span>
-                              </label>
-                              <label className="inline-flex items-center px-3 py-2 bg-white border-2 border-slate-200 rounded-lg cursor-pointer hover:border-green-300 transition-all">
-                                <input type="checkbox" className="w-4 h-4 text-green-600 rounded focus:ring-green-500 focus:ring-2" />
-                                <span className="ml-2 text-sm text-slate-700">수평적 문화</span>
-                              </label>
-                              <label className="inline-flex items-center px-3 py-2 bg-white border-2 border-slate-200 rounded-lg cursor-pointer hover:border-red-300 transition-all">
-                                <input type="checkbox" className="w-4 h-4 text-red-600 rounded focus:ring-red-500 focus:ring-2" />
-                                <span className="ml-2 text-sm text-slate-700">소통이 원활하지 않음</span>
-                              </label>
-                              <label className="inline-flex items-center px-3 py-2 bg-white border-2 border-slate-200 rounded-lg cursor-pointer hover:border-red-300 transition-all">
-                                <input type="checkbox" className="w-4 h-4 text-red-600 rounded focus:ring-red-500 focus:ring-2" />
-                                <span className="ml-2 text-sm text-slate-700">협업 경험 부족</span>
-                              </label>
-                              <label className="inline-flex items-center px-3 py-2 bg-white border-2 border-slate-200 rounded-lg cursor-pointer hover:border-red-300 transition-all">
-                                <input type="checkbox" className="w-4 h-4 text-red-600 rounded focus:ring-red-500 focus:ring-2" />
-                                <span className="ml-2 text-sm text-slate-700">사일로 현상 (각자 일함)</span>
-                              </label>
+                              {['협업 경험 많음', '소통이 활발함', '수평적 문화'].map(item => (
+                                <label key={item} className={`inline-flex items-center px-3 py-2 bg-white border-2 rounded-lg cursor-pointer transition-all ${teamCharacteristics.includes(item) ? 'border-green-400 bg-green-50' : 'border-slate-200 hover:border-green-300'}`}>
+                                  <input type="checkbox" checked={teamCharacteristics.includes(item)} onChange={() => toggleCharacteristic(item)} className="w-4 h-4 text-green-600 rounded focus:ring-green-500 focus:ring-2" />
+                                  <span className="ml-2 text-sm text-slate-700">{item}</span>
+                                </label>
+                              ))}
+                              {['소통이 원활하지 않음', '협업 경험 부족', '사일로 현상 (각자 일함)'].map(item => (
+                                <label key={item} className={`inline-flex items-center px-3 py-2 bg-white border-2 rounded-lg cursor-pointer transition-all ${teamCharacteristics.includes(item) ? 'border-red-400 bg-red-50' : 'border-slate-200 hover:border-red-300'}`}>
+                                  <input type="checkbox" checked={teamCharacteristics.includes(item)} onChange={() => toggleCharacteristic(item)} className="w-4 h-4 text-red-600 rounded focus:ring-red-500 focus:ring-2" />
+                                  <span className="ml-2 text-sm text-slate-700">{item}</span>
+                                </label>
+                              ))}
                             </div>
                           </div>
 
@@ -2155,34 +2182,18 @@ if __name__ == "__main__":
                           <div>
                             <h5 className="text-xs font-semibold text-slate-500 uppercase mb-2">⚡ 업무 스타일</h5>
                             <div className="flex flex-wrap gap-2">
-                              <label className="inline-flex items-center px-3 py-2 bg-white border-2 border-slate-200 rounded-lg cursor-pointer hover:border-green-300 transition-all">
-                                <input type="checkbox" className="w-4 h-4 text-green-600 rounded focus:ring-green-500 focus:ring-2" />
-                                <span className="ml-2 text-sm text-slate-700">빠른 실행력</span>
-                              </label>
-                              <label className="inline-flex items-center px-3 py-2 bg-white border-2 border-slate-200 rounded-lg cursor-pointer hover:border-green-300 transition-all">
-                                <input type="checkbox" className="w-4 h-4 text-green-600 rounded focus:ring-green-500 focus:ring-2" />
-                                <span className="ml-2 text-sm text-slate-700">꼼꼼하고 신중함</span>
-                              </label>
-                              <label className="inline-flex items-center px-3 py-2 bg-white border-2 border-slate-200 rounded-lg cursor-pointer hover:border-green-300 transition-all">
-                                <input type="checkbox" className="w-4 h-4 text-green-600 rounded focus:ring-green-500 focus:ring-2" />
-                                <span className="ml-2 text-sm text-slate-700">도전적이고 혁신적</span>
-                              </label>
-                              <label className="inline-flex items-center px-3 py-2 bg-white border-2 border-slate-200 rounded-lg cursor-pointer hover:border-green-300 transition-all">
-                                <input type="checkbox" className="w-4 h-4 text-green-600 rounded focus:ring-green-500 focus:ring-2" />
-                                <span className="ml-2 text-sm text-slate-700">안정적이고 체계적</span>
-                              </label>
-                              <label className="inline-flex items-center px-3 py-2 bg-white border-2 border-slate-200 rounded-lg cursor-pointer hover:border-green-300 transition-all">
-                                <input type="checkbox" className="w-4 h-4 text-green-600 rounded focus:ring-green-500 focus:ring-2" />
-                                <span className="ml-2 text-sm text-slate-700">자율성 높음</span>
-                              </label>
-                              <label className="inline-flex items-center px-3 py-2 bg-white border-2 border-slate-200 rounded-lg cursor-pointer hover:border-red-300 transition-all">
-                                <input type="checkbox" className="w-4 h-4 text-red-600 rounded focus:ring-red-500 focus:ring-2" />
-                                <span className="ml-2 text-sm text-slate-700">실행력 부족</span>
-                              </label>
-                              <label className="inline-flex items-center px-3 py-2 bg-white border-2 border-slate-200 rounded-lg cursor-pointer hover:border-red-300 transition-all">
-                                <input type="checkbox" className="w-4 h-4 text-red-600 rounded focus:ring-red-500 focus:ring-2" />
-                                <span className="ml-2 text-sm text-slate-700">변화 저항 큼</span>
-                              </label>
+                              {['빠른 실행력', '꼼꼼하고 신중함', '도전적이고 혁신적', '안정적이고 체계적', '자율성 높음'].map(item => (
+                                <label key={item} className={`inline-flex items-center px-3 py-2 bg-white border-2 rounded-lg cursor-pointer transition-all ${teamCharacteristics.includes(item) ? 'border-green-400 bg-green-50' : 'border-slate-200 hover:border-green-300'}`}>
+                                  <input type="checkbox" checked={teamCharacteristics.includes(item)} onChange={() => toggleCharacteristic(item)} className="w-4 h-4 text-green-600 rounded focus:ring-green-500 focus:ring-2" />
+                                  <span className="ml-2 text-sm text-slate-700">{item}</span>
+                                </label>
+                              ))}
+                              {['실행력 부족', '변화 저항 큼'].map(item => (
+                                <label key={item} className={`inline-flex items-center px-3 py-2 bg-white border-2 rounded-lg cursor-pointer transition-all ${teamCharacteristics.includes(item) ? 'border-red-400 bg-red-50' : 'border-slate-200 hover:border-red-300'}`}>
+                                  <input type="checkbox" checked={teamCharacteristics.includes(item)} onChange={() => toggleCharacteristic(item)} className="w-4 h-4 text-red-600 rounded focus:ring-red-500 focus:ring-2" />
+                                  <span className="ml-2 text-sm text-slate-700">{item}</span>
+                                </label>
+                              ))}
                             </div>
                           </div>
 
@@ -2190,38 +2201,24 @@ if __name__ == "__main__":
                           <div>
                             <h5 className="text-xs font-semibold text-slate-500 uppercase mb-2">🌟 팀 상태 & 분위기</h5>
                             <div className="flex flex-wrap gap-2">
-                              <label className="inline-flex items-center px-3 py-2 bg-white border-2 border-slate-200 rounded-lg cursor-pointer hover:border-blue-300 transition-all">
-                                <input type="checkbox" className="w-4 h-4 text-blue-600 rounded focus:ring-blue-500 focus:ring-2" />
-                                <span className="ml-2 text-sm text-slate-700">신규 팀 (결성 1년 이내)</span>
-                              </label>
-                              <label className="inline-flex items-center px-3 py-2 bg-white border-2 border-slate-200 rounded-lg cursor-pointer hover:border-blue-300 transition-all">
-                                <input type="checkbox" className="w-4 h-4 text-blue-600 rounded focus:ring-blue-500 focus:ring-2" />
-                                <span className="ml-2 text-sm text-slate-700">안정기 팀</span>
-                              </label>
-                              <label className="inline-flex items-center px-3 py-2 bg-white border-2 border-slate-200 rounded-lg cursor-pointer hover:border-blue-300 transition-all">
-                                <input type="checkbox" className="w-4 h-4 text-blue-600 rounded focus:ring-blue-500 focus:ring-2" />
-                                <span className="ml-2 text-sm text-slate-700">변화기 (구조조정/재편)</span>
-                              </label>
-                              <label className="inline-flex items-center px-3 py-2 bg-white border-2 border-slate-200 rounded-lg cursor-pointer hover:border-green-300 transition-all">
-                                <input type="checkbox" className="w-4 h-4 text-green-600 rounded focus:ring-green-500 focus:ring-2" />
-                                <span className="ml-2 text-sm text-slate-700">동기부여 높음</span>
-                              </label>
-                              <label className="inline-flex items-center px-3 py-2 bg-white border-2 border-slate-200 rounded-lg cursor-pointer hover:border-green-300 transition-all">
-                                <input type="checkbox" className="w-4 h-4 text-green-600 rounded focus:ring-green-500 focus:ring-2" />
-                                <span className="ml-2 text-sm text-slate-700">팀워크 좋음</span>
-                              </label>
-                              <label className="inline-flex items-center px-3 py-2 bg-white border-2 border-slate-200 rounded-lg cursor-pointer hover:border-red-300 transition-all">
-                                <input type="checkbox" className="w-4 h-4 text-red-600 rounded focus:ring-red-500 focus:ring-2" />
-                                <span className="ml-2 text-sm text-slate-700">동기부여 낮음</span>
-                              </label>
-                              <label className="inline-flex items-center px-3 py-2 bg-white border-2 border-slate-200 rounded-lg cursor-pointer hover:border-red-300 transition-all">
-                                <input type="checkbox" className="w-4 h-4 text-red-600 rounded focus:ring-red-500 focus:ring-2" />
-                                <span className="ml-2 text-sm text-slate-700">번아웃/피로도 높음</span>
-                              </label>
-                              <label className="inline-flex items-center px-3 py-2 bg-white border-2 border-slate-200 rounded-lg cursor-pointer hover:border-red-300 transition-all">
-                                <input type="checkbox" className="w-4 h-4 text-red-600 rounded focus:ring-red-500 focus:ring-2" />
-                                <span className="ml-2 text-sm text-slate-700">이직률 높음</span>
-                              </label>
+                              {['신규 팀 (결성 1년 이내)', '안정기 팀', '변화기 (구조조정/재편)'].map(item => (
+                                <label key={item} className={`inline-flex items-center px-3 py-2 bg-white border-2 rounded-lg cursor-pointer transition-all ${teamCharacteristics.includes(item) ? 'border-blue-400 bg-blue-50' : 'border-slate-200 hover:border-blue-300'}`}>
+                                  <input type="checkbox" checked={teamCharacteristics.includes(item)} onChange={() => toggleCharacteristic(item)} className="w-4 h-4 text-blue-600 rounded focus:ring-blue-500 focus:ring-2" />
+                                  <span className="ml-2 text-sm text-slate-700">{item}</span>
+                                </label>
+                              ))}
+                              {['동기부여 높음', '팀워크 좋음'].map(item => (
+                                <label key={item} className={`inline-flex items-center px-3 py-2 bg-white border-2 rounded-lg cursor-pointer transition-all ${teamCharacteristics.includes(item) ? 'border-green-400 bg-green-50' : 'border-slate-200 hover:border-green-300'}`}>
+                                  <input type="checkbox" checked={teamCharacteristics.includes(item)} onChange={() => toggleCharacteristic(item)} className="w-4 h-4 text-green-600 rounded focus:ring-green-500 focus:ring-2" />
+                                  <span className="ml-2 text-sm text-slate-700">{item}</span>
+                                </label>
+                              ))}
+                              {['동기부여 낮음', '번아웃/피로도 높음', '이직률 높음'].map(item => (
+                                <label key={item} className={`inline-flex items-center px-3 py-2 bg-white border-2 rounded-lg cursor-pointer transition-all ${teamCharacteristics.includes(item) ? 'border-red-400 bg-red-50' : 'border-slate-200 hover:border-red-300'}`}>
+                                  <input type="checkbox" checked={teamCharacteristics.includes(item)} onChange={() => toggleCharacteristic(item)} className="w-4 h-4 text-red-600 rounded focus:ring-red-500 focus:ring-2" />
+                                  <span className="ml-2 text-sm text-slate-700">{item}</span>
+                                </label>
+                              ))}
                             </div>
                           </div>
                         </div>
@@ -2240,6 +2237,8 @@ if __name__ == "__main__":
                         </div>
 
                         <textarea
+                          value={teamFreeOpinionInput}
+                          onChange={(e) => setTeamFreeOpinionInput(e.target.value)}
                           placeholder="예시: 데이터 전문가 5명, 기획자 3명으로 분석 역량이 강함. 최근 신규 입사자 3명 합류로 팀 분위기 변화 중."
                           className="w-full h-24 px-4 py-3 bg-white border-2 border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-purple-400/50 focus:border-purple-400 resize-none"
                           style={{ lineHeight: '1.6' }}
@@ -2266,101 +2265,37 @@ if __name__ == "__main__":
 
                     {/* Constraint Checkboxes - 2 Columns */}
                     <div className="grid md:grid-cols-2 gap-3 mb-8">
-                      <label className="flex items-start gap-3 p-4 bg-slate-50 hover:bg-orange-50 border-2 border-slate-200 hover:border-orange-300 rounded-xl cursor-pointer transition-all group">
-                        <input type="checkbox" className="mt-1 w-5 h-5 text-orange-600 rounded focus:ring-orange-500 focus:ring-2" />
-                        <div className="flex-1">
-                          <span className="text-base font-medium text-slate-900 group-hover:text-orange-700">복잡하고 어려운 일이 많음</span>
-                          <p className="text-xs text-slate-500 mt-1">고도의 전문성 필요, 복잡한 문제 해결</p>
-                        </div>
-                      </label>
-
-                      <label className="flex items-start gap-3 p-4 bg-slate-50 hover:bg-orange-50 border-2 border-slate-200 hover:border-orange-300 rounded-xl cursor-pointer transition-all group">
-                        <input type="checkbox" className="mt-1 w-5 h-5 text-orange-600 rounded focus:ring-orange-500 focus:ring-2" />
-                        <div className="flex-1">
-                          <span className="text-base font-medium text-slate-900 group-hover:text-orange-700">단순 반복 업무가 많음</span>
-                          <p className="text-xs text-slate-500 mt-1">동일 패턴 리포트, 데이터 입력 등</p>
-                        </div>
-                      </label>
-
-                      <label className="flex items-start gap-3 p-4 bg-slate-50 hover:bg-orange-50 border-2 border-slate-200 hover:border-orange-300 rounded-xl cursor-pointer transition-all group">
-                        <input type="checkbox" className="mt-1 w-5 h-5 text-orange-600 rounded focus:ring-orange-500 focus:ring-2" />
-                        <div className="flex-1">
-                          <span className="text-base font-medium text-slate-900 group-hover:text-orange-700">조율 업무가 많음</span>
-                          <p className="text-xs text-slate-500 mt-1">여러 부서 협의, 복잡한 승인 과정</p>
-                        </div>
-                      </label>
-
-                      <label className="flex items-start gap-3 p-4 bg-slate-50 hover:bg-orange-50 border-2 border-slate-200 hover:border-orange-300 rounded-xl cursor-pointer transition-all group">
-                        <input type="checkbox" className="mt-1 w-5 h-5 text-orange-600 rounded focus:ring-orange-500 focus:ring-2" />
-                        <div className="flex-1">
-                          <span className="text-base font-medium text-slate-900 group-hover:text-orange-700">외부 환경에 따라 계획 변경</span>
-                          <p className="text-xs text-slate-500 mt-1">시장 변화, 고객 요청에 우선순위 수시 변경</p>
-                        </div>
-                      </label>
-
-                      <label className="flex items-start gap-3 p-4 bg-slate-50 hover:bg-orange-50 border-2 border-slate-200 hover:border-orange-300 rounded-xl cursor-pointer transition-all group">
-                        <input type="checkbox" className="mt-1 w-5 h-5 text-orange-600 rounded focus:ring-orange-500 focus:ring-2" />
-                        <div className="flex-1">
-                          <span className="text-base font-medium text-slate-900 group-hover:text-orange-700">업무 과부하 (인력 부족)</span>
-                          <p className="text-xs text-slate-500 mt-1">해야 할 일 대비 팀원 수 부족</p>
-                        </div>
-                      </label>
-
-                      <label className="flex items-start gap-3 p-4 bg-slate-50 hover:bg-orange-50 border-2 border-slate-200 hover:border-orange-300 rounded-xl cursor-pointer transition-all group">
-                        <input type="checkbox" className="mt-1 w-5 h-5 text-orange-600 rounded focus:ring-orange-500 focus:ring-2" />
-                        <div className="flex-1">
-                          <span className="text-base font-medium text-slate-900 group-hover:text-orange-700">업무 표준화 부족</span>
-                          <p className="text-xs text-slate-500 mt-1">매번 다르게 처리, 일관성 없음</p>
-                        </div>
-                      </label>
-
-                      <label className="flex items-start gap-3 p-4 bg-slate-50 hover:bg-orange-50 border-2 border-slate-200 hover:border-orange-300 rounded-xl cursor-pointer transition-all group">
-                        <input type="checkbox" className="mt-1 w-5 h-5 text-orange-600 rounded focus:ring-orange-500 focus:ring-2" />
-                        <div className="flex-1">
-                          <span className="text-base font-medium text-slate-900 group-hover:text-orange-700">정보/도구 부족</span>
-                          <p className="text-xs text-slate-500 mt-1">필요한 시스템, 데이터 접근 어려움</p>
-                        </div>
-                      </label>
-
-                      <label className="flex items-start gap-3 p-4 bg-slate-50 hover:bg-orange-50 border-2 border-slate-200 hover:border-orange-300 rounded-xl cursor-pointer transition-all group">
-                        <input type="checkbox" className="mt-1 w-5 h-5 text-orange-600 rounded focus:ring-orange-500 focus:ring-2" />
-                        <div className="flex-1">
-                          <span className="text-base font-medium text-slate-900 group-hover:text-orange-700">긴급 요청이 많음</span>
-                          <p className="text-xs text-slate-500 mt-1">갑작스런 요청으로 계획된 업무 중단</p>
-                        </div>
-                      </label>
-
-                      <label className="flex items-start gap-3 p-4 bg-slate-50 hover:bg-orange-50 border-2 border-slate-200 hover:border-orange-300 rounded-xl cursor-pointer transition-all group">
-                        <input type="checkbox" className="mt-1 w-5 h-5 text-orange-600 rounded focus:ring-orange-500 focus:ring-2" />
-                        <div className="flex-1">
-                          <span className="text-base font-medium text-slate-900 group-hover:text-orange-700">의사결정 지연</span>
-                          <p className="text-xs text-slate-500 mt-1">승인/결정이 늦어져 업무 진행 막힘</p>
-                        </div>
-                      </label>
-
-                      <label className="flex items-start gap-3 p-4 bg-slate-50 hover:bg-orange-50 border-2 border-slate-200 hover:border-orange-300 rounded-xl cursor-pointer transition-all group">
-                        <input type="checkbox" className="mt-1 w-5 h-5 text-orange-600 rounded focus:ring-orange-500 focus:ring-2" />
-                        <div className="flex-1">
-                          <span className="text-base font-medium text-slate-900 group-hover:text-orange-700">레거시 시스템/프로세스</span>
-                          <p className="text-xs text-slate-500 mt-1">오래되고 비효율적인 방식 사용</p>
-                        </div>
-                      </label>
-
-                      <label className="flex items-start gap-3 p-4 bg-slate-50 hover:bg-orange-50 border-2 border-slate-200 hover:border-orange-300 rounded-xl cursor-pointer transition-all group">
-                        <input type="checkbox" className="mt-1 w-5 h-5 text-orange-600 rounded focus:ring-orange-500 focus:ring-2" />
-                        <div className="flex-1">
-                          <span className="text-base font-medium text-slate-900 group-hover:text-orange-700">지식/노하우 공유 부족</span>
-                          <p className="text-xs text-slate-500 mt-1">특정 사람만 알고 있어 병목 발생</p>
-                        </div>
-                      </label>
-
-                      <label className="flex items-start gap-3 p-4 bg-slate-50 hover:bg-orange-50 border-2 border-slate-200 hover:border-orange-300 rounded-xl cursor-pointer transition-all group">
-                        <input type="checkbox" className="mt-1 w-5 h-5 text-orange-600 rounded focus:ring-orange-500 focus:ring-2" />
-                        <div className="flex-1">
-                          <span className="text-base font-medium text-slate-900 group-hover:text-orange-700">품질 검증 시간 부족</span>
-                          <p className="text-xs text-slate-500 mt-1">빠듯한 일정으로 검토 시간 없음</p>
-                        </div>
-                      </label>
+                      {[
+                        { label: '복잡하고 어려운 일이 많음', desc: '고도의 전문성 필요, 복잡한 문제 해결' },
+                        { label: '단순 반복 업무가 많음', desc: '동일 패턴 리포트, 데이터 입력 등' },
+                        { label: '조율 업무가 많음', desc: '여러 부서 협의, 복잡한 승인 과정' },
+                        { label: '외부 환경에 따라 계획 변경', desc: '시장 변화, 고객 요청에 우선순위 수시 변경' },
+                        { label: '업무 과부하 (인력 부족)', desc: '해야 할 일 대비 팀원 수 부족' },
+                        { label: '업무 표준화 부족', desc: '매번 다르게 처리, 일관성 없음' },
+                        { label: '정보/도구 부족', desc: '필요한 시스템, 데이터 접근 어려움' },
+                        { label: '긴급 요청이 많음', desc: '갑작스런 요청으로 계획된 업무 중단' },
+                        { label: '의사결정 지연', desc: '승인/결정이 늦어져 업무 진행 막힘' },
+                        { label: '레거시 시스템/프로세스', desc: '오래되고 비효율적인 방식 사용' },
+                        { label: '지식/노하우 공유 부족', desc: '특정 사람만 알고 있어 병목 발생' },
+                        { label: '품질 검증 시간 부족', desc: '빠듯한 일정으로 검토 시간 없음' }
+                      ].map((item) => (
+                        <label key={item.label} className={`flex items-start gap-3 p-4 border-2 rounded-xl cursor-pointer transition-all group ${
+                          constraintCheckboxes.includes(item.label)
+                            ? 'bg-orange-50 border-orange-400'
+                            : 'bg-slate-50 hover:bg-orange-50 border-slate-200 hover:border-orange-300'
+                        }`}>
+                          <input
+                            type="checkbox"
+                            checked={constraintCheckboxes.includes(item.label)}
+                            onChange={() => toggleConstraint(item.label)}
+                            className="mt-1 w-5 h-5 text-orange-600 rounded focus:ring-orange-500 focus:ring-2"
+                          />
+                          <div className="flex-1">
+                            <span className={`text-base font-medium ${constraintCheckboxes.includes(item.label) ? 'text-orange-700' : 'text-slate-900 group-hover:text-orange-700'}`}>{item.label}</span>
+                            <p className="text-xs text-slate-500 mt-1">{item.desc}</p>
+                          </div>
+                        </label>
+                      ))}
                     </div>
 
                     {/* Controllable Issues Section */}
@@ -2379,6 +2314,8 @@ if __name__ == "__main__":
                         </div>
                       </div>
                       <textarea
+                        value={controllableIssuesInput}
+                        onChange={(e) => setControllableIssuesInput(e.target.value)}
                         placeholder="예시: 단순 반복 업무는 자동화로 해결 가능할 것 같음. 업무 과부하는 우선순위 조정과 업무 분배 개선으로 일부 해결 가능."
                         className="w-full h-24 px-4 py-3 bg-white border-2 border-blue-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-400/50 focus:border-blue-400 resize-none"
                         style={{ lineHeight: '1.6' }}
@@ -2441,7 +2378,9 @@ if __name__ == "__main__":
                 {/* 이전 단계 입력 요약 - 우리 팀 컨텍스트 */}
                 <div className="bg-white rounded-2xl p-5 mb-6 border border-slate-200 shadow-sm">
                   <p className="text-xs font-semibold text-slate-400 uppercase tracking-wide mb-4">📋 앞서 정리한 우리 팀 컨텍스트</p>
-                  <div className="grid md:grid-cols-3 gap-4">
+
+                  {/* 미션 & 고객가치 - 2열 */}
+                  <div className="grid md:grid-cols-2 gap-4 mb-4">
                     {/* 미션 */}
                     <div className="bg-blue-50/50 rounded-xl p-4 border border-blue-100">
                       <p className="text-xs font-semibold text-blue-600 mb-1">🎯 팀 미션</p>
@@ -2456,12 +2395,48 @@ if __name__ == "__main__":
                         {customerInput || <span className="text-slate-400 italic">미입력</span>}
                       </p>
                     </div>
-                    {/* 팀 상황 */}
-                    <div className="bg-purple-50/50 rounded-xl p-4 border border-purple-100">
-                      <p className="text-xs font-semibold text-purple-600 mb-1">🏢 팀 상황</p>
-                      <p className="text-sm text-slate-700">
-                        {teamSizeInput > 0 ? `${teamSizeInput}명` : <span className="text-slate-400 italic">미입력</span>}
-                      </p>
+                  </div>
+
+                  {/* 팀 상황 - 전체 너비 */}
+                  <div className="bg-purple-50/50 rounded-xl p-4 border border-purple-100">
+                    <div className="flex flex-wrap items-center gap-x-6 gap-y-3">
+                      {/* 팀 규모 & 결성 */}
+                      <div className="flex items-center gap-2">
+                        <p className="text-xs font-semibold text-purple-600">🏢 팀 상황</p>
+                        <p className="text-sm text-slate-700">
+                          {teamSizeInput > 0 ? `${teamSizeInput}명` : <span className="text-slate-400 italic">미입력</span>}
+                          {teamFormationInput && <span className="text-slate-500"> · {teamFormationInput}</span>}
+                        </p>
+                      </div>
+
+                      {/* 팀 특성 */}
+                      {teamCharacteristics.length > 0 && (
+                        <div className="flex items-center gap-2">
+                          <span className="text-slate-300">|</span>
+                          <div className="flex flex-wrap gap-1">
+                            {teamCharacteristics.map((char, idx) => (
+                              <span key={idx} className="text-xs px-2 py-0.5 bg-purple-100 text-purple-700 rounded-full">
+                                {char}
+                              </span>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+
+                      {/* 제약조건 */}
+                      {constraintCheckboxes.length > 0 && (
+                        <div className="flex items-center gap-2">
+                          <span className="text-slate-300">|</span>
+                          <p className="text-xs font-semibold text-orange-600">⚠️</p>
+                          <div className="flex flex-wrap gap-1">
+                            {constraintCheckboxes.map((constraint, idx) => (
+                              <span key={idx} className="text-xs px-2 py-0.5 bg-orange-100 text-orange-700 rounded-full">
+                                {constraint}
+                              </span>
+                            ))}
+                          </div>
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -2500,14 +2475,16 @@ if __name__ == "__main__":
 
                     <div className="space-y-3">
                       {[
-                        { label: '반복·수작업', placeholder: '매번 똑같이 하는데 자동화 안 된 일은?' },
-                        { label: '대기·지연', placeholder: '답변/승인 기다리느라 멈추는 일은?' },
-                        { label: '재작업', placeholder: '한 번에 안 끝나고 자꾸 다시 하는 일은?' },
-                        { label: '불필요한 일', placeholder: '"왜 이걸 하지?" 싶은데 관성으로 하는 일은?' }
-                      ].map((item, idx) => (
-                        <div key={idx} className="p-3 rounded-xl bg-red-50/50">
+                        { key: 'repetitive', label: '반복·수작업', placeholder: '매번 똑같이 하는데 자동화 안 된 일은?' },
+                        { key: 'waiting', label: '대기·지연', placeholder: '답변/승인 기다리느라 멈추는 일은?' },
+                        { key: 'rework', label: '재작업', placeholder: '한 번에 안 끝나고 자꾸 다시 하는 일은?' },
+                        { key: 'unnecessary', label: '불필요한 일', placeholder: '"왜 이걸 하지?" 싶은데 관성으로 하는 일은?' }
+                      ].map((item) => (
+                        <div key={item.key} className="p-3 rounded-xl bg-red-50/50">
                           <label className="text-xs font-semibold text-red-600 mb-1.5 block">{item.label}</label>
                           <textarea
+                            value={reduceWorkInput[item.key as keyof typeof reduceWorkInput]}
+                            onChange={(e) => setReduceWorkInput(prev => ({ ...prev, [item.key]: e.target.value }))}
                             placeholder={item.placeholder}
                             rows={2}
                             className="w-full px-3 py-2.5 text-sm border border-red-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-300 bg-white resize-none"
@@ -2531,14 +2508,16 @@ if __name__ == "__main__":
 
                     <div className="space-y-3">
                       {[
-                        { label: '전략·기획', placeholder: '하고 싶은데 시간이 없어서 못 하는 일은?' },
-                        { label: '협업·소통', placeholder: '다른 팀/고객과 더 소통하면 좋을 일은?' },
-                        { label: '품질 향상', placeholder: '지금보다 더 깊이/정교하게 해야 할 일은?' },
-                        { label: '선제적 대응', placeholder: '문제 터지기 전에 미리 준비해야 할 일은?' }
-                      ].map((item, idx) => (
-                        <div key={idx} className="p-3 rounded-xl bg-emerald-50/50">
+                        { key: 'strategy', label: '전략·기획', placeholder: '하고 싶은데 시간이 없어서 못 하는 일은?' },
+                        { key: 'collaboration', label: '협업·소통', placeholder: '다른 팀/고객과 더 소통하면 좋을 일은?' },
+                        { key: 'quality', label: '품질 향상', placeholder: '지금보다 더 깊이/정교하게 해야 할 일은?' },
+                        { key: 'proactive', label: '선제적 대응', placeholder: '문제 터지기 전에 미리 준비해야 할 일은?' }
+                      ].map((item) => (
+                        <div key={item.key} className="p-3 rounded-xl bg-emerald-50/50">
                           <label className="text-xs font-semibold text-emerald-600 mb-1.5 block">{item.label}</label>
                           <textarea
+                            value={enhanceWorkInput[item.key as keyof typeof enhanceWorkInput]}
+                            onChange={(e) => setEnhanceWorkInput(prev => ({ ...prev, [item.key]: e.target.value }))}
                             placeholder={item.placeholder}
                             rows={2}
                             className="w-full px-3 py-2.5 text-sm border border-emerald-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-300 bg-white resize-none"
@@ -2569,10 +2548,10 @@ if __name__ == "__main__":
                     이전
                   </button>
                   <button
-                    onPointerDown={() => setCurrentStep(5)}
-                    className="flex items-center gap-2 px-5 py-2.5 bg-teal-600 text-white font-medium rounded-lg hover:bg-teal-700 transition-all"
+                    onPointerDown={() => setShowPhaseSummary(1)}
+                    className="flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-medium rounded-lg hover:from-indigo-700 hover:to-purple-700 transition-all"
                   >
-                    다음
+                    Phase 1 완료
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                     </svg>
@@ -3057,7 +3036,7 @@ if __name__ == "__main__":
           {currentStep === 8 && (
             <Step7Summary
               workshop={workshop}
-              onNext={() => setCurrentStep(9)}
+              onNext={() => setShowPhaseSummary(2)}
               onBack={() => setCurrentStep(7)}
             />
           )}
@@ -3309,6 +3288,41 @@ if __name__ == "__main__":
           onClose={closeTaskDetailsModal}
         />
       )}
+
+      {/* Phase Summary 모달 */}
+      <PhaseSummary
+        phase={showPhaseSummary || 1}
+        isOpen={showPhaseSummary !== null}
+        onClose={() => setShowPhaseSummary(null)}
+        onContinue={() => {
+          if (showPhaseSummary === 1) {
+            setShowPhaseSummary(null);
+            setCurrentStep(5);
+          } else if (showPhaseSummary === 2) {
+            setShowPhaseSummary(null);
+            setCurrentStep(9);
+          }
+        }}
+        phase1Data={showPhaseSummary === 1 ? {
+          mission: missionInput,
+          customer: customerInput,
+          teamSize: teamSizeInput,
+          teamFormation: teamFormationInput,
+          teamComposition: teamCompositionInput,
+          teamCharacteristics: teamCharacteristics,
+          teamFreeOpinion: teamFreeOpinionInput,
+          constraints: constraintCheckboxes,
+          controllableIssues: controllableIssuesInput,
+          reduceWork: reduceWorkInput,
+          enhanceWork: enhanceWorkInput,
+        } : undefined}
+        phase2Data={showPhaseSummary === 2 ? {
+          domains: workshop.domains,
+          uploadedFiles: uploadedFiles.map(f => f.file.name),
+          tasks: workshop.tasks,
+          selectedTaskIds: workshop.selectedTaskIds,
+        } : undefined}
+      />
     </div>
   );
 }

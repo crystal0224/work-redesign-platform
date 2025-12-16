@@ -805,15 +805,36 @@ export default function Step4TaskExtraction({ workshopId, domains, onNext, manua
           />
         )}
         {!loading && error ? (
-          <div className="bg-red-50/90 backdrop-blur-xl border border-red-200 rounded-[32px] p-10 text-center shadow-xl">
-            <p className="text-red-700 font-bold text-xl mb-4">⚠️ 업무 추출에 실패했습니다</p>
-            <p className="text-red-600 mb-6">{error}</p>
-            <button
-              onClick={extractTasks}
-              className="px-6 py-3 bg-red-600 text-white rounded-xl hover:bg-red-700 transition-all font-bold shadow-lg hover:shadow-red-200"
-            >
-              다시 시도
-            </button>
+          <div className="bg-white rounded-2xl border border-slate-200 p-8 shadow-sm">
+            <div className="text-center mb-8">
+              <div className="w-16 h-16 bg-amber-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <span className="text-3xl">⚠️</span>
+              </div>
+              <h3 className="text-xl font-bold text-slate-900 mb-2">서버 연결 실패</h3>
+              <p className="text-slate-600 mb-6">{error}</p>
+              <div className="flex justify-center gap-4">
+                <button
+                  onClick={extractTasks}
+                  className="px-5 py-2.5 bg-white border border-slate-300 text-slate-700 rounded-xl hover:bg-slate-50 transition-all font-medium"
+                >
+                  다시 시도
+                </button>
+                <button
+                  onClick={() => {
+                    setError('');
+                    setExtractedTasks([]);
+                  }}
+                  className="px-5 py-2.5 bg-indigo-600 text-white rounded-xl hover:bg-indigo-700 transition-all font-medium"
+                >
+                  직접 업무 추가하기
+                </button>
+              </div>
+            </div>
+            <div className="border-t border-slate-100 pt-6">
+              <p className="text-sm text-slate-500 text-center">
+                💡 서버가 실행되지 않아도 "직접 업무 추가하기"를 눌러 수동으로 업무를 등록할 수 있습니다.
+              </p>
+            </div>
           </div>
         ) : (
           <div className="space-y-8">

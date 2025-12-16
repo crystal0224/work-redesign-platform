@@ -3,222 +3,430 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Work Redesign Platform - Demo Guide</title>
+    <title>Work Re-design Platform - Demo Guide</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Pretendard:wght@300;400;500;600;700&display=swap');
-        body { font-family: 'Pretendard', sans-serif; }
-        .step-card { @apply bg-white rounded-xl shadow-sm border border-slate-200 p-6 mb-6 transition-all hover:shadow-md; }
-        .step-header { @apply flex items-center gap-3 mb-4 pb-3 border-b border-slate-100; }
-        .step-number { @apply w-8 h-8 rounded-lg bg-blue-600 text-white flex items-center justify-center font-bold text-sm; }
-        .step-title { @apply text-lg font-bold text-slate-800; }
-        .input-box { @apply bg-slate-50 border border-slate-200 rounded-lg p-4 my-3 text-slate-700 text-sm leading-relaxed; }
-        .copy-btn { @apply float-right text-xs bg-white border border-slate-300 px-2 py-1 rounded text-slate-500 hover:bg-slate-50 hover:text-blue-600 transition-colors cursor-pointer; }
-        .tip-box { @apply bg-amber-50 border border-amber-200 rounded-lg p-3 text-xs text-amber-800 mt-3 flex items-start gap-2; }
+        @import url('https://fonts.googleapis.com/css2?family=Pretendard:wght@300;400;500;600;700;800&display=swap');
+        body { font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif; }
+        .input-box { position: relative; }
+        .input-box .copy-btn {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+        .input-box:hover .copy-btn { opacity: 1; }
     </style>
 </head>
-<body class="bg-slate-50 text-slate-800">
-    <div class="max-w-3xl mx-auto px-4 py-8">
+<body class="bg-gradient-to-br from-slate-50 via-indigo-50/30 to-purple-50/20 min-h-screen text-slate-800">
+    <div class="max-w-4xl mx-auto px-6 py-12">
+
         <!-- Header -->
-        <header class="mb-8 text-center">
-            <h1 class="text-3xl font-black text-slate-900 mb-2">Demo Input Guide</h1>
-            <p class="text-slate-600">Work Redesign Platform 데모 시연 가이드 (마케팅기획팀)</p>
+        <header class="mb-12 text-center">
+            <div class="inline-flex items-center gap-2 px-4 py-2 bg-indigo-50 border border-indigo-100 rounded-full mb-6">
+                <span class="text-lg">🤖</span>
+                <span class="text-sm font-semibold text-indigo-600">AI 협업 설계 워크샵</span>
+            </div>
+            <h1 class="text-4xl font-black text-slate-900 mb-3">
+                Work <span class="text-indigo-600">Re-design</span> Demo Guide
+            </h1>
+            <p class="text-lg text-slate-600">마케팅기획팀 시나리오 기반 데모 시연 가이드</p>
         </header>
 
-        <!-- Step 1 -->
-        <div class="step-card">
-            <div class="step-header">
-                <div class="step-number">01</div>
-                <h2 class="step-title">워크샵 시작 (Start)</h2>
-            </div>
-            <ul class="list-disc list-inside text-sm text-slate-600 space-y-1">
-                <li><span class="font-semibold text-blue-600">Action:</span> "워크샵 시작하기" 버튼 클릭</li>
-                <li><span class="font-semibold text-emerald-600">Check:</span> 전체적인 워크샵 흐름(11단계)이 표시되는지 확인</li>
-            </ul>
-        </div>
-
-        <!-- Step 2 -->
-        <div class="step-card border-l-4 border-l-blue-500">
-            <div class="step-header">
-                <div class="step-number">02</div>
-                <h2 class="step-title">미션 작성 (Mission)</h2>
-            </div>
-            
-            <div class="mb-6">
-                <h3 class="text-sm font-bold text-slate-900 mb-2">질문 1: 성공 기준 (Success Criteria)</h3>
-                <div class="input-box relative group">
-                    <button class="copy-btn" onclick="copyText(this)">복사</button>
-                    데이터 기반의 의사결정과 창의적인 마케팅 전략을 통해 브랜드 가치를 극대화하고, 고객에게 최적의 경험을 제공하여 비즈니스 성장을 견인한다.
+        <!-- Phase Overview -->
+        <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 mb-10">
+            <h2 class="text-sm font-bold text-slate-400 uppercase tracking-wider mb-4">Workshop Overview</h2>
+            <div class="grid md:grid-cols-3 gap-4">
+                <div class="bg-teal-50/50 rounded-xl p-4 border border-teal-100">
+                    <div class="flex items-center gap-2 mb-2">
+                        <span class="text-lg">🧭</span>
+                        <span class="text-xs font-bold text-teal-600 uppercase">Phase 1</span>
+                    </div>
+                    <p class="font-bold text-slate-800 mb-1">팀 업무 재정의</p>
+                    <p class="text-xs text-slate-500">Step 1-4</p>
                 </div>
-            </div>
-
-            <div>
-                <h3 class="text-sm font-bold text-slate-900 mb-2">질문 2: 고객 및 가치 (Customer & Value)</h3>
-                <div class="input-box relative group">
-                    <button class="copy-btn" onclick="copyText(this)">복사</button>
-                    고객사 담당자들에게 빠르고 정확한 문제 해결을 제공하여 신뢰를 구축하고, 내부 영업팀에게 데이터 기반 인사이트를 제공하여 매출 증대에 기여한다.
+                <div class="bg-amber-50/50 rounded-xl p-4 border border-amber-100">
+                    <div class="flex items-center gap-2 mb-2">
+                        <span class="text-lg">🧩</span>
+                        <span class="text-xs font-bold text-amber-600 uppercase">Phase 2</span>
+                    </div>
+                    <p class="font-bold text-slate-800 mb-1">Task 분해</p>
+                    <p class="text-xs text-slate-500">Step 5-8</p>
                 </div>
-            </div>
-            
-            <div class="tip-box">
-                <span>💡</span>
-                <p>두 질문에 모두 답변을 입력해야 다음 단계로 넘어갈 수 있습니다.</p>
+                <div class="bg-indigo-50/50 rounded-xl p-4 border border-indigo-100">
+                    <div class="flex items-center gap-2 mb-2">
+                        <span class="text-lg">🤖</span>
+                        <span class="text-xs font-bold text-indigo-600 uppercase">Phase 3</span>
+                    </div>
+                    <p class="font-bold text-slate-800 mb-1">AI 협업 설계</p>
+                    <p class="text-xs text-slate-500">Step 9-12</p>
+                </div>
             </div>
         </div>
 
-        <!-- Step 3 -->
-        <div class="step-card border-l-4 border-l-indigo-500">
-            <div class="step-header">
-                <div class="step-number">03</div>
-                <h2 class="step-title">팀 상황 확인 (Team Context)</h2>
-            </div>
-
-            <div class="grid grid-cols-2 gap-4 mb-4">
-                <div>
-                    <span class="text-xs font-bold text-slate-500 uppercase">팀원 수</span>
-                    <div class="text-lg font-bold text-slate-900">13명</div>
+        <!-- Phase 1: 팀 업무 재정의 -->
+        <div class="mb-10">
+            <div class="flex items-center gap-3 mb-6">
+                <div class="w-10 h-10 rounded-xl bg-teal-100 flex items-center justify-center">
+                    <span class="text-xl">🧭</span>
                 </div>
                 <div>
-                    <span class="text-xs font-bold text-slate-500 uppercase">결성 시기</span>
-                    <div class="text-lg font-bold text-slate-900">3년 전</div>
+                    <span class="text-xs font-bold text-teal-600 uppercase tracking-wider">Phase 1</span>
+                    <h2 class="text-xl font-bold text-slate-900">팀 업무 재정의</h2>
                 </div>
             </div>
 
-            <div class="space-y-3 mb-4">
-                <div>
-                    <span class="text-xs font-bold text-slate-500 block mb-1">체크박스 선택 항목</span>
-                    <div class="flex flex-wrap gap-2">
-                        <span class="px-2 py-1 bg-blue-50 text-blue-700 text-xs rounded border border-blue-100">전문성이 높음</span>
-                        <span class="px-2 py-1 bg-blue-50 text-blue-700 text-xs rounded border border-blue-100">학습 의지 높음</span>
-                        <span class="px-2 py-1 bg-blue-50 text-blue-700 text-xs rounded border border-blue-100">경력 골고루 분포</span>
-                        <span class="px-2 py-1 bg-blue-50 text-blue-700 text-xs rounded border border-blue-100">소통이 활발함</span>
-                        <span class="px-2 py-1 bg-blue-50 text-blue-700 text-xs rounded border border-blue-100">수평적 문화</span>
-                        <span class="px-2 py-1 bg-blue-50 text-blue-700 text-xs rounded border border-blue-100">도전적/혁신적</span>
-                        <span class="px-2 py-1 bg-blue-50 text-blue-700 text-xs rounded border border-blue-100">빠른 실행력</span>
-                        <span class="px-2 py-1 bg-blue-50 text-blue-700 text-xs rounded border border-blue-100">안정기 팀</span>
-                        <span class="px-2 py-1 bg-blue-50 text-blue-700 text-xs rounded border border-blue-100">동기부여 높음</span>
+            <!-- Step 1 -->
+            <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-5 mb-4">
+                <div class="flex items-center gap-3 mb-3">
+                    <span class="w-7 h-7 rounded-lg bg-slate-100 flex items-center justify-center text-sm font-bold text-slate-600">1</span>
+                    <h3 class="font-bold text-slate-800">워크샵 시작</h3>
+                    <span class="text-xs text-slate-400">🚀</span>
+                </div>
+                <div class="pl-10">
+                    <p class="text-sm text-slate-600">
+                        <span class="font-semibold text-blue-600">Action:</span> "시작하기" 버튼 클릭
+                    </p>
+                </div>
+            </div>
+
+            <!-- Step 2 -->
+            <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-5 mb-4 border-l-4 border-l-blue-500">
+                <div class="flex items-center gap-3 mb-4">
+                    <span class="w-7 h-7 rounded-lg bg-blue-100 flex items-center justify-center text-sm font-bold text-blue-600">2</span>
+                    <h3 class="font-bold text-slate-800">미션 작성</h3>
+                    <span class="text-xs text-slate-400">🎯</span>
+                </div>
+                <div class="pl-10 space-y-4">
+                    <div>
+                        <label class="text-xs font-bold text-slate-500 uppercase block mb-2">팀 미션 (우리 팀이 존재하는 이유)</label>
+                        <div class="input-box bg-slate-50 border border-slate-200 rounded-lg p-4 text-sm text-slate-700 leading-relaxed">
+                            <button class="copy-btn text-xs bg-white border border-slate-300 px-2 py-1 rounded text-slate-500 hover:bg-blue-50 hover:text-blue-600 hover:border-blue-300 transition-colors cursor-pointer" onclick="copyText(this)">복사</button>
+                            데이터 기반의 의사결정과 창의적인 마케팅 전략을 통해 브랜드 가치를 극대화하고, 고객에게 최적의 경험을 제공하여 비즈니스 성장을 견인한다.
+                        </div>
+                    </div>
+                    <div>
+                        <label class="text-xs font-bold text-slate-500 uppercase block mb-2">고객 및 제공 가치</label>
+                        <div class="input-box bg-slate-50 border border-slate-200 rounded-lg p-4 text-sm text-slate-700 leading-relaxed">
+                            <button class="copy-btn text-xs bg-white border border-slate-300 px-2 py-1 rounded text-slate-500 hover:bg-blue-50 hover:text-blue-600 hover:border-blue-300 transition-colors cursor-pointer" onclick="copyText(this)">복사</button>
+                            고객사 담당자들에게 빠르고 정확한 문제 해결을 제공하여 신뢰를 구축하고, 내부 영업팀에게 데이터 기반 인사이트를 제공하여 매출 증대에 기여한다.
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <div class="mb-4">
-                <h3 class="text-sm font-bold text-slate-900 mb-2">추가 설명 (Optional)</h3>
-                <div class="input-box relative group">
-                    <button class="copy-btn" onclick="copyText(this)">복사</button>
-                    팀장 1명, 기획 담당 4명, 데이터 분석 3명, 채널 운영 3명, 디자인 지원 2명으로 구성됨. 최근 신규 입사자가 늘어 온보딩이 중요함.
+            <!-- Step 3 -->
+            <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-5 mb-4 border-l-4 border-l-indigo-500">
+                <div class="flex items-center gap-3 mb-4">
+                    <span class="w-7 h-7 rounded-lg bg-indigo-100 flex items-center justify-center text-sm font-bold text-indigo-600">3</span>
+                    <h3 class="font-bold text-slate-800">팀 상황 확인</h3>
+                    <span class="text-xs text-slate-400">👥</span>
+                </div>
+                <div class="pl-10 space-y-4">
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="bg-slate-50 rounded-lg p-3">
+                            <span class="text-xs font-bold text-slate-400 uppercase">팀원 수</span>
+                            <div class="text-lg font-bold text-slate-900">13명</div>
+                        </div>
+                        <div class="bg-slate-50 rounded-lg p-3">
+                            <span class="text-xs font-bold text-slate-400 uppercase">결성 시기</span>
+                            <div class="text-lg font-bold text-slate-900">3년 전</div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="text-xs font-bold text-slate-500 uppercase block mb-2">팀 특성 (체크박스 선택)</label>
+                        <div class="flex flex-wrap gap-2">
+                            <span class="px-2 py-1 bg-blue-50 text-blue-700 text-xs rounded-full border border-blue-100">전문성이 높음</span>
+                            <span class="px-2 py-1 bg-blue-50 text-blue-700 text-xs rounded-full border border-blue-100">학습 의지 높음</span>
+                            <span class="px-2 py-1 bg-blue-50 text-blue-700 text-xs rounded-full border border-blue-100">경력 골고루 분포</span>
+                            <span class="px-2 py-1 bg-blue-50 text-blue-700 text-xs rounded-full border border-blue-100">소통이 활발함</span>
+                            <span class="px-2 py-1 bg-blue-50 text-blue-700 text-xs rounded-full border border-blue-100">수평적 문화</span>
+                            <span class="px-2 py-1 bg-blue-50 text-blue-700 text-xs rounded-full border border-blue-100">도전적/혁신적</span>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="text-xs font-bold text-slate-500 uppercase block mb-2">팀 구성 (선택)</label>
+                        <div class="input-box bg-slate-50 border border-slate-200 rounded-lg p-4 text-sm text-slate-700 leading-relaxed">
+                            <button class="copy-btn text-xs bg-white border border-slate-300 px-2 py-1 rounded text-slate-500 hover:bg-blue-50 hover:text-blue-600 hover:border-blue-300 transition-colors cursor-pointer" onclick="copyText(this)">복사</button>
+                            팀장 1명, 기획 담당 4명, 데이터 분석 3명, 채널 운영 3명, 디자인 지원 2명으로 구성됨. 최근 신규 입사자가 늘어 온보딩이 중요함.
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="text-xs font-bold text-slate-500 uppercase block mb-2">제약조건 (체크박스 선택)</label>
+                        <div class="flex flex-wrap gap-2">
+                            <span class="px-2 py-1 bg-orange-50 text-orange-700 text-xs rounded-full border border-orange-100">단순 반복 업무가 많음</span>
+                            <span class="px-2 py-1 bg-orange-50 text-orange-700 text-xs rounded-full border border-orange-100">조율 업무가 많음</span>
+                            <span class="px-2 py-1 bg-orange-50 text-orange-700 text-xs rounded-full border border-orange-100">긴급 요청이 많음</span>
+                            <span class="px-2 py-1 bg-orange-50 text-orange-700 text-xs rounded-full border border-orange-100">정보/도구 부족</span>
+                        </div>
+                    </div>
                 </div>
             </div>
 
-            <div class="mb-4">
-                <h3 class="text-sm font-bold text-slate-900 mb-2">제약조건 (Constraints)</h3>
-                <div class="flex flex-wrap gap-2 mb-3">
-                    <span class="px-2 py-1 bg-orange-50 text-orange-700 text-xs rounded border border-orange-100">단순 반복 업무가 많음</span>
-                    <span class="px-2 py-1 bg-orange-50 text-orange-700 text-xs rounded border border-orange-100">조율 업무가 많음</span>
-                    <span class="px-2 py-1 bg-orange-50 text-orange-700 text-xs rounded border border-orange-100">긴급 요청이 많음</span>
-                    <span class="px-2 py-1 bg-orange-50 text-orange-700 text-xs rounded border border-orange-100">정보/도구 부족</span>
+            <!-- Step 4 -->
+            <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-5 mb-4 border-l-4 border-l-teal-500">
+                <div class="flex items-center gap-3 mb-4">
+                    <span class="w-7 h-7 rounded-lg bg-teal-100 flex items-center justify-center text-sm font-bold text-teal-600">4</span>
+                    <h3 class="font-bold text-slate-800">줄일 일 vs 강화할 일</h3>
+                    <span class="text-xs text-slate-400">🧭</span>
                 </div>
-            </div>
+                <div class="pl-10 space-y-6">
+                    <!-- 줄여야 할 일 -->
+                    <div>
+                        <label class="text-xs font-bold text-red-500 uppercase block mb-3">🔻 줄여야 할 일 (효율화/자동화)</label>
+                        <div class="grid grid-cols-2 gap-3">
+                            <div class="bg-red-50/50 border border-red-100 rounded-lg p-3">
+                                <div class="text-xs font-bold text-red-600 mb-1">반복·수작업</div>
+                                <div class="input-box bg-white border border-red-100 rounded p-2 text-xs text-slate-700">
+                                    <button class="copy-btn text-xs bg-white border border-slate-300 px-1.5 py-0.5 rounded text-slate-500 hover:bg-red-50 hover:text-red-600 hover:border-red-300 transition-colors cursor-pointer" onclick="copyText(this)">복사</button>
+                                    매주 엑셀로 데이터 취합하고 PPT 리포트 작성
+                                </div>
+                            </div>
+                            <div class="bg-red-50/50 border border-red-100 rounded-lg p-3">
+                                <div class="text-xs font-bold text-red-600 mb-1">대기·지연</div>
+                                <div class="input-box bg-white border border-red-100 rounded p-2 text-xs text-slate-700">
+                                    <button class="copy-btn text-xs bg-white border border-slate-300 px-1.5 py-0.5 rounded text-slate-500 hover:bg-red-50 hover:text-red-600 hover:border-red-300 transition-colors cursor-pointer" onclick="copyText(this)">복사</button>
+                                    타팀 데이터 수신 대기, 승인 대기로 업무 지연
+                                </div>
+                            </div>
+                            <div class="bg-red-50/50 border border-red-100 rounded-lg p-3">
+                                <div class="text-xs font-bold text-red-600 mb-1">재작업</div>
+                                <div class="input-box bg-white border border-red-100 rounded p-2 text-xs text-slate-700">
+                                    <button class="copy-btn text-xs bg-white border border-slate-300 px-1.5 py-0.5 rounded text-slate-500 hover:bg-red-50 hover:text-red-600 hover:border-red-300 transition-colors cursor-pointer" onclick="copyText(this)">복사</button>
+                                    피드백 후 수정 반복, 데이터 오류로 재분석
+                                </div>
+                            </div>
+                            <div class="bg-red-50/50 border border-red-100 rounded-lg p-3">
+                                <div class="text-xs font-bold text-red-600 mb-1">불필요한 일</div>
+                                <div class="input-box bg-white border border-red-100 rounded p-2 text-xs text-slate-700">
+                                    <button class="copy-btn text-xs bg-white border border-slate-300 px-1.5 py-0.5 rounded text-slate-500 hover:bg-red-50 hover:text-red-600 hover:border-red-300 transition-colors cursor-pointer" onclick="copyText(this)">복사</button>
+                                    형식적 주간 회의, 아무도 안 보는 리포트 작성
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
-            <div>
-                <h3 class="text-sm font-bold text-slate-900 mb-2">해결 가능한 문제 (Optional)</h3>
-                <div class="input-box relative group">
-                    <button class="copy-btn" onclick="copyText(this)">복사</button>
-                    단순 반복 업무는 자동화 도구 도입으로 해결 가능하며, 조율 업무는 프로세스 명확화를 통해 개선 가능함.
+                    <!-- 강화해야 할 일 -->
+                    <div>
+                        <label class="text-xs font-bold text-emerald-600 uppercase block mb-3">🔺 강화해야 할 일 (고부가가치)</label>
+                        <div class="grid grid-cols-2 gap-3">
+                            <div class="bg-emerald-50/50 border border-emerald-100 rounded-lg p-3">
+                                <div class="text-xs font-bold text-emerald-600 mb-1">전략·기획</div>
+                                <div class="input-box bg-white border border-emerald-100 rounded p-2 text-xs text-slate-700">
+                                    <button class="copy-btn text-xs bg-white border border-slate-300 px-1.5 py-0.5 rounded text-slate-500 hover:bg-emerald-50 hover:text-emerald-600 hover:border-emerald-300 transition-colors cursor-pointer" onclick="copyText(this)">복사</button>
+                                    연간 마케팅 전략 수립, 신규 채널 발굴 기획
+                                </div>
+                            </div>
+                            <div class="bg-emerald-50/50 border border-emerald-100 rounded-lg p-3">
+                                <div class="text-xs font-bold text-emerald-600 mb-1">협업·소통</div>
+                                <div class="input-box bg-white border border-emerald-100 rounded p-2 text-xs text-slate-700">
+                                    <button class="copy-btn text-xs bg-white border border-slate-300 px-1.5 py-0.5 rounded text-slate-500 hover:bg-emerald-50 hover:text-emerald-600 hover:border-emerald-300 transition-colors cursor-pointer" onclick="copyText(this)">복사</button>
+                                    영업팀과 고객 피드백 공유, 파트너사 협업
+                                </div>
+                            </div>
+                            <div class="bg-emerald-50/50 border border-emerald-100 rounded-lg p-3">
+                                <div class="text-xs font-bold text-emerald-600 mb-1">품질 향상</div>
+                                <div class="input-box bg-white border border-emerald-100 rounded p-2 text-xs text-slate-700">
+                                    <button class="copy-btn text-xs bg-white border border-slate-300 px-1.5 py-0.5 rounded text-slate-500 hover:bg-emerald-50 hover:text-emerald-600 hover:border-emerald-300 transition-colors cursor-pointer" onclick="copyText(this)">복사</button>
+                                    크리에이티브 퀄리티 개선, 데이터 분석 고도화
+                                </div>
+                            </div>
+                            <div class="bg-emerald-50/50 border border-emerald-100 rounded-lg p-3">
+                                <div class="text-xs font-bold text-emerald-600 mb-1">선제적 대응</div>
+                                <div class="input-box bg-white border border-emerald-100 rounded p-2 text-xs text-slate-700">
+                                    <button class="copy-btn text-xs bg-white border border-slate-300 px-1.5 py-0.5 rounded text-slate-500 hover:bg-emerald-50 hover:text-emerald-600 hover:border-emerald-300 transition-colors cursor-pointer" onclick="copyText(this)">복사</button>
+                                    트렌드 선제 대응, 리스크 조기 감지 및 대응
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <!-- Step 4 -->
-        <div class="step-card">
-            <div class="step-header">
-                <div class="step-number">04</div>
-                <h2 class="step-title">업무영역 정의 (Domains)</h2>
-            </div>
-            <p class="text-sm text-slate-600 mb-3">화면의 <span class="font-bold text-emerald-600">+ 업무 영역 추가</span> 버튼을 눌러 3개를 만드세요.</p>
-            <div class="space-y-2">
-                <div class="flex items-center gap-2 text-sm bg-slate-50 p-2 rounded border border-slate-200">
-                    <span class="w-5 h-5 rounded bg-slate-200 flex items-center justify-center text-xs font-bold">1</span>
-                    <span class="font-medium">마케팅 전략 및 기획</span>
+        <!-- Phase 2: Task 분해 -->
+        <div class="mb-10">
+            <div class="flex items-center gap-3 mb-6">
+                <div class="w-10 h-10 rounded-xl bg-amber-100 flex items-center justify-center">
+                    <span class="text-xl">🧩</span>
                 </div>
-                <div class="flex items-center gap-2 text-sm bg-slate-50 p-2 rounded border border-slate-200">
-                    <span class="w-5 h-5 rounded bg-slate-200 flex items-center justify-center text-xs font-bold">2</span>
-                    <span class="font-medium">광고 운영 및 성과 분석</span>
-                </div>
-                <div class="flex items-center gap-2 text-sm bg-slate-50 p-2 rounded border border-slate-200">
-                    <span class="w-5 h-5 rounded bg-slate-200 flex items-center justify-center text-xs font-bold">3</span>
-                    <span class="font-medium">시장 조사 및 경쟁사 분석</span>
-                </div>
-            </div>
-        </div>
-
-        <!-- Step 5 -->
-        <div class="step-card border-l-4 border-l-pink-500">
-            <div class="step-header">
-                <div class="step-number">05</div>
-                <h2 class="step-title">업무 정보 입력 (Task Input)</h2>
-            </div>
-            
-            <div class="mb-6 pb-6 border-b border-slate-100">
-                <h3 class="text-sm font-bold text-slate-900 mb-2">Option A: 파일 업로드 (추천)</h3>
-                <p class="text-sm text-slate-600">
-                    <code class="bg-slate-100 px-1 py-0.5 rounded text-pink-600">demo/sample-work-description.docx</code> 파일을 드래그 앤 드롭
-                </p>
-            </div>
-
-            <div>
-                <h3 class="text-sm font-bold text-slate-900 mb-4">Option B: 직접 입력 (영역별 복사)</h3>
-                
-                <div class="mb-4">
-                    <label class="text-xs font-bold text-slate-500 uppercase mb-1 block">1. 마케팅 전략 및 기획</label>
-                    <div class="input-box relative group">
-                        <button class="copy-btn" onclick="copyText(this)">복사</button>
-                        <div class="whitespace-pre-line">- **연간 마케팅 플랜 수립** (연 1회, 40시간): 전사 목표에 따른 채널별 예산 및 KPI 설정
-- **신규 프로모션 기획** (월 1회, 12시간): 시즌 이슈에 맞춘 이벤트 컨셉 도출 및 상세 기획안 작성
-- **브랜드 캠페인 운영** (분기 1회, 20시간): 온/오프라인 브랜드 인지도 제고 캠페인 실행 및 관리</div>
-                    </div>
-                </div>
-
-                <div class="mb-4">
-                    <label class="text-xs font-bold text-slate-500 uppercase mb-1 block">2. 광고 운영 및 성과 분석</label>
-                    <div class="input-box relative group">
-                        <button class="copy-btn" onclick="copyText(this)">복사</button>
-                        <div class="whitespace-pre-line">- **광고 성과 리포트 작성** (주 1회, 4시간): Google Ads, Meta Ads 등 4개 플랫폼 데이터를 수집하여 엑셀로 정제하고 PPT 리포트 작성
-- **캠페인 예산 조정** (주 2회, 2시간): 성과 모니터링 후 저효율 캠페인 예산을 고효율로 이동 (각 대시보드 접속 번거로움)
-- **월간 성과 보고서** (월 1회, 8시간): 전월 성과 종합 분석 및 시각화 (데이터 취합에만 4시간 이상 소요)</div>
-                    </div>
-                </div>
-
                 <div>
-                    <label class="text-xs font-bold text-slate-500 uppercase mb-1 block">3. 시장 조사 및 경쟁사 분석</label>
-                    <div class="input-box relative group">
-                        <button class="copy-btn" onclick="copyText(this)">복사</button>
-                        <div class="whitespace-pre-line">- **경쟁사 동향 분석** (주 1회, 3시간): 경쟁사 SNS, 뉴스, 웹사이트를 모니터링하여 신규 프로모션 파악 (수동 검색 시간 소요 큼)
-- **트렌드 리포트 작성** (월 1회, 4시간): 업계 최신 트렌드 및 소비자 반응 분석하여 인사이트 도출
-- **고객 리뷰 분석** (주 1회, 2시간): 자사 및 경쟁사 제품 리뷰를 수집하여 긍/부정 키워드 분석</div>
+                    <span class="text-xs font-bold text-amber-600 uppercase tracking-wider">Phase 2</span>
+                    <h2 class="text-xl font-bold text-slate-900">Task 분해</h2>
+                </div>
+            </div>
+
+            <!-- Step 5 -->
+            <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-5 mb-4">
+                <div class="flex items-center gap-3 mb-4">
+                    <span class="w-7 h-7 rounded-lg bg-amber-100 flex items-center justify-center text-sm font-bold text-amber-600">5</span>
+                    <h3 class="font-bold text-slate-800">업무영역 정의</h3>
+                    <span class="text-xs text-slate-400">📋</span>
+                </div>
+                <div class="pl-10">
+                    <p class="text-sm text-slate-600 mb-3">"+ 업무 영역 추가" 버튼을 눌러 3개를 입력하세요.</p>
+                    <div class="space-y-2">
+                        <div class="flex items-center gap-3 bg-slate-50 p-3 rounded-lg border border-slate-200">
+                            <span class="w-6 h-6 rounded-full bg-amber-500 text-white flex items-center justify-center text-xs font-bold">1</span>
+                            <span class="font-medium text-slate-800">마케팅 전략 및 기획</span>
+                        </div>
+                        <div class="flex items-center gap-3 bg-slate-50 p-3 rounded-lg border border-slate-200">
+                            <span class="w-6 h-6 rounded-full bg-amber-500 text-white flex items-center justify-center text-xs font-bold">2</span>
+                            <span class="font-medium text-slate-800">광고 운영 및 성과 분석</span>
+                        </div>
+                        <div class="flex items-center gap-3 bg-slate-50 p-3 rounded-lg border border-slate-200">
+                            <span class="w-6 h-6 rounded-full bg-amber-500 text-white flex items-center justify-center text-xs font-bold">3</span>
+                            <span class="font-medium text-slate-800">시장 조사 및 경쟁사 분석</span>
+                        </div>
                     </div>
+                </div>
+            </div>
+
+            <!-- Step 6 -->
+            <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-5 mb-4 border-l-4 border-l-pink-500">
+                <div class="flex items-center gap-3 mb-4">
+                    <span class="w-7 h-7 rounded-lg bg-pink-100 flex items-center justify-center text-sm font-bold text-pink-600">6</span>
+                    <h3 class="font-bold text-slate-800">업무 정보 입력</h3>
+                    <span class="text-xs text-slate-400">📁</span>
+                </div>
+                <div class="pl-10 space-y-6">
+                    <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                        <div class="flex items-center gap-2 mb-2">
+                            <span>📄</span>
+                            <span class="font-bold text-blue-800 text-sm">Option A: 파일 업로드 (추천)</span>
+                        </div>
+                        <p class="text-sm text-blue-700">
+                            <code class="bg-blue-100 px-2 py-0.5 rounded text-blue-800">demo/sample-work-description.docx</code> 파일을 드래그 앤 드롭
+                        </p>
+                    </div>
+
+                    <div>
+                        <p class="font-bold text-slate-700 text-sm mb-4">Option B: 직접 입력 (영역별)</p>
+
+                        <div class="space-y-4">
+                            <div>
+                                <label class="text-xs font-bold text-slate-500 uppercase block mb-2">1. 마케팅 전략 및 기획</label>
+                                <div class="input-box bg-slate-50 border border-slate-200 rounded-lg p-4 text-sm text-slate-700 leading-relaxed">
+                                    <button class="copy-btn text-xs bg-white border border-slate-300 px-2 py-1 rounded text-slate-500 hover:bg-blue-50 hover:text-blue-600 hover:border-blue-300 transition-colors cursor-pointer" onclick="copyText(this)">복사</button>
+                                    <div class="whitespace-pre-line pr-16">- 연간 마케팅 플랜 수립 (연 1회, 40시간): 전사 목표에 따른 채널별 예산 및 KPI 설정
+- 신규 프로모션 기획 (월 1회, 12시간): 시즌 이슈에 맞춘 이벤트 컨셉 도출 및 상세 기획안 작성
+- 브랜드 캠페인 운영 (분기 1회, 20시간): 온/오프라인 브랜드 인지도 제고 캠페인 실행 및 관리</div>
+                                </div>
+                            </div>
+
+                            <div>
+                                <label class="text-xs font-bold text-slate-500 uppercase block mb-2">2. 광고 운영 및 성과 분석</label>
+                                <div class="input-box bg-slate-50 border border-slate-200 rounded-lg p-4 text-sm text-slate-700 leading-relaxed">
+                                    <button class="copy-btn text-xs bg-white border border-slate-300 px-2 py-1 rounded text-slate-500 hover:bg-blue-50 hover:text-blue-600 hover:border-blue-300 transition-colors cursor-pointer" onclick="copyText(this)">복사</button>
+                                    <div class="whitespace-pre-line pr-16">- 광고 성과 리포트 작성 (주 1회, 4시간): Google Ads, Meta Ads 등 4개 플랫폼 데이터 수집하여 엑셀로 정제하고 PPT 리포트 작성
+- 캠페인 예산 조정 (주 2회, 2시간): 성과 모니터링 후 저효율 캠페인 예산을 고효율로 이동
+- 월간 성과 보고서 (월 1회, 8시간): 전월 성과 종합 분석 및 시각화 (데이터 취합에만 4시간 이상 소요)</div>
+                                </div>
+                            </div>
+
+                            <div>
+                                <label class="text-xs font-bold text-slate-500 uppercase block mb-2">3. 시장 조사 및 경쟁사 분석</label>
+                                <div class="input-box bg-slate-50 border border-slate-200 rounded-lg p-4 text-sm text-slate-700 leading-relaxed">
+                                    <button class="copy-btn text-xs bg-white border border-slate-300 px-2 py-1 rounded text-slate-500 hover:bg-blue-50 hover:text-blue-600 hover:border-blue-300 transition-colors cursor-pointer" onclick="copyText(this)">복사</button>
+                                    <div class="whitespace-pre-line pr-16">- 경쟁사 동향 분석 (주 1회, 3시간): 경쟁사 SNS, 뉴스, 웹사이트 모니터링하여 신규 프로모션 파악
+- 트렌드 리포트 작성 (월 1회, 4시간): 업계 최신 트렌드 및 소비자 반응 분석하여 인사이트 도출
+- 고객 리뷰 분석 (주 1회, 2시간): 자사 및 경쟁사 제품 리뷰 수집하여 긍/부정 키워드 분석</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 7-8 -->
+            <div class="bg-slate-50 rounded-xl border border-slate-200 border-dashed p-5 mb-4">
+                <div class="flex items-center gap-3 mb-3">
+                    <span class="w-7 h-7 rounded-lg bg-slate-200 flex items-center justify-center text-sm font-bold text-slate-500">7-8</span>
+                    <h3 class="font-bold text-slate-500">업무 추출 결과 & 워크샵 요약</h3>
+                </div>
+                <div class="pl-10 text-sm text-slate-500 space-y-1">
+                    <p><strong>Step 7:</strong> AI가 추출한 업무 목록 확인 (자동화 가능성 High 업무 확인)</p>
+                    <p><strong>Step 8:</strong> 지금까지 입력한 정보 종합 요약 확인</p>
                 </div>
             </div>
         </div>
 
-        <!-- Remaining Steps -->
-        <div class="step-card bg-slate-50 border-dashed">
-            <div class="step-header border-none mb-0 pb-0">
-                <div class="step-number bg-slate-400">06+</div>
-                <h2 class="step-title text-slate-500">이후 단계 (AI 분석 및 결과)</h2>
+        <!-- Phase 3: AI 협업 설계 -->
+        <div class="mb-10">
+            <div class="flex items-center gap-3 mb-6">
+                <div class="w-10 h-10 rounded-xl bg-indigo-100 flex items-center justify-center">
+                    <span class="text-xl">🤖</span>
+                </div>
+                <div>
+                    <span class="text-xs font-bold text-indigo-600 uppercase tracking-wider">Phase 3</span>
+                    <h2 class="text-xl font-bold text-slate-900">AI 협업 설계</h2>
+                </div>
             </div>
-            <div class="mt-4 text-sm text-slate-500 space-y-2 pl-11">
-                <p><strong>Step 6:</strong> 업무 추출 결과 확인 ('자동화 가능성 High' 확인)</p>
-                <p><strong>Step 9:</strong> AI 컨설팅 ("광고 성과 리포트 자동화 도구 추천해줘" 등 질문)</p>
-                <p><strong>Step 10:</strong> 워크플로우 설계 (Trigger -> Process -> Output 확인)</p>
-                <p><strong>Step 11:</strong> 결과 확인 및 다운로드</p>
+
+            <!-- Step 9 -->
+            <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-5 mb-4">
+                <div class="flex items-center gap-3 mb-3">
+                    <span class="w-7 h-7 rounded-lg bg-indigo-100 flex items-center justify-center text-sm font-bold text-indigo-600">9</span>
+                    <h3 class="font-bold text-slate-800">AI 자동화 교육</h3>
+                    <span class="text-xs text-slate-400">🎓</span>
+                </div>
+                <div class="pl-10 text-sm text-slate-600">
+                    <p>LLM 이해 및 역할 전략 학습 - 인터랙티브 교육 콘텐츠 진행</p>
+                </div>
+            </div>
+
+            <!-- Step 10 -->
+            <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-5 mb-4 border-l-4 border-l-purple-500">
+                <div class="flex items-center gap-3 mb-4">
+                    <span class="w-7 h-7 rounded-lg bg-purple-100 flex items-center justify-center text-sm font-bold text-purple-600">10</span>
+                    <h3 class="font-bold text-slate-800">AI 컨설팅</h3>
+                    <span class="text-xs text-slate-400">💬</span>
+                </div>
+                <div class="pl-10">
+                    <label class="text-xs font-bold text-slate-500 uppercase block mb-2">예시 질문</label>
+                    <div class="space-y-2">
+                        <div class="input-box bg-purple-50 border border-purple-100 rounded-lg p-3 text-sm text-slate-700">
+                            <button class="copy-btn text-xs bg-white border border-slate-300 px-2 py-1 rounded text-slate-500 hover:bg-purple-50 hover:text-purple-600 hover:border-purple-300 transition-colors cursor-pointer" onclick="copyText(this)">복사</button>
+                            광고 성과 리포트 자동화 도구를 추천해줘
+                        </div>
+                        <div class="input-box bg-purple-50 border border-purple-100 rounded-lg p-3 text-sm text-slate-700">
+                            <button class="copy-btn text-xs bg-white border border-slate-300 px-2 py-1 rounded text-slate-500 hover:bg-purple-50 hover:text-purple-600 hover:border-purple-300 transition-colors cursor-pointer" onclick="copyText(this)">복사</button>
+                            경쟁사 모니터링을 자동화하려면 어떻게 해야 해?
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 11-12 -->
+            <div class="bg-slate-50 rounded-xl border border-slate-200 border-dashed p-5">
+                <div class="flex items-center gap-3 mb-3">
+                    <span class="w-7 h-7 rounded-lg bg-slate-200 flex items-center justify-center text-sm font-bold text-slate-500">11-12</span>
+                    <h3 class="font-bold text-slate-500">워크플로우 설계 & 결과 확인</h3>
+                </div>
+                <div class="pl-10 text-sm text-slate-500 space-y-1">
+                    <p><strong>Step 11:</strong> Trigger → Process → Output 워크플로우 상세 설계</p>
+                    <p><strong>Step 12:</strong> 최종 결과 검토 및 리포트 다운로드</p>
+                </div>
             </div>
         </div>
+
+        <!-- Footer -->
+        <footer class="text-center pt-8 border-t border-slate-200">
+            <p class="text-sm text-slate-400">Work Re-design Platform Demo Guide v2.0</p>
+        </footer>
 
     </div>
 
     <script>
         function copyText(btn) {
-            const text = btn.nextSibling.textContent.trim();
+            const container = btn.parentElement;
+            const textElement = container.querySelector('div') || container;
+            const text = (textElement.textContent || textElement.innerText).replace('복사', '').trim();
+
             navigator.clipboard.writeText(text).then(() => {
                 const originalText = btn.textContent;
                 btn.textContent = '완료!';
@@ -226,7 +434,7 @@
                 setTimeout(() => {
                     btn.textContent = originalText;
                     btn.classList.remove('text-green-600', 'border-green-300', 'bg-green-50');
-                }, 2000);
+                }, 1500);
             });
         }
     </script>

@@ -25,12 +25,11 @@ const envSchema = z.object({
     })
     .url('DATABASE_URL must be a valid URL'),
 
-  // Redis
+  // Redis (optional in development)
   REDIS_URL: z
-    .string({
-      required_error: 'REDIS_URL is required for AI caching and rate limiting',
-    })
-    .refine(val => val.startsWith('redis://') || val.startsWith('rediss://'), {
+    .string()
+    .optional()
+    .refine(val => !val || val.startsWith('redis://') || val.startsWith('rediss://'), {
       message: 'REDIS_URL must start with redis:// or rediss://',
     }),
 
@@ -95,7 +94,7 @@ export function validateEnv(): Env {
       NODE_ENV: env.NODE_ENV,
       PORT: env.PORT,
       DATABASE_URL: maskUrl(env.DATABASE_URL),
-      REDIS_URL: maskUrl(env.REDIS_URL),
+      REDIS_URL: env.REDIS_URL ? maskUrl(env.REDIS_URL) : '(not configured - caching disabled)',
       ANTHROPIC_API_KEY: maskApiKey(env.ANTHROPIC_API_KEY),
       CORS_ORIGIN: env.CORS_ORIGIN,
       ENABLE_AI_CACHE: env.ENABLE_AI_CACHE,
