@@ -122,19 +122,20 @@ const WORKSHOP_GROUPS = [
   }
 ];
 
-// 실제 워크샵 단계 정의 (내부 로직용)
+// 실제 워크샵 단계 정의 (내부 로직용) - 총 12단계
 const WORKSHOP_STEPS = [
-  { id: 1, title: '워크샵 시작', description: '워크샵 개요 확인', icon: '🚀', section: '우리 팀 일 분석하기' },
-  { id: 2, title: '미션 작성', description: '팀의 미션과 가치 정의', icon: '🎯', section: '우리 팀 일 분석하기' },
-  { id: 3, title: '팀 상황 확인', description: '팀 구성 및 제약사항 파악', icon: '👥', section: '우리 팀 일 분석하기' },
-  { id: 4, title: '업무영역 정의', description: '담당 업무 영역 설정', icon: '📋', section: '우리 팀 일 분석하기' },
-  { id: 5, title: '업무 정보 입력', description: '문서 업로드 또는 직접 입력', icon: '📁', section: '우리 팀 일 분석하기' },
-  { id: 6, title: '업무 추출 결과', description: '추출된 업무 확인 및 편집', icon: '📝', section: '우리 팀 일 분석하기' },
-  { id: 7, title: '워크샵 요약', description: '입력한 정보 종합 확인', icon: '📊', section: '우리 팀 일 분석하기' },
-  { id: 8, title: 'AI 자동화 교육', description: 'LLM 이해 및 역할 전략', icon: '🎓', section: 'AI로 일 자동화하기' },
-  { id: 9, title: 'AI 컨설팅', description: 'AI와 대화하며 솔루션 설계', icon: '💬', section: 'AI로 일 자동화하기' },
-  { id: 10, title: '워크플로우 설계', description: '자동화 워크플로우 상세 설계', icon: '🔧', section: 'AI로 일 자동화하기' },
-  { id: 11, title: '결과 확인', description: '최종 결과 검토 및 다운로드', icon: '🎉', section: 'AI로 일 자동화하기' }
+  { id: 1, displayId: '1', title: '워크샵 시작', description: '워크샵 개요 확인', icon: '🚀', section: '공통' },
+  { id: 2, displayId: '2', title: '미션 작성', description: '팀의 미션과 가치 정의', icon: '🎯', section: '팀 업무 재정의하기' },
+  { id: 3, displayId: '3', title: '팀 상황 확인', description: '팀 구성 및 제약사항 파악', icon: '👥', section: '팀 업무 재정의하기' },
+  { id: 4, displayId: '4', title: '줄일 일 vs 강화할 일', description: 'Work Re-design 방향 설정', icon: '🧭', section: '팀 업무 재정의하기' },
+  { id: 5, displayId: '5', title: '업무영역 정의', description: '담당 업무 영역 설정', icon: '📋', section: '일을 쪼개고 구조화하기' },
+  { id: 6, displayId: '6', title: '업무 정보 입력', description: '문서 업로드 또는 직접 입력', icon: '📁', section: '일을 쪼개고 구조화하기' },
+  { id: 7, displayId: '7', title: '업무 추출 결과', description: '추출된 업무 확인 및 편집', icon: '📝', section: '일을 쪼개고 구조화하기' },
+  { id: 8, displayId: '8', title: '워크샵 요약', description: '입력한 정보 종합 확인', icon: '📊', section: '일을 쪼개고 구조화하기' },
+  { id: 9, displayId: '9', title: 'AI 자동화 교육', description: 'LLM 이해 및 역할 전략', icon: '🎓', section: 'AI 협업 구조 설계하기' },
+  { id: 10, displayId: '10', title: 'AI 컨설팅', description: 'AI와 대화하며 솔루션 설계', icon: '💬', section: 'AI 협업 구조 설계하기' },
+  { id: 11, displayId: '11', title: '워크플로우 설계', description: '자동화 워크플로우 상세 설계', icon: '🔧', section: 'AI 협업 구조 설계하기' },
+  { id: 12, displayId: '12', title: '결과 확인', description: '최종 결과 검토 및 다운로드', icon: '🎉', section: 'AI 협업 구조 설계하기' }
 ];
 
 // 현재 단계가 속한 그룹 찾기
@@ -494,6 +495,7 @@ export default function WorkshopPage() {
 
   // Step 2 & 3 form data
   const [missionInput, setMissionInput] = useState<string>('');
+  const [customerInput, setCustomerInput] = useState<string>('');
   const [teamSizeInput, setTeamSizeInput] = useState<number>(0);
   const [teamCompositionInput, setTeamCompositionInput] = useState<string>('');
   const [constraintsInput, setConstraintsInput] = useState<string[]>(['']);
@@ -521,14 +523,17 @@ export default function WorkshopPage() {
       // Step3 팀 현황 자동 채우기 - 다음 단계로
       setTimeout(() => setCurrentStep(4), 500);
     } else if (currentStep === 4) {
-      // 업무 영역 자동 입력
+      // Step 4: 업무 재설계 진단 - Step5(업무 영역 정의)로 이동
+      setTimeout(() => setCurrentStep(5), 500);
+    } else if (currentStep === 5) {
+      // Step 5: 업무 영역 자동 입력
       setWorkshop(prev => ({
         ...prev,
         domains: ['고객 문의 처리', '데이터 분석 및 리포트', '회의 및 보고']
       }));
-      setTimeout(() => setCurrentStep(5), 500);
-    } else if (currentStep === 5) {
-      // 업무 내용 자동 입력
+      setTimeout(() => setCurrentStep(6), 500);
+    } else if (currentStep === 6) {
+      // Step 6: 업무 내용 자동 입력
       setManualTaskInput({
         '고객 문의 처리': '매일 오전 9시 이메일 확인 (30분)\n고객 문의 분류 및 답변 (2시간)\n긴급 문의 처리 (1시간)',
         '데이터 분석 및 리포트': '주간 데이터 수집 (1시간)\nExcel 데이터 정제 (2시간)\n리포트 작성 및 차트 생성 (3시간)',
@@ -592,33 +597,33 @@ export default function WorkshopPage() {
                 }
               ]
             }));
-            setTimeout(() => setCurrentStep(6), 500);
+            setTimeout(() => setCurrentStep(7), 500);
           }
         } catch (error) {
           console.error('Dev mode: Failed to create workshop', error);
         }
       } else {
         // 이미 워크샵이 있으면 바로 다음 단계로
-        setTimeout(() => setCurrentStep(6), 500);
+        setTimeout(() => setCurrentStep(7), 500);
       }
-    } else if (currentStep === 6) {
-      // Step 6: 업무 추출 - tasks가 이미 step 5에서 설정됨, Step7(요약)로 이동
-      setTimeout(() => setCurrentStep(7), 500);
     } else if (currentStep === 7) {
-      // Step 7: 요약 - Step8(워크플로우 교육)로 이동
+      // Step 7: 업무 추출 - tasks가 이미 step 6에서 설정됨, Step8(요약)로 이동
       setTimeout(() => setCurrentStep(8), 500);
     } else if (currentStep === 8) {
-      // Step 8: 워크플로우 교육 - Step9(AI 컨설팅)로 이동
+      // Step 8: 요약 - Step9(워크플로우 교육)로 이동
       setTimeout(() => setCurrentStep(9), 500);
     } else if (currentStep === 9) {
-      // Step 9: AI 컨설팅 - 선택된 task 설정 후 Step10(워크플로우 설계)으로 이동
+      // Step 9: 워크플로우 교육 - Step10(AI 컨설팅)로 이동
+      setTimeout(() => setCurrentStep(10), 500);
+    } else if (currentStep === 10) {
+      // Step 10: AI 컨설팅 - 선택된 task 설정 후 Step11(워크플로우 설계)으로 이동
       setWorkshop(prev => ({
         ...prev,
         selectedTaskIds: ['task1'] // 첫 번째 task 자동 선택
       }));
-      setTimeout(() => setCurrentStep(10), 500);
-    } else if (currentStep === 10) {
-      // Step 10: 워크플로우 설계 - Step11(자동화 솔루션)로 이동
+      setTimeout(() => setCurrentStep(11), 500);
+    } else if (currentStep === 11) {
+      // Step 11: 워크플로우 설계 - Step12(자동화 솔루션)로 이동
       // 자동화 솔루션 데이터 자동 생성
       setAutomationSolutions([
         {
@@ -897,7 +902,7 @@ if __name__ == "__main__":
 
   // Initialize kanban when selected tasks change
   useEffect(() => {
-    if (workshop.selectedTaskIds.length > 0 && currentStep === 7) {
+    if (workshop.selectedTaskIds.length > 0 && currentStep === 8) {
       initializeKanban();
     }
   }, [workshop.selectedTaskIds, currentStep]);
@@ -1331,17 +1336,24 @@ if __name__ == "__main__":
             await handleFilesUploadToServer(data.id);
           }
 
-          setCurrentStep(6);
+          setCurrentStep(7);
         } else {
-          setError(data.error);
+          // API 실패 시에도 임시 ID로 진행 가능하게 함
+          const tempId = `temp-${Date.now()}`;
+          setWorkshop(prev => ({ ...prev, id: tempId }));
+          setCurrentStep(7);
         }
       } catch (error) {
-        setError('워크샵 생성 중 오류가 발생했습니다');
+        // 네트워크 오류 시에도 임시 ID로 진행 가능하게 함
+        console.log('Workshop API not available, using temp ID');
+        const tempId = `temp-${Date.now()}`;
+        setWorkshop(prev => ({ ...prev, id: tempId }));
+        setCurrentStep(7);
       } finally {
         setLoading(false);
       }
     } else {
-      setCurrentStep(6);
+      setCurrentStep(7);
     }
   };
 
@@ -1522,25 +1534,35 @@ if __name__ == "__main__":
         <div className="absolute -bottom-8 left-20 w-96 h-96 bg-indigo-300 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-4000"></div>
       </div>
 
-      {/* Progress header - Clean & Sensory Design (Refined) */}
+      {/* Progress header - 3 Sections Design (Compact) */}
       <div className="relative backdrop-blur-xl bg-white/90 border-b border-slate-200 shadow-sm z-40">
-        <div className="max-w-7xl mx-auto px-6 py-4">
+        <div className="max-w-7xl mx-auto px-4 py-2">
           <div className="max-w-6xl mx-auto">
-            <div className="grid grid-cols-2 gap-6">
+            <div className="grid grid-cols-3 gap-3">
               {[
                 {
-                  title: '우리 팀 일 분석하기',
-                  range: [1, 7],
-                  icon: '📊',
-                  activeGradient: 'from-emerald-50 to-teal-100',
-                  activeBorder: 'border-emerald-400',
-                  activeText: 'text-emerald-900',
-                  barColor: 'bg-gradient-to-r from-emerald-500 to-teal-500',
-                  shadowColor: 'shadow-emerald-200/50'
+                  title: '팀 업무 재정의하기',
+                  range: [2, 4],
+                  icon: '🧭',
+                  activeGradient: 'from-teal-50 to-emerald-100',
+                  activeBorder: 'border-teal-400',
+                  activeText: 'text-teal-900',
+                  barColor: 'bg-gradient-to-r from-teal-500 to-emerald-500',
+                  shadowColor: 'shadow-teal-200/50'
                 },
                 {
-                  title: 'AI로 일 자동화하기',
-                  range: [8, 11],
+                  title: '일을 쪼개고 구조화하기',
+                  range: [5, 8],
+                  icon: '🧩',
+                  activeGradient: 'from-amber-50 to-orange-100',
+                  activeBorder: 'border-amber-400',
+                  activeText: 'text-amber-900',
+                  barColor: 'bg-gradient-to-r from-amber-500 to-orange-500',
+                  shadowColor: 'shadow-amber-200/50'
+                },
+                {
+                  title: 'AI 협업 구조 설계하기',
+                  range: [9, 12],
                   icon: '🤖',
                   activeGradient: 'from-indigo-50 to-purple-100',
                   activeBorder: 'border-indigo-400',
@@ -1556,66 +1578,38 @@ if __name__ == "__main__":
                 // Progress calculation: Based on COMPLETED steps in the section
                 const totalStepsInSection = section.range[1] - section.range[0] + 1;
 
-                // Calculate display step number
+                // Calculate display step number within section
                 let displayStep = currentStep - section.range[0] + 1;
-                if (currentStep < section.range[0]) displayStep = 0; // Future section
-                if (currentStep > section.range[1]) displayStep = totalStepsInSection; // Completed section
+                if (currentStep < section.range[0]) displayStep = 0;
+                if (currentStep > section.range[1]) displayStep = totalStepsInSection;
 
                 const progress = isActive
-                  ? Math.round(((currentStep - section.range[0]) / totalStepsInSection) * 100)
+                  ? Math.round(((currentStep - section.range[0] + 1) / totalStepsInSection) * 100)
                   : (isCompleted ? 100 : 0);
 
                 return (
-                  <div key={index} className={`relative overflow-hidden backdrop-blur-md p-4 rounded-2xl transition-all duration-300 border-2 ${isActive
-                    ? `bg-gradient-to-br ${section.activeGradient} ${section.activeBorder} ${section.activeText} shadow-lg ${section.shadowColor} scale-[1.02]`
+                  <div key={index} className={`relative overflow-hidden backdrop-blur-md px-3 py-2 rounded-lg transition-all duration-300 border ${isActive
+                    ? `bg-gradient-to-br ${section.activeGradient} ${section.activeBorder} ${section.activeText} shadow-md`
                     : isCompleted
-                      ? 'bg-slate-50 border-slate-200 text-slate-500 grayscale-[0.5]'
-                      : 'bg-white/50 border-transparent text-slate-400 hover:bg-slate-50'
+                      ? 'bg-slate-50 border-slate-200 text-slate-500'
+                      : 'bg-white/50 border-slate-100 text-slate-400'
                     }`}>
-
-                    {/* Active Indicator Glow */}
-                    {isActive && (
-                      <div className="absolute top-0 right-0 -mt-4 -mr-4 w-24 h-24 bg-white opacity-40 blur-2xl rounded-full pointer-events-none"></div>
-                    )}
-
-                    <div className="relative flex items-center justify-between gap-5">
-                      {/* 왼쪽: 섹션명 */}
-                      <div className="flex items-center gap-3 flex-shrink-0">
-                        <div className="w-10 h-10 rounded-xl flex items-center justify-center text-xl shadow-sm bg-white">
-                          <span className="filter drop-shadow-sm">{section.icon}</span>
-                        </div>
-                        <div className="flex flex-col">
-                          <span className={`text-xs font-bold uppercase tracking-wider ${isActive ? 'opacity-70' : 'opacity-50'}`}>Phase {index + 1}</span>
-                          <h3 className={`font-bold text-base whitespace-nowrap ${isActive ? 'text-lg' : ''}`}>{section.title}</h3>
-                        </div>
+                    <div className="flex items-center gap-2">
+                      {/* 아이콘 */}
+                      <div className="w-7 h-7 rounded-md flex items-center justify-center text-sm bg-white shadow-sm flex-shrink-0">
+                        {section.icon}
                       </div>
 
-                      {/* 중앙: 현재 step 정보 (활성화된 섹션만) */}
-                      {isActive && currentStepInfo && (
-                        <div className="hidden md:flex items-center gap-3 flex-1 min-w-0 px-4 border-l border-slate-900/10 mx-2">
-                          <div className="flex flex-col min-w-0">
-                            <span className="text-xs font-semibold opacity-60">Current Step</span>
-                            <div className="flex items-center gap-2">
-                              <span className="text-base">{currentStepInfo.icon}</span>
-                              <span className="text-sm font-bold truncate">{currentStepInfo.title}</span>
-                            </div>
-                          </div>
+                      {/* 섹션명 + 진행률 */}
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center justify-between gap-2">
+                          <h3 className="font-bold text-xs truncate">{section.title}</h3>
+                          <span className={`text-[10px] font-bold flex-shrink-0 ${isActive ? 'opacity-80' : 'opacity-50'}`}>{displayStep}/{totalStepsInSection}</span>
                         </div>
-                      )}
-
-                      {/* 우측: 진행률 바 + Step Counter */}
-                      <div className="flex flex-col items-end gap-1.5 flex-shrink-0 min-w-[100px]">
-                        <div className="flex items-end gap-1.5">
-                          <span className={`text-xs font-bold uppercase tracking-wider mb-1 ${isActive ? 'opacity-60' : 'opacity-40'}`}>Step</span>
-                          <div className={`flex items-baseline gap-1 ${isActive ? 'scale-105 origin-right' : 'opacity-60'}`}>
-                            <span className="text-2xl font-black">{displayStep}</span>
-                            <span className="text-lg font-medium opacity-40">/</span>
-                            <span className="text-lg font-medium opacity-40">{totalStepsInSection}</span>
-                          </div>
-                        </div>
-                        <div className="w-full h-2 bg-slate-200/80 rounded-full overflow-hidden">
+                        {/* 진행률 바 */}
+                        <div className="mt-1 h-1 bg-slate-200/80 rounded-full overflow-hidden">
                           <div
-                            className={`h-full transition-all duration-700 ease-out rounded-full shadow-sm ${isActive ? section.barColor : isCompleted ? 'bg-emerald-500/60' : 'bg-slate-300'}`}
+                            className={`h-full transition-all duration-700 ease-out rounded-full ${isActive ? section.barColor : isCompleted ? 'bg-emerald-500/60' : 'bg-slate-300'}`}
                             style={{ width: `${progress}%` }}
                           />
                         </div>
@@ -1633,199 +1627,141 @@ if __name__ == "__main__":
       <div className="flex-1 overflow-auto">
         <div className="max-w-6xl mx-auto p-6">
 
-          {/* Step 1: 워크샵 시작하기 - Dynamic & Immersive Design */}
+          {/* Step 1: 워크샵 시작하기 */}
           {currentStep === 1 && (
-            <div className="relative min-h-screen -m-6 flex flex-col animate-fadeIn overflow-hidden">
-              {/* Dynamic Gradient Background */}
-              <div className="absolute inset-0 fixed bg-gradient-to-br from-blue-50 via-indigo-50/30 to-purple-50/20">
-                <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_30%,rgba(59,130,246,0.15),transparent_50%)]"></div>
-                <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_70%,rgba(147,51,234,0.1),transparent_50%)]"></div>
-                <div className="absolute inset-0 backdrop-blur-3xl bg-white/40"></div>
-              </div>
+            <div className="animate-fadeIn">
+              {/* Content Container */}
+              <div className="flex flex-col min-h-[calc(100vh-120px)]">
 
-              {/* Main Content Container */}
-              <div className="relative z-10 flex-1 flex items-center justify-center px-6 py-16">
-                <div className="w-full max-w-5xl mx-auto">
+                {/* Hero Area */}
+                <div className="flex items-center justify-center px-6 pt-20 pb-8">
+                  <div className="w-full max-w-3xl mx-auto text-center">
 
-                  {/* Hero Section */}
-                  <div className="text-center mb-16">
-                    {/* Section Label */}
-                    <div className="mb-4">
-                      <span className="text-sm font-semibold text-emerald-600 bg-emerald-50 px-4 py-2 rounded-full">
-                        📊 우리 팀 일 분석하기
+                    {/* Badge - 작고 절제된 */}
+                    <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-indigo-50 border border-indigo-100 rounded-full mb-10">
+                      <span className="text-sm">🤖</span>
+                      <span className="text-xs font-semibold text-indigo-600 tracking-wide">AI 협업 설계 워크샵</span>
+                    </div>
+
+                    {/* Title - 시각적 중심 */}
+                    <h1 className="text-6xl md:text-8xl font-black tracking-tighter mb-6 leading-none">
+                      <span className="bg-gradient-to-br from-slate-900 via-indigo-900 to-slate-800 bg-clip-text text-transparent">
+                        Work
                       </span>
-                    </div>
-
-                    {/* Badge with Animation */}
-                    <div className="inline-flex items-center gap-2.5 px-4 py-2 bg-white/80 backdrop-blur-sm border border-blue-200/50 rounded-full mb-8 shadow-lg shadow-blue-500/10">
-                      <div className="relative">
-                        <div className="w-2 h-2 bg-blue-600 rounded-full animate-pulse"></div>
-                        <div className="absolute inset-0 bg-blue-400 rounded-full animate-ping"></div>
-                      </div>
-                      <span className="text-xs font-bold text-blue-900 uppercase tracking-widest">팀장 워크샵</span>
-                    </div>
-
-                    {/* Simple Title */}
-                    <h1 className="text-5xl md:text-6xl font-black tracking-tight">
-                      <span className="bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 bg-clip-text text-transparent">
-                        Work Re-design
+                      <br />
+                      <span className="bg-gradient-to-r from-indigo-600 via-purple-600 to-indigo-600 bg-clip-text text-transparent">
+                        Re-design
                       </span>
                     </h1>
-                  </div>
 
-                  {/* Impactful Message Section - Moved to top */}
-                  <div className="text-center mb-16">
-                    <div className="space-y-6">
-                      {/* Philosophy */}
-                      <div className="space-y-2">
-                        <p className="text-base text-slate-600">
-                          단순한 업무 자동화가 아닌
-                        </p>
-                        <p className="text-3xl md:text-4xl font-bold text-slate-900 leading-tight">
-                          일하는 방식의{' '}
-                          <span className="relative inline-block">
-                            <span className="relative z-10 bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 bg-clip-text text-transparent">
-                              근본적인 혁신
-                            </span>
-                            <span className="absolute bottom-1 left-0 right-0 h-4 bg-gradient-to-r from-blue-200 via-indigo-200 to-purple-200 -z-0 blur-sm"></span>
-                          </span>
-                        </p>
-                      </div>
-
-                      {/* Divider */}
-                      <div className="flex items-center justify-center gap-3 py-3">
-                        <div className="w-16 h-0.5 bg-gradient-to-r from-transparent via-blue-300 to-transparent"></div>
-                        <div className="w-2 h-2 rounded-full bg-blue-500"></div>
-                        <div className="w-16 h-0.5 bg-gradient-to-r from-transparent via-blue-300 to-transparent"></div>
-                      </div>
-
-                      {/* Main CTA Message */}
-                      <div>
-                        <p className="text-2xl md:text-3xl font-black text-slate-900 leading-tight tracking-tight">
-                          팀장님께서는{' '}
-                          <span className="bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 bg-clip-text text-transparent">
-                            &apos;진짜 일&apos;
-                          </span>
-                          에<br />
-                          집중하세요!
-                        </p>
-                      </div>
+                    {/* Tagline - 간결하고 명확 */}
+                    <div className="space-y-3 mb-8">
+                      <p className="text-sm tracking-widest text-slate-400 uppercase">단순한 업무 자동화가 아닌</p>
+                      <p className="text-2xl md:text-3xl font-semibold text-slate-700">
+                        AI와 함께하는 일의 혁신
+                      </p>
                     </div>
+
+                    {/* Question - 행동 유도 */}
+                    <p className="text-lg text-slate-500">
+                      어떤 일을 <span className="font-semibold text-indigo-600">AI에게 맡기고</span>, 어떤 일에 <span className="font-semibold text-indigo-600">집중</span>할까요?
+                    </p>
                   </div>
-
-                  {/* 2x2 Grid Layout */}
-                  <div className="max-w-4xl mx-auto mb-20">
-                    <div className="grid md:grid-cols-2 gap-6">
-                      {/* Step 1 - Blue Theme */}
-                      <div className="group relative transform hover:scale-[1.02] transition-all duration-300">
-                        <div className="absolute -inset-0.5 bg-gradient-to-r from-blue-500 to-blue-600 rounded-2xl opacity-0 group-hover:opacity-100 blur transition duration-500"></div>
-                        <div className="relative flex items-center gap-6 bg-white rounded-2xl p-7 shadow-lg shadow-slate-200/50 group-hover:shadow-2xl group-hover:shadow-blue-200/50 transition-all duration-300">
-                          <div className="flex-shrink-0">
-                            <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-blue-500 to-blue-700 flex items-center justify-center text-white font-bold text-xl shadow-xl shadow-blue-500/30">
-                              01
-                            </div>
-                          </div>
-                          <div className="flex-1">
-                            <h3 className="text-2xl font-bold text-slate-900 mb-1.5 group-hover:text-blue-700 transition-colors">일의 본질에 집중</h3>
-                            <p className="text-slate-600 text-base leading-relaxed">
-                              진짜 목적과 가치를 발견합니다
-                            </p>
-                          </div>
-                          <div className="flex-shrink-0 opacity-0 group-hover:opacity-100 transition-opacity">
-                            <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" />
-                            </svg>
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* Step 2 - Indigo Theme */}
-                      <div className="group relative transform hover:scale-[1.02] transition-all duration-300">
-                        <div className="absolute -inset-0.5 bg-gradient-to-r from-indigo-500 to-indigo-600 rounded-2xl opacity-0 group-hover:opacity-100 blur transition duration-500"></div>
-                        <div className="relative flex items-center gap-6 bg-white rounded-2xl p-7 shadow-lg shadow-slate-200/50 group-hover:shadow-2xl group-hover:shadow-indigo-200/50 transition-all duration-300">
-                          <div className="flex-shrink-0">
-                            <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-indigo-500 to-indigo-700 flex items-center justify-center text-white font-bold text-xl shadow-xl shadow-indigo-500/30">
-                              02
-                            </div>
-                          </div>
-                          <div className="flex-1">
-                            <h3 className="text-2xl font-bold text-slate-900 mb-1.5 group-hover:text-indigo-700 transition-colors">관점을 확장</h3>
-                            <p className="text-slate-600 text-base leading-relaxed">
-                              새로운 접근법을 탐색합니다
-                            </p>
-                          </div>
-                          <div className="flex-shrink-0 opacity-0 group-hover:opacity-100 transition-opacity">
-                            <svg className="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" />
-                            </svg>
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* Step 3 - Purple Theme */}
-                      <div className="group relative transform hover:scale-[1.02] transition-all duration-300">
-                        <div className="absolute -inset-0.5 bg-gradient-to-r from-purple-500 to-purple-600 rounded-2xl opacity-0 group-hover:opacity-100 blur transition duration-500"></div>
-                        <div className="relative flex items-center gap-6 bg-white rounded-2xl p-7 shadow-lg shadow-slate-200/50 group-hover:shadow-2xl group-hover:shadow-purple-200/50 transition-all duration-300">
-                          <div className="flex-shrink-0">
-                            <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-purple-500 to-purple-700 flex items-center justify-center text-white font-bold text-xl shadow-xl shadow-purple-500/30">
-                              03
-                            </div>
-                          </div>
-                          <div className="flex-1">
-                            <h3 className="text-2xl font-bold text-slate-900 mb-1.5 group-hover:text-purple-700 transition-colors">워크플로우를 재설계</h3>
-                            <p className="text-slate-600 text-base leading-relaxed">
-                              프로세스를 최적화합니다
-                            </p>
-                          </div>
-                          <div className="flex-shrink-0 opacity-0 group-hover:opacity-100 transition-opacity">
-                            <svg className="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" />
-                            </svg>
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* Step 4 - Emerald Theme */}
-                      <div className="group relative transform hover:scale-[1.02] transition-all duration-300">
-                        <div className="absolute -inset-0.5 bg-gradient-to-r from-emerald-500 to-emerald-600 rounded-2xl opacity-0 group-hover:opacity-100 blur transition duration-500"></div>
-                        <div className="relative flex items-center gap-6 bg-white rounded-2xl p-7 shadow-lg shadow-slate-200/50 group-hover:shadow-2xl group-hover:shadow-emerald-200/50 transition-all duration-300">
-                          <div className="flex-shrink-0">
-                            <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-emerald-500 to-emerald-700 flex items-center justify-center text-white font-bold text-xl shadow-xl shadow-emerald-500/30">
-                              04
-                            </div>
-                          </div>
-                          <div className="flex-1">
-                            <h3 className="text-2xl font-bold text-slate-900 mb-1.5 group-hover:text-emerald-700 transition-colors">ERRC로 실행</h3>
-                            <p className="text-slate-600 text-base leading-relaxed">
-                              제거·축소·강화·창조합니다
-                            </p>
-                          </div>
-                          <div className="flex-shrink-0 opacity-0 group-hover:opacity-100 transition-opacity">
-                            <svg className="w-6 h-6 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" />
-                            </svg>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Prominent CTA Button */}
-                  <div className="text-center">
-                    <button
-                      onClick={handleStart}
-                      disabled={loading}
-                      className="group relative inline-flex items-center justify-center gap-3 px-12 py-5 bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 text-white text-xl font-bold rounded-2xl shadow-2xl shadow-blue-500/40 hover:shadow-3xl hover:shadow-indigo-500/50 hover:scale-[1.05] transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed overflow-hidden"
-                    >
-                      <div className="absolute inset-0 bg-gradient-to-r from-blue-400 via-indigo-400 to-purple-400 opacity-0 group-hover:opacity-20 transition-opacity duration-300"></div>
-                      <span className="relative">{loading ? '준비 중...' : '워크샵 시작하기'}</span>
-                      <svg className="relative w-6 h-6 group-hover:translate-x-2 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M13 7l5 5m0 0l-5 5m5-5H6" />
-                      </svg>
-                    </button>
-                  </div>
-
                 </div>
+
+                {/* Divider */}
+                <div className="flex justify-center pt-4 pb-6">
+                  <div className="w-20 h-0.5 bg-gradient-to-r from-indigo-200 via-purple-300 to-indigo-200 rounded-full"></div>
+                </div>
+
+                {/* Bottom Section - 오늘의 여정 */}
+                <div className="px-6 pb-8">
+                  <div className="max-w-4xl mx-auto">
+                    <div className="bg-white rounded-2xl border border-slate-200/60 shadow-sm overflow-hidden">
+                      {/* Header */}
+                      <div className="px-6 py-4 border-b border-slate-100 flex items-center justify-between">
+                        <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider">오늘의 여정</p>
+                        <p className="text-xs text-slate-400">AI 업무 재설계의 프로세스와 기준을 이해합니다</p>
+                      </div>
+
+                      {/* Process Steps */}
+                      <div className="grid md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-slate-100">
+                        {/* Phase 1 */}
+                        <div className="p-5 hover:bg-slate-50/50 transition-colors">
+                          <div className="flex items-center gap-3 mb-2">
+                            <div className="w-7 h-7 rounded-lg bg-teal-50 flex items-center justify-center">
+                              <span className="text-sm">🧭</span>
+                            </div>
+                            <div>
+                              <p className="text-[10px] font-bold text-teal-600 uppercase tracking-wider">Phase 1</p>
+                              <p className="text-sm font-bold text-slate-800">팀 업무 재정의</p>
+                            </div>
+                          </div>
+                          <p className="text-xs text-slate-500 leading-relaxed pl-10">미션, 줄일 일, 강화할 일</p>
+                        </div>
+
+                        {/* Phase 2 */}
+                        <div className="p-5 hover:bg-slate-50/50 transition-colors">
+                          <div className="flex items-center gap-3 mb-2">
+                            <div className="w-7 h-7 rounded-lg bg-amber-50 flex items-center justify-center">
+                              <span className="text-sm">🧩</span>
+                            </div>
+                            <div>
+                              <p className="text-[10px] font-bold text-amber-600 uppercase tracking-wider">Phase 2</p>
+                              <p className="text-sm font-bold text-slate-800">Task 분해</p>
+                            </div>
+                          </div>
+                          <p className="text-xs text-slate-500 leading-relaxed pl-10">업무 리스트업, 자동화 후보 선별</p>
+                        </div>
+
+                        {/* Phase 3 */}
+                        <div className="p-5 hover:bg-slate-50/50 transition-colors">
+                          <div className="flex items-center gap-3 mb-2">
+                            <div className="w-7 h-7 rounded-lg bg-indigo-50 flex items-center justify-center">
+                              <span className="text-sm">🤖</span>
+                            </div>
+                            <div>
+                              <p className="text-[10px] font-bold text-indigo-600 uppercase tracking-wider">Phase 3</p>
+                              <p className="text-sm font-bold text-slate-800">AI 협업 설계</p>
+                            </div>
+                          </div>
+                          <p className="text-xs text-slate-500 leading-relaxed pl-10">역할 분담, 워크플로우 설계</p>
+                        </div>
+                      </div>
+
+                      {/* 최종 산출물 */}
+                      <div className="px-6 py-4 bg-slate-50/80 border-t border-slate-100">
+                        <div className="flex items-center justify-center gap-8">
+                          <div className="flex items-center gap-2">
+                            <span className="w-6 h-6 rounded bg-blue-100 flex items-center justify-center text-xs">📄</span>
+                            <span className="text-xs font-medium text-slate-600">팀 업무 분석 리포트</span>
+                          </div>
+                          <span className="text-slate-300">+</span>
+                          <div className="flex items-center gap-2">
+                            <span className="w-6 h-6 rounded bg-purple-100 flex items-center justify-center text-xs">🔧</span>
+                            <span className="text-xs font-medium text-slate-600">AI 워크플로우 설계서</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* CTA Button */}
+                    <div className="text-center mt-8">
+                      <button
+                        type="button"
+                        onPointerDown={() => setCurrentStep(2)}
+                        style={{ pointerEvents: 'auto' }}
+                        className="inline-flex items-center gap-2.5 px-6 py-3 bg-slate-700 text-white text-sm font-medium rounded-full hover:bg-slate-600 active:bg-slate-800 transition-all duration-200 cursor-pointer select-none"
+                      >
+                        시작하기
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                        </svg>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
               </div>
             </div>
           )}
@@ -1846,12 +1782,12 @@ if __name__ == "__main__":
                   {/* Header */}
                   <div className="text-center mb-12">
                     <div className="mb-4">
-                      <span className="text-sm font-semibold text-emerald-600 bg-emerald-50 px-4 py-2 rounded-full">
-                        📊 우리 팀 일 분석하기
+                      <span className="text-sm font-semibold text-teal-600 bg-teal-50 px-4 py-2 rounded-full">
+                        🧭 팀 업무 재정의하기
                       </span>
                     </div>
-                    <div className="inline-flex items-center gap-2 px-3 py-1 bg-white/80 backdrop-blur-sm border border-indigo-200/50 rounded-full mb-6">
-                      <span className="text-xs font-medium text-indigo-700 uppercase tracking-wide">Step 2</span>
+                    <div className="inline-flex items-center gap-2 px-3 py-1 bg-white/80 backdrop-blur-sm border border-teal-200/50 rounded-full mb-6">
+                      <span className="text-xs font-medium text-teal-700 uppercase tracking-wide">Step 2</span>
                     </div>
                     <h2 className="text-4xl md:text-5xl font-black text-slate-900 mb-4 tracking-tight">
                       미션 작성하기
@@ -1963,6 +1899,8 @@ if __name__ == "__main__":
                       </div>
                       <textarea
                         rows={4}
+                        value={customerInput}
+                        onChange={(e) => setCustomerInput(e.target.value)}
                         placeholder="예시: 고객사 담당자들에게 빠르고 정확한 문제 해결을 제공하여 신뢰를 구축하고, 내부 영업팀에게 데이터 기반 인사이트를 제공"
                         className="w-full px-5 py-4 bg-slate-50 border-2 border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-400/50 focus:border-indigo-400 text-base transition-all resize-none"
                       />
@@ -2072,12 +2010,12 @@ if __name__ == "__main__":
                   {/* Header */}
                   <div className="text-center mb-12">
                     <div className="mb-4">
-                      <span className="text-sm font-semibold text-emerald-600 bg-emerald-50 px-4 py-2 rounded-full">
-                        📊 우리 팀 일 분석하기
+                      <span className="text-sm font-semibold text-teal-600 bg-teal-50 px-4 py-2 rounded-full">
+                        🧭 팀 업무 재정의하기
                       </span>
                     </div>
-                    <div className="inline-flex items-center gap-2 px-3 py-1 bg-white/80 backdrop-blur-sm border border-purple-200/50 rounded-full mb-6">
-                      <span className="text-xs font-medium text-purple-700 uppercase tracking-wide">Step 3</span>
+                    <div className="inline-flex items-center gap-2 px-3 py-1 bg-white/80 backdrop-blur-sm border border-teal-200/50 rounded-full mb-6">
+                      <span className="text-xs font-medium text-teal-700 uppercase tracking-wide">Step 3</span>
                     </div>
                     <h2 className="text-4xl md:text-5xl font-black text-slate-900 mb-4 tracking-tight">
                       팀 상황 확인하기
@@ -2482,8 +2420,171 @@ if __name__ == "__main__":
             </div>
           )}
 
-          {/* Step 4: 업무 영역 작성하기 */}
+          {/* Step 4: Work Re-design 진단 (displayId 3.5 → 화면표시 Step 4) */}
           {currentStep === 4 && (
+            <div className="animate-fadeIn">
+              <div className="w-full max-w-4xl mx-auto py-8">
+
+                {/* Header - 간결하게 */}
+                <div className="text-center mb-8">
+                  <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-teal-50 border border-teal-200 rounded-full mb-4">
+                    <span className="text-xs font-semibold text-teal-700 uppercase tracking-wide">Step 4</span>
+                  </div>
+                  <h2 className="text-3xl md:text-4xl font-black text-slate-900 mb-3 tracking-tight">
+                    줄일 일 vs 강화할 일
+                  </h2>
+                  <p className="text-base text-slate-500">
+                    팀 미션 기준, 무엇을 줄이고 무엇에 집중할까요?
+                  </p>
+                </div>
+
+                {/* 이전 단계 입력 요약 - 우리 팀 컨텍스트 */}
+                <div className="bg-white rounded-2xl p-5 mb-6 border border-slate-200 shadow-sm">
+                  <p className="text-xs font-semibold text-slate-400 uppercase tracking-wide mb-4">📋 앞서 정리한 우리 팀 컨텍스트</p>
+                  <div className="grid md:grid-cols-3 gap-4">
+                    {/* 미션 */}
+                    <div className="bg-blue-50/50 rounded-xl p-4 border border-blue-100">
+                      <p className="text-xs font-semibold text-blue-600 mb-1">🎯 팀 미션</p>
+                      <p className="text-sm text-slate-700">
+                        {missionInput || <span className="text-slate-400 italic">미입력</span>}
+                      </p>
+                    </div>
+                    {/* 고객 */}
+                    <div className="bg-indigo-50/50 rounded-xl p-4 border border-indigo-100">
+                      <p className="text-xs font-semibold text-indigo-600 mb-1">👥 고객 & 가치</p>
+                      <p className="text-sm text-slate-700">
+                        {customerInput || <span className="text-slate-400 italic">미입력</span>}
+                      </p>
+                    </div>
+                    {/* 팀 상황 */}
+                    <div className="bg-purple-50/50 rounded-xl p-4 border border-purple-100">
+                      <p className="text-xs font-semibold text-purple-600 mb-1">🏢 팀 상황</p>
+                      <p className="text-sm text-slate-700">
+                        {teamSizeInput > 0 ? `${teamSizeInput}명` : <span className="text-slate-400 italic">미입력</span>}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* 디바이더 */}
+                <div className="flex justify-center py-4">
+                  <div className="w-20 h-0.5 bg-gradient-to-r from-red-200 via-slate-300 to-emerald-200 rounded-full"></div>
+                </div>
+
+                {/* 가이드 텍스트 - 강조 */}
+                <div className="text-center mb-6">
+                  <h3 className="text-xl font-bold text-slate-800 mb-2">
+                    팀 미션을 기준으로,
+                    <span className="text-red-500"> 줄여야 할 일</span>과
+                    <span className="text-emerald-500"> 강화해야 할 일</span>을 적어주세요
+                  </h3>
+                  <p className="text-sm text-slate-500">
+                    각 카테고리별로 떠오르는 업무를 작성해주세요. <span className="text-slate-400">해당 없으면 비워둬도 괜찮습니다.</span>
+                  </p>
+                </div>
+
+                {/* 2열 레이아웃 */}
+                <div className="grid md:grid-cols-2 gap-5 mb-6">
+
+                  {/* 줄일 일 */}
+                  <div className="bg-white rounded-2xl p-6 border border-red-200 shadow-sm">
+                    <div className="flex items-center gap-3 mb-5">
+                      <div className="w-12 h-12 rounded-xl bg-red-100 flex items-center justify-center text-xl">
+                        🔻
+                      </div>
+                      <div>
+                        <h3 className="text-xl font-bold text-slate-900">줄일 일</h3>
+                        <p className="text-xs text-slate-400">이 일이 줄면 본질에 집중할 수 있다</p>
+                      </div>
+                    </div>
+
+                    <div className="space-y-3">
+                      {[
+                        { label: '반복·수작업', placeholder: '매번 똑같이 하는데 자동화 안 된 일은?' },
+                        { label: '대기·지연', placeholder: '답변/승인 기다리느라 멈추는 일은?' },
+                        { label: '재작업', placeholder: '한 번에 안 끝나고 자꾸 다시 하는 일은?' },
+                        { label: '불필요한 일', placeholder: '"왜 이걸 하지?" 싶은데 관성으로 하는 일은?' }
+                      ].map((item, idx) => (
+                        <div key={idx} className="p-3 rounded-xl bg-red-50/50">
+                          <label className="text-xs font-semibold text-red-600 mb-1.5 block">{item.label}</label>
+                          <textarea
+                            placeholder={item.placeholder}
+                            rows={2}
+                            className="w-full px-3 py-2.5 text-sm border border-red-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-300 bg-white resize-none"
+                          />
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* 강화할 일 */}
+                  <div className="bg-white rounded-2xl p-6 border border-emerald-200 shadow-sm">
+                    <div className="flex items-center gap-3 mb-5">
+                      <div className="w-12 h-12 rounded-xl bg-emerald-100 flex items-center justify-center text-xl">
+                        🔺
+                      </div>
+                      <div>
+                        <h3 className="text-xl font-bold text-slate-900">강화할 일</h3>
+                        <p className="text-xs text-slate-400">이 일을 더 하면 미션 달성에 직접 기여한다</p>
+                      </div>
+                    </div>
+
+                    <div className="space-y-3">
+                      {[
+                        { label: '전략·기획', placeholder: '하고 싶은데 시간이 없어서 못 하는 일은?' },
+                        { label: '협업·소통', placeholder: '다른 팀/고객과 더 소통하면 좋을 일은?' },
+                        { label: '품질 향상', placeholder: '지금보다 더 깊이/정교하게 해야 할 일은?' },
+                        { label: '선제적 대응', placeholder: '문제 터지기 전에 미리 준비해야 할 일은?' }
+                      ].map((item, idx) => (
+                        <div key={idx} className="p-3 rounded-xl bg-emerald-50/50">
+                          <label className="text-xs font-semibold text-emerald-600 mb-1.5 block">{item.label}</label>
+                          <textarea
+                            placeholder={item.placeholder}
+                            rows={2}
+                            className="w-full px-3 py-2.5 text-sm border border-emerald-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-300 bg-white resize-none"
+                          />
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+
+                {/* 핵심 메시지 - 한 줄로 */}
+                <div className="bg-teal-50 rounded-xl px-4 py-3 mb-6 flex items-center gap-3">
+                  <span className="text-lg">💡</span>
+                  <p className="text-sm text-teal-700">
+                    줄여서 확보한 시간을 <strong>어디에 쓸지</strong>까지 정해야 Work Re-design이 완성됩니다.
+                  </p>
+                </div>
+
+                {/* Navigation */}
+                <div className="flex justify-between items-center pt-6 border-t border-slate-200">
+                  <button
+                    onPointerDown={() => setCurrentStep(3)}
+                    className="flex items-center gap-2 px-5 py-2.5 text-slate-600 hover:text-slate-900 font-medium rounded-lg hover:bg-slate-100 transition-all"
+                  >
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                    </svg>
+                    이전
+                  </button>
+                  <button
+                    onPointerDown={() => setCurrentStep(5)}
+                    className="flex items-center gap-2 px-5 py-2.5 bg-teal-600 text-white font-medium rounded-lg hover:bg-teal-700 transition-all"
+                  >
+                    다음
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                    </svg>
+                  </button>
+                </div>
+
+              </div>
+            </div>
+          )}
+
+          {/* Step 5: 업무 영역 작성하기 (기존 Step 4) */}
+          {currentStep === 5 && (
             <div className="relative min-h-screen -m-6 flex flex-col animate-fadeIn overflow-hidden">
               {/* Background */}
               <div className="absolute inset-0 fixed bg-gradient-to-br from-blue-50 via-indigo-50/30 to-purple-50/20">
@@ -2498,15 +2599,15 @@ if __name__ == "__main__":
                   {/* Header */}
                   <div className="text-center mb-12">
                     <div className="mb-4">
-                      <span className="text-sm font-semibold text-emerald-600 bg-emerald-50 px-4 py-2 rounded-full">
-                        📊 우리 팀 일 분석하기
+                      <span className="text-sm font-semibold text-amber-600 bg-amber-50 px-4 py-2 rounded-full">
+                        🧩 일을 쪼개고 구조화하기
                       </span>
                     </div>
-                    <div className="inline-flex items-center gap-2 px-3 py-1 bg-white/80 backdrop-blur-sm border border-emerald-200/50 rounded-full mb-6">
-                      <span className="text-xs font-medium text-emerald-700 uppercase tracking-wide">Step 4</span>
+                    <div className="inline-flex items-center gap-2 px-3 py-1 bg-white/80 backdrop-blur-sm border border-amber-200/50 rounded-full mb-6">
+                      <span className="text-xs font-medium text-amber-700 uppercase tracking-wide">Step 4</span>
                     </div>
                     <h2 className="text-4xl md:text-5xl font-black text-slate-900 mb-4 tracking-tight">
-                      업무 영역 작성하기
+                      업무 영역 정의
                     </h2>
                     <p className="text-lg text-slate-600 max-w-2xl mx-auto">
                       앞서 떠올린 팀원들을 생각하며 우리 팀의 주요 업무 영역을 정의해봅시다
@@ -2664,7 +2765,7 @@ if __name__ == "__main__":
                   {/* Bottom buttons */}
                   <div className="flex items-center justify-between">
                     <button
-                      onClick={() => setCurrentStep(3)}
+                      onPointerDown={() => setCurrentStep(4)}
                       className="inline-flex items-center gap-2 px-6 py-3 bg-white text-slate-700 font-semibold rounded-xl border border-slate-300 hover:bg-slate-50 transition-all"
                     >
                       <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -2674,7 +2775,7 @@ if __name__ == "__main__":
                     </button>
 
                     <button
-                      onClick={addDomain}
+                      onPointerDown={addDomain}
                       disabled={workshop.domains.length >= 5}
                       className="inline-flex items-center gap-2 px-6 py-3 bg-white border border-emerald-300 border-dashed text-emerald-700 font-semibold rounded-xl hover:bg-emerald-50 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                     >
@@ -2683,7 +2784,7 @@ if __name__ == "__main__":
                     </button>
 
                     <button
-                      onClick={() => setCurrentStep(5)}
+                      onPointerDown={() => setCurrentStep(6)}
                       className="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-emerald-600 to-green-600 text-white text-lg font-bold rounded-xl shadow-xl shadow-emerald-500/30 hover:shadow-2xl hover:shadow-green-500/40 hover:scale-[1.02] transition-all"
                     >
                       다음 단계로
@@ -2698,13 +2799,13 @@ if __name__ == "__main__":
             </div>
           )}
 
-          {/* Step 5: 업무 내용 작성하기 */}
-          {currentStep === 5 && (
+          {/* Step 6: 업무 정보 입력 (기존 Step 5) */}
+          {currentStep === 6 && (
             <div className="relative min-h-screen -m-6 flex flex-col animate-fadeIn overflow-hidden">
               {/* Background */}
-              <div className="absolute inset-0 fixed bg-gradient-to-br from-blue-50 via-indigo-50/30 to-purple-50/20">
-                <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_30%,rgba(59,130,246,0.1),transparent_50%)]"></div>
-                <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_70%,rgba(147,51,234,0.08),transparent_50%)]"></div>
+              <div className="absolute inset-0 fixed bg-gradient-to-br from-amber-50 via-orange-50/30 to-yellow-50/20">
+                <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_30%,rgba(245,158,11,0.1),transparent_50%)]"></div>
+                <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_70%,rgba(249,115,22,0.08),transparent_50%)]"></div>
               </div>
 
               {/* Main Content */}
@@ -2714,15 +2815,15 @@ if __name__ == "__main__":
                   {/* Header */}
                   <div className="text-center mb-12">
                     <div className="mb-4">
-                      <span className="text-sm font-semibold text-emerald-600 bg-emerald-50 px-4 py-2 rounded-full">
-                        📊 우리 팀 일 분석하기
+                      <span className="text-sm font-semibold text-amber-600 bg-amber-50 px-4 py-2 rounded-full">
+                        🧩 일을 쪼개고 구조화하기
                       </span>
                     </div>
-                    <div className="inline-flex items-center gap-2 px-3 py-1 bg-white/80 backdrop-blur-sm border border-pink-200/50 rounded-full mb-6">
-                      <span className="text-xs font-medium text-pink-700 uppercase tracking-wide">Step 5</span>
+                    <div className="inline-flex items-center gap-2 px-3 py-1 bg-white/80 backdrop-blur-sm border border-amber-200/50 rounded-full mb-6">
+                      <span className="text-xs font-medium text-amber-700 uppercase tracking-wide">Step 6</span>
                     </div>
                     <h2 className="text-4xl md:text-5xl font-black text-slate-900 mb-4 tracking-tight">
-                      업무 내용 작성하기
+                      업무 정보 입력
                     </h2>
                     <p className="text-lg text-slate-600 max-w-2xl mx-auto">
                       문서를 업로드하거나 직접 작성하여 업무 내용을 입력해주세요
@@ -2898,7 +2999,7 @@ if __name__ == "__main__":
                   {/* Navigation Buttons */}
                   <div className="flex items-center justify-between">
                     <button
-                      onClick={() => setCurrentStep(4)}
+                      onPointerDown={() => setCurrentStep(5)}
                       className="inline-flex items-center gap-2 px-6 py-3 bg-white text-slate-700 font-semibold rounded-xl border border-slate-300 hover:bg-slate-50 transition-all"
                     >
                       <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -2907,7 +3008,7 @@ if __name__ == "__main__":
                       이전
                     </button>
                     <button
-                      onClick={() => {
+                      onPointerDown={() => {
                         // 업무 영역별 입력을 하나의 문자열로 통합
                         const combinedInput = Object.entries(manualTaskInput)
                           .filter(([domain, tasks]) => tasks.trim())
@@ -2920,7 +3021,7 @@ if __name__ == "__main__":
                         if (!workshop.id) {
                           handleWorkshopCreate();
                         } else {
-                          setCurrentStep(6);
+                          setCurrentStep(7);
                         }
                       }}
                       disabled={loading || (uploadedFiles.length === 0 && Object.values(manualTaskInput).every(v => !v.trim()))}
@@ -2938,71 +3039,71 @@ if __name__ == "__main__":
             </div>
           )}
 
-          {/* Step 6: 업무 추출 결과 */}
-          {currentStep === 6 && (
+          {/* Step 7: 업무 추출 결과 (기존 Step 6) */}
+          {currentStep === 7 && (
             <Step4TaskExtraction
               workshopId={workshop.id || 'temp-workshop-id'}
               domains={workshop.domains}
               onNext={(tasks) => {
                 // @ts-ignore - ExtractedTask is compatible with Task
                 setWorkshop(prev => ({ ...prev, tasks, manualInput }));
-                setCurrentStep(7);
+                setCurrentStep(8);
               }}
               manualInput={manualInput}
             />
           )}
 
-          {/* Step 7: 요약 및 AI 추천 */}
-          {currentStep === 7 && (
+          {/* Step 8: 워크샵 요약 (기존 Step 7) */}
+          {currentStep === 8 && (
             <Step7Summary
               workshop={workshop}
-              onNext={() => setCurrentStep(8)}
-              onBack={() => setCurrentStep(6)}
-            />
-          )}
-
-          {/* Step 8: 워크플로우 교육 */}
-          {currentStep === 8 && (
-            <Step8WorkflowEducation
               onNext={() => setCurrentStep(9)}
               onBack={() => setCurrentStep(7)}
             />
           )}
 
-          {/* Step 9: AI 컨설팅 */}
+          {/* Step 9: AI 자동화 교육 (기존 Step 8) */}
           {currentStep === 9 && (
+            <Step8WorkflowEducation
+              onNext={() => setCurrentStep(10)}
+              onBack={() => setCurrentStep(8)}
+            />
+          )}
+
+          {/* Step 10: AI 컨설팅 (기존 Step 9) */}
+          {currentStep === 10 && (
             <Step9AIConsultant
               tasks={workshop.tasks as any}
               workshopId={workshop.id}
               onComplete={(selectedTask, insights) => {
                 console.log('AI Consultant completed:', selectedTask, insights);
-                setCurrentStep(10);
-              }}
-              onPrevious={() => setCurrentStep(8)}
-            />
-          )}
-
-          {/* Step 10: 워크플로우 설계 */}
-          {currentStep === 10 && (
-            <Step6WorkflowDesign
-              taskTitle={workshop.tasks.find(t => workshop.selectedTaskIds.includes(t.id))?.title || '선택된 업무'}
-              conversationInsights={{}}
-              onComplete={(workflow) => {
-                console.log('Workflow completed:', workflow);
                 setCurrentStep(11);
               }}
               onPrevious={() => setCurrentStep(9)}
             />
           )}
 
-          {/* Step 11: 자동화 솔루션 생성 */}
+          {/* Step 11: 워크플로우 설계 (기존 Step 10) */}
           {currentStep === 11 && (
+            <Step6WorkflowDesign
+              taskTitle={workshop.tasks.find(t => workshop.selectedTaskIds.includes(t.id))?.title || '선택된 업무'}
+              conversationInsights={{}}
+              onComplete={(workflow) => {
+                console.log('Workflow completed:', workflow);
+                setCurrentStep(12);
+              }}
+              onPrevious={() => setCurrentStep(10)}
+            />
+          )}
+
+          {/* Step 12: 결과 확인 (기존 Step 11) */}
+          {currentStep === 12 && (
             <div className="relative min-h-screen -m-6 p-6 animate-fadeIn">
               {/* Animated gradient background */}
-              <div className="absolute inset-0 bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 overflow-hidden">
+              <div className="absolute inset-0 bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 overflow-hidden">
                 <div className="absolute top-0 -left-4 w-96 h-96 bg-purple-300 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob"></div>
-                <div className="absolute top-0 -right-4 w-96 h-96 bg-blue-300 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob animation-delay-2000"></div>
-                <div className="absolute -bottom-8 left-20 w-96 h-96 bg-indigo-300 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob animation-delay-4000"></div>
+                <div className="absolute top-0 -right-4 w-96 h-96 bg-indigo-300 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob animation-delay-2000"></div>
+                <div className="absolute -bottom-8 left-20 w-96 h-96 bg-pink-300 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob animation-delay-4000"></div>
               </div>
 
               <div className="relative">
@@ -3010,7 +3111,7 @@ if __name__ == "__main__":
                   <div className="text-center mb-8">
                     <div className="mb-4">
                       <span className="text-sm font-semibold text-purple-600 bg-purple-50 px-4 py-2 rounded-full">
-                        🤖 AI로 일 자동화하기
+                        🤖 AI 협업 구조 설계하기
                       </span>
                     </div>
                     <div className="w-20 h-20 bg-gradient-to-br from-indigo-600 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-6">

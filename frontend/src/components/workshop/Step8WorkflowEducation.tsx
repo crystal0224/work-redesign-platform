@@ -275,9 +275,11 @@ const DEPARTMENT_WORKFLOWS = {
 };
 
 // Department Practice Section Component
+type DeptStep = { id: number; title: string; name: string; role: 'human' | 'together' | 'ai' };
+
 function DepartmentPracticeSection() {
   const [selectedDept, setSelectedDept] = useState<keyof typeof DEPARTMENT_WORKFLOWS>('marketing');
-  const [deptSteps, setDeptSteps] = useState(DEPARTMENT_WORKFLOWS.marketing.steps);
+  const [deptSteps, setDeptSteps] = useState<DeptStep[]>(DEPARTMENT_WORKFLOWS.marketing.steps);
 
   const handleDeptChange = (dept: keyof typeof DEPARTMENT_WORKFLOWS) => {
     setSelectedDept(dept);
