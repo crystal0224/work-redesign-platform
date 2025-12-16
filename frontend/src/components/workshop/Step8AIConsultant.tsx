@@ -48,7 +48,7 @@ export default function Step8AIConsultant({ tasks, workshopId, onComplete, onPre
           console.log('🔄 초기 메시지 로딩 시작, WorkshopId:', workshopId);
 
           // 초기 메시지 API 호출
-          const response = await fetch('http://localhost:4000/api/consulting/chat', {
+          const response = await fetch('http://localhost:3001/api/consulting/chat', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
@@ -126,7 +126,7 @@ export default function Step8AIConsultant({ tasks, workshopId, onComplete, onPre
         content: msg.content
       }));
 
-      const response = await fetch('http://localhost:4000/api/consulting/chat', {
+      const response = await fetch('http://localhost:3001/api/consulting/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

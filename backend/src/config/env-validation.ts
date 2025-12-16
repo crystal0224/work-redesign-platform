@@ -30,7 +30,9 @@ const envSchema = z.object({
     .string({
       required_error: 'REDIS_URL is required for AI caching and rate limiting',
     })
-    .url('REDIS_URL must be a valid URL'),
+    .refine(val => val.startsWith('redis://') || val.startsWith('rediss://'), {
+      message: 'REDIS_URL must start with redis:// or rediss://',
+    }),
 
   // Anthropic API
   ANTHROPIC_API_KEY: z

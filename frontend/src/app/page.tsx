@@ -327,7 +327,7 @@ export default function LandingPage() {
       </div>
 
       {/* Noise Overlay */}
-      <div className="absolute inset-0 opacity-[0.015] mix-blend-overlay"></div>
+      <div className="absolute inset-0 opacity-[0.015] mix-blend-overlay pointer-events-none"></div>
 
       {/* Hero Section */}
       <div className="relative container mx-auto px-8 pt-32 pb-40 text-center">

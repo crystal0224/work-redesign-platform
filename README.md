@@ -1,23 +1,68 @@
-# Work Redesign Platform 🚀
+# Work Redesign Platform
 
 SK 신임 팀장을 위한 AI 기반 업무 재설계 워크샵 도구
 
-## 📋 프로젝트 개요
+## 프로젝트 개요
 
-### 🎯 목표
+### 목표
 - **35분 내** 업무 재설계 완료
 - **칸반 보드** 중심의 직관적 UI
 - **즉시 사용 가능한** 자동화 도구 제공
 - **Claude AI** 기반 지능형 분석
 
-### 👥 타겟 사용자
+### 타겟 사용자
 - **Primary**: SK 그룹 신임 팀장 (연 500명)
 - **Secondary**: 기존 팀장 및 파트장
 - **Tertiary**: SK 아카데미 교육 담당자
 
 ---
 
-## 🏗️ 시스템 아키텍처
+## 빠른 시작
+
+### 데모 실행 (가장 간단)
+
+```bash
+# 데모 모드 실행 (DB 불필요)
+./demo-start.sh
+
+# 브라우저에서 접속
+# 메인: http://localhost:3000
+# API:  http://localhost:3001
+
+# 종료
+./demo-stop.sh
+```
+
+### 개발 환경 실행
+
+#### Option A: Docker 사용 (추천)
+```bash
+# PostgreSQL + Redis 시작
+docker compose up -d postgres redis
+
+# 환경 변수 설정
+export REDIS_URL=redis://localhost:6379
+
+# 개발 서버 시작
+npm run dev
+```
+
+#### Option B: 로컬 개발
+```bash
+# PostgreSQL, Redis가 로컬에 설치되어 있어야 함
+npm run migrate  # 데이터베이스 마이그레이션
+npm run seed     # 초기 데이터 생성
+npm run dev      # 개발 서버 시작
+```
+
+### 접속 주소
+- **프론트엔드**: http://localhost:3000
+- **백엔드 API**: http://localhost:4000 (또는 데모 모드: 3001)
+- **API 문서**: http://localhost:4000/docs (Swagger)
+
+---
+
+## 시스템 아키텍처
 
 ```
 ┌─────────────────────────────────────────────┐
@@ -41,97 +86,7 @@ SK 신임 팀장을 위한 AI 기반 업무 재설계 워크샵 도구
 
 ---
 
-## 🚀 빠른 시작
-
-### 1. 환경 설정
-```bash
-# 저장소 클론
-git clone <repository-url>
-cd work-redesign-platform
-
-# 환경 변수 설정
-cp backend/.env.example backend/.env
-cp frontend/.env.example frontend/.env
-# 각 .env 파일을 편집하여 필수 값 설정 (아래 환경 변수 섹션 참조)
-
-# 의존성 설치
-cd backend && npm install
-cd ../frontend && npm install
-```
-
-### 필수 환경 변수
-
-#### Backend (.env)
-```bash
-# 서버 설정
-NODE_ENV=development
-PORT=4000
-CORS_ORIGIN=http://localhost:3000
-
-# 데이터베이스
-DATABASE_URL=postgresql://user:password@localhost:5432/work_redesign
-REDIS_URL=redis://localhost:6379
-
-# 인증
-JWT_SECRET=your-super-secret-jwt-key-min-32-chars
-
-# Anthropic Claude API
-ANTHROPIC_API_KEY=sk-ant-api...
-ANTHROPIC_MODEL=claude-3-5-sonnet-20241022
-
-# AI 캐싱 (비용 절감 50%)
-ENABLE_AI_CACHE=true
-AI_CACHE_TTL=3600
-
-# 파일 스토리지 (선택사항)
-AWS_ACCESS_KEY_ID=your-key
-AWS_SECRET_ACCESS_KEY=your-secret
-AWS_S3_BUCKET=your-bucket
-AWS_REGION=ap-northeast-2
-
-# 모니터링 (선택사항)
-SENTRY_DSN=https://...
-DATADOG_API_KEY=your-key
-```
-
-#### Frontend (.env)
-```bash
-# API 엔드포인트
-NEXT_PUBLIC_API_URL=http://localhost:4000
-NEXT_PUBLIC_WS_URL=ws://localhost:4000
-
-# 앱 설정
-NEXT_PUBLIC_APP_NAME=Work Redesign Platform
-NEXT_PUBLIC_APP_VERSION=1.0.0
-```
-
-### 2. 개발 환경 실행
-
-#### Option A: Docker 사용 (추천)
-```bash
-# 데이터베이스 및 캐시 시작
-docker-compose up -d postgres redis
-
-# 애플리케이션 시작
-npm run dev
-```
-
-#### Option B: 로컬 개발
-```bash
-# PostgreSQL, Redis가 로컬에 설치되어 있어야 함
-npm run migrate  # 데이터베이스 마이그레이션
-npm run seed     # 초기 데이터 생성
-npm run dev      # 개발 서버 시작
-```
-
-### 3. 접속
-- **프론트엔드**: http://localhost:3000
-- **백엔드 API**: http://localhost:4000
-- **API 문서**: http://localhost:4000/docs (Swagger)
-
----
-
-## 📁 프로젝트 구조
+## 프로젝트 구조
 
 ```
 work-redesign-platform/
@@ -140,51 +95,54 @@ work-redesign-platform/
 │   │   ├── app/                 # App Router 페이지
 │   │   │   ├── page.tsx         # 랜딩 페이지
 │   │   │   └── workshop/        # 워크샵 페이지들
-│   │   │       ├── [sessionId]/
-│   │   │       │   ├── domains/      # 도메인 정의
-│   │   │       │   ├── upload/       # 자료 업로드
-│   │   │       │   ├── analysis/     # AI 분석
-│   │   │       │   ├── tasks/        # 칸반 보드
-│   │   │       │   ├── agents/       # Agent 시나리오
-│   │   │       │   ├── priority/     # 우선순위 선택
-│   │   │       │   └── results/      # 결과물 다운로드
-│   │   │       └── components/       # 워크샵 컴포넌트
 │   │   ├── components/          # 공통 컴포넌트
-│   │   │   ├── ui/              # shadcn/ui 컴포넌트
-│   │   │   └── shared/          # 공유 컴포넌트
 │   │   ├── lib/                 # 유틸리티 및 설정
 │   │   ├── hooks/               # 커스텀 훅
 │   │   └── store/               # 상태 관리 (Zustand)
 │   └── package.json
+│
 ├── backend/                     # Express.js 백엔드
 │   ├── src/
 │   │   ├── routes/              # API 라우트
 │   │   ├── controllers/         # 비즈니스 로직
-│   │   ├── models/              # 데이터베이스 모델
 │   │   ├── services/            # 외부 서비스 연동
-│   │   │   ├── ai/              # Claude API 연동
-│   │   │   ├── files/           # 파일 처리
-│   │   │   └── email/           # 이메일 발송
+│   │   │   └── ai/              # Claude API 연동
 │   │   ├── middleware/          # 미들웨어
-│   │   ├── database/            # DB 스키마 및 마이그레이션
-│   │   └── utils/               # 유틸리티
+│   │   └── config/              # 설정 및 환경변수 검증
 │   └── package.json
+│
+├── workshop-pilot-system/       # 파일럿 테스팅 시스템
+│   ├── 2-personas/
+│   │   └── personas-v3.ts       # 30명 Synthetic Users
+│   ├── phases/                  # 파일럿 프로세스
+│   ├── run-real-pilot.ts        # 5명 샘플 테스트
+│   ├── run-real-pilot-parallel.ts # 30명 병렬 테스트
+│   └── outputs/                 # 보고서 출력
+│
+├── docs/                        # 문서
+│   ├── 1-persona-integration/   # 페르소나 통합 가이드
+│   ├── 2-deployment/            # 배포 가이드
+│   ├── 3-workshop-demo/         # 워크샵/데모 가이드
+│   └── 4-testing/               # 테스팅 가이드
+│
+├── demo-start.sh                # 데모 실행 스크립트
+├── demo-stop.sh                 # 데모 종료 스크립트
+├── workshop-server.js           # 간단한 워크샵 서버 (데모용)
 ├── docker-compose.yml           # Docker 설정
-├── .env.example                 # 환경 변수 템플릿
-└── README.md
+└── package.json
 ```
 
 ---
 
-## 🎨 핵심 기능
+## 핵심 기능
 
-### 1. 📊 칸반 보드 (4개 컬럼)
+### 1. 칸반 보드 (4개 컬럼)
 - **백로그**: 정의된 업무들
 - **진행중**: 현재 분석/수정 중인 업무
 - **검토**: AI가 분석한 업무들
 - **완료**: 확정된 업무들
 
-### 2. 🤖 AI 분석 엔진 ✨ **NEW: Enhanced**
+### 2. AI 분석 엔진
 - **Claude 3.5 Sonnet** 기반 고급 업무 분석
 - **실시간 채팅** 인터페이스
 - **자동 업무 구조화** (12개 필드 검증)
@@ -192,29 +150,73 @@ work-redesign-platform/
 - **중복 업무 자동 제거** (90% 일관성)
 - **ROI 기반 우선순위** 자동 계산
 - **Redis 캐싱** - AI API 비용 50% 절감
-- **Rate Limiting** - AI/파일 업로드 요청 제한
-- **구조화된 에러 처리** - 사용자 친화적 메시지
 
-### 3. 📁 파일 처리
+### 3. 파일 처리
 - **다중 형식 지원**: DOCX, XLSX, PDF, TXT
 - **실시간 파싱**
 - **한국어 문서 최적화**
 
-### 4. ⚙️ 자동화 도구 생성
+### 4. 자동화 도구 생성
 - **프롬프트 템플릿**
 - **워크플로우 JSON** (n8n, Zapier)
 - **Python 스크립트** 자동 생성
 - **즉시 다운로드** 가능한 패키지
 
-### 5. 🔍 고급 데이터 검증 ✨ **NEW**
-- **Zod 타입 시스템** - 런타임 타입 안정성
-- **Robust JSON 파싱** - 3단계 재시도 전략
-- **자동 에러 복구** - 부분 실패 허용
-- **상세한 로깅** - 디버깅 지원
+---
+
+## 파일럿 테스팅 시스템
+
+### 개요
+
+**30명의 Synthetic Users로 실제 HRD 파일럿 테스팅을 재현**하여:
+- 직무별, 성숙도별, 팀 규모별로 **어느 단계에서 막히는지** 파악
+- **실제로 하기 힘든 부분** 사전 발견
+- **추가 가이드가 필요한 지점** 식별
+
+### Synthetic Users
+
+| 항목 | 실제 사용자 테스트 | Synthetic Users |
+|------|-------------------|-----------------|
+| **소요 시간** | 3일 | 40분 |
+| **비용** | $3,000+ | $1.50 |
+| **반복 가능성** | 1-2회 | 무제한 |
+| **세그먼트 통제** | 어려움 | 정밀 통제 |
+
+### 30명 페르소나 구성
+
+- **8개 부서**: 마케팅, 영업, HR, R&D, 재무, IT, 생산, 네트워크운영
+- **4단계 디지털 성숙도**: Beginner → Intermediate → Advanced → Expert
+- **300+ 데이터 포인트**: 팀 구성, 업무 특성, pain points, 사용 도구
+
+### 실행 방법
+
+```bash
+# 5명 샘플 테스트
+npm run pilot:real
+
+# 30명 전체 테스트 (병렬)
+npm run pilot:real:full
+
+# UI/UX 분석 보고서
+npm run pilot:report:uiux
+
+# UI 재추출 (프론트엔드 변경 시)
+npm run pilot:ui-extract
+```
+
+### 파일럿 프로세스
+
+1. **사전 인터뷰**: 참가자 배경, 기대, 우려 파악
+2. **워크샵 진행**: Playwright로 실제 브라우저 실행
+3. **중간 체크인**: 각 단계 후 피드백 수집
+4. **사후 인터뷰**: 전체 경험 회고
+5. **퍼실리테이터 분석**: 막힘 지점, 이탈 위험, 개선사항 도출
+
+상세 내용: [workshop-pilot-system/README.md](workshop-pilot-system/README.md)
 
 ---
 
-## 🛠️ 기술 스택
+## 기술 스택
 
 ### Frontend
 - **Framework**: Next.js 14 (App Router)
@@ -232,200 +234,112 @@ work-redesign-platform/
 - **AI**: Anthropic Claude API
 - **Storage**: AWS S3
 
-### DevOps
-- **Containerization**: Docker + Docker Compose
-- **Monitoring**: DataDog + Sentry
-- **Analytics**: Google Analytics
+### Testing
+- **E2E**: Playwright
+- **Unit**: Jest
+- **Pilot Testing**: Synthetic Users + Claude AI
 
 ---
 
-## 📊 11개 핵심 화면
+## 환경 변수
 
-| #  | 화면명 | 설명 | 소요시간 |
-|----|--------|------|----------|
-| 1  | 랜딩 페이지 | SK SSO 로그인, 워크샵 소개 | 2분 |
-| 2  | 도메인 정의 | 3-5개 업무 영역 입력 | 3분 |
-| 3  | 자료 업로드 | 파일/텍스트 업로드 | 5분 |
-| 4  | AI 분석 대기 | 실시간 진행률 표시 | 2분 |
-| 5  | 칸반 보드 | 업무 시각화 및 수정 | 8분 |
-| 6  | AI 채팅 | 불명확 부분 해결 | 5분 |
-| 7  | Agent 시나리오 | 자동화 방안 확인 | 4분 |
-| 8  | 프롬프트 미리보기 | 생성된 도구 확인 | 2분 |
-| 9  | 우선순위 선택 | Quick Win 선정 | 2분 |
-| 10 | 결과물 다운로드 | ZIP 패키지 생성 | 1분 |
-| 11 | 성과 추적 | 실행 계획 수립 | 1분 |
+### Backend (.env)
+```bash
+NODE_ENV=development
+PORT=4000
+CORS_ORIGIN=http://localhost:3000
 
-**총 소요시간: 35분**
+# 데이터베이스
+DATABASE_URL=postgresql://user:password@localhost:5432/work_redesign
+REDIS_URL=redis://localhost:6379
+
+# 인증
+JWT_SECRET=your-super-secret-jwt-key-min-32-chars
+
+# Anthropic Claude API
+ANTHROPIC_API_KEY=sk-ant-api...
+ANTHROPIC_MODEL=claude-3-5-sonnet-20241022
+
+# AI 캐싱
+ENABLE_AI_CACHE=true
+AI_CACHE_TTL=3600
+```
+
+### Frontend (.env)
+```bash
+NEXT_PUBLIC_API_URL=http://localhost:4000
+NEXT_PUBLIC_WS_URL=ws://localhost:4000
+NEXT_PUBLIC_APP_NAME=Work Redesign Platform
+```
 
 ---
 
-## 🔧 개발 가이드
+## 개발 가이드
 
 ### 코드 스타일
 ```bash
-# 린트 검사
-npm run lint
-
-# 코드 포맷팅
-npm run format
-
-# 타입 검사
-npm run type-check
+npm run lint        # 린트 검사
+npm run format      # 코드 포맷팅
+npm run type-check  # 타입 검사
 ```
 
 ### 테스트
 ```bash
-# 전체 테스트
-npm run test
-
-# 특정 테스트
-npm run test:backend
-npm run test:frontend
-
-# 커버리지
-npm run test:coverage
+npm run test                # 전체 테스트
+npm run test:backend        # 백엔드 테스트
+npm run test:frontend       # 프론트엔드 테스트
+npm run test:coverage       # 커버리지
 ```
 
 ### 데이터베이스
 ```bash
-# 마이그레이션 실행
-npm run migrate
-
-# 마이그레이션 생성
-npm run migrate:create
-
-# 시드 데이터 생성
-npm run seed
+npm run migrate     # 마이그레이션 실행
+npm run seed        # 시드 데이터 생성
 ```
 
 ---
 
-## 🚀 배포 가이드
+## 문서
 
-### 개발 환경 (로컬)
-```bash
-# Docker를 사용한 로컬 개발
-docker-compose up -d
-
-# 또는 직접 실행
-cd backend && npm run dev
-cd frontend && npm run dev
-```
-
-### 프로덕션 배포 (Railway + Vercel)
-
-#### 1. Backend 배포 (Railway)
-```bash
-# Railway CLI 설치
-npm install -g @railway/cli
-
-# Railway 로그인 및 프로젝트 생성
-railway login
-railway init
-
-# 환경 변수 설정 (Railway Dashboard에서 설정)
-# - DATABASE_URL (PostgreSQL 플러그인 자동 생성)
-# - REDIS_URL (Redis 플러그인 자동 생성)
-# - ANTHROPIC_API_KEY
-# - JWT_SECRET
-# - ENABLE_AI_CACHE=true
-# - CORS_ORIGIN=https://your-frontend.vercel.app
-
-# 배포
-railway up
-```
-
-#### 2. Frontend 배포 (Vercel)
-```bash
-# Vercel CLI 설치
-npm install -g vercel
-
-# Vercel 로그인 및 배포
-vercel
-
-# 환경 변수 설정 (Vercel Dashboard에서 설정)
-# - NEXT_PUBLIC_API_URL=https://your-backend.railway.app
-# - NEXT_PUBLIC_WS_URL=wss://your-backend.railway.app
-
-# 프로덕션 배포
-vercel --prod
-```
-
-#### 3. 데이터베이스 마이그레이션
-```bash
-# Railway에서 실행
-railway run npm run migrate:deploy
-railway run npm run seed
-```
-
-### 배포 체크리스트
-- [ ] Backend 환경 변수 설정 완료
-- [ ] Frontend 환경 변수 설정 완료
-- [ ] PostgreSQL 데이터베이스 연결 확인
-- [ ] Redis 캐시 연결 확인
-- [ ] Anthropic API 키 동작 확인
-- [ ] CORS 설정 확인 (프론트엔드 도메인 허용)
-- [ ] 헬스체크 엔드포인트 확인 (/health)
-- [ ] 데이터베이스 마이그레이션 실행
-- [ ] 빌드 성공 확인
-- [ ] 프로덕션 접속 테스트
+| 폴더 | 내용 |
+|------|------|
+| [docs/1-persona-integration/](docs/1-persona-integration/) | 페르소나 데이터 통합 가이드 |
+| [docs/2-deployment/](docs/2-deployment/) | 배포 가이드 (Railway/Vercel) |
+| [docs/3-workshop-demo/](docs/3-workshop-demo/) | 워크샵 진행 및 데모 가이드 |
+| [docs/4-testing/](docs/4-testing/) | 테스팅 전략 및 가이드 |
+| [workshop-pilot-system/](workshop-pilot-system/) | 파일럿 테스팅 시스템 |
 
 ---
 
-## 📈 성능 목표
+## 로드맵
 
-| 메트릭 | 목표 | 현재 |
-|--------|------|------|
-| 페이지 로드 시간 | < 2초 | - |
-| AI 분석 시간 | < 30초 | - |
-| 워크샵 완료율 | > 80% | - |
-| 가용성 | 99.9% | - |
-| 동시 사용자 | 100명 | - |
+### Phase 1-4: 완료
+- [x] 8단계 워크샵 플로우
+- [x] 칸반 보드 기본 기능
+- [x] Claude API 연동
+- [x] AI 채팅 인터페이스
+- [x] 파일 업로드 및 파싱
+- [x] 자동화 도구 생성
+- [x] Zod 타입 검증
+- [x] Redis 캐싱
+- [x] Rate Limiting
 
----
+### Phase 5: 파일럿 테스팅 (완료)
+- [x] Synthetic Users 시스템 구축
+- [x] 30명 페르소나 정의 (personas-v3)
+- [x] 실제 파일럿 프로세스 구현
+- [x] UI/UX 분석 보고서 자동화
+- [x] 페르소나 카드 UI 개선
 
-## 🔒 보안
-
-- **인증**: SK SSO 연동
-- **권한**: JWT 토큰 기반
-- **데이터 암호화**: AES-256
-- **파일 업로드**: 바이러스 스캔
-- **API 보안**: Rate Limiting
-
----
-
-## 📚 문서
-
-프로젝트 문서는 `/docs` 폴더에 체계적으로 정리되어 있습니다.
-
-### 주요 문서
-
-#### [📁 1-persona-integration/](docs/1-persona-integration/) ⭐ **최신 (2025-11-26)**
-**페르소나 데이터 통합 가이드**
-
-- [PERSONA_INTEGRATION_GUIDE.md](docs/1-persona-integration/PERSONA_INTEGRATION_GUIDE.md) - 완벽한 통합 가이드
-- [PERSONA_SYNC_QUICKSTART.md](docs/1-persona-integration/PERSONA_SYNC_QUICKSTART.md) - 5분 빠른 시작
-
-**사용**: 페르소나 데이터 수정 시
-```bash
-./scripts/sync-personas.sh  # 데이터 동기화
-./scripts/sync-images.sh    # 이미지 동기화
-```
-
-#### [📁 2-deployment/](docs/2-deployment/)
-배포 및 인프라 가이드
-
-#### [📁 3-workshop-demo/](docs/3-workshop-demo/)
-워크샵 진행 및 데모 가이드
-
-#### [📁 4-testing/](docs/4-testing/)
-테스팅 전략 및 가이드
-
-**상세 목록**: [docs/README.md](docs/README.md)
+### Phase 6: 배포 (진행 중)
+- [ ] Backend 배포 (Railway)
+- [ ] Frontend 배포 (Vercel)
+- [ ] 도메인 연결 및 SSL
+- [ ] 모니터링 설정
 
 ---
 
-## 📞 지원
+## 지원
 
 - **이슈 리포트**: GitHub Issues
 - **문서**: [/docs](docs/) 폴더
@@ -433,47 +347,6 @@ railway run npm run seed
 
 ---
 
-## 🎯 로드맵
-
-### Phase 1: MVP (완료 ✅)
-- [x] 프로젝트 구조 설정
-- [x] 8단계 워크샵 플로우
-- [x] 칸반 보드 기본 기능
-- [x] Claude API 연동
-- [x] 업무 추출 시스템
-
-### Phase 2: Enhancement (완료 ✅)
-- [x] AI 채팅 인터페이스
-- [x] 파일 업로드 및 파싱 (DOCX, PDF, XLSX)
-- [x] 자동화 도구 생성 (프롬프트, n8n, Python)
-- [x] 한국어 시간 표현 전처리
-- [x] 중복 제거 시스템
-- [x] Zod 타입 검증
-
-### Phase 3: Quality Improvement (완료 ✅)
-- [x] **P0**: Zod 타입 검증 시스템
-- [x] **P0**: Robust JSON 파싱 (3단계 재시도)
-- [x] **P1**: 한국어 시간 전처리 (85% → 95-98%)
-- [x] **P1**: 중복 업무 제거 (75% → 90%)
-- [x] 테스트 커버리지: 24/24 (100%)
-
-### Phase 4: Production Readiness (완료 ✅)
-- [x] **Redis 캐싱** - AI API 비용 50% 절감
-- [x] **Rate Limiting** - AI/일반 API/파일 업로드 제한
-- [x] **환경 변수 검증** - Zod 기반 시작 시 검증
-- [x] **에러 처리** - 구조화된 에러 클래스 및 사용자 메시지
-- [x] **빌드 최적화** - 프로덕션 배포 준비
-- [x] **배포 문서화** - Railway/Vercel 가이드
-
-### Phase 5: Deployment (진행 중 🚀)
-- [ ] **Backend 배포** - Railway + PostgreSQL + Redis
-- [ ] **Frontend 배포** - Vercel
-- [ ] **도메인 연결** - SSL 인증서 설정
-- [ ] **모니터링 설정** - Sentry/DataDog (선택사항)
-- [ ] **성능 테스트** - 50명 동시 접속 테스트
-
----
-
-**🏢 SK Academy 전용 도구**
-**⚡ 35분 내 업무 재설계 완성**
-**🤖 AI 기반 자동화 솔루션**
+**SK Academy 전용 도구**
+**35분 내 업무 재설계 완성**
+**AI 기반 자동화 솔루션**

@@ -68,5 +68,8 @@
   "workspaces": [
     "backend",
     "frontend"
-  ]
+  ],
+  "dependencies": {
+    "docx": "^9.5.1"
+  }
 }
