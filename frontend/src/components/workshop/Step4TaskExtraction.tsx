@@ -43,6 +43,7 @@ interface Step4TaskExtractionProps {
   onNext: (tasks: ExtractedTask[]) => void;
   manualInput?: string;
   initialTasks?: ExtractedTask[];
+  onBack?: () => void;
 }
 
 // Sortable Task Card Component

@@ -136,6 +136,35 @@ const TaskSchema = z.object({
     .max(10, 'tags는 최대 10개까지 가능합니다')
 });
 
+// 기본 라우트 (상태 확인용)
+app.get('/', (req, res) => {
+  res.send(`
+    <html>
+      <head>
+        <title>Workshop Server Status</title>
+        <style>
+          body { font-family: sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; background-color: #f0f9ff; }
+          .card { background: white; padding: 2rem; border-radius: 1rem; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1); text-align: center; }
+          h1 { color: #0284c7; margin-bottom: 0.5rem; }
+          p { color: #64748b; }
+          .status { display: inline-block; padding: 0.25rem 0.75rem; background: #dcfce7; color: #166534; border-radius: 9999px; font-weight: 600; font-size: 0.875rem; margin-top: 1rem; }
+        </style>
+      </head>
+      <body>
+        <div class="card">
+          <h1>Workshop Server</h1>
+          <p>API Server is running normally.</p>
+          <div class="status">● Online</div>
+        </div>
+      </body>
+    </html>
+  `);
+});
+
+app.get('/health', (req, res) => {
+  res.json({ status: 'ok', timestamp: new Date().toISOString() });
+});
+
 // 유틸리티 함수들
 function generateId(prefix) {
   return `${prefix}_${Date.now()}_${Math.random().toString(36).substr(2, 8)}`;

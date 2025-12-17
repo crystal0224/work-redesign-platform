@@ -563,7 +563,7 @@ export default function PhaseSummary({
                 : 'bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-700 hover:to-blue-700'
             }`}
           >
-            {phase === 1 ? 'Task 분해하기 시작하기' : 'Phase 3 시작하기'}
+            {phase === 1 ? 'Phase 2 시작하기' : 'Phase 3 시작하기'}
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
             </svg>

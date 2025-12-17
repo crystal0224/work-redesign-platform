@@ -137,7 +137,8 @@ const WORKSHOP_STEPS = [
   { id: 9, displayId: '9', title: 'AI 자동화 교육', description: 'LLM 이해 및 역할 전략', icon: '🎓', section: 'AI 협업 구조 설계하기' },
   { id: 10, displayId: '10', title: 'AI 컨설팅', description: 'AI와 대화하며 솔루션 설계', icon: '💬', section: 'AI 협업 구조 설계하기' },
   { id: 11, displayId: '11', title: '워크플로우 설계', description: '자동화 워크플로우 상세 설계', icon: '🔧', section: 'AI 협업 구조 설계하기' },
-  { id: 12, displayId: '12', title: '결과 확인', description: '최종 결과 검토 및 다운로드', icon: '🎉', section: 'AI 협업 구조 설계하기' }
+  { id: 12, displayId: '12', title: '결과 확인', description: '최종 결과 검토 및 다운로드', icon: '🎉', section: 'AI 협업 구조 설계하기' },
+  { id: 13, displayId: '13', title: '워크샵 마무리', description: '여정 확인 및 소감 작성', icon: '🏁', section: 'AI 협업 구조 설계하기' }
 ];
 
 // 현재 단계가 속한 그룹 찾기
@@ -1793,8 +1794,8 @@ if __name__ == "__main__":
                               <span className="text-xl">🧩</span>
                             </div>
                             <div>
-                              <p className="text-[11px] font-bold text-amber-600 uppercase tracking-wider">Task 분해하기</p>
-                              <p className="text-base font-bold text-slate-800">업무 구조화</p>
+                              <p className="text-[11px] font-bold text-amber-600 uppercase tracking-wider">Phase 2</p>
+                              <p className="text-base font-bold text-slate-800">Task 분해하기</p>
                             </div>
                           </div>
                           <p className="text-sm text-slate-500 leading-relaxed pl-[52px]">
@@ -3501,15 +3502,177 @@ if __name__ == "__main__":
                       </svg>
                       이전 단계
                     </button>
-                    <button
-                      onClick={() => setCurrentStep(10)}
+            <button
+                      onClick={() => setCurrentStep(13)}
                       disabled={automationSolutions.length === 0}
                       className="px-8 py-4 bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-semibold rounded-2xl hover:shadow-2xl hover:scale-105 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
                     >
-                      최종 보고서 보기
+                      워크샵 마무리하기
                       <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                       </svg>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          )}
+
+          {/* Step 13: 워크샵 마무리 */}
+          {currentStep === 13 && (
+            <div className="relative min-h-screen -m-6 p-6 animate-fadeIn">
+              <div className="absolute inset-0 bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 overflow-hidden">
+                <div className="absolute top-0 -left-4 w-96 h-96 bg-purple-300 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob"></div>
+                <div className="absolute top-0 -right-4 w-96 h-96 bg-indigo-300 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob animation-delay-2000"></div>
+                <div className="absolute -bottom-8 left-20 w-96 h-96 bg-pink-300 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob animation-delay-4000"></div>
+              </div>
+
+              <div className="relative max-w-5xl mx-auto">
+                <div className="backdrop-blur-xl bg-white/40 border border-white/60 rounded-3xl p-8 shadow-2xl shadow-indigo-200/50">
+                  <div className="text-center mb-12">
+                    <h2 className="text-4xl font-bold text-slate-900 mb-4">
+                      워크샵을 성공적으로 마쳤습니다! 👏
+                    </h2>
+                    <p className="text-xl text-slate-600">
+                      오늘의 여정을 통해 우리 팀의 업무가 어떻게 변화될지 기대됩니다.
+                    </p>
+                  </div>
+
+                  {/* Journey Visualization */}
+                  <div className="mb-12">
+                    <h3 className="text-xl font-bold text-slate-900 mb-6 flex items-center gap-2">
+                      <span>🗺️</span> 오늘의 여정
+                    </h3>
+                    <div className="relative flex justify-between items-center px-12 py-8 bg-white/50 rounded-2xl border border-white/60">
+                      {/* Connecting Line */}
+                      <div className="absolute left-12 right-12 top-1/2 h-1 bg-slate-200 -z-10"></div>
+                      <div className="absolute left-12 right-12 top-1/2 h-1 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 -z-10" style={{ width: '100%' }}></div>
+
+                      {/* Phase 1 */}
+                      <div className="flex flex-col items-center gap-3">
+                        <div className="w-16 h-16 rounded-full bg-indigo-600 text-white flex items-center justify-center text-2xl shadow-lg ring-4 ring-indigo-100">
+                          🚀
+                        </div>
+                        <div className="text-center">
+                          <p className="font-bold text-slate-900">Phase 1</p>
+                          <p className="text-sm text-slate-600">팀 업무 재정의</p>
+                        </div>
+                      </div>
+
+                      {/* Phase 2 */}
+                      <div className="flex flex-col items-center gap-3">
+                        <div className="w-16 h-16 rounded-full bg-purple-600 text-white flex items-center justify-center text-2xl shadow-lg ring-4 ring-purple-100">
+                          🧩
+                        </div>
+                        <div className="text-center">
+                          <p className="font-bold text-slate-900">Phase 2</p>
+                          <p className="text-sm text-slate-600">Task 분해하기</p>
+                        </div>
+                      </div>
+
+                      {/* Phase 3 */}
+                      <div className="flex flex-col items-center gap-3">
+                        <div className="w-16 h-16 rounded-full bg-pink-600 text-white flex items-center justify-center text-2xl shadow-lg ring-4 ring-pink-100">
+                          🤖
+                        </div>
+                        <div className="text-center">
+                          <p className="font-bold text-slate-900">Phase 3</p>
+                          <p className="text-sm text-slate-600">AI 협업 설계</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="grid md:grid-cols-2 gap-8 mb-12">
+                    {/* Downloads */}
+                    <div className="bg-white/60 rounded-2xl p-6 border border-white/60">
+                      <h3 className="text-xl font-bold text-slate-900 mb-4 flex items-center gap-2">
+                        <span>📥</span> 결과물 다운로드
+                      </h3>
+                      <div className="space-y-3">
+                        <button
+                          onClick={() => setShowPhaseSummary(1)}
+                          className="w-full flex items-center justify-between p-4 bg-white rounded-xl border border-indigo-100 hover:border-indigo-300 hover:shadow-md transition-all group"
+                        >
+                          <div className="flex items-center gap-3">
+                            <span className="w-10 h-10 rounded-lg bg-indigo-100 text-indigo-600 flex items-center justify-center text-xl group-hover:bg-indigo-600 group-hover:text-white transition-colors">
+                              1️⃣
+                            </span>
+                            <div className="text-left">
+                              <p className="font-bold text-slate-900">Phase 1 요약</p>
+                              <p className="text-xs text-slate-500">미션, 팀 현황, R&R 정의</p>
+                            </div>
+                          </div>
+                          <span className="text-indigo-600">보기 & 다운로드 →</span>
+                        </button>
+
+                        <button
+                          onClick={() => setShowPhaseSummary(2)}
+                          className="w-full flex items-center justify-between p-4 bg-white rounded-xl border border-purple-100 hover:border-purple-300 hover:shadow-md transition-all group"
+                        >
+                          <div className="flex items-center gap-3">
+                            <span className="w-10 h-10 rounded-lg bg-purple-100 text-purple-600 flex items-center justify-center text-xl group-hover:bg-purple-600 group-hover:text-white transition-colors">
+                              2️⃣
+                            </span>
+                            <div className="text-left">
+                              <p className="font-bold text-slate-900">Phase 2 요약</p>
+                              <p className="text-xs text-slate-500">Task 분해, 자동화 후보 도출</p>
+                            </div>
+                          </div>
+                          <span className="text-purple-600">보기 & 다운로드 →</span>
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* Checklist */}
+                    <div className="bg-white/60 rounded-2xl p-6 border border-white/60">
+                      <h3 className="text-xl font-bold text-slate-900 mb-4 flex items-center gap-2">
+                        <span>✅</span> 체크리스트
+                      </h3>
+                      <div className="space-y-3">
+                        {[
+                          '우리 팀의 미션과 가치를 재확인했나요?',
+                          '비효율적인 업무(줄일 일)를 식별했나요?',
+                          '업무를 구체적인 Task 단위로 분해했나요?',
+                          'AI로 자동화할 수 있는 업무를 찾았나요?',
+                          '구체적인 실행 계획(프롬프트/워크플로우)을 얻었나요?'
+                        ].map((item, idx) => (
+                          <div key={idx} className="flex items-center gap-3 p-3 bg-white rounded-xl border border-slate-100">
+                            <div className="w-6 h-6 rounded-full bg-green-100 text-green-600 flex items-center justify-center text-sm font-bold">
+                              ✓
+                            </div>
+                            <span className="text-slate-700 text-sm">{item}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Feedback */}
+                  <div className="mb-12">
+                    <h3 className="text-xl font-bold text-slate-900 mb-4 flex items-center gap-2">
+                      <span>💭</span> 오늘의 소감
+                    </h3>
+                    <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+                      <label className="block text-slate-700 font-medium mb-2">
+                        오늘 워크샵을 통해 느낀 점이나 부족했던 점을 한 마디로 남겨주세요
+                      </label>
+                      <input
+                        type="text"
+                        placeholder="예: AI가 이렇게 구체적으로 도와줄 수 있다는 점이 놀라웠습니다."
+                        className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Footer */}
+                  <div className="flex justify-center">
+                    <button
+                      onClick={() => alert('워크샵이 종료되었습니다. 수고하셨습니다!')}
+                      className="px-12 py-4 bg-gradient-to-r from-slate-800 to-slate-900 text-white text-lg font-bold rounded-2xl shadow-xl hover:shadow-2xl hover:scale-105 transition-all duration-300"
+                    >
+                      워크샵 종료하기
                     </button>
                   </div>
                 </div>
@@ -3548,9 +3711,7 @@ if __name__ == "__main__":
           customer: customerInput,
           teamSize: Number(teamSizeInput),
           teamFormation: teamFormationInput,
-          teamFormation: teamFormationInput,
           teamComposition: workshop.teamComposition || teamFreeOpinionInput, // Use saved workshop data or current input
-          teamCharacteristics: teamCharacteristics,
           teamCharacteristics: teamCharacteristics,
           teamFreeOpinion: teamFreeOpinionInput,
           constraints: constraintCheckboxes,
@@ -3561,7 +3722,12 @@ if __name__ == "__main__":
         phase2Data={showPhaseSummary === 2 ? {
           domains: workshop.domains,
           uploadedFiles: uploadedFiles.map(f => f.file.name),
-          tasks: workshop.tasks,
+          tasks: workshop.tasks.map(t => ({
+            ...t,
+            domain: (t as any).domain || 'General',
+            complexity: (t as any).complexity || 'medium',
+            automationPotential: (t as any).automationPotential || (t.automation === 'high' ? 'High' : t.automation === 'medium' ? 'Medium' : 'Low')
+          })),
           selectedTaskIds: workshop.selectedTaskIds,
           recommendations: [
             { category: 'should', title: '주간 보고서 자동화', description: '데이터 취합 및 포맷팅 시간을 80% 단축할 수 있습니다.', reason: '반복적이고 규칙적인 업무', priority: 'high' },
